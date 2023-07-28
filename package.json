@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "typescript": "^5.1.6",
+    "xterm": "^5.2.1"
+  }
+}
