@@ -4,10 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    
+    <script src="./dist/bundle.js"></script>
+    <script src="node_modules/xterm/lib/xterm.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="terminal"></div>
-    <script src="./dist/bundle.js"></script>
+    <div class="left-side">
+        <canvas>
+
+        </canvas>
+    </div>
+    <div class="right-side">
+        <!-- Content for the right side -->
+        <div class="UI">
+
+        </div>
+        <div class="UI">
+            <textarea name="console" class="console" id="console" cols="30" rows="10">
+
+            </textarea>
+            <div class="buttonsection">
+                <button class="button start">
+                    Start
+                </button>
+                <button class="button stop">
+                    Stop
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
