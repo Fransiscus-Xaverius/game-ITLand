@@ -1,6 +1,12 @@
 {
+  "scripts":{
+    "compile" : "browserify -p [ tsify --target es6 ] './src/main.ts' -o './dist/bundle.js'"
+  },
   "dependencies": {
     "typescript": "^5.1.6",
     "xterm": "^5.2.1"
+  },
+  "devDependencies": {
+    "tsify": "^5.0.4"
   }
 }
