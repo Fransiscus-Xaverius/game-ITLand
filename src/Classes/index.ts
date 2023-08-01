@@ -1,6 +1,4 @@
-import GameObjects from './GameObjects'
-import Items from './Items'
-import Console from './Console'
+import {GameObjects, Items, Console} from './subnamespace'
 import { Player } from './Player'
 import { GameManager } from './GameManager'
 import { Shop } from './Shop'

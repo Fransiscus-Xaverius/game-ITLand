@@ -17,8 +17,6 @@ export default{
     Entity,
     Grid,
     Ground,
-    IDamaging,
-    IDestructable,
     LootTable,
     PlayerUnit,
     Rock,

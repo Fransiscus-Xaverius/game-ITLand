@@ -1,3 +1,5 @@
-export class IDamaging{
+import { IDestructable } from "./IDestructable";
+
+export interface IDamaging{
     
 }

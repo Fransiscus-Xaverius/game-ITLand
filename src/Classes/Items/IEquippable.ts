@@ -1,3 +1,3 @@
-export class IEquippable{
+export interface IEquippable{
     
 }

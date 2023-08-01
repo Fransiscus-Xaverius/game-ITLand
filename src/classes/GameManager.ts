@@ -1,4 +1,4 @@
-import Game from './'
+import {GameObjects, Items, Console} from './subnamespace'
 
 export class GameManager{
     

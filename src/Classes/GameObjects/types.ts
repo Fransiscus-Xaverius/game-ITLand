@@ -1,7 +1,11 @@
-import {Point} from './Point'
-import {ItemDropRate} from './ItemDropRate'
+import { Point } from './Point'
+import { ItemDropRate } from './ItemDropRate'
+import { IDamaging } from './IDamaging'
+import { IDestructable } from './IDestructable'
 
 export {
     Point,
-    ItemDropRate
+    ItemDropRate,
+    IDamaging,
+    IDestructable
 }
