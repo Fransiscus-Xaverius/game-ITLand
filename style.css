@@ -3,6 +3,10 @@
     src: url(/fonts/consolas/CONSOLA.TTF);
 }
 
+.asset{
+    display: none;
+}
+
 body, html {
     margin: 0;
     padding: 0;

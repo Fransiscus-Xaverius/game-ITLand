@@ -1,3 +1,8 @@
 import Game from './Classes'
+import init from './assetInit'
 
-var game = new Game.GameManager()
+window.onload = () => {
+    init()
+    var game = new Game.GameManager()
+}
+
