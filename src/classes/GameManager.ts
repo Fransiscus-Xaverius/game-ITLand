@@ -3,6 +3,7 @@ import { Terminal } from './Console/Terminal'
 import { Grid } from './GameObjects/Grid'
 import { SpriteFrame } from './GameObjects/SpriteFrame'
 import { Tile } from './GameObjects/Tile'
+import { Point } from './types'
 
 export class GameManager{
     private lastTimeStamp:number = 0
@@ -14,24 +15,63 @@ export class GameManager{
     private terminals:Terminal[] = []
     private grid:Grid = new Grid({x:15, y:15})
     private canvasScale:number = 1
+    private maxCanvasScale:number = 2
+    private minCanvasScale:number = 0.25
     private maxCanvasSize:number = 1
     private defaultTilesPerCanvas:number = 10
+    private cameraPosition:Point = {x:1000, y:500}
+    private middleMousePressed:boolean = false
 
     constructor(canvas:HTMLCanvasElement){
         this.setCanvas(canvas)
     }
 
     public setCanvas(canvas:HTMLCanvasElement):void{
-        if(this.canvas) this.canvas.onwheel = null
+        if(this.canvas) {
+            this.canvas.onwheel = null
+            this.canvas.onmousedown = null
+            this.canvas.onmouseup = null
+            this.canvas.onmousemove = null
+            this.canvas.onmouseleave = null
+        }
         this.canvas = canvas
-        this.canvas.width = this.canvas.parentElement?.clientWidth ?? window.innerWidth
-        this.canvas.height = this.canvas.parentElement?.clientHeight ?? window.innerHeight
         this.context = canvas.getContext("2d") as CanvasRenderingContext2D
         this.context.imageSmoothingEnabled = false
         this.maxCanvasSize = Math.max(this.canvas.width, this.canvas.height)
         this.canvas.onwheel = (evt) => {
-            this.canvasScale *= 1-(evt.deltaY * 0.001)
+            this.setCanvasScale(this.canvasScale * (1-(evt.deltaY * 0.001)))
         }
+
+        this.canvas.onmousedown = (evt) => {
+            if(evt.button == 1) {
+                this.middleMousePressed = true
+                evt.preventDefault();
+                return false;
+            }
+        }
+
+        this.canvas.onmouseup = (evt) => {
+            if(evt.button == 1) {
+                this.middleMousePressed = false
+            }
+        }
+
+        this.canvas.onmouseleave = (evt) => {
+            this.middleMousePressed = false
+        }
+
+        this.canvas.onmousemove = (evt) => {
+            if(this.middleMousePressed) {
+                this.cameraPosition.x -= evt.movementX / this.canvasScale
+                this.cameraPosition.y -= evt.movementY / this.canvasScale
+            }
+        }
+
+        
+    }
+
+    public setCanvasScale(scale:number):void{
+        this.canvasScale = Math.min(this.maxCanvasScale, Math.max(this.minCanvasScale, scale))
     }
 
     public getDeltatime():number{
@@ -69,8 +109,8 @@ export class GameManager{
             for (let j = 0; j < this.grid.size.x; j++) {
                 var tileSprite:SpriteFrame|undefined = this.grid.tiles[i][j]?.currentAnimationFrame()
                 var entitySprite:SpriteFrame|undefined = this.grid.entityGrid[i][j]?.currentAnimationFrame()
+
                 const oneTileSize = (this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize
-                
                 if(tileSprite) {
                     const xSize = Math.floor(tileSprite.resolution.x / Tile.defaultTileResolution.x * oneTileSize)
                     const ySize = Math.floor(tileSprite.resolution.y / Tile.defaultTileResolution.y * oneTileSize)
@@ -80,14 +120,18 @@ export class GameManager{
                         tileSprite.position.y, 
                         tileSprite.resolution.x,
                         tileSprite.resolution.y,
-                        j * xSize,
-                        i * ySize,
+                        j * xSize - Math.floor(this.cameraPosition.x * this.canvasScale - this.canvas.width / 2),
+                        i * ySize - Math.floor(this.cameraPosition.y * this.canvasScale - this.canvas.height / 2),
                         xSize,
                         ySize
                     )
                 }
             }
+            
         }
+        
+        this.context.fillText( "x : " + this.cameraPosition.x, 10, 20)
+        this.context.fillText( "y : " + this.cameraPosition.y, 10, 40)
     }
 
 

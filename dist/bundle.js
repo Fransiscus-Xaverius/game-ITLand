@@ -117,23 +117,53 @@ class GameManager {
         this.terminals = [];
         this.grid = new Grid_1.Grid({ x: 15, y: 15 });
         this.canvasScale = 1;
+        this.maxCanvasScale = 2;
+        this.minCanvasScale = 0.25;
         this.maxCanvasSize = 1;
         this.defaultTilesPerCanvas = 10;
+        this.cameraPosition = { x: 1000, y: 500 };
+        this.middleMousePressed = false;
         this.setCanvas(canvas);
     }
     setCanvas(canvas) {
-        var _a, _b, _c, _d;
-        if (this.canvas)
+        if (this.canvas) {
             this.canvas.onwheel = null;
+            this.canvas.onmousedown = null;
+            this.canvas.onmouseup = null;
+            this.canvas.onmousemove = null;
+            this.canvas.onmouseleave = null;
+        }
         this.canvas = canvas;
-        this.canvas.width = (_b = (_a = this.canvas.parentElement) === null || _a === void 0 ? void 0 : _a.clientWidth) !== null && _b !== void 0 ? _b : window.innerWidth;
-        this.canvas.height = (_d = (_c = this.canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
         this.context = canvas.getContext("2d");
         this.context.imageSmoothingEnabled = false;
         this.maxCanvasSize = Math.max(this.canvas.width, this.canvas.height);
         this.canvas.onwheel = (evt) => {
-            this.canvasScale *= 1 - (evt.deltaY * 0.001);
+            this.setCanvasScale(this.canvasScale * (1 - (evt.deltaY * 0.001)));
         };
+        this.canvas.onmousedown = (evt) => {
+            if (evt.button == 1) {
+                this.middleMousePressed = true;
+                evt.preventDefault();
+                return false;
+            }
+        };
+        this.canvas.onmouseup = (evt) => {
+            if (evt.button == 1) {
+                this.middleMousePressed = false;
+            }
+        };
+        this.canvas.onmouseleave = (evt) => {
+            this.middleMousePressed = false;
+        };
+        this.canvas.onmousemove = (evt) => {
+            if (this.middleMousePressed) {
+                this.cameraPosition.x -= evt.movementX / this.canvasScale;
+                this.cameraPosition.y -= evt.movementY / this.canvasScale;
+            }
+        };
+    }
+    setCanvasScale(scale) {
+        this.canvasScale = Math.min(this.maxCanvasScale, Math.max(this.minCanvasScale, scale));
     }
     getDeltatime() {
         return this.deltaTime;
@@ -171,10 +201,12 @@ class GameManager {
                 if (tileSprite) {
                     const xSize = Math.floor(tileSprite.resolution.x / Tile_1.Tile.defaultTileResolution.x * oneTileSize);
                     const ySize = Math.floor(tileSprite.resolution.y / Tile_1.Tile.defaultTileResolution.y * oneTileSize);
-                    this.context.drawImage(tileSprite.spriteSheet, tileSprite.position.x, tileSprite.position.y, tileSprite.resolution.x, tileSprite.resolution.y, j * xSize, i * ySize, xSize, ySize);
+                    this.context.drawImage(tileSprite.spriteSheet, tileSprite.position.x, tileSprite.position.y, tileSprite.resolution.x, tileSprite.resolution.y, j * xSize - Math.floor(this.cameraPosition.x * this.canvasScale - this.canvas.width / 2), i * ySize - Math.floor(this.cameraPosition.y * this.canvasScale - this.canvas.height / 2), xSize, ySize);
                 }
             }
         }
+        this.context.fillText("x : " + this.cameraPosition.x, 10, 20);
+        this.context.fillText("y : " + this.cameraPosition.y, 10, 40);
     }
 }
 exports.GameManager = GameManager;
@@ -525,9 +557,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Classes_1 = __importDefault(require("./Classes"));
 const assetInit_1 = __importDefault(require("./assetInit"));
 window.onload = () => {
+    var _a, _b, _c, _d;
     const canvas = document.querySelector("#view");
     if (canvas == null)
         throw new Error("Canvas not found");
+    canvas.width = (_b = (_a = canvas.parentElement) === null || _a === void 0 ? void 0 : _a.clientWidth) !== null && _b !== void 0 ? _b : window.innerWidth;
+    canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
     (0, assetInit_1.default)();
     const game = new Classes_1.default.GameManager(canvas);
     game.start();
