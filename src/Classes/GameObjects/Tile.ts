@@ -4,6 +4,7 @@ import { Entity } from "./Entity";
 import { Point } from "./Point";
 
 export abstract class Tile extends Animated{
+    public static defaultTileResolution:Point = {x:32, y:32}
     public readonly coordinate:Point;
 
     constructor(coordinate:Point, animations:Animation[] = []){

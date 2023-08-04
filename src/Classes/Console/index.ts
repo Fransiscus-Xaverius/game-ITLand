@@ -1,4 +1,4 @@
-import { Console } from './Console'
+import { Terminal } from './Terminal'
 import { Command } from './Command'
 import { ForCommand } from './ForCommand'
 import { IfCommand } from './IfCommand'
@@ -10,7 +10,7 @@ import { GlobalWrapper } from './GlobalWrapper'
 
 
 export default {
-    Console,
+    Terminal,
     Command,
     ForCommand,
     IfCommand,

@@ -11,11 +11,11 @@ export abstract class Animated{
         this.animations = animations
     }
 
-    public addAnimationRaw(animation: Animation){
+    public addAnimation(animation: Animation){
         this.animations.push(animation)
     }
 
-    public addAnimation(animationName:string, spriteSheet:HTMLImageElement, spriteResolution:Point, spriteFrameNum:number, nextAnimation:string="", animationSpeed:number=1):void{
+    public createAnimation(animationName:string, spriteSheet:HTMLImageElement, spriteResolution:Point, spriteFrameNum:number, nextAnimation:string="", animationSpeed:number=1):void{
         this.animations.push(new Animation(
             this,
             animationName,
