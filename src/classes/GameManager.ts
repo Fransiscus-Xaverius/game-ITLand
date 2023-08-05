@@ -16,10 +16,10 @@ export class GameManager{
     private grid:Grid = new Grid({x:15, y:15})
     private canvasScale:number = 1
     private maxCanvasScale:number = 2
-    private minCanvasScale:number = 0.25
+    private minCanvasScale:number = 0.5
     private maxCanvasSize:number = 1
     private defaultTilesPerCanvas:number = 10
-    private cameraPosition:Point = {x:1000, y:500}
+    private cameraPosition:Point = {x:0, y:0}
     private middleMousePressed:boolean = false
 
     constructor(canvas:HTMLCanvasElement){
@@ -28,6 +28,7 @@ export class GameManager{
 
     public setCanvas(canvas:HTMLCanvasElement):void{
         if(this.canvas) {
+            window.onresize = null
             this.canvas.onwheel = null
             this.canvas.onmousedown = null
             this.canvas.onmouseup = null
@@ -41,6 +42,8 @@ export class GameManager{
         this.canvas.onwheel = (evt) => {
             this.setCanvasScale(this.canvasScale * (1-(evt.deltaY * 0.001)))
         }
+
+        
 
         this.canvas.onmousedown = (evt) => {
             if(evt.button == 1) {
@@ -62,12 +65,25 @@ export class GameManager{
 
         this.canvas.onmousemove = (evt) => {
             if(this.middleMousePressed) {
-                this.cameraPosition.x -= evt.movementX / this.canvasScale
-                this.cameraPosition.y -= evt.movementY / this.canvasScale
+                this.cameraPosition.x -= (evt.movementX / this.canvasScale) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
+                this.cameraPosition.y -= (evt.movementY / this.canvasScale) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
+                // this.cameraPosition.x -= evt.movementX / this.canvasScale 
+                // this.cameraPosition.y -= evt.movementY / this.canvasScale
             }
         }
 
-        
+        window.onresize = (evt) => {
+            console.log('resized')
+            const target = this.canvas as HTMLCanvasElement
+            if(!target) return
+            canvas.width = canvas.clientWidth
+            canvas.height = canvas.clientHeight
+            this.maxCanvasSize = Math.max(target.width, target.height)
+
+            if(this.context)
+            this.context.imageSmoothingEnabled = false
+        }
+
     }
 
     public setCanvasScale(scale:number):void{
@@ -105,23 +121,29 @@ export class GameManager{
     private render():void{
         if(this.context == null || this.canvas == null) return
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        const oneTileSize = (this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize * this.canvasScale
+        const oneTileSizeX = oneTileSize / Tile.defaultTileResolution.x
+        const oneTileSizeY = oneTileSize / Tile.defaultTileResolution.y
+        const xCam = Math.floor(this.cameraPosition.x * oneTileSize - this.canvas.width / 2)
+        const yCam = Math.floor(this.cameraPosition.y * oneTileSize - this.canvas.height / 2)
+        // const xCam = Math.floor(this.cameraPosition.x * this.canvasScale - this.canvas.width / 2)
+        // const yCam = Math.floor(this.cameraPosition.y * this.canvasScale - this.canvas.height / 2)
         for (let i = 0; i < this.grid.size.y; i++) {
             for (let j = 0; j < this.grid.size.x; j++) {
                 var tileSprite:SpriteFrame|undefined = this.grid.tiles[i][j]?.currentAnimationFrame()
                 var entitySprite:SpriteFrame|undefined = this.grid.entityGrid[i][j]?.currentAnimationFrame()
 
-                const oneTileSize = (this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize
                 if(tileSprite) {
-                    const xSize = Math.floor(tileSprite.resolution.x / Tile.defaultTileResolution.x * oneTileSize)
-                    const ySize = Math.floor(tileSprite.resolution.y / Tile.defaultTileResolution.y * oneTileSize)
+                    const xSize = Math.floor(oneTileSizeX * tileSprite.resolution.x)
+                    const ySize = Math.floor(oneTileSizeY * tileSprite.resolution.y)
                     this.context.drawImage(
                         tileSprite.spriteSheet, 
                         tileSprite.position.x, 
                         tileSprite.position.y, 
                         tileSprite.resolution.x,
                         tileSprite.resolution.y,
-                        j * xSize - Math.floor(this.cameraPosition.x * this.canvasScale - this.canvas.width / 2),
-                        i * ySize - Math.floor(this.cameraPosition.y * this.canvasScale - this.canvas.height / 2),
+                        j * xSize - xCam,
+                        i * ySize - yCam,
                         xSize,
                         ySize
                     )

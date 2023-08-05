@@ -118,15 +118,16 @@ class GameManager {
         this.grid = new Grid_1.Grid({ x: 15, y: 15 });
         this.canvasScale = 1;
         this.maxCanvasScale = 2;
-        this.minCanvasScale = 0.25;
+        this.minCanvasScale = 0.5;
         this.maxCanvasSize = 1;
         this.defaultTilesPerCanvas = 10;
-        this.cameraPosition = { x: 1000, y: 500 };
+        this.cameraPosition = { x: 0, y: 0 };
         this.middleMousePressed = false;
         this.setCanvas(canvas);
     }
     setCanvas(canvas) {
         if (this.canvas) {
+            window.onresize = null;
             this.canvas.onwheel = null;
             this.canvas.onmousedown = null;
             this.canvas.onmouseup = null;
@@ -157,9 +158,22 @@ class GameManager {
         };
         this.canvas.onmousemove = (evt) => {
             if (this.middleMousePressed) {
-                this.cameraPosition.x -= evt.movementX / this.canvasScale;
-                this.cameraPosition.y -= evt.movementY / this.canvasScale;
+                this.cameraPosition.x -= (evt.movementX / this.canvasScale) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize);
+                this.cameraPosition.y -= (evt.movementY / this.canvasScale) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize);
+                // this.cameraPosition.x -= evt.movementX / this.canvasScale 
+                // this.cameraPosition.y -= evt.movementY / this.canvasScale
             }
+        };
+        window.onresize = (evt) => {
+            console.log('resized');
+            const target = this.canvas;
+            if (!target)
+                return;
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+            this.maxCanvasSize = Math.max(target.width, target.height);
+            if (this.context)
+                this.context.imageSmoothingEnabled = false;
         };
     }
     setCanvasScale(scale) {
@@ -193,15 +207,21 @@ class GameManager {
         if (this.context == null || this.canvas == null)
             return;
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        const oneTileSize = (this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize * this.canvasScale;
+        const oneTileSizeX = oneTileSize / Tile_1.Tile.defaultTileResolution.x;
+        const oneTileSizeY = oneTileSize / Tile_1.Tile.defaultTileResolution.y;
+        const xCam = Math.floor(this.cameraPosition.x * oneTileSize - this.canvas.width / 2);
+        const yCam = Math.floor(this.cameraPosition.y * oneTileSize - this.canvas.height / 2);
+        // const xCam = Math.floor(this.cameraPosition.x * this.canvasScale - this.canvas.width / 2)
+        // const yCam = Math.floor(this.cameraPosition.y * this.canvasScale - this.canvas.height / 2)
         for (let i = 0; i < this.grid.size.y; i++) {
             for (let j = 0; j < this.grid.size.x; j++) {
                 var tileSprite = (_a = this.grid.tiles[i][j]) === null || _a === void 0 ? void 0 : _a.currentAnimationFrame();
                 var entitySprite = (_b = this.grid.entityGrid[i][j]) === null || _b === void 0 ? void 0 : _b.currentAnimationFrame();
-                const oneTileSize = (this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize;
                 if (tileSprite) {
-                    const xSize = Math.floor(tileSprite.resolution.x / Tile_1.Tile.defaultTileResolution.x * oneTileSize);
-                    const ySize = Math.floor(tileSprite.resolution.y / Tile_1.Tile.defaultTileResolution.y * oneTileSize);
-                    this.context.drawImage(tileSprite.spriteSheet, tileSprite.position.x, tileSprite.position.y, tileSprite.resolution.x, tileSprite.resolution.y, j * xSize - Math.floor(this.cameraPosition.x * this.canvasScale - this.canvas.width / 2), i * ySize - Math.floor(this.cameraPosition.y * this.canvasScale - this.canvas.height / 2), xSize, ySize);
+                    const xSize = Math.floor(oneTileSizeX * tileSprite.resolution.x);
+                    const ySize = Math.floor(oneTileSizeY * tileSprite.resolution.y);
+                    this.context.drawImage(tileSprite.spriteSheet, tileSprite.position.x, tileSprite.position.y, tileSprite.resolution.x, tileSprite.resolution.y, j * xSize - xCam, i * ySize - yCam, xSize, ySize);
                 }
             }
         }
