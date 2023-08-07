@@ -8,7 +8,7 @@ window.onload = () => {
     canvas.height = canvas.parentElement?.clientHeight ?? window.innerHeight
 
     init()
-    const game = new Game.GameManager(canvas)
+    const game = new Game.GameManager(new Game.CanvasView(canvas))
     game.start()
 }
 
