@@ -8,13 +8,13 @@ class CanvasView {
         this.canvas = null;
         this.context = null;
         this.canvasScale = 1;
-        this.maxCanvasScale = 2;
+        this.maxCanvasScale = 1.5;
         this.minCanvasScale = 0.5;
         this.maxCanvasSize = 1;
         this.defaultTilesPerCanvas = 10;
-        this.renderRadius = 5;
+        this.renderRadius = 6;
         this.middleMousePressed = false;
-        this.cameraPosition = { x: 1, y: 0 };
+        this.cameraPosition = { x: 0, y: 0 };
         this.setCanvas(canvas);
     }
     setCanvas(canvas) {
@@ -54,8 +54,8 @@ class CanvasView {
         };
         this.canvas.onmousemove = (evt) => {
             if (this.middleMousePressed) {
-                this.cameraPosition.x -= (evt.movementX / this.canvasScale) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize);
-                this.cameraPosition.y -= (evt.movementY / this.canvasScale) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize);
+                this.cameraPosition.x -= (evt.movementX) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize);
+                this.cameraPosition.y -= (evt.movementY) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize);
             }
         };
         window.onresize = (evt) => {
@@ -76,6 +76,15 @@ class CanvasView {
     setCameraPosition(position) {
         this.cameraPosition = position;
     }
+    getCameraPosition() {
+        return this.cameraPosition;
+    }
+    getContext() {
+        return this.context;
+    }
+    getRenderRadius() {
+        return Math.round(this.renderRadius / this.canvasScale);
+    }
     render(grid) {
         var _a, _b, _c, _d;
         if (this.context == null || this.canvas == null)
@@ -83,29 +92,42 @@ class CanvasView {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (grid == null)
             return;
-        const oneTileSize = (this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize * this.canvasScale;
+        const oneTileSize = this.canvasScale * this.maxCanvasSize / this.defaultTilesPerCanvas;
         const oneTileSizeX = oneTileSize / Tile_1.Tile.defaultTileResolution.x;
         const oneTileSizeY = oneTileSize / Tile_1.Tile.defaultTileResolution.y;
-        const xCam = Math.floor(this.cameraPosition.x * oneTileSize - this.canvas.width / 2);
-        const yCam = Math.floor(this.cameraPosition.y * oneTileSize - this.canvas.height / 2);
-        for (let i = Math.round(this.cameraPosition.y) - this.renderRadius; i < Math.round(this.cameraPosition.y) + this.renderRadius; i++) {
-            for (let j = Math.round(this.cameraPosition.x) - this.renderRadius; j < Math.round(this.cameraPosition.x) + this.renderRadius; j++) {
+        const xCam = this.cameraPosition.x * oneTileSize - this.canvas.width / 2;
+        const yCam = this.cameraPosition.y * oneTileSize - this.canvas.height / 2;
+        const scaledRadius = this.getRenderRadius();
+        const iStart = Math.floor(this.cameraPosition.y - scaledRadius);
+        const iEnd = Math.ceil(this.cameraPosition.y + scaledRadius);
+        const jStart = Math.floor(this.cameraPosition.x - scaledRadius);
+        const jEnd = Math.ceil(this.cameraPosition.x + scaledRadius);
+        for (let i = iStart; i < iEnd; i++) {
+            for (let j = jStart; j < jEnd; j++) {
+                if (j < 0)
+                    continue;
                 var tileSprite = (_b = (_a = grid.tiles[i]) === null || _a === void 0 ? void 0 : _a.at(j)) === null || _b === void 0 ? void 0 : _b.currentAnimationFrame();
                 var entitySprite = (_d = (_c = grid.entityGrid[i]) === null || _c === void 0 ? void 0 : _c.at(j)) === null || _d === void 0 ? void 0 : _d.currentAnimationFrame();
                 if (tileSprite) {
-                    const xSize = Math.floor(oneTileSizeX * tileSprite.resolution.x);
-                    const ySize = Math.floor(oneTileSizeY * tileSprite.resolution.y);
-                    this.context.drawImage(tileSprite.spriteSheet, tileSprite.position.x, tileSprite.position.y, tileSprite.resolution.x, tileSprite.resolution.y, j * xSize - xCam, i * ySize - yCam, xSize, ySize);
+                    const xSize = oneTileSizeX * tileSprite.resolution.x;
+                    const ySize = oneTileSizeY * tileSprite.resolution.y;
+                    const xCoord = Math.round(j * xSize - xCam);
+                    const yCoord = Math.round(i * ySize - yCam);
+                    const xLength = Math.round((j + 1) * xSize - xCam) - xCoord;
+                    const yLength = Math.round((i + 1) * ySize - yCam) - yCoord;
+                    this.context.drawImage(tileSprite.spriteSheet, tileSprite.position.x, tileSprite.position.y, tileSprite.resolution.x, tileSprite.resolution.y, xCoord, yCoord, xLength, yLength);
                 }
             }
         }
         this.context.fillText("x : " + this.cameraPosition.x, 10, 20);
         this.context.fillText("y : " + this.cameraPosition.y, 10, 40);
+        this.context.fillText("xCam : " + xCam, 10, 100);
+        this.context.fillText("yCam : " + yCam, 10, 120);
     }
 }
 exports.CanvasView = CanvasView;
 
-},{"./GameObjects/Tile":23}],2:[function(require,module,exports){
+},{"./GameObjects/Tile":25}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Command = void 0;
@@ -220,7 +242,7 @@ class GameManager {
         this.isRunning = false;
         this.animationFrameId = -1;
         this.terminals = [];
-        this.grid = new Grid_1.Grid({ x: 15, y: 15 });
+        this.grid = new Grid_1.Grid({ x: 1000, y: 1000 });
         this.setCanvasView(canvasView);
     }
     getDeltatime() {
@@ -247,20 +269,37 @@ class GameManager {
         cancelAnimationFrame(this.animationFrameId);
     }
     update() {
-        this.grid.nextFrame(this.deltaTime);
+        if (!this.canvasView) {
+            this.grid.nextFrame(this.deltaTime);
+            return;
+        }
+        const camPos = this.canvasView.getCameraPosition();
+        const scaledRenderRadius = this.canvasView.getRenderRadius();
+        this.grid.nextFrame(this.deltaTime, {
+            position: {
+                x: Math.floor(camPos.x - scaledRenderRadius),
+                y: Math.floor(camPos.y - scaledRenderRadius)
+            },
+            size: {
+                x: Math.ceil(scaledRenderRadius * 2),
+                y: Math.ceil(scaledRenderRadius * 2),
+            }
+        });
     }
     render() {
-        var _a;
+        var _a, _b, _c;
         (_a = this.canvasView) === null || _a === void 0 ? void 0 : _a.render(this.grid);
+        (_c = (_b = this.canvasView) === null || _b === void 0 ? void 0 : _b.getContext()) === null || _c === void 0 ? void 0 : _c.fillText("fps : " + (1 / this.deltaTime).toFixed(3), 10, 80);
     }
 }
 exports.GameManager = GameManager;
 
-},{"./GameObjects/Grid":17}],13:[function(require,module,exports){
+},{"./GameObjects/Grid":18}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
-const Animation_1 = require("./Animation");
+const ChainedAnimation_1 = require("./ChainedAnimation");
+const GroupAnimation_1 = require("./GroupAnimation");
 class Animated {
     constructor(animations = []) {
         this.currentAnimationIndex = 0;
@@ -270,7 +309,7 @@ class Animated {
         this.animations.push(animation);
     }
     createAnimation(animationName, spriteSheet, spriteResolution, spriteFrameNum, nextAnimation = "", animationSpeed = 1) {
-        this.animations.push(new Animation_1.Animation(this, animationName, spriteSheet, spriteResolution, spriteFrameNum, this.animations.findIndex(x => x.animationName === nextAnimation), animationSpeed));
+        this.animations.push(new ChainedAnimation_1.ChainedAnimation(this, animationName, spriteSheet, spriteResolution, spriteFrameNum, this.animations.findIndex(x => x.animationName === nextAnimation), animationSpeed));
     }
     playAnimation(animationName) {
         this.animations[this.currentAnimationIndex].resetAnimation();
@@ -281,6 +320,8 @@ class Animated {
         this.currentAnimationIndex = animationIndex;
     }
     nextFrame(deltaTime) {
+        if (this.animations[this.currentAnimationIndex] instanceof GroupAnimation_1.GroupAnimation)
+            return;
         this.animations[this.currentAnimationIndex].nextFrame(deltaTime);
     }
     currentAnimationFrame() {
@@ -294,25 +335,51 @@ class Animated {
 }
 exports.Animated = Animated;
 
-},{"./Animation":14}],14:[function(require,module,exports){
+},{"./ChainedAnimation":15,"./GroupAnimation":20}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animation = void 0;
 class Animation {
-    constructor(owner, animationName, spriteSheet, spriteResolution, spriteFrameNum, nextAnimationIndex = -1, // -1 will make this loop indefinitely
-    animationSpeed = 1 // 0 will make this a static sprite (no animation)
+    constructor(animationName, spriteSheet, spriteResolution, spriteFrameNum, animationSpeed = 1 // 0 will make this a static sprite (no animation)
     ) {
         this.animationProgress = 0;
-        this.owner = owner;
         this.animationName = animationName;
         this.spriteSheet = spriteSheet;
         this.spriteResolution = spriteResolution;
         this.spriteFrameNum = spriteFrameNum;
-        this.nextAnimationIndex = nextAnimationIndex;
         this.animationSpeed = animationSpeed;
     }
     resetAnimation() {
         this.animationProgress = 0;
+    }
+    nextFrame(deltaTime) {
+        this.animationProgress += deltaTime * this.animationSpeed;
+        this.animationProgress %= this.spriteFrameNum;
+    }
+    currentAnimationFrame() {
+        const sx = this.spriteResolution.x * Math.floor(this.animationProgress);
+        return {
+            spriteSheet: this.spriteSheet,
+            position: { x: sx, y: 0 },
+            resolution: this.spriteResolution
+        };
+    }
+}
+exports.Animation = Animation;
+Animation.assets = [];
+
+},{}],15:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChainedAnimation = void 0;
+const Animation_1 = require("./Animation");
+class ChainedAnimation extends Animation_1.Animation {
+    constructor(owner, animationName, spriteSheet, spriteResolution, spriteFrameNum, nextAnimationIndex = -1, // -1 will make this loop indefinitely
+    animationSpeed = 1 // 0 will make this a static sprite (no animation)
+    ) {
+        super(animationName, spriteSheet, spriteResolution, spriteFrameNum, animationSpeed);
+        this.owner = owner;
+        this.nextAnimationIndex = nextAnimationIndex;
     }
     nextFrame(deltaTime) {
         this.animationProgress += deltaTime * this.animationSpeed;
@@ -333,9 +400,9 @@ class Animation {
         };
     }
 }
-exports.Animation = Animation;
+exports.ChainedAnimation = ChainedAnimation;
 
-},{}],15:[function(require,module,exports){
+},{"./Animation":14}],16:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Entity = void 0;
@@ -344,17 +411,18 @@ class Entity extends Animated_1.Animated {
 }
 exports.Entity = Entity;
 
-},{"./Animated":13}],16:[function(require,module,exports){
+},{"./Animated":13}],17:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grass = void 0;
-const Animation_1 = require("./Animation");
 const Tile_1 = require("./Tile");
+const GroupAnimation_1 = require("./GroupAnimation");
 class Grass extends Tile_1.Tile {
     constructor(coordinate) {
         super(coordinate);
-        this.addAnimation(new Animation_1.Animation(this, "grass", document.querySelector("#itland_ptype_grasstile"), { x: 32, y: 32 }, 1, -1, 0));
-        this.addAnimation(new Animation_1.Animation(this, "flower_grass", document.querySelector("#itland_ptype_flowergrasstile"), { x: 32, y: 32 }, 2, -1, 1));
+        this.addAnimation(GroupAnimation_1.GroupAnimation.animations[0]);
+        this.addAnimation(GroupAnimation_1.GroupAnimation.animations[1]);
+        // this.currentAnimationIndex = 1
         this.currentAnimationIndex = Math.round(Math.random());
     }
     step(stepper) {
@@ -363,11 +431,12 @@ class Grass extends Tile_1.Tile {
 }
 exports.Grass = Grass;
 
-},{"./Animation":14,"./Tile":23}],17:[function(require,module,exports){
+},{"./GroupAnimation":20,"./Tile":25}],18:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grid = void 0;
 const Grass_1 = require("./Grass");
+const GroupAnimation_1 = require("./GroupAnimation");
 class Grid {
     constructor(size) {
         this.size = size;
@@ -381,20 +450,42 @@ class Grid {
             }
         }
     }
-    nextFrame(deltaTime) {
-        this.entities.forEach(x => {
+    nextFrame(deltaTime, renderArea = null, priorityRenders = []) {
+        var _a, _b, _c, _d, _e, _f;
+        GroupAnimation_1.GroupAnimation.animations.forEach(x => x.nextFrame(deltaTime));
+        if (!renderArea) {
+            for (let i = 0; i < this.size.y; ++i) {
+                for (let j = 0; j < this.size.x; ++j) {
+                    (_b = (_a = this.tiles[i]) === null || _a === void 0 ? void 0 : _a.at(j)) === null || _b === void 0 ? void 0 : _b.nextFrame(deltaTime);
+                    (_d = (_c = this.entityGrid[i]) === null || _c === void 0 ? void 0 : _c.at(j)) === null || _d === void 0 ? void 0 : _d.nextFrame(deltaTime);
+                }
+            }
+            return;
+        }
+        const xStart = renderArea.position.x;
+        const xEnd = renderArea.position.x + renderArea.size.x;
+        const yStart = renderArea.position.y;
+        const yEnd = renderArea.position.y + renderArea.size.y;
+        for (let i = yStart; i < yEnd; ++i) {
+            for (let j = xStart; j < xEnd; ++j) {
+                if (j < 0)
+                    continue;
+                const tile = (_e = this.tiles[i]) === null || _e === void 0 ? void 0 : _e.at(j);
+                const entity = (_f = this.entityGrid[i]) === null || _f === void 0 ? void 0 : _f.at(j);
+                if (tile && !priorityRenders.includes(tile))
+                    tile.nextFrame(deltaTime);
+                if (entity && !priorityRenders.includes(entity))
+                    entity.nextFrame(deltaTime);
+            }
+        }
+        priorityRenders.forEach(x => {
             x.nextFrame(deltaTime);
-        });
-        this.tiles.forEach(x => {
-            x.forEach(y => {
-                y === null || y === void 0 ? void 0 : y.nextFrame(deltaTime);
-            });
         });
     }
 }
 exports.Grid = Grid;
 
-},{"./Grass":16}],18:[function(require,module,exports){
+},{"./Grass":17,"./GroupAnimation":20}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ground = void 0;
@@ -406,7 +497,21 @@ class Ground extends Tile_1.Tile {
 }
 exports.Ground = Ground;
 
-},{"./Tile":23}],19:[function(require,module,exports){
+},{"./Tile":25}],20:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GroupAnimation = void 0;
+const Animation_1 = require("./Animation");
+class GroupAnimation extends Animation_1.Animation {
+    constructor(animationName, spriteSheet, spriteResolution, spriteFrameNum, animationSpeed = 1 // 0 will make this a static sprite (no animation)
+    ) {
+        super(animationName, spriteSheet, spriteResolution, spriteFrameNum, animationSpeed);
+    }
+}
+exports.GroupAnimation = GroupAnimation;
+GroupAnimation.animations = [];
+
+},{"./Animation":14}],21:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LootTable = void 0;
@@ -414,7 +519,7 @@ class LootTable {
 }
 exports.LootTable = LootTable;
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerUnit = void 0;
@@ -422,7 +527,7 @@ class PlayerUnit {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rock = void 0;
@@ -431,7 +536,7 @@ class Rock extends Entity_1.Entity {
 }
 exports.Rock = Rock;
 
-},{"./Entity":15}],22:[function(require,module,exports){
+},{"./Entity":16}],24:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TNTEntity = void 0;
@@ -440,7 +545,7 @@ class TNTEntity extends Entity_1.Entity {
 }
 exports.TNTEntity = TNTEntity;
 
-},{"./Entity":15}],23:[function(require,module,exports){
+},{"./Entity":16}],25:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tile = void 0;
@@ -454,7 +559,7 @@ class Tile extends Animated_1.Animated {
 exports.Tile = Tile;
 Tile.defaultTileResolution = { x: 32, y: 32 };
 
-},{"./Animated":13}],24:[function(require,module,exports){
+},{"./Animated":13}],26:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animated_1 = require("./Animated");
@@ -480,7 +585,7 @@ exports.default = {
     TNTEntity: TNTEntity_1.TNTEntity
 };
 
-},{"./Animated":13,"./Animation":14,"./Entity":15,"./Grid":17,"./Ground":18,"./LootTable":19,"./PlayerUnit":20,"./Rock":21,"./TNTEntity":22,"./Tile":23}],25:[function(require,module,exports){
+},{"./Animated":13,"./Animation":14,"./Entity":16,"./Grid":18,"./Ground":19,"./LootTable":21,"./PlayerUnit":22,"./Rock":23,"./TNTEntity":24,"./Tile":25}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
@@ -488,7 +593,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
@@ -496,7 +601,7 @@ class Item {
 }
 exports.Item = Item;
 
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pickaxe = void 0;
@@ -505,7 +610,7 @@ class Pickaxe extends Item_1.Item {
 }
 exports.Pickaxe = Pickaxe;
 
-},{"./Item":26}],28:[function(require,module,exports){
+},{"./Item":28}],30:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shovel = void 0;
@@ -514,7 +619,7 @@ class Shovel extends Item_1.Item {
 }
 exports.Shovel = Shovel;
 
-},{"./Item":26}],29:[function(require,module,exports){
+},{"./Item":28}],31:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TNT = void 0;
@@ -523,7 +628,7 @@ class TNT extends Item_1.Item {
 }
 exports.TNT = TNT;
 
-},{"./Item":26}],30:[function(require,module,exports){
+},{"./Item":28}],32:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Inventory_1 = require("./Inventory");
@@ -539,7 +644,7 @@ exports.default = {
     TNT: TNT_1.TNT
 };
 
-},{"./Inventory":25,"./Item":26,"./Pickaxe":27,"./Shovel":28,"./TNT":29}],31:[function(require,module,exports){
+},{"./Inventory":27,"./Item":28,"./Pickaxe":29,"./Shovel":30,"./TNT":31}],33:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -547,7 +652,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{}],32:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
@@ -555,7 +660,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const subnamespace_1 = require("./subnamespace");
@@ -573,7 +678,7 @@ exports.default = {
     CanvasView: CanvasView_1.CanvasView,
 };
 
-},{"./CanvasView":1,"./GameManager":12,"./Player":31,"./Shop":32,"./subnamespace":34}],34:[function(require,module,exports){
+},{"./CanvasView":1,"./GameManager":12,"./Player":33,"./Shop":34,"./subnamespace":36}],36:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -587,15 +692,22 @@ exports.Items = Items_1.default;
 const Console_1 = __importDefault(require("./Console"));
 exports.Console = Console_1.default;
 
-},{"./Console":11,"./GameObjects":24,"./Items":30}],35:[function(require,module,exports){
+},{"./Console":11,"./GameObjects":26,"./Items":32}],37:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const ptype_path = './Assets/Prototype';
+const Animation_1 = require("./Classes/GameObjects/Animation");
+const GroupAnimation_1 = require("./Classes/GameObjects/GroupAnimation");
 function init() {
+    const grass = new Image();
+    grass.src = "./dist/Assets/Prototype/itland_ptype_grasstile.png";
+    const flowergrass = new Image();
+    flowergrass.src = "./dist/Assets/Prototype/itland_ptype_flowergrasstile.png";
+    Animation_1.Animation.assets.push(grass, flowergrass);
+    GroupAnimation_1.GroupAnimation.animations.push(new GroupAnimation_1.GroupAnimation("grass_tile", grass, { x: 32, y: 32 }, 1, 0), new GroupAnimation_1.GroupAnimation("flowery_grass_tile", flowergrass, { x: 32, y: 32 }, 2, 1));
 }
 exports.default = init;
 
-},{}],36:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":14,"./Classes/GameObjects/GroupAnimation":20}],38:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -615,4 +727,4 @@ window.onload = () => {
     game.start();
 };
 
-},{"./Classes":33,"./assetInit":35}]},{},[36]);
+},{"./Classes":35,"./assetInit":37}]},{},[38]);

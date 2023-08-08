@@ -1,6 +1,8 @@
 import { Animation } from "./Animation";
 import { Point } from "./Point";
 import { SpriteFrame } from "./SpriteFrame";
+import { ChainedAnimation } from "./ChainedAnimation";
+import { GroupAnimation } from "./GroupAnimation";
 
 export abstract class Animated{
     protected animations:Animation[];
@@ -16,7 +18,7 @@ export abstract class Animated{
     }
 
     public createAnimation(animationName:string, spriteSheet:HTMLImageElement, spriteResolution:Point, spriteFrameNum:number, nextAnimation:string="", animationSpeed:number=1):void{
-        this.animations.push(new Animation(
+        this.animations.push(new ChainedAnimation(
             this,
             animationName,
             spriteSheet,
@@ -38,6 +40,7 @@ export abstract class Animated{
     }
 
     public nextFrame(deltaTime:number):void{
+        if(this.animations[this.currentAnimationIndex] instanceof GroupAnimation) return;
         this.animations[this.currentAnimationIndex].nextFrame(deltaTime)
     }
 

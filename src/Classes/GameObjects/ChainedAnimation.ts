@@ -1,39 +1,36 @@
 import { Animated } from "./Animated";
 import { Point } from "./Point";
 import { SpriteFrame } from "./SpriteFrame";
+import { Animation } from "./Animation";
 
-export abstract class Animation{
-    public static assets:HTMLImageElement[] = [];
-
-    protected animationProgress: number = 0;
+export class ChainedAnimation extends Animation{
     
-    public readonly animationName: string;
-    public readonly spriteSheet: HTMLImageElement;
-    public readonly spriteResolution: Point;
-    public readonly spriteFrameNum: number;
-    public animationSpeed: number;
+    public readonly owner: Animated;
+    public readonly nextAnimationIndex: number;
 
     constructor(
+        owner: Animated,
         animationName: string,
         spriteSheet: HTMLImageElement,
         spriteResolution: Point,
         spriteFrameNum: number,
+        nextAnimationIndex: number = -1, // -1 will make this loop indefinitely
         animationSpeed: number = 1 // 0 will make this a static sprite (no animation)
     ) {
-        this.animationName = animationName;
-        this.spriteSheet = spriteSheet;
-        this.spriteResolution = spriteResolution;
-        this.spriteFrameNum = spriteFrameNum;
-        this.animationSpeed = animationSpeed;
-    }
-
-    public resetAnimation():void{
-        this.animationProgress = 0
+        super(animationName, spriteSheet, spriteResolution, spriteFrameNum, animationSpeed)
+        this.owner = owner;
+        this.nextAnimationIndex = nextAnimationIndex;
     }
 
     public nextFrame(deltaTime: number):void{
         this.animationProgress += deltaTime * this.animationSpeed
-        this.animationProgress %= this.spriteFrameNum
+        if(this.nextAnimationIndex == -1){
+            this.animationProgress %= this.spriteFrameNum
+        }
+        else if(this.animationProgress >= this.spriteFrameNum){
+            this.resetAnimation()
+            this.owner.currentAnimationIndex = this.nextAnimationIndex
+        }
     }
 
     public currentAnimationFrame():SpriteFrame{

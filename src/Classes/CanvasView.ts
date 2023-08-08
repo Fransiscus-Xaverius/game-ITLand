@@ -7,13 +7,13 @@ export class CanvasView{
     private canvas:HTMLCanvasElement|null = null
     private context:CanvasRenderingContext2D|null = null
     private canvasScale:number = 1
-    private maxCanvasScale:number = 2
+    private maxCanvasScale:number = 1.5
     private minCanvasScale:number = 0.5
     private maxCanvasSize:number = 1
     private defaultTilesPerCanvas:number = 10
-    private renderRadius = 5
+    private renderRadius:number = 6
     private middleMousePressed:boolean = false
-    private cameraPosition:Point = {x:1, y:0}
+    private cameraPosition:Point = {x:0, y:0}
 
     constructor(canvas:HTMLCanvasElement|null = null){
         this.setCanvas(canvas)
@@ -60,8 +60,8 @@ export class CanvasView{
 
         this.canvas.onmousemove = (evt) => {
             if(this.middleMousePressed) {
-                this.cameraPosition.x -= (evt.movementX / this.canvasScale) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
-                this.cameraPosition.y -= (evt.movementY / this.canvasScale) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
+                this.cameraPosition.x -= (evt.movementX) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
+                this.cameraPosition.y -= (evt.movementY) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
             }
         }
 
@@ -87,35 +87,63 @@ export class CanvasView{
         this.cameraPosition = position
     }
 
+    public getCameraPosition():Point{
+        return this.cameraPosition
+    }
+
+    public getContext():CanvasRenderingContext2D|null{
+        return this.context
+    }
+
+    public getRenderRadius():number{
+        return Math.round(this.renderRadius / this.canvasScale)
+    }
+
     public render(grid:Grid|null):void{
         if(this.context == null || this.canvas == null) return
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
         if(grid == null) return
-        const oneTileSize = (this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize * this.canvasScale
+        const oneTileSize = this.canvasScale * this.maxCanvasSize/ this.defaultTilesPerCanvas
         const oneTileSizeX = oneTileSize / Tile.defaultTileResolution.x
         const oneTileSizeY = oneTileSize / Tile.defaultTileResolution.y
-        const xCam = Math.floor(this.cameraPosition.x * oneTileSize - this.canvas.width / 2)
-        const yCam = Math.floor(this.cameraPosition.y * oneTileSize - this.canvas.height / 2)
-        for (let i = Math.round(this.cameraPosition.y) - this.renderRadius; i < Math.round(this.cameraPosition.y) + this.renderRadius; i++) {
+        const xCam = this.cameraPosition.x * oneTileSize - this.canvas.width / 2
+        const yCam = this.cameraPosition.y * oneTileSize - this.canvas.height / 2
+
+        const scaledRadius = this.getRenderRadius()
+
+        const iStart = Math.floor(this.cameraPosition.y - scaledRadius) 
+        const iEnd   = Math.ceil(this.cameraPosition.y  + scaledRadius) 
+
+        const jStart = Math.floor(this.cameraPosition.x - scaledRadius) 
+        const jEnd   = Math.ceil(this.cameraPosition.x  + scaledRadius) 
+        for (let i = iStart; i < iEnd; i++) {
             
-            for (let j = Math.round(this.cameraPosition.x) - this.renderRadius; j < Math.round(this.cameraPosition.x) + this.renderRadius; j++) {
+            for (let j = jStart; j < jEnd; j++) {
+                if(j < 0) continue;
                 var tileSprite:SpriteFrame|undefined = grid.tiles[i]?.at(j)?.currentAnimationFrame()
                 var entitySprite:SpriteFrame|undefined = grid.entityGrid[i]?.at(j)?.currentAnimationFrame()
 
                 if(tileSprite) {
-                    const xSize = Math.floor(oneTileSizeX * tileSprite.resolution.x)
-                    const ySize = Math.floor(oneTileSizeY * tileSprite.resolution.y)
+                    const xSize = oneTileSizeX * tileSprite.resolution.x
+                    const ySize = oneTileSizeY * tileSprite.resolution.y
+
+                    const xCoord = Math.round(j * xSize - xCam)
+                    const yCoord = Math.round(i * ySize - yCam)
+
+                    const xLength = Math.round((j+1) * xSize - xCam) - xCoord
+                    const yLength = Math.round((i+1) * ySize - yCam) - yCoord
+
                     this.context.drawImage(
                         tileSprite.spriteSheet, 
                         tileSprite.position.x, 
                         tileSprite.position.y, 
                         tileSprite.resolution.x,
                         tileSprite.resolution.y,
-                        j * xSize - xCam,
-                        i * ySize - yCam,
-                        xSize,
-                        ySize
+                        xCoord,
+                        yCoord,
+                        xLength,
+                        yLength
                     )
                 }
             }
