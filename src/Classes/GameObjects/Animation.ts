@@ -3,7 +3,7 @@ import { Point } from "./Point";
 import { SpriteFrame } from "./SpriteFrame";
 
 export abstract class Animation{
-    public static assets:HTMLImageElement[] = [];
+    public static assets:{[key:string]:HTMLImageElement} = {};
 
     protected animationProgress: number = 0;
     

@@ -1,7 +1,9 @@
 import { Tile } from "./GameObjects/Tile"
+import { Entity } from "./GameObjects/Entity"
 import { SpriteFrame } from "./GameObjects/SpriteFrame"
 import { Point } from "./types"
 import { Grid } from "./GameObjects/Grid"
+import { PlayerUnit } from "./GameObjects/PlayerUnit"
 
 export class CanvasView{
     private canvas:HTMLCanvasElement|null = null
@@ -95,8 +97,8 @@ export class CanvasView{
         return this.context
     }
 
-    public getRenderRadius():number{
-        return Math.round(this.renderRadius / this.canvasScale)
+    public getScaledRenderRadius():number{
+        return this.renderRadius / this.canvasScale
     }
 
     public render(grid:Grid|null):void{
@@ -110,7 +112,8 @@ export class CanvasView{
         const xCam = this.cameraPosition.x * oneTileSize - this.canvas.width / 2
         const yCam = this.cameraPosition.y * oneTileSize - this.canvas.height / 2
 
-        const scaledRadius = this.getRenderRadius()
+        const yPlayerOffset = Math.round(oneTileSize/3)
+        const scaledRadius = this.getScaledRenderRadius()
 
         const iStart = Math.floor(this.cameraPosition.y - scaledRadius) 
         const iEnd   = Math.ceil(this.cameraPosition.y  + scaledRadius) 
@@ -118,33 +121,70 @@ export class CanvasView{
         const jStart = Math.floor(this.cameraPosition.x - scaledRadius) 
         const jEnd   = Math.ceil(this.cameraPosition.x  + scaledRadius) 
         for (let i = iStart; i < iEnd; i++) {
-            
+            if(i < 0) continue;
             for (let j = jStart; j < jEnd; j++) {
                 if(j < 0) continue;
-                var tileSprite:SpriteFrame|undefined = grid.tiles[i]?.at(j)?.currentAnimationFrame()
-                var entitySprite:SpriteFrame|undefined = grid.entityGrid[i]?.at(j)?.currentAnimationFrame()
+                var tileSprite:SpriteFrame|undefined = grid.tiles[i]?.at(j)?.currentAnimationFrame();
+                
 
                 if(tileSprite) {
-                    const xSize = oneTileSizeX * tileSprite.resolution.x
-                    const ySize = oneTileSizeY * tileSprite.resolution.y
+                    const xSize = oneTileSizeX * tileSprite.resolution.x;
+                    const ySize = oneTileSizeY * tileSprite.resolution.y;
 
-                    const xCoord = Math.round(j * xSize - xCam)
-                    const yCoord = Math.round(i * ySize - yCam)
-
-                    const xLength = Math.round((j+1) * xSize - xCam) - xCoord
-                    const yLength = Math.round((i+1) * ySize - yCam) - yCoord
+                    const xCoord = Math.round(j * xSize - xCam);
+                    const yCoord = Math.round(i * ySize - yCam);
+    
+                    const xSizeScaled = Math.round((j+1) * xSize - xCam) - xCoord;
+                    const ySizeScaled = Math.round((i+1) * ySize - yCam) - yCoord;
 
                     this.context.drawImage(
                         tileSprite.spriteSheet, 
-                        tileSprite.position.x, 
+                        tileSprite.position.x,
                         tileSprite.position.y, 
                         tileSprite.resolution.x,
                         tileSprite.resolution.y,
                         xCoord,
                         yCoord,
-                        xLength,
-                        yLength
-                    )
+                        xSizeScaled,
+                        ySizeScaled
+                    );
+                }
+            }
+        }
+
+        for (let i = iStart; i < iEnd; i++) {
+            if(i < 0) continue;
+            for (let j = jStart; j < jEnd; j++) {
+                if(j < 0) continue;
+                var entity:Entity|null|undefined = grid.entityGrid[i]?.at(j);
+
+                if(entity) {
+                    const entitySprite = entity.currentAnimationFrame()
+                    const xSize = oneTileSizeX * entitySprite.resolution.x;
+                    const ySize = oneTileSizeY * entitySprite.resolution.y;
+
+                    const spriteCoord = entity instanceof PlayerUnit ? entity.getSpriteCoordinate() : null;
+
+                    const jPos = spriteCoord ? spriteCoord.x : j;
+                    const iPos = spriteCoord ? spriteCoord.y : i;
+    
+                    const xCoord = jPos * xSize - xCam;
+                    const yCoord = iPos * ySize - yCam;
+    
+                    const xSizeScaled = Math.round((jPos+1) * xSize - xCam) - xCoord;
+                    const ySizeScaled = Math.round((iPos+1) * ySize - yCam) - yCoord;
+
+                    this.context.drawImage(
+                        entitySprite.spriteSheet, 
+                        entitySprite.position.x,
+                        entitySprite.position.y, 
+                        entitySprite.resolution.x,
+                        entitySprite.resolution.y,
+                        xCoord,
+                        yCoord - (spriteCoord ? yPlayerOffset : 0),
+                        xSizeScaled,
+                        ySizeScaled
+                    );
                 }
             }
         }

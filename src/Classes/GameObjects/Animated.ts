@@ -29,6 +29,11 @@ export abstract class Animated{
         ))
     }
 
+    public getAnimation(animationName:string):Animation|null{
+        const index = this.animations.findIndex(x => x.animationName === animationName)
+        return index === -1 ? null  : this.animations[index]
+    }
+
     public playAnimation(animationName:string):void{
         this.animations[this.currentAnimationIndex].resetAnimation()
         this.currentAnimationIndex = this.animations.findIndex(x => x.animationName === animationName)
@@ -39,7 +44,7 @@ export abstract class Animated{
         this.currentAnimationIndex = animationIndex
     }
 
-    public nextFrame(deltaTime:number):void{
+    public nextFrame(deltaTime:number, inputDetail?:):void{
         if(this.animations[this.currentAnimationIndex] instanceof GroupAnimation) return;
         this.animations[this.currentAnimationIndex].nextFrame(deltaTime)
     }

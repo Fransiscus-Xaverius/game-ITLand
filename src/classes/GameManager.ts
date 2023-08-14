@@ -3,18 +3,29 @@ import { Terminal } from './Console/Terminal'
 import { Grid } from './GameObjects/Grid'
 import { CanvasView } from './CanvasView'
 import { GroupAnimation } from './GameObjects/GroupAnimation';
+import { Player } from './Player';
+import { Direction } from './GameObjects/Direction';
 
 export class GameManager{
-    private canvasView:CanvasView|null = null;
     private lastTimeStamp:number = 0
     private deltaTime:number = 0
     private isRunning:Boolean = false
     private animationFrameId:number = -1
+    private player:Player = new Player()
     private terminals:Terminal[] = []
-    private grid:Grid = new Grid({x:1000, y:1000})
+    private grid:Grid = new Grid({x:1000, y:10})
+    private canvasView:CanvasView|null = null;
 
     constructor(canvasView:CanvasView|null = null){
         this.setCanvasView(canvasView)
+        this.grid.addEntity(this.player.units[0])
+        window.addEventListener('keydown', (evt) => {
+            const player = this.player.units[0]
+            if(evt.key == "d") player.move(Direction.Right)
+            if(evt.key == "w") player.move(Direction.Up)
+            if(evt.key == "a") player.move(Direction.Left)
+            if(evt.key == "s") player.move(Direction.Down)
+        })
     }
 
     public getDeltatime():number{
@@ -50,17 +61,17 @@ export class GameManager{
             return
         }
         const camPos = this.canvasView.getCameraPosition()
-        const scaledRenderRadius = this.canvasView.getRenderRadius()
+        const scaledRenderRadius = this.canvasView.getScaledRenderRadius()
         this.grid.nextFrame(this.deltaTime, {
             position: {
                 x: Math.floor(camPos.x - scaledRenderRadius), 
-                y: Math.floor(camPos.y - scaledRenderRadius)
+                y: Math.floor(camPos.y - scaledRenderRadius),
             },
             size: {
                 x: Math.ceil(scaledRenderRadius*2),
                 y: Math.ceil(scaledRenderRadius*2),
             }
-        })
+        }, this.player.units)
     }
 
     private render():void{

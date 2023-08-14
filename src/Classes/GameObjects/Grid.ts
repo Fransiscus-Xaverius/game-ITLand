@@ -14,12 +14,14 @@ export class Grid{
     constructor(size:Point){
         this.size = size
         this.entities = []
-        this.entityGrid = new Array(size.y).fill(new Array(size.x).fill(null))
+        this.entityGrid = []
         this.tiles = []
 
         for (let i = 0; i < size.y; i++) {
+            this.entityGrid.push([])
             this.tiles.push([])
             for (let j = 0; j < size.x; j++) {
+                this.entityGrid[i].push(null)
                 this.tiles[i].push(new Grass({x:j, y:i}))
             }
         }
@@ -62,5 +64,30 @@ export class Grid{
         
     }
 
+    public addEntity(entity:Entity):void{
+        console.log("add");
+        const index = this.entities.indexOf(entity)
+        if(index != -1) {
+            if(entity.getGrid() != this) entity.setGrid(this)
+            return
+        }
+        if(this.entityGrid[entity.getCoordinate().y][entity.getCoordinate().x] != null){
+            throw Error("This coordinate is taken")
+        }
+        this.entities.push(entity)
+        this.entityGrid[entity.getCoordinate().y][entity.getCoordinate().x] = entity
+        if(entity.getGrid() != this) entity.setGrid(this)
+    }
+
+    public removeEntity(entity:Entity):void{
+        const index = this.entities.indexOf(entity)
+        if(index != -1){
+            this.entities.splice(index, 1)
+            this.entityGrid[entity.getCoordinate().y][entity.getCoordinate().x] = null
+        }
+        if(entity.getGrid() == this){
+            entity.setGrid(null)
+        }
+    }
 
 }
