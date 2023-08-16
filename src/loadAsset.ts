@@ -1,7 +1,7 @@
 import { Animation } from "./Classes/GameObjects/Animation"
 import { GroupAnimation } from "./Classes/GameObjects/GroupAnimation"
 
-export default function init():void{
+export default function loadAsset():void{
 
     const grass = new Image()
     grass.src = "./dist/Assets/Prototype/itland_ptype_grasstile.png"

@@ -44,7 +44,7 @@ export abstract class Animated{
         this.currentAnimationIndex = animationIndex
     }
 
-    public nextFrame(deltaTime:number, inputDetail?:):void{
+    public nextFrame(deltaTime:number):void{
         if(this.animations[this.currentAnimationIndex] instanceof GroupAnimation) return;
         this.animations[this.currentAnimationIndex].nextFrame(deltaTime)
     }

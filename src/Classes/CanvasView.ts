@@ -1,7 +1,7 @@
 import { Tile } from "./GameObjects/Tile"
 import { Entity } from "./GameObjects/Entity"
 import { SpriteFrame } from "./GameObjects/SpriteFrame"
-import { Point } from "./types"
+import { Point } from "./GameObjects/Point"
 import { Grid } from "./GameObjects/Grid"
 import { PlayerUnit } from "./GameObjects/PlayerUnit"
 
@@ -16,6 +16,8 @@ export class CanvasView{
     private renderRadius:number = 6
     private middleMousePressed:boolean = false
     private cameraPosition:Point = {x:0, y:0}
+
+    public onClick?: (gridCoordinate:Point)=>void;
 
     constructor(canvas:HTMLCanvasElement|null = null){
         this.setCanvas(canvas)

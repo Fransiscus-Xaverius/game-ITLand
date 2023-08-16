@@ -1,3 +1,4 @@
+import { Terminal } from "../Console/Terminal";
 import { IEquippable } from "../Items/IEquippable";
 import { Inventory } from "../Items/Inventory";
 import { Animation } from "./Animation";
@@ -9,7 +10,8 @@ export class PlayerUnit extends Entity{
     private originalCoordinate:Point
     private isMoving:boolean = false
     private moveSpeed:number = 1
-    public lerpProgress:number = 0
+    private lerpProgress:number = 0
+    public terminal:Terminal = new Terminal()
     public inventory:Inventory = new Inventory()
     public equipped:IEquippable|null = null
 
@@ -40,7 +42,7 @@ export class PlayerUnit extends Entity{
         }
     }
 
-    public nextFrame(deltaTime: number): void {
+    public update(deltaTime: number): void {
         if(this.isMoving){
             this.lerpProgress += deltaTime * this.moveSpeed
             if(this.lerpProgress >= 1){
@@ -50,7 +52,6 @@ export class PlayerUnit extends Entity{
                 this.isMoving = false;
             }
         }
-        super.nextFrame(deltaTime);
     }
 
     public getSpriteCoordinate(): Point {
@@ -89,7 +90,7 @@ export class PlayerUnit extends Entity{
         }
 
         try{
-            this.setCoordinate(nextCoord)
+            this.setCoordinate(nextCoord, true)
         }
         catch(err){}
     }

@@ -12,11 +12,11 @@ export class Grass extends Tile implements IDestructable{
         super(coordinate)
         this.addAnimation(GroupAnimation.animations[0])
         this.addAnimation(GroupAnimation.animations[1])
-        // this.currentAnimationIndex = 1
         this.currentAnimationIndex = Math.round(Math.random())
     }
 
     public step(stepper: Entity): void {
+        return;
         throw new Error("Method not implemented.");
     }
 }

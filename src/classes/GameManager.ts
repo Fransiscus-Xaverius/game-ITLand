@@ -1,39 +1,46 @@
-import { GameObjects, Items, Console } from './subnamespace'
-import { Terminal } from './Console/Terminal'
+import { TerminalView } from './TerminalView';
 import { Grid } from './GameObjects/Grid'
 import { CanvasView } from './CanvasView'
 import { GroupAnimation } from './GameObjects/GroupAnimation';
 import { Player } from './Player';
 import { Direction } from './GameObjects/Direction';
+import { PlayerUnit } from './GameObjects/PlayerUnit';
 
 export class GameManager{
-    private lastTimeStamp:number = 0
-    private deltaTime:number = 0
-    private isRunning:Boolean = false
-    private animationFrameId:number = -1
-    private player:Player = new Player()
-    private terminals:Terminal[] = []
-    private grid:Grid = new Grid({x:1000, y:10})
+    private lastTimeStamp:number = 0;
+    private deltaTime:number = 0;
+    private isRunning:Boolean = false;
+    private animationFrameId:number = -1;
+    private player:Player = new Player();
+    private terminalView:TerminalView|null = null;
+    private grid:Grid = new Grid({x:1000, y:10});
     private canvasView:CanvasView|null = null;
+    private activePlayerUnit:PlayerUnit|null = null
 
-    constructor(canvasView:CanvasView|null = null){
+    constructor(canvasView:CanvasView|null = null, terminalView:TerminalView|null = null){
         this.setCanvasView(canvasView)
+        this.setTerminalView(terminalView)
         this.grid.addEntity(this.player.units[0])
-        window.addEventListener('keydown', (evt) => {
-            const player = this.player.units[0]
-            if(evt.key == "d") player.move(Direction.Right)
-            if(evt.key == "w") player.move(Direction.Up)
-            if(evt.key == "a") player.move(Direction.Left)
-            if(evt.key == "s") player.move(Direction.Down)
-        })
+        this.setActivePlayerUnit(this.player.units[0])
     }
 
     public getDeltatime():number{
         return this.deltaTime
     }
 
+    public setActivePlayerUnit(value:PlayerUnit|null):void{
+        this.terminalView?.setTerminal(value?.terminal ?? null)
+        this.activePlayerUnit = value
+    }
+
     public setCanvasView(canvasView:CanvasView|null):void{
         this.canvasView = canvasView
+    }
+
+    public setTerminalView(terminalView:TerminalView|null):void{
+        terminalView?.setTerminal(this.activePlayerUnit?.terminal ?? null)
+        this.terminalView?.setTerminal(null)
+        this.terminalView = terminalView
     }
 
     public start():void{
@@ -57,12 +64,12 @@ export class GameManager{
 
     private update():void{
         if(!this.canvasView) {
-            this.grid.nextFrame(this.deltaTime)
+            this.grid.update(this.deltaTime)
             return
         }
         const camPos = this.canvasView.getCameraPosition()
         const scaledRenderRadius = this.canvasView.getScaledRenderRadius()
-        this.grid.nextFrame(this.deltaTime, {
+        this.grid.update(this.deltaTime, {
             position: {
                 x: Math.floor(camPos.x - scaledRenderRadius), 
                 y: Math.floor(camPos.y - scaledRenderRadius),

@@ -4,6 +4,7 @@ import { Point } from "./Point";
 import { Grass } from "./Grass";
 import { Animated } from "./Animated";
 import { GroupAnimation } from "./GroupAnimation";
+import { PlayerUnit } from "./PlayerUnit";
 
 export class Grid{
     public readonly size:Point
@@ -27,10 +28,10 @@ export class Grid{
         }
     }
 
-    public nextFrame(deltaTime:number, renderArea:{position:Point, size:Point} | null = null, priorityRenders:Animated[] = []):void{
+    public update(deltaTime:number, updateArea:{position:Point, size:Point} | null = null, priorityUpdate:Animated[] = []):void{
         GroupAnimation.animations.forEach(x => x.nextFrame(deltaTime))
 
-        if(!renderArea){
+        if(!updateArea){
             for(let i = 0; i < this.size.y; ++i){
                 for(let j = 0; j < this.size.x; ++j){
                     this.tiles[i]?.at(j)?.nextFrame(deltaTime)
@@ -40,27 +41,31 @@ export class Grid{
             return;
         }
 
-        const xStart = renderArea.position.x
-        const xEnd   = renderArea.position.x + renderArea.size.x
+        const xStart = updateArea.position.x
+        const xEnd   = updateArea.position.x + updateArea.size.x
 
-        const yStart = renderArea.position.y
-        const yEnd   = renderArea.position.y + renderArea.size.y
+        const yStart = updateArea.position.y
+        const yEnd   = updateArea.position.y + updateArea.size.y
 
         for(let i = yStart; i < yEnd; ++i){
             for(let j = xStart; j < xEnd; ++j){
                 if(j < 0) continue;
                 const tile = this.tiles[i]?.at(j)
                 const entity = this.entityGrid[i]?.at(j)
-                if(tile && !priorityRenders.includes(tile))
+                if(tile && !priorityUpdate.includes(tile))
                     tile.nextFrame(deltaTime)
-                if(entity && !priorityRenders.includes(entity))
+                if(entity && !priorityUpdate.includes(entity)){
+                    if(entity instanceof PlayerUnit) entity.update(deltaTime);
                     entity.nextFrame(deltaTime)
+                }
             }
         }
 
-        priorityRenders.forEach(x => {
+        priorityUpdate.forEach(x => {
+            if(x instanceof PlayerUnit) x.update(deltaTime);
             x.nextFrame(deltaTime)
         })
+
         
     }
 

@@ -16,7 +16,7 @@ export abstract class Entity extends Animated{
         return this.coordinate;
     }
 
-    public setCoordinate(value:Point):void{
+    public setCoordinate(value:Point, triggerTile?:boolean):void{
         if(this.grid){
             const row = this.grid.entityGrid[value.y]
             if(!row) {
@@ -32,8 +32,11 @@ export abstract class Entity extends Animated{
                 throw Error('coordinate is not empty')
             }
 
-            this.grid.entityGrid[this.coordinate.y][this.coordinate.x] = null
-            row[value.x] = this
+            this.grid.entityGrid[this.coordinate.y][this.coordinate.x] = null;
+            row[value.x] = this;
+            this.coordinate = value;
+            if(triggerTile) this.grid.tiles[value.y][value.x]?.step(this);
+            return;
         }
         this.coordinate = value;
     }

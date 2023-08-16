@@ -150,144 +150,63 @@ class CanvasView {
 }
 exports.CanvasView = CanvasView;
 
-},{"./GameObjects/PlayerUnit":23,"./GameObjects/Tile":26}],2:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Command = void 0;
-class Command {
-}
-exports.Command = Command;
-
-},{}],3:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ForCommand = void 0;
-const Command_1 = require("./Command");
-class ForCommand extends Command_1.Command {
-}
-exports.ForCommand = ForCommand;
-
-},{"./Command":2}],4:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GlobalWrapper = void 0;
-const Wrapper_1 = require("./Wrapper");
-class GlobalWrapper extends Wrapper_1.Wrapper {
-}
-exports.GlobalWrapper = GlobalWrapper;
-
-},{"./Wrapper":10}],5:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.IfCommand = void 0;
-const Command_1 = require("./Command");
-class IfCommand extends Command_1.Command {
-}
-exports.IfCommand = IfCommand;
-
-},{"./Command":2}],6:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlayerWrapper = void 0;
-const Wrapper_1 = require("./Wrapper");
-class PlayerWrapper extends Wrapper_1.Wrapper {
-}
-exports.PlayerWrapper = PlayerWrapper;
-
-},{"./Wrapper":10}],7:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SequenceCommand = void 0;
-const Command_1 = require("./Command");
-class SequenceCommand extends Command_1.Command {
-}
-exports.SequenceCommand = SequenceCommand;
-
-},{"./Command":2}],8:[function(require,module,exports){
+},{"./GameObjects/PlayerUnit":12,"./GameObjects/Tile":13}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Terminal = void 0;
 class Terminal {
+    constructor() {
+        this.content = "";
+        this.running = false;
+    }
+    execute() {
+        this.running = true;
+        alert(this.content);
+    }
+    stop() {
+        this.running = false;
+    }
 }
 exports.Terminal = Terminal;
 
-},{}],9:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WhileCommand = void 0;
-const Command_1 = require("./Command");
-class WhileCommand extends Command_1.Command {
-}
-exports.WhileCommand = WhileCommand;
-
-},{"./Command":2}],10:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Wrapper = void 0;
-class Wrapper {
-}
-exports.Wrapper = Wrapper;
-
-},{}],11:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Terminal_1 = require("./Terminal");
-const Command_1 = require("./Command");
-const ForCommand_1 = require("./ForCommand");
-const IfCommand_1 = require("./IfCommand");
-const WhileCommand_1 = require("./WhileCommand");
-const SequenceCommand_1 = require("./SequenceCommand");
-const Wrapper_1 = require("./Wrapper");
-const PlayerWrapper_1 = require("./PlayerWrapper");
-const GlobalWrapper_1 = require("./GlobalWrapper");
-exports.default = {
-    Terminal: Terminal_1.Terminal,
-    Command: Command_1.Command,
-    ForCommand: ForCommand_1.ForCommand,
-    IfCommand: IfCommand_1.IfCommand,
-    WhileCommand: WhileCommand_1.WhileCommand,
-    SequenceCommand: SequenceCommand_1.SequenceCommand,
-    Wrapper: Wrapper_1.Wrapper,
-    PlayerWrapper: PlayerWrapper_1.PlayerWrapper,
-    GlobalWrapper: GlobalWrapper_1.GlobalWrapper
-};
-
-},{"./Command":2,"./ForCommand":3,"./GlobalWrapper":4,"./IfCommand":5,"./PlayerWrapper":6,"./SequenceCommand":7,"./Terminal":8,"./WhileCommand":9,"./Wrapper":10}],12:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameManager = void 0;
 const Grid_1 = require("./GameObjects/Grid");
 const Player_1 = require("./Player");
-const Direction_1 = require("./GameObjects/Direction");
 class GameManager {
-    constructor(canvasView = null) {
+    constructor(canvasView = null, terminalView = null) {
         this.lastTimeStamp = 0;
         this.deltaTime = 0;
         this.isRunning = false;
         this.animationFrameId = -1;
         this.player = new Player_1.Player();
-        this.terminals = [];
+        this.terminalView = null;
         this.grid = new Grid_1.Grid({ x: 1000, y: 10 });
         this.canvasView = null;
+        this.activePlayerUnit = null;
         this.setCanvasView(canvasView);
+        this.setTerminalView(terminalView);
         this.grid.addEntity(this.player.units[0]);
-        window.addEventListener('keydown', (evt) => {
-            const player = this.player.units[0];
-            if (evt.key == "d")
-                player.move(Direction_1.Direction.Right);
-            if (evt.key == "w")
-                player.move(Direction_1.Direction.Up);
-            if (evt.key == "a")
-                player.move(Direction_1.Direction.Left);
-            if (evt.key == "s")
-                player.move(Direction_1.Direction.Down);
-        });
+        this.setActivePlayerUnit(this.player.units[0]);
     }
     getDeltatime() {
         return this.deltaTime;
     }
+    setActivePlayerUnit(value) {
+        var _a, _b;
+        (_a = this.terminalView) === null || _a === void 0 ? void 0 : _a.setTerminal((_b = value === null || value === void 0 ? void 0 : value.terminal) !== null && _b !== void 0 ? _b : null);
+        this.activePlayerUnit = value;
+    }
     setCanvasView(canvasView) {
         this.canvasView = canvasView;
+    }
+    setTerminalView(terminalView) {
+        var _a, _b, _c;
+        terminalView === null || terminalView === void 0 ? void 0 : terminalView.setTerminal((_b = (_a = this.activePlayerUnit) === null || _a === void 0 ? void 0 : _a.terminal) !== null && _b !== void 0 ? _b : null);
+        (_c = this.terminalView) === null || _c === void 0 ? void 0 : _c.setTerminal(null);
+        this.terminalView = terminalView;
     }
     start() {
         if (this.isRunning)
@@ -308,12 +227,12 @@ class GameManager {
     }
     update() {
         if (!this.canvasView) {
-            this.grid.nextFrame(this.deltaTime);
+            this.grid.update(this.deltaTime);
             return;
         }
         const camPos = this.canvasView.getCameraPosition();
         const scaledRenderRadius = this.canvasView.getScaledRenderRadius();
-        this.grid.nextFrame(this.deltaTime, {
+        this.grid.update(this.deltaTime, {
             position: {
                 x: Math.floor(camPos.x - scaledRenderRadius),
                 y: Math.floor(camPos.y - scaledRenderRadius),
@@ -332,7 +251,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./GameObjects/Direction":16,"./GameObjects/Grid":19,"./Player":34}],13:[function(require,module,exports){
+},{"./GameObjects/Grid":10,"./Player":15}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -377,7 +296,7 @@ class Animated {
 }
 exports.Animated = Animated;
 
-},{"./ChainedAnimation":15,"./GroupAnimation":21}],14:[function(require,module,exports){
+},{"./ChainedAnimation":6,"./GroupAnimation":11}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animation = void 0;
@@ -410,7 +329,7 @@ class Animation {
 exports.Animation = Animation;
 Animation.assets = {};
 
-},{}],15:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChainedAnimation = void 0;
@@ -444,7 +363,7 @@ class ChainedAnimation extends Animation_1.Animation {
 }
 exports.ChainedAnimation = ChainedAnimation;
 
-},{"./Animation":14}],16:[function(require,module,exports){
+},{"./Animation":5}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Direction = void 0;
@@ -457,7 +376,7 @@ var Direction;
     Direction[Direction["None"] = 4] = "None";
 })(Direction || (exports.Direction = Direction = {}));
 
-},{}],17:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Entity = void 0;
@@ -471,7 +390,8 @@ class Entity extends Animated_1.Animated {
     getCoordinate() {
         return this.coordinate;
     }
-    setCoordinate(value) {
+    setCoordinate(value, triggerTile) {
+        var _a;
         if (this.grid) {
             const row = this.grid.entityGrid[value.y];
             if (!row) {
@@ -486,6 +406,10 @@ class Entity extends Animated_1.Animated {
             }
             this.grid.entityGrid[this.coordinate.y][this.coordinate.x] = null;
             row[value.x] = this;
+            this.coordinate = value;
+            if (triggerTile)
+                (_a = this.grid.tiles[value.y][value.x]) === null || _a === void 0 ? void 0 : _a.step(this);
+            return;
         }
         this.coordinate = value;
     }
@@ -511,7 +435,7 @@ class Entity extends Animated_1.Animated {
 }
 exports.Entity = Entity;
 
-},{"./Animated":13}],18:[function(require,module,exports){
+},{"./Animated":4}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grass = void 0;
@@ -522,21 +446,22 @@ class Grass extends Tile_1.Tile {
         super(coordinate);
         this.addAnimation(GroupAnimation_1.GroupAnimation.animations[0]);
         this.addAnimation(GroupAnimation_1.GroupAnimation.animations[1]);
-        // this.currentAnimationIndex = 1
         this.currentAnimationIndex = Math.round(Math.random());
     }
     step(stepper) {
+        return;
         throw new Error("Method not implemented.");
     }
 }
 exports.Grass = Grass;
 
-},{"./GroupAnimation":21,"./Tile":26}],19:[function(require,module,exports){
+},{"./GroupAnimation":11,"./Tile":13}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grid = void 0;
 const Grass_1 = require("./Grass");
 const GroupAnimation_1 = require("./GroupAnimation");
+const PlayerUnit_1 = require("./PlayerUnit");
 class Grid {
     constructor(size) {
         this.size = size;
@@ -552,10 +477,10 @@ class Grid {
             }
         }
     }
-    nextFrame(deltaTime, renderArea = null, priorityRenders = []) {
+    update(deltaTime, updateArea = null, priorityUpdate = []) {
         var _a, _b, _c, _d, _e, _f;
         GroupAnimation_1.GroupAnimation.animations.forEach(x => x.nextFrame(deltaTime));
-        if (!renderArea) {
+        if (!updateArea) {
             for (let i = 0; i < this.size.y; ++i) {
                 for (let j = 0; j < this.size.x; ++j) {
                     (_b = (_a = this.tiles[i]) === null || _a === void 0 ? void 0 : _a.at(j)) === null || _b === void 0 ? void 0 : _b.nextFrame(deltaTime);
@@ -564,23 +489,28 @@ class Grid {
             }
             return;
         }
-        const xStart = renderArea.position.x;
-        const xEnd = renderArea.position.x + renderArea.size.x;
-        const yStart = renderArea.position.y;
-        const yEnd = renderArea.position.y + renderArea.size.y;
+        const xStart = updateArea.position.x;
+        const xEnd = updateArea.position.x + updateArea.size.x;
+        const yStart = updateArea.position.y;
+        const yEnd = updateArea.position.y + updateArea.size.y;
         for (let i = yStart; i < yEnd; ++i) {
             for (let j = xStart; j < xEnd; ++j) {
                 if (j < 0)
                     continue;
                 const tile = (_e = this.tiles[i]) === null || _e === void 0 ? void 0 : _e.at(j);
                 const entity = (_f = this.entityGrid[i]) === null || _f === void 0 ? void 0 : _f.at(j);
-                if (tile && !priorityRenders.includes(tile))
+                if (tile && !priorityUpdate.includes(tile))
                     tile.nextFrame(deltaTime);
-                if (entity && !priorityRenders.includes(entity))
+                if (entity && !priorityUpdate.includes(entity)) {
+                    if (entity instanceof PlayerUnit_1.PlayerUnit)
+                        entity.update(deltaTime);
                     entity.nextFrame(deltaTime);
+                }
             }
         }
-        priorityRenders.forEach(x => {
+        priorityUpdate.forEach(x => {
+            if (x instanceof PlayerUnit_1.PlayerUnit)
+                x.update(deltaTime);
             x.nextFrame(deltaTime);
         });
     }
@@ -613,19 +543,7 @@ class Grid {
 }
 exports.Grid = Grid;
 
-},{"./Grass":18,"./GroupAnimation":21}],20:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Ground = void 0;
-const Tile_1 = require("./Tile");
-class Ground extends Tile_1.Tile {
-    step(stepper) {
-        throw new Error("Method not implemented.");
-    }
-}
-exports.Ground = Ground;
-
-},{"./Tile":26}],21:[function(require,module,exports){
+},{"./Grass":9,"./GroupAnimation":11,"./PlayerUnit":12}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupAnimation = void 0;
@@ -639,18 +557,11 @@ class GroupAnimation extends Animation_1.Animation {
 exports.GroupAnimation = GroupAnimation;
 GroupAnimation.animations = [];
 
-},{"./Animation":14}],22:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LootTable = void 0;
-class LootTable {
-}
-exports.LootTable = LootTable;
-
-},{}],23:[function(require,module,exports){
+},{"./Animation":5}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerUnit = void 0;
+const Terminal_1 = require("../Console/Terminal");
 const Inventory_1 = require("../Items/Inventory");
 const Direction_1 = require("./Direction");
 const Entity_1 = require("./Entity");
@@ -658,9 +569,9 @@ class PlayerUnit extends Entity_1.Entity {
     constructor(coordinate, moveSpeed = 1, animations = []) {
         super(coordinate, animations);
         this.isMoving = false;
-        this.nextCommand = null;
         this.moveSpeed = 1;
         this.lerpProgress = 0;
+        this.terminal = new Terminal_1.Terminal();
         this.inventory = new Inventory_1.Inventory();
         this.equipped = null;
         this.originalCoordinate = Object.assign({}, this.coordinate);
@@ -685,19 +596,16 @@ class PlayerUnit extends Entity_1.Entity {
             this.setMoveSpeed(this.moveSpeed);
         }
     }
-    nextFrame(deltaTime) {
+    update(deltaTime) {
         if (this.isMoving) {
             this.lerpProgress += deltaTime * this.moveSpeed;
             if (this.lerpProgress >= 1) {
                 this.lerpProgress = 0;
                 this.originalCoordinate = this.coordinate;
-                if (!this.nextCommand)
-                    this.playAnimation('idle');
+                this.playAnimation('idle');
                 this.isMoving = false;
             }
         }
-        super.nextFrame(deltaTime);
-        this.nextCommand = null;
     }
     getSpriteCoordinate() {
         if (!this.isMoving)
@@ -712,7 +620,6 @@ class PlayerUnit extends Entity_1.Entity {
         };
     }
     move(direction) {
-        this.nextCommand = "move";
         if (this.isMoving || direction == Direction_1.Direction.None)
             return;
         this.isMoving = true;
@@ -735,32 +642,14 @@ class PlayerUnit extends Entity_1.Entity {
                 break;
         }
         try {
-            this.setCoordinate(nextCoord);
+            this.setCoordinate(nextCoord, true);
         }
         catch (err) { }
     }
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Items/Inventory":28,"./Direction":16,"./Entity":17}],24:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Rock = void 0;
-const Entity_1 = require("./Entity");
-class Rock extends Entity_1.Entity {
-}
-exports.Rock = Rock;
-
-},{"./Entity":17}],25:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TNTEntity = void 0;
-const Entity_1 = require("./Entity");
-class TNTEntity extends Entity_1.Entity {
-}
-exports.TNTEntity = TNTEntity;
-
-},{"./Entity":17}],26:[function(require,module,exports){
+},{"../Console/Terminal":2,"../Items/Inventory":14,"./Direction":7,"./Entity":8}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tile = void 0;
@@ -774,33 +663,7 @@ class Tile extends Animated_1.Animated {
 exports.Tile = Tile;
 Tile.defaultTileResolution = { x: 32, y: 32 };
 
-},{"./Animated":13}],27:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Animated_1 = require("./Animated");
-const Animation_1 = require("./Animation");
-const Entity_1 = require("./Entity");
-const Grid_1 = require("./Grid");
-const Ground_1 = require("./Ground");
-const LootTable_1 = require("./LootTable");
-const PlayerUnit_1 = require("./PlayerUnit");
-const Rock_1 = require("./Rock");
-const Tile_1 = require("./Tile");
-const TNTEntity_1 = require("./TNTEntity");
-exports.default = {
-    Animated: Animated_1.Animated,
-    Animation: Animation_1.Animation,
-    Entity: Entity_1.Entity,
-    Grid: Grid_1.Grid,
-    Ground: Ground_1.Ground,
-    LootTable: LootTable_1.LootTable,
-    PlayerUnit: PlayerUnit_1.PlayerUnit,
-    Rock: Rock_1.Rock,
-    Tile: Tile_1.Tile,
-    TNTEntity: TNTEntity_1.TNTEntity
-};
-
-},{"./Animated":13,"./Animation":14,"./Entity":17,"./Grid":19,"./Ground":20,"./LootTable":22,"./PlayerUnit":23,"./Rock":24,"./TNTEntity":25,"./Tile":26}],28:[function(require,module,exports){
+},{"./Animated":4}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
@@ -808,58 +671,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{}],29:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Item = void 0;
-class Item {
-}
-exports.Item = Item;
-
-},{}],30:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Pickaxe = void 0;
-const Item_1 = require("./Item");
-class Pickaxe extends Item_1.Item {
-}
-exports.Pickaxe = Pickaxe;
-
-},{"./Item":29}],31:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Shovel = void 0;
-const Item_1 = require("./Item");
-class Shovel extends Item_1.Item {
-}
-exports.Shovel = Shovel;
-
-},{"./Item":29}],32:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TNT = void 0;
-const Item_1 = require("./Item");
-class TNT extends Item_1.Item {
-}
-exports.TNT = TNT;
-
-},{"./Item":29}],33:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Inventory_1 = require("./Inventory");
-const Item_1 = require("./Item");
-const Pickaxe_1 = require("./Pickaxe");
-const Shovel_1 = require("./Shovel");
-const TNT_1 = require("./TNT");
-exports.default = {
-    Inventory: Inventory_1.Inventory,
-    Item: Item_1.Item,
-    Pickaxe: Pickaxe_1.Pickaxe,
-    Shovel: Shovel_1.Shovel,
-    TNT: TNT_1.TNT
-};
-
-},{"./Inventory":28,"./Item":29,"./Pickaxe":30,"./Shovel":31,"./TNT":32}],34:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -879,52 +691,73 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":14,"./GameObjects/ChainedAnimation":15,"./GameObjects/PlayerUnit":23}],35:[function(require,module,exports){
+},{"./GameObjects/Animation":5,"./GameObjects/ChainedAnimation":6,"./GameObjects/PlayerUnit":12}],16:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Shop = void 0;
-class Shop {
+exports.TerminalView = void 0;
+class TerminalView {
+    constructor(textArea, executeButton, stopButton, terminal = null) {
+        this.terminal = null;
+        this.textArea = null;
+        this.executeButton = null;
+        this.stopButton = null;
+        this.setTerminal(terminal);
+        this.setTextArea(textArea);
+        this.setExecuteButton(executeButton);
+        this.setStopButton(stopButton);
+    }
+    setTextArea(value) {
+        var _a;
+        const inputListener = (evt) => {
+            if (!this.terminal)
+                return;
+            const target = evt.target;
+            console.log(target);
+            this.terminal.content = target.value;
+        };
+        if (value) {
+            value.addEventListener('input', inputListener);
+            if (this.terminal) {
+                value.value = this.terminal.content;
+            }
+        }
+        (_a = this.textArea) === null || _a === void 0 ? void 0 : _a.removeEventListener('input', inputListener);
+        this.textArea = value;
+    }
+    setTerminal(value) {
+        if (this.textArea && value)
+            this.textArea.value = value.content;
+        this.terminal = value;
+    }
+    setExecuteButton(value) {
+        const executeClickListener = (evt) => {
+            var _a;
+            (_a = this.terminal) === null || _a === void 0 ? void 0 : _a.execute();
+        };
+        if (this.executeButton)
+            this.executeButton.removeEventListener('click', executeClickListener);
+        value === null || value === void 0 ? void 0 : value.addEventListener('click', executeClickListener);
+        this.executeButton = value;
+    }
+    setStopButton(value) {
+        const stopClickListener = (evt) => {
+            var _a;
+            (_a = this.terminal) === null || _a === void 0 ? void 0 : _a.stop();
+        };
+        if (this.stopButton)
+            this.stopButton.removeEventListener('click', stopClickListener);
+        value === null || value === void 0 ? void 0 : value.addEventListener('click', stopClickListener);
+        this.stopButton = value;
+    }
 }
-exports.Shop = Shop;
+exports.TerminalView = TerminalView;
 
-},{}],36:[function(require,module,exports){
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const subnamespace_1 = require("./subnamespace");
-const Player_1 = require("./Player");
-const GameManager_1 = require("./GameManager");
-const Shop_1 = require("./Shop");
-const CanvasView_1 = require("./CanvasView");
-exports.default = {
-    GameObjects: subnamespace_1.GameObjects,
-    Items: subnamespace_1.Items,
-    Console: subnamespace_1.Console,
-    Player: Player_1.Player,
-    GameManager: GameManager_1.GameManager,
-    Shop: Shop_1.Shop,
-    CanvasView: CanvasView_1.CanvasView,
-};
-
-},{"./CanvasView":1,"./GameManager":12,"./Player":34,"./Shop":35,"./subnamespace":37}],37:[function(require,module,exports){
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Console = exports.Items = exports.GameObjects = void 0;
-const GameObjects_1 = __importDefault(require("./GameObjects"));
-exports.GameObjects = GameObjects_1.default;
-const Items_1 = __importDefault(require("./Items"));
-exports.Items = Items_1.default;
-const Console_1 = __importDefault(require("./Console"));
-exports.Console = Console_1.default;
-
-},{"./Console":11,"./GameObjects":27,"./Items":33}],38:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
 const GroupAnimation_1 = require("./Classes/GameObjects/GroupAnimation");
-function init() {
+function loadAsset() {
     const grass = new Image();
     grass.src = "./dist/Assets/Prototype/itland_ptype_grasstile.png";
     const flowergrass = new Image();
@@ -939,26 +772,37 @@ function init() {
     Animation_1.Animation.assets['player_walk'] = player_walk;
     GroupAnimation_1.GroupAnimation.animations.push(new GroupAnimation_1.GroupAnimation("grass_tile", grass, { x: 32, y: 32 }, 1, 0), new GroupAnimation_1.GroupAnimation("flowery_grass_tile", flowergrass, { x: 32, y: 32 }, 2, 1));
 }
-exports.default = init;
+exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":14,"./Classes/GameObjects/GroupAnimation":21}],39:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":5,"./Classes/GameObjects/GroupAnimation":11}],18:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Classes_1 = __importDefault(require("./Classes"));
-const assetInit_1 = __importDefault(require("./assetInit"));
+const CanvasView_1 = require("./Classes/CanvasView");
+const TerminalView_1 = require("./Classes/TerminalView");
+const GameManager_1 = require("./Classes/GameManager");
+const loadAsset_1 = __importDefault(require("./loadAsset"));
 window.onload = () => {
     var _a, _b, _c, _d;
     const canvas = document.querySelector("#view");
+    const terminal = document.querySelector("#console");
+    const executeButton = document.querySelector("#executeButton");
+    const stopButton = document.querySelector("#stopButton");
     if (canvas == null)
         throw new Error("Canvas not found");
+    if (terminal == null)
+        throw new Error("Console not found");
+    if (executeButton == null)
+        throw new Error("Start button not found");
+    if (stopButton == null)
+        throw new Error("Stop button not found");
     canvas.width = (_b = (_a = canvas.parentElement) === null || _a === void 0 ? void 0 : _a.clientWidth) !== null && _b !== void 0 ? _b : window.innerWidth;
     canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
-    (0, assetInit_1.default)();
-    const game = new Classes_1.default.GameManager(new Classes_1.default.CanvasView(canvas));
+    (0, loadAsset_1.default)();
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton));
     game.start();
 };
 
-},{"./Classes":36,"./assetInit":38}]},{},[39]);
+},{"./Classes/CanvasView":1,"./Classes/GameManager":3,"./Classes/TerminalView":16,"./loadAsset":17}]},{},[18]);
