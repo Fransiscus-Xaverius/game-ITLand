@@ -6,7 +6,6 @@ export class Player{
     private gold:number = 0
     public units:PlayerUnit[] = []
 
-
     constructor(){
         const p1 = new PlayerUnit({x:0,y:0})
         

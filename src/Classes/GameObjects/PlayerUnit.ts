@@ -1,3 +1,4 @@
+import { SingleCommand } from "../Console/SingleCommand";
 import { Terminal } from "../Console/Terminal";
 import { IEquippable } from "../Items/IEquippable";
 import { Inventory } from "../Items/Inventory";
@@ -43,13 +44,46 @@ export class PlayerUnit extends Entity{
     }
 
     public update(deltaTime: number): void {
-        if(this.isMoving){
+        if(this.terminal.running) this.terminal.currentCommand?.Execute()
+        var currentCommand = this.terminal.currentCommand
+        
+        if(currentCommand instanceof SingleCommand){
+            const asyncTask = currentCommand.getAsyncTask()
+            if(asyncTask){
+                const taskDetail = asyncTask.split(' ')
+                if(taskDetail[0] === 'move'){
+                    var direction = Direction.None;
+                    switch(taskDetail[1]){
+                        case 'up':
+                            direction = Direction.Up;
+                            break;
+                        case 'down':
+                            direction = Direction.Down;
+                            break;
+                        case 'left':
+                            direction = Direction.Left;
+                            break;
+                        case 'right':
+                            direction = Direction.Right;
+                            break;
+                        default:
+                            direction = Direction.None;
+                            break;
+                    }
+                    if(!this.isMoving)this.move(direction)
+                }
+            }
+            if(!this.isMoving) 
             this.lerpProgress += deltaTime * this.moveSpeed
             if(this.lerpProgress >= 1){
                 this.lerpProgress = 0;
                 this.originalCoordinate = this.coordinate;
-                this.playAnimation('idle')
-                this.isMoving = false;
+                currentCommand = currentCommand.jumpNextCommand()
+                currentCommand.Execute()
+                if(!(currentCommand instanceof SingleCommand) || !(currentCommand.getAsyncTask()?.startsWith('move '))){
+                    this.playAnimation('idle')
+                    this.isMoving = false;
+                }
             }
         }
     }
