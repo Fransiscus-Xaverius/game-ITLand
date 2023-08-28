@@ -14,6 +14,14 @@ export class StringWrapper extends Wrapper{
         super(value);
     }
 
+    public processExpression(trigger: string, args: Wrapper[]): Wrapper {
+        if(!trigger) this.log()
+        const handler = StringWrapper.processes.find(x => x.trigger === trigger)
+    
+        if(!handler)throw new Error("There's something wrong with your code");
+        return handler.process(this, args);
+    }
+
     public getValue():string {
         return super.getValue();
     }

@@ -1,7 +1,4 @@
-import { BoolWrapper } from "./BoolWrapper"
 import { ExpressionHandler } from "./ExpressionHandler"
-import { NumberWrapper } from "./NumberWrapper"
-import { StringWrapper } from "./StringWrapper"
 
 export abstract class Wrapper {
     private value:any = null
@@ -11,15 +8,18 @@ export abstract class Wrapper {
         this.setValue(value)
     }
 
-    public static wrap(value:string):Wrapper{
-        if(value === 'true' || value === 'false') return new BoolWrapper(value === 'true')
-        if(!isNaN(+value)) return new NumberWrapper(+value)
-        if(value.startsWith('"') && value.endsWith('"') && (value.match(/"/g) || []).length == 2) return new StringWrapper(value.replace('"', ''))
-        throw Error('hmmm, something is weird with ' + value)
+    public log(){
+        console.log(this.value)
     }
 
     public processExpression(trigger:string, args:Wrapper[]):Wrapper{
-        throw new Error("There's something wrong with your code");
+        const argCount = args.length
+        const expHandler = Wrapper.processes.find(x => {
+            return x.trigger === trigger && x.arguments == argCount
+        })
+
+        if(!expHandler) throw Error('something is wrong with what you wrote')
+        return expHandler.process(this, args);
     }
 
     public getValue():any{

@@ -150,18 +150,451 @@ class CanvasView {
 }
 exports.CanvasView = CanvasView;
 
-},{"./GameObjects/PlayerUnit":12,"./GameObjects/Tile":13}],2:[function(require,module,exports){
+},{"./GameObjects/PlayerUnit":24,"./GameObjects/Tile":25}],2:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BoolWrapper = void 0;
+const Wrapper_1 = require("./Wrapper");
+class BoolWrapper extends Wrapper_1.Wrapper {
+    constructor(value) {
+        super(value);
+    }
+    processExpression(trigger, args) {
+        const argCount = args.length;
+        const expHandler = Wrapper_1.Wrapper.processes.find(x => {
+            return x.trigger === trigger && x.arguments == argCount;
+        });
+        if (!expHandler)
+            throw Error('something is wrong with what you wrote');
+        return expHandler.process(this, args);
+    }
+    getValue() {
+        return super.getValue();
+    }
+    setValue(value) {
+        super.setValue(value);
+    }
+}
+exports.BoolWrapper = BoolWrapper;
+
+},{"./Wrapper":14}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BranchCommand = void 0;
+const Command_1 = require("./Command");
+const Expression_1 = require("./Expression");
+const Wrapper_1 = require("./Wrapper");
+class BranchCommand extends Command_1.Command {
+    constructor(terminal, condition, trueNextCommand = null, falseNextCommand = null) {
+        super(terminal);
+        this.condition = condition;
+        this.trueNextCommand = trueNextCommand;
+        this.falseNextCommand = falseNextCommand;
+    }
+    setTrueNextCommand(value) {
+        this.trueNextCommand = value;
+    }
+    setFalseNextCommand(value) {
+        this.falseNextCommand = value;
+    }
+    Execute() {
+        if (!this.trueNextCommand || !this.falseNextCommand)
+            throw new Error("true and false nextCommands needs to be instantiated");
+        const condition = this.condition instanceof Wrapper_1.Wrapper ?
+            this.condition :
+            this.condition instanceof Expression_1.Expression ?
+                this.condition.getResult() :
+                this.terminal.getVariable(this.condition);
+        this.terminal.currentCommand = condition.getValue() ?
+            this.trueNextCommand :
+            this.falseNextCommand;
+    }
+}
+exports.BranchCommand = BranchCommand;
+
+},{"./Command":4,"./Expression":6,"./Wrapper":14}],4:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Command = void 0;
+class Command {
+    constructor(terminal) {
+        this.terminal = terminal;
+    }
+}
+exports.Command = Command;
+
+},{}],5:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EndCommand = void 0;
+const Command_1 = require("./Command");
+class EndCommand extends Command_1.Command {
+    constructor(terminal) {
+        super(terminal);
+    }
+    Execute() {
+    }
+}
+exports.EndCommand = EndCommand;
+
+},{"./Command":4}],6:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Expression = void 0;
+const VoidWrapper_1 = require("./VoidWrapper");
+const Wrapper_1 = require("./Wrapper");
+class Expression {
+    constructor(terminal, first, trigger, args = []) {
+        this.terminal = terminal;
+        this.first = first;
+        this.trigger = trigger;
+        this.args = args;
+    }
+    getResult() {
+        const first = this.first instanceof Wrapper_1.Wrapper ?
+            this.first :
+            this.first instanceof Expression ?
+                this.first.getResult() :
+                this.terminal.getVariable(this.first);
+        if (this.first instanceof VoidWrapper_1.VoidWrapper)
+            throw Error('there is something wrong with your code');
+        const args = [];
+        for (let index = 0; index < this.args.length; index++) {
+            const item = this.args[index];
+            args[index] = item instanceof Wrapper_1.Wrapper ?
+                item :
+                item instanceof Expression ?
+                    item.getResult() :
+                    this.terminal.getVariable(item);
+            if (args[index] instanceof VoidWrapper_1.VoidWrapper)
+                throw Error('there is something wrong with your code');
+        }
+        return first.processExpression(this.trigger, args);
+    }
+}
+exports.Expression = Expression;
+
+},{"./VoidWrapper":12,"./Wrapper":14}],7:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NumberWrapper = void 0;
+const Wrapper_1 = require("./Wrapper");
+class NumberWrapper extends Wrapper_1.Wrapper {
+    constructor(value) {
+        super(value);
+    }
+    processExpression(trigger, args) {
+        const argCount = args.length;
+        const expHandler = Wrapper_1.Wrapper.processes.find(x => {
+            return x.trigger === trigger && x.arguments == argCount;
+        });
+        if (!expHandler)
+            throw Error('something is wrong with what you wrote');
+        return expHandler.process(this, args);
+    }
+    getValue() {
+        return super.getValue();
+    }
+    setValue(value) {
+        super.setValue(value);
+    }
+}
+exports.NumberWrapper = NumberWrapper;
+
+},{"./Wrapper":14}],8:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SingleCommand = void 0;
+const Command_1 = require("./Command");
+const VoidWrapper_1 = require("./VoidWrapper");
+const WaitWrapper_1 = require("./WaitWrapper");
+class SingleCommand extends Command_1.Command {
+    constructor(terminal, expression, nextCommand, variableToSet) {
+        super(terminal);
+        this.nextCommand = nextCommand;
+        this.expression = expression;
+        this.asyncTask = null;
+    }
+    setNextCommand(value) {
+        this.nextCommand = value;
+    }
+    jumpNextCommand() {
+        if (!this.nextCommand)
+            throw Error();
+        this.terminal.currentCommand = this.nextCommand;
+        return this.nextCommand;
+    }
+    getAsyncTask() {
+        return this.asyncTask;
+    }
+    isSynced() {
+        return this.asyncTask == null;
+    }
+    Execute() {
+        if (!this.isSynced())
+            return;
+        const result = this.expression.getResult();
+        if (this.variableToSet) {
+            if (result instanceof VoidWrapper_1.VoidWrapper)
+                throw Error("you can't put nothing in variable " + this.variableToSet);
+            this.terminal.setVariable(this.variableToSet, result);
+        }
+        if (result instanceof WaitWrapper_1.WaitWrapper) {
+            this.asyncTask = result.command;
+            return;
+        }
+        if (this.isSynced())
+            this.jumpNextCommand();
+        // throw new Error("Method not implemented.");
+    }
+}
+exports.SingleCommand = SingleCommand;
+
+},{"./Command":4,"./VoidWrapper":12,"./WaitWrapper":13}],9:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StartCommand = void 0;
+const Command_1 = require("./Command");
+const EndCommand_1 = require("./EndCommand");
+class StartCommand extends Command_1.Command {
+    constructor(terminal, nextCommand) {
+        super(terminal);
+        this.nextCommand = nextCommand !== null && nextCommand !== void 0 ? nextCommand : new EndCommand_1.EndCommand(terminal);
+    }
+    getNextCommand() {
+        return this.nextCommand;
+    }
+    setNextCommand(value) {
+        this.nextCommand = value;
+    }
+    jumpNextCommand() {
+        this.terminal.currentCommand = this.nextCommand;
+        return this.nextCommand;
+    }
+    Execute() {
+        this.jumpNextCommand();
+    }
+}
+exports.StartCommand = StartCommand;
+
+},{"./Command":4,"./EndCommand":5}],10:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StringWrapper = void 0;
+const Wrapper_1 = require("./Wrapper");
+class StringWrapper extends Wrapper_1.Wrapper {
+    constructor(value) {
+        super(value);
+    }
+    processExpression(trigger, args) {
+        if (!trigger)
+            this.log();
+        const handler = StringWrapper.processes.find(x => x.trigger === trigger);
+        if (!handler)
+            throw new Error("There's something wrong with your code");
+        return handler.process(this, args);
+    }
+    getValue() {
+        return super.getValue();
+    }
+    setValue(value) {
+        super.setValue(value);
+    }
+}
+exports.StringWrapper = StringWrapper;
+StringWrapper.functions = [];
+StringWrapper.procedures = [];
+
+},{"./Wrapper":14}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Terminal = void 0;
+const SingleCommand_1 = require("./SingleCommand");
+const StartCommand_1 = require("./StartCommand");
+const Wrapper_1 = require("./Wrapper");
+const NumberWrapper_1 = require("./NumberWrapper");
+const BoolWrapper_1 = require("./BoolWrapper");
+const StringWrapper_1 = require("./StringWrapper");
+const BranchCommand_1 = require("./BranchCommand");
 class Terminal {
     constructor() {
         this.content = "";
         this.running = false;
+        this.currentCommand = null;
+        this.variables = new Map();
+    }
+    static wrap(value) {
+        if (value === 'true' || value === 'false')
+            return new BoolWrapper_1.BoolWrapper(value === 'true');
+        if (!isNaN(+value))
+            return new NumberWrapper_1.NumberWrapper(+value);
+        if ((/^".*"$/ && (value.match(/"/g) || []).length == 2))
+            return new StringWrapper_1.StringWrapper(value.replace('"', ''));
+        if ((/^'.*'$/ && (value.match(/'/g) || []).length == 2))
+            return new StringWrapper_1.StringWrapper(value.replace("'", ''));
+        throw Error(value + " is not a boolean, number, or string");
+    }
+    static tokenize(code) {
+        const tokens = [];
+        // + - * / = > < ! %
+        const stackableOp = /[\+\-\*\/\=\<\>\!\%]/;
+        const stringOp = /['"]/;
+        var stringBuilder = "";
+        for (let i = 0; i < code.length; i++) {
+            const char = code[i];
+            if (stringBuilder.length > 0) {
+                if (stringOp.test(stringBuilder[0])) {
+                    stringBuilder += char;
+                    if (stringBuilder[0] === char)
+                        pushStringBuilder();
+                    continue;
+                }
+                if (stringOp.test(char)) {
+                    pushStringBuilder();
+                    stringBuilder += char;
+                    continue;
+                }
+            }
+            if (/\s/.test(char)) {
+                pushStringBuilder();
+                continue;
+            }
+            // [ ] { } ( ) ; .
+            if (/[\[\]\{\}\(\);.,]/.test(char)) {
+                if (char === '.' && /^[0-9]+$/.test(stringBuilder)) {
+                    stringBuilder += char;
+                    continue;
+                }
+                pushStringBuilder();
+                tokens.push(char);
+                continue;
+            }
+            if (stackableOp.test(char)) {
+                if (stringBuilder.length >= 2 || (stringBuilder.length > 0 && !stackableOp.test(stringBuilder))) {
+                    pushStringBuilder();
+                }
+                stringBuilder += char;
+                continue;
+            }
+            if (stackableOp.test(stringBuilder)) {
+                pushStringBuilder();
+            }
+            stringBuilder += char;
+        }
+        pushStringBuilder();
+        return tokens;
+        function pushStringBuilder() {
+            if (stringBuilder.length > 0) {
+                tokens.push(stringBuilder);
+                stringBuilder = "";
+            }
+        }
+    }
+    static checkVariableName(name) {
+        const variableRegex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+        if (variableRegex.test(name))
+            return name;
+        throw Error('invalid variable name');
+    }
+    getVariable(variableName) {
+        const value = this.variables.get(variableName);
+        if (value)
+            return value;
+        throw Error('Variable ' + variableName + ' is not defined');
+    }
+    setVariable(variableName, value) {
+        var wrapperValue;
+        if (value instanceof Wrapper_1.Wrapper)
+            wrapperValue = value;
+        else {
+            try {
+                // if this fails it means value is most likely a variable name
+                wrapperValue = Terminal.wrap(value);
+            }
+            catch (err) {
+                // if value is not a variable name then throw an error for undefined variable
+                wrapperValue = this.getVariable(variableName);
+            }
+        }
+        this.variables.set(variableName, wrapperValue);
+    }
+    _compile(codeTokens) {
+        const startCommand = new StartCommand_1.StartCommand(this);
+        const placeholderCommands = [startCommand];
+        for (let i = 0; i < codeTokens.length; i++) {
+            switch (codeTokens[i]) {
+                case "if":
+                    {
+                        if (codeTokens[++i] !== '(')
+                            throw Error('if syntax error, correct syntax ex. : if(a == "test"){ moveUp(); }');
+                        const conditionTokens = [];
+                        var bracketCounter = 1;
+                        while (bracketCounter > 0) {
+                            i++;
+                            switch (codeTokens[i]) {
+                                case '(':
+                                    bracketCounter++;
+                                    break;
+                                case ')':
+                                    bracketCounter--;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if (bracketCounter > 0) {
+                                conditionTokens.push(codeTokens[i]);
+                            }
+                        }
+                        var condition;
+                        if (conditionTokens.length == 1) {
+                            try {
+                                condition = Terminal.wrap(conditionTokens[0]);
+                            }
+                            catch (err) {
+                                condition = Terminal.checkVariableName(conditionTokens[0]);
+                            }
+                        }
+                        else {
+                            condition = compileExpression(conditionTokens);
+                        }
+                        const temp = new BranchCommand_1.BranchCommand(this, condition);
+                        placeholderCommands.forEach(x => {
+                            if (x instanceof SingleCommand_1.SingleCommand)
+                                x.setNextCommand(temp);
+                            if (x instanceof BranchCommand_1.BranchCommand)
+                                x.setFalseNextCommand(temp);
+                        });
+                    }
+                    break;
+                case "while":
+                    {
+                    }
+                    break;
+                case "for":
+                    {
+                    }
+                    break;
+                default:
+                    {
+                    }
+                    break;
+            }
+        }
+        return {
+            startCommand,
+            endCommand: startCommand
+        };
+        throw Error('Method not implemented');
+        function compileExpression(expTokens) {
+            throw Error('Function not implemented');
+        }
+    }
+    compile() {
+        //this.currentCommand = new StartCommand(this, this._compile(this.content).startCommand)
     }
     execute() {
         this.running = true;
-        alert(this.content);
+        alert(Terminal.tokenize(this.content));
     }
     stop() {
         this.running = false;
@@ -169,7 +602,69 @@ class Terminal {
 }
 exports.Terminal = Terminal;
 
-},{}],3:[function(require,module,exports){
+},{"./BoolWrapper":2,"./BranchCommand":3,"./NumberWrapper":7,"./SingleCommand":8,"./StartCommand":9,"./StringWrapper":10,"./Wrapper":14}],12:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VoidWrapper = void 0;
+const Wrapper_1 = require("./Wrapper");
+class VoidWrapper extends Wrapper_1.Wrapper {
+    constructor() {
+        super(null);
+    }
+    getValue() {
+        return super.getValue();
+    }
+    setValue(value) {
+        super.setValue(value);
+    }
+}
+exports.VoidWrapper = VoidWrapper;
+
+},{"./Wrapper":14}],13:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WaitWrapper = void 0;
+const VoidWrapper_1 = require("./VoidWrapper");
+class WaitWrapper extends VoidWrapper_1.VoidWrapper {
+    constructor(command) {
+        super();
+        this.command = command;
+    }
+}
+exports.WaitWrapper = WaitWrapper;
+
+},{"./VoidWrapper":12}],14:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Wrapper = void 0;
+class Wrapper {
+    constructor(value) {
+        this.value = null;
+        this.setValue(value);
+    }
+    log() {
+        console.log(this.value);
+    }
+    processExpression(trigger, args) {
+        const argCount = args.length;
+        const expHandler = Wrapper.processes.find(x => {
+            return x.trigger === trigger && x.arguments == argCount;
+        });
+        if (!expHandler)
+            throw Error('something is wrong with what you wrote');
+        return expHandler.process(this, args);
+    }
+    getValue() {
+        return this.value;
+    }
+    setValue(value) {
+        this.value = value;
+    }
+}
+exports.Wrapper = Wrapper;
+Wrapper.processes = [];
+
+},{}],15:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameManager = void 0;
@@ -183,7 +678,7 @@ class GameManager {
         this.animationFrameId = -1;
         this.player = new Player_1.Player();
         this.terminalView = null;
-        this.grid = new Grid_1.Grid({ x: 1000, y: 10 });
+        this.grid = new Grid_1.Grid({ x: 100, y: 100 });
         this.canvasView = null;
         this.activePlayerUnit = null;
         this.setCanvasView(canvasView);
@@ -251,7 +746,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./GameObjects/Grid":10,"./Player":15}],4:[function(require,module,exports){
+},{"./GameObjects/Grid":22,"./Player":27}],16:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -296,7 +791,7 @@ class Animated {
 }
 exports.Animated = Animated;
 
-},{"./ChainedAnimation":6,"./GroupAnimation":11}],5:[function(require,module,exports){
+},{"./ChainedAnimation":18,"./GroupAnimation":23}],17:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animation = void 0;
@@ -329,7 +824,7 @@ class Animation {
 exports.Animation = Animation;
 Animation.assets = {};
 
-},{}],6:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChainedAnimation = void 0;
@@ -363,7 +858,7 @@ class ChainedAnimation extends Animation_1.Animation {
 }
 exports.ChainedAnimation = ChainedAnimation;
 
-},{"./Animation":5}],7:[function(require,module,exports){
+},{"./Animation":17}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Direction = void 0;
@@ -376,7 +871,7 @@ var Direction;
     Direction[Direction["None"] = 4] = "None";
 })(Direction || (exports.Direction = Direction = {}));
 
-},{}],8:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Entity = void 0;
@@ -435,7 +930,7 @@ class Entity extends Animated_1.Animated {
 }
 exports.Entity = Entity;
 
-},{"./Animated":4}],9:[function(require,module,exports){
+},{"./Animated":16}],21:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grass = void 0;
@@ -455,7 +950,7 @@ class Grass extends Tile_1.Tile {
 }
 exports.Grass = Grass;
 
-},{"./GroupAnimation":11,"./Tile":13}],10:[function(require,module,exports){
+},{"./GroupAnimation":23,"./Tile":25}],22:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grid = void 0;
@@ -543,7 +1038,7 @@ class Grid {
 }
 exports.Grid = Grid;
 
-},{"./Grass":9,"./GroupAnimation":11,"./PlayerUnit":12}],11:[function(require,module,exports){
+},{"./Grass":21,"./GroupAnimation":23,"./PlayerUnit":24}],23:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupAnimation = void 0;
@@ -557,10 +1052,11 @@ class GroupAnimation extends Animation_1.Animation {
 exports.GroupAnimation = GroupAnimation;
 GroupAnimation.animations = [];
 
-},{"./Animation":5}],12:[function(require,module,exports){
+},{"./Animation":17}],24:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerUnit = void 0;
+const SingleCommand_1 = require("../Console/SingleCommand");
 const Terminal_1 = require("../Console/Terminal");
 const Inventory_1 = require("../Items/Inventory");
 const Direction_1 = require("./Direction");
@@ -597,13 +1093,48 @@ class PlayerUnit extends Entity_1.Entity {
         }
     }
     update(deltaTime) {
-        if (this.isMoving) {
-            this.lerpProgress += deltaTime * this.moveSpeed;
+        var _a, _b;
+        if (this.terminal.running)
+            (_a = this.terminal.currentCommand) === null || _a === void 0 ? void 0 : _a.Execute();
+        var currentCommand = this.terminal.currentCommand;
+        if (currentCommand instanceof SingleCommand_1.SingleCommand) {
+            const asyncTask = currentCommand.getAsyncTask();
+            if (asyncTask) {
+                const taskDetail = asyncTask.split(' ');
+                if (taskDetail[0] === 'move') {
+                    var direction = Direction_1.Direction.None;
+                    switch (taskDetail[1]) {
+                        case 'up':
+                            direction = Direction_1.Direction.Up;
+                            break;
+                        case 'down':
+                            direction = Direction_1.Direction.Down;
+                            break;
+                        case 'left':
+                            direction = Direction_1.Direction.Left;
+                            break;
+                        case 'right':
+                            direction = Direction_1.Direction.Right;
+                            break;
+                        default:
+                            direction = Direction_1.Direction.None;
+                            break;
+                    }
+                    if (!this.isMoving)
+                        this.move(direction);
+                }
+            }
+            if (!this.isMoving)
+                this.lerpProgress += deltaTime * this.moveSpeed;
             if (this.lerpProgress >= 1) {
                 this.lerpProgress = 0;
                 this.originalCoordinate = this.coordinate;
-                this.playAnimation('idle');
-                this.isMoving = false;
+                currentCommand = currentCommand.jumpNextCommand();
+                currentCommand.Execute();
+                if (!(currentCommand instanceof SingleCommand_1.SingleCommand) || !((_b = currentCommand.getAsyncTask()) === null || _b === void 0 ? void 0 : _b.startsWith('move '))) {
+                    this.playAnimation('idle');
+                    this.isMoving = false;
+                }
             }
         }
     }
@@ -649,7 +1180,7 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/Terminal":2,"../Items/Inventory":14,"./Direction":7,"./Entity":8}],13:[function(require,module,exports){
+},{"../Console/SingleCommand":8,"../Console/Terminal":11,"../Items/Inventory":26,"./Direction":19,"./Entity":20}],25:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tile = void 0;
@@ -663,7 +1194,7 @@ class Tile extends Animated_1.Animated {
 exports.Tile = Tile;
 Tile.defaultTileResolution = { x: 32, y: 32 };
 
-},{"./Animated":4}],14:[function(require,module,exports){
+},{"./Animated":16}],26:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
@@ -671,7 +1202,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{}],15:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -691,7 +1222,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":5,"./GameObjects/ChainedAnimation":6,"./GameObjects/PlayerUnit":12}],16:[function(require,module,exports){
+},{"./GameObjects/Animation":17,"./GameObjects/ChainedAnimation":18,"./GameObjects/PlayerUnit":24}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -731,8 +1262,10 @@ class TerminalView {
     }
     setExecuteButton(value) {
         const executeClickListener = (evt) => {
-            var _a;
-            (_a = this.terminal) === null || _a === void 0 ? void 0 : _a.execute();
+            if (!this.terminal)
+                return;
+            this.terminal.compile();
+            this.terminal.execute();
         };
         if (this.executeButton)
             this.executeButton.removeEventListener('click', executeClickListener);
@@ -741,8 +1274,9 @@ class TerminalView {
     }
     setStopButton(value) {
         const stopClickListener = (evt) => {
-            var _a;
-            (_a = this.terminal) === null || _a === void 0 ? void 0 : _a.stop();
+            if (!this.terminal)
+                return;
+            this.terminal.stop();
         };
         if (this.stopButton)
             this.stopButton.removeEventListener('click', stopClickListener);
@@ -752,7 +1286,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],17:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -774,7 +1308,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":5,"./Classes/GameObjects/GroupAnimation":11}],18:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":17,"./Classes/GameObjects/GroupAnimation":23}],30:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -805,4 +1339,4 @@ window.onload = () => {
     game.start();
 };
 
-},{"./Classes/CanvasView":1,"./Classes/GameManager":3,"./Classes/TerminalView":16,"./loadAsset":17}]},{},[18]);
+},{"./Classes/CanvasView":1,"./Classes/GameManager":15,"./Classes/TerminalView":28,"./loadAsset":29}]},{},[30]);

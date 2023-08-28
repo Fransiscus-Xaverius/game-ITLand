@@ -43,7 +43,9 @@ export class TerminalView{
 
     public setExecuteButton(value:HTMLButtonElement|null):void{
         const executeClickListener = (evt:MouseEvent) => {
-            this.terminal?.execute()
+            if(!this.terminal) return
+            this.terminal.compile()
+            this.terminal.execute()
         }
         if(this.executeButton) this.executeButton.removeEventListener('click', executeClickListener)
         value?.addEventListener('click', executeClickListener)
@@ -52,7 +54,8 @@ export class TerminalView{
 
     public setStopButton(value:HTMLButtonElement|null):void{
         const stopClickListener = (evt:MouseEvent) => {
-            this.terminal?.stop()
+            if(!this.terminal) return
+            this.terminal.stop()
         }
         if(this.stopButton) this.stopButton.removeEventListener('click', stopClickListener)
         value?.addEventListener('click', stopClickListener)

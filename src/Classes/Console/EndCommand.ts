@@ -1,9 +1,12 @@
 import { Command } from "./Command";
 import { Terminal } from "./Terminal";
 
-export class IfCommand extends Command{
+export class EndCommand extends Command{
+    constructor(terminal:Terminal){
+        super(terminal)
+    }
+
     public Execute(): void {
-        throw new Error("Method not implemented.");
     }
     
 }

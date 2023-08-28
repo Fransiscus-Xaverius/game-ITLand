@@ -5,20 +5,25 @@ import { VoidWrapper } from "./VoidWrapper";
 import { WaitWrapper } from "./WaitWrapper";
 
 export class SingleCommand extends Command{
-    private nextCommand:Command
+    private nextCommand:Command|null
     private expression:Expression
     private variableToSet?:string
 
     private asyncTask:string|null
 
-    constructor(terminal:Terminal, expression:Expression, nextCommand:Command, variableToSet?:string){
+    constructor(terminal:Terminal, expression:Expression, nextCommand:Command|null, variableToSet?:string){
         super(terminal)
         this.nextCommand = nextCommand
         this.expression = expression
         this.asyncTask = null
     }
 
+    public setNextCommand(value:Command):void{
+        this.nextCommand = value
+    }
+
     public jumpNextCommand(): Command{
+        if(!this.nextCommand) throw Error()
         this.terminal.currentCommand = this.nextCommand
         return this.nextCommand
     }
@@ -43,7 +48,7 @@ export class SingleCommand extends Command{
             return;
         }
         if(this.isSynced()) this.jumpNextCommand()
-        throw new Error("Method not implemented.");
+        // throw new Error("Method not implemented.");
     }
     
 }

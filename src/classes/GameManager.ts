@@ -13,7 +13,7 @@ export class GameManager{
     private animationFrameId:number = -1;
     private player:Player = new Player();
     private terminalView:TerminalView|null = null;
-    private grid:Grid = new Grid({x:1000, y:10});
+    private grid:Grid = new Grid({x:100, y:100});
     private canvasView:CanvasView|null = null;
     private activePlayerUnit:PlayerUnit|null = null
 

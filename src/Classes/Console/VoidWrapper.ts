@@ -2,10 +2,6 @@ import { ExpressionHandler } from "./ExpressionHandler";
 import { Wrapper } from "./Wrapper";
 
 export class VoidWrapper extends Wrapper{
-    static processes:ExpressionHandler[] = [
-        
-    ]
-
     constructor(){
         super(null);
     }
