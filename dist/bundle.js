@@ -520,7 +520,7 @@ class Terminal {
     }
     _compile(codeTokens) {
         const startCommand = new StartCommand_1.StartCommand(this);
-        const placeholderCommands = [startCommand];
+        var placeholderCommands = [startCommand];
         for (let i = 0; i < codeTokens.length; i++) {
             switch (codeTokens[i]) {
                 case "if":
@@ -558,12 +558,76 @@ class Terminal {
                             condition = compileExpression(conditionTokens);
                         }
                         const temp = new BranchCommand_1.BranchCommand(this, condition);
-                        placeholderCommands.forEach(x => {
-                            if (x instanceof SingleCommand_1.SingleCommand)
-                                x.setNextCommand(temp);
-                            if (x instanceof BranchCommand_1.BranchCommand)
-                                x.setFalseNextCommand(temp);
-                        });
+                        setNextCommand(temp);
+                        // if true
+                        if (codeTokens[++i] !== '{') {
+                            const commandTokens = [codeTokens[i]];
+                            while (codeTokens[++i] !== ';') {
+                                commandTokens.push(codeTokens[i]);
+                            }
+                            const compiledCommand = compileSingleCommand(this, commandTokens);
+                            temp.setTrueNextCommand(compiledCommand);
+                            placeholderCommands = [compiledCommand];
+                        }
+                        else {
+                            const codeBlockTokens = [codeTokens[++i]];
+                            var bracketCounter = 1;
+                            while (bracketCounter > 0) {
+                                switch (codeTokens[++i]) {
+                                    case '{':
+                                        bracketCounter++;
+                                        break;
+                                    case '}':
+                                        bracketCounter--;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if (bracketCounter > 0) {
+                                    codeBlockTokens.push(codeTokens[i]);
+                                }
+                            }
+                            const compiledBlockCommands = this._compile(codeBlockTokens);
+                            temp.setTrueNextCommand(compiledBlockCommands.startCommand);
+                            placeholderCommands = [...compiledBlockCommands.endCommands];
+                        }
+                        // if false
+                        if (codeTokens[++i] === 'else') {
+                            if (codeTokens[++i] !== '{') {
+                                const commandTokens = [codeTokens[i]];
+                                while (codeTokens[++i] !== ';') {
+                                    commandTokens.push(codeTokens[i]);
+                                }
+                                const compiledCommand = compileSingleCommand(this, commandTokens);
+                                temp.setFalseNextCommand(compiledCommand);
+                                placeholderCommands.push(compiledCommand);
+                            }
+                            else {
+                                const codeBlockTokens = [codeTokens[++i]];
+                                var bracketCounter = 1;
+                                while (bracketCounter > 0) {
+                                    switch (codeTokens[++i]) {
+                                        case '{':
+                                            bracketCounter++;
+                                            break;
+                                        case '}':
+                                            bracketCounter--;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    if (bracketCounter > 0) {
+                                        codeBlockTokens.push(codeTokens[i]);
+                                    }
+                                }
+                                const compiledBlockCommands = this._compile(codeBlockTokens);
+                                temp.setFalseNextCommand(compiledBlockCommands.startCommand);
+                                placeholderCommands = [...placeholderCommands, ...compiledBlockCommands.endCommands];
+                            }
+                        }
+                        else {
+                            placeholderCommands.push(temp);
+                        }
                     }
                     break;
                 case "while":
@@ -576,21 +640,55 @@ class Terminal {
                     break;
                 default:
                     {
+                        const commandTokens = [];
+                        do {
+                            commandTokens.push(codeTokens[i]);
+                        } while (codeTokens[++i] !== ';');
+                        const compiledCommand = compileSingleCommand(this, commandTokens);
+                        setNextCommand(compiledCommand);
+                        placeholderCommands = [compiledCommand];
                     }
                     break;
             }
         }
         return {
-            startCommand,
-            endCommand: startCommand
+            startCommand: startCommand.getNextCommand(),
+            endCommands: placeholderCommands
         };
         throw Error('Method not implemented');
+        function compileSingleCommand(terminal, commandTokens) {
+            const assignment = commandTokens.includes('=');
+            var variable = undefined;
+            var expression;
+            if (assignment && commandTokens.indexOf('=') != 1)
+                throw Error('invalid assignment syntax, valid ex. a = 3');
+            if (assignment) {
+                if (Terminal.checkVariableName(commandTokens[0])) {
+                    variable = commandTokens[0];
+                    expression = compileExpression(commandTokens.slice(2));
+                }
+                else
+                    throw Error('invalid variable name');
+            }
+            else {
+                expression = compileExpression(commandTokens);
+            }
+            return new SingleCommand_1.SingleCommand(terminal, expression, null, variable);
+        }
         function compileExpression(expTokens) {
             throw Error('Function not implemented');
         }
+        function setNextCommand(command) {
+            placeholderCommands.forEach(x => {
+                if (x instanceof SingleCommand_1.SingleCommand)
+                    x.setNextCommand(command);
+                if (x instanceof BranchCommand_1.BranchCommand)
+                    x.setFalseNextCommand(command);
+            });
+        }
     }
     compile() {
-        //this.currentCommand = new StartCommand(this, this._compile(this.content).startCommand)
+        //this.currentCommand = this._compile(Terminal.tokenize(this.content)).startCommand
     }
     execute() {
         this.running = true;
@@ -671,7 +769,7 @@ exports.GameManager = void 0;
 const Grid_1 = require("./GameObjects/Grid");
 const Player_1 = require("./Player");
 class GameManager {
-    constructor(canvasView = null, terminalView = null) {
+    constructor(canvasView = null, terminalView = null, shopView) {
         this.lastTimeStamp = 0;
         this.deltaTime = 0;
         this.isRunning = false;
@@ -681,10 +779,18 @@ class GameManager {
         this.grid = new Grid_1.Grid({ x: 100, y: 100 });
         this.canvasView = null;
         this.activePlayerUnit = null;
+        this.shopView = null;
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
         this.grid.addEntity(this.player.units[0]);
         this.setActivePlayerUnit(this.player.units[0]);
+        this.setShopView(shopView);
+    }
+    setShopView(shopView) {
+        this.shopView = shopView;
+    }
+    getShopView() {
+        return this.shopView;
     }
     getDeltatime() {
         return this.deltaTime;
@@ -1225,6 +1331,75 @@ exports.Player = Player;
 },{"./GameObjects/Animation":17,"./GameObjects/ChainedAnimation":18,"./GameObjects/PlayerUnit":24}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Shop = void 0;
+class Shop {
+    constructor() {
+        this.item = ["hello1"];
+    }
+    open(shopHTML) {
+        if (shopHTML) {
+            let shopTemp = document.createElement('div');
+            for (let i = 0; i < this.item.length; i++) {
+                let shop1 = document.createElement('div');
+                shop1.className = `${this.item[i]}`;
+                shopTemp.appendChild(shop1);
+            }
+            const newShopHTML = document.createElement('div');
+            newShopHTML.appendChild(shopTemp);
+            shopHTML === null || shopHTML === void 0 ? void 0 : shopHTML.appendChild(newShopHTML);
+        }
+    }
+}
+exports.Shop = Shop;
+
+},{}],29:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ShopView = void 0;
+class ShopView {
+    constructor(shopButton, shop = null, shopHTML = null) {
+        this.shop = null;
+        this.shopButton = null;
+        this.shopHTML = null;
+        this.setShop(shop);
+        this.setShopButton(shopButton);
+        this.setShopHTML(shopHTML);
+    }
+    initShopButton() {
+        var _a;
+        if (this.shopButton) {
+            (_a = this.shopButton) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
+                if (this.shop) {
+                    this.shop.open(this.getShopHTML());
+                }
+            });
+        }
+    }
+    setShopHTML(shopHTML) {
+        this.shopHTML = shopHTML;
+    }
+    getShopHTML() {
+        return this.shopHTML;
+    }
+    setShopButton(shopButton) {
+        this.shopButton = shopButton;
+        this.initShopButton();
+    }
+    getShopButton() {
+        return this.shopButton;
+    }
+    setShop(value) {
+        this.shop = value;
+    }
+    getShop() {
+        return this.shop;
+    }
+}
+exports.ShopView = ShopView;
+
+},{}],30:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
 class TerminalView {
     constructor(textArea, executeButton, stopButton, terminal = null) {
@@ -1286,7 +1461,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -1308,7 +1483,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":17,"./Classes/GameObjects/GroupAnimation":23}],30:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":17,"./Classes/GameObjects/GroupAnimation":23}],32:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -1317,13 +1492,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const CanvasView_1 = require("./Classes/CanvasView");
 const TerminalView_1 = require("./Classes/TerminalView");
 const GameManager_1 = require("./Classes/GameManager");
+const ShopView_1 = require("./Classes/ShopView");
 const loadAsset_1 = __importDefault(require("./loadAsset"));
+const Shop_1 = require("./Classes/Shop");
 window.onload = () => {
     var _a, _b, _c, _d;
     const canvas = document.querySelector("#view");
     const terminal = document.querySelector("#console");
     const executeButton = document.querySelector("#executeButton");
     const stopButton = document.querySelector("#stopButton");
+    const shopButton = document.querySelector(".button-shop");
+    const shopHTML = document.querySelector(".shop-html");
+    const shop = new Shop_1.Shop();
     if (canvas == null)
         throw new Error("Canvas not found");
     if (terminal == null)
@@ -1332,11 +1512,13 @@ window.onload = () => {
         throw new Error("Start button not found");
     if (stopButton == null)
         throw new Error("Stop button not found");
+    if (shopButton == null)
+        throw new Error("Shop button not found");
     canvas.width = (_b = (_a = canvas.parentElement) === null || _a === void 0 ? void 0 : _a.clientWidth) !== null && _b !== void 0 ? _b : window.innerWidth;
     canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
     (0, loadAsset_1.default)();
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton));
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, shopHTML));
     game.start();
 };
 
-},{"./Classes/CanvasView":1,"./Classes/GameManager":15,"./Classes/TerminalView":28,"./loadAsset":29}]},{},[30]);
+},{"./Classes/CanvasView":1,"./Classes/GameManager":15,"./Classes/Shop":28,"./Classes/ShopView":29,"./Classes/TerminalView":30,"./loadAsset":31}]},{},[32]);
