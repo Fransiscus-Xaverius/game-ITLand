@@ -1334,19 +1334,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
 class Shop {
     constructor() {
-        this.item = ["hello1"];
+        this.item = ["hello1", "hello1", "hello1", "hello1"];
     }
     open(shopHTML) {
         if (shopHTML) {
+            shopHTML.innerHTML = "";
+            console.log(shopHTML);
             let shopTemp = document.createElement('div');
             for (let i = 0; i < this.item.length; i++) {
                 let shop1 = document.createElement('div');
                 shop1.className = `${this.item[i]}`;
                 shopTemp.appendChild(shop1);
             }
-            const newShopHTML = document.createElement('div');
-            newShopHTML.appendChild(shopTemp);
-            shopHTML === null || shopHTML === void 0 ? void 0 : shopHTML.appendChild(newShopHTML);
+            shopHTML.appendChild(shopTemp);
+            console.log(shopTemp);
         }
     }
 }
