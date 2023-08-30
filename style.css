@@ -63,6 +63,15 @@ body, html {
 .start{
 
 }
+.shop{
+    display: flex;
+}
+
+.item-in-shop{
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+}
 
 .stop{
     
