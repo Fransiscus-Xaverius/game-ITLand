@@ -244,20 +244,50 @@ exports.Expression = void 0;
 const VoidWrapper_1 = require("./VoidWrapper");
 const Wrapper_1 = require("./Wrapper");
 class Expression {
-    constructor(terminal, first, trigger, args = []) {
+    constructor(terminal, trigger = null, first = null, args = null) {
         this.terminal = terminal;
         this.first = first;
         this.trigger = trigger;
         this.args = args;
     }
+    setFirst(value) {
+        this.first = value;
+    }
+    getFirst() {
+        return this.first;
+    }
+    setArgs(value) {
+        this.args = value;
+    }
+    addArg(value) {
+        if (this.args == null)
+            this.args = [];
+        this.args.push(value);
+    }
+    getArgs() {
+        return this.args;
+    }
+    setTrigger(value) {
+        this.trigger = value;
+    }
+    isSelfExpression() {
+        return this.trigger == null && this.args == null && this.first != null;
+    }
     getResult() {
+        if (this.first == null)
+            throw Error('something went wrong with the expression, the first is null');
         const first = this.first instanceof Wrapper_1.Wrapper ?
             this.first :
             this.first instanceof Expression ?
                 this.first.getResult() :
                 this.terminal.getVariable(this.first);
+        if (this.trigger == null && this.args == null) {
+            return first;
+        }
+        if (this.args == null || this.trigger == null)
+            throw Error('something went wrong with the expression, the args or the trigger is null');
         if (this.first instanceof VoidWrapper_1.VoidWrapper)
-            throw Error('there is something wrong with your code');
+            throw Error('there is something wrong with your code, this.first returns void');
         const args = [];
         for (let index = 0; index < this.args.length; index++) {
             const item = this.args[index];
@@ -409,6 +439,7 @@ StringWrapper.procedures = [];
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Terminal = void 0;
+const Expression_1 = require("./Expression");
 const SingleCommand_1 = require("./SingleCommand");
 const StartCommand_1 = require("./StartCommand");
 const Wrapper_1 = require("./Wrapper");
@@ -520,7 +551,7 @@ class Terminal {
     }
     _compile(codeTokens) {
         const startCommand = new StartCommand_1.StartCommand(this);
-        const placeholderCommands = [startCommand];
+        var placeholderCommands = [startCommand];
         for (let i = 0; i < codeTokens.length; i++) {
             switch (codeTokens[i]) {
                 case "if":
@@ -555,15 +586,79 @@ class Terminal {
                             }
                         }
                         else {
-                            condition = compileExpression(conditionTokens);
+                            condition = this.compileExpression(conditionTokens);
                         }
                         const temp = new BranchCommand_1.BranchCommand(this, condition);
-                        placeholderCommands.forEach(x => {
-                            if (x instanceof SingleCommand_1.SingleCommand)
-                                x.setNextCommand(temp);
-                            if (x instanceof BranchCommand_1.BranchCommand)
-                                x.setFalseNextCommand(temp);
-                        });
+                        setNextCommand(temp);
+                        // if true
+                        if (codeTokens[++i] !== '{') {
+                            const commandTokens = [codeTokens[i]];
+                            while (codeTokens[++i] !== ';') {
+                                commandTokens.push(codeTokens[i]);
+                            }
+                            const compiledCommand = this.compileSingleCommand(this, commandTokens);
+                            temp.setTrueNextCommand(compiledCommand);
+                            placeholderCommands = [compiledCommand];
+                        }
+                        else {
+                            const codeBlockTokens = [codeTokens[++i]];
+                            var bracketCounter = 1;
+                            while (bracketCounter > 0) {
+                                switch (codeTokens[++i]) {
+                                    case '{':
+                                        bracketCounter++;
+                                        break;
+                                    case '}':
+                                        bracketCounter--;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if (bracketCounter > 0) {
+                                    codeBlockTokens.push(codeTokens[i]);
+                                }
+                            }
+                            const compiledBlockCommands = this._compile(codeBlockTokens);
+                            temp.setTrueNextCommand(compiledBlockCommands.startCommand);
+                            placeholderCommands = [...compiledBlockCommands.endCommands];
+                        }
+                        // if false
+                        if (codeTokens[++i] === 'else') {
+                            if (codeTokens[++i] !== '{') {
+                                const commandTokens = [codeTokens[i]];
+                                while (codeTokens[++i] !== ';') {
+                                    commandTokens.push(codeTokens[i]);
+                                }
+                                const compiledCommand = this.compileSingleCommand(this, commandTokens);
+                                temp.setFalseNextCommand(compiledCommand);
+                                placeholderCommands.push(compiledCommand);
+                            }
+                            else {
+                                const codeBlockTokens = [codeTokens[++i]];
+                                var bracketCounter = 1;
+                                while (bracketCounter > 0) {
+                                    switch (codeTokens[++i]) {
+                                        case '{':
+                                            bracketCounter++;
+                                            break;
+                                        case '}':
+                                            bracketCounter--;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    if (bracketCounter > 0) {
+                                        codeBlockTokens.push(codeTokens[i]);
+                                    }
+                                }
+                                const compiledBlockCommands = this._compile(codeBlockTokens);
+                                temp.setFalseNextCommand(compiledBlockCommands.startCommand);
+                                placeholderCommands = [...placeholderCommands, ...compiledBlockCommands.endCommands];
+                            }
+                        }
+                        else {
+                            placeholderCommands.push(temp);
+                        }
                     }
                     break;
                 case "while":
@@ -576,21 +671,252 @@ class Terminal {
                     break;
                 default:
                     {
+                        const commandTokens = [];
+                        do {
+                            commandTokens.push(codeTokens[i]);
+                            if (i > codeTokens.length)
+                                throw Error('missing ;');
+                        } while (codeTokens[++i] !== ';');
+                        const compiledCommand = this.compileSingleCommand(this, commandTokens);
+                        setNextCommand(compiledCommand);
+                        placeholderCommands = [compiledCommand];
+                        console.log(compiledCommand);
                     }
                     break;
             }
         }
         return {
-            startCommand,
-            endCommand: startCommand
+            startCommand: startCommand.getNextCommand(),
+            endCommands: placeholderCommands
         };
-        throw Error('Method not implemented');
-        function compileExpression(expTokens) {
-            throw Error('Function not implemented');
+        function setNextCommand(command) {
+            placeholderCommands.forEach(x => {
+                if (x instanceof SingleCommand_1.SingleCommand)
+                    x.setNextCommand(command);
+                if (x instanceof BranchCommand_1.BranchCommand)
+                    x.setFalseNextCommand(command);
+            });
+        }
+    }
+    compileSingleCommand(terminal, commandTokens) {
+        const assignment = commandTokens.includes('=');
+        var variable = undefined;
+        var expression;
+        if (assignment && commandTokens.indexOf('=') != 1)
+            throw Error('invalid assignment syntax, valid ex. a = 3');
+        if (assignment) {
+            if (Terminal.checkVariableName(commandTokens[0])) {
+                variable = commandTokens[0];
+                expression = this.compileExpression(commandTokens.slice(2));
+            }
+            else
+                throw Error('invalid variable name');
+        }
+        else {
+            expression = this.compileExpression(commandTokens);
+        }
+        return new SingleCommand_1.SingleCommand(terminal, expression, null, variable);
+    }
+    compileExpression(expTokens) {
+        var _a;
+        const unarySymbol = '@u';
+        const globalSymbol = '@g';
+        const postfixedTokens = [];
+        const postfixOps = [];
+        const opsRegex = /^((==|!=|\|\||&&|<=|>=)|[<>!%+\-*\/])$|^\./;
+        const unaryOpsRegex = /^[!-]$/;
+        const separatorRegex = /^[\(\),]$/;
+        const priority = [
+            ['.'],
+            ['!'],
+            ['*', '/', '%'],
+            ['+', '-'],
+            ['<', '>', '<=', '>='],
+            ['==', '!='],
+            ['&&'],
+            ['||']
+        ];
+        // postfixify
+        for (let i = 0; i < expTokens.length; i++) {
+            console.log(postfixOps);
+            if (opsRegex.test(expTokens[i])) {
+                //check if this is a unary operator by looking at the token before, if it's an operator or a bracket then this operator is most likely to be unary
+                if (unaryOpsRegex.test(expTokens[i]) && (!expTokens[i - 1] || (opsRegex.test(expTokens[i - 1]) && expTokens[i - 1] !== '.') || separatorRegex.test(expTokens[i - 1]))) {
+                    postfixedTokens.push(unarySymbol);
+                    stackOp(expTokens[i]);
+                    continue;
+                }
+                // if two operators are stacked together, throw an error
+                if (expTokens[i - 1] && (opsRegex.test(expTokens[i - 1]) || (separatorRegex.test(expTokens[i - 1]) && expTokens[i - 1] !== ')')))
+                    throw Error('something is wrong at : ' + expTokens.slice(i - 1, i + 2).join(' '));
+                // if the operator is stackable according to the priority table then stack, else eject previous ones until stackable again
+                while (!opStackable(peek(postfixOps), expTokens[i])) {
+                    pushOp();
+                }
+                stackOp(expTokens[i]);
+                continue;
+            }
+            if (expTokens[i] === '(') {
+                postfixOps.push('(');
+                continue;
+            }
+            if (expTokens[i] === ')') {
+                var op;
+                while ((op = peek(postfixOps)) && op !== '(') {
+                    pushOp();
+                }
+                if (postfixOps.length == 0)
+                    throw Error('uneven number of brackets, "(" missing');
+                postfixOps.pop();
+                continue;
+            }
+            if (expTokens[i] === ',') {
+                while ((op = peek(postfixOps)) && op !== '(') {
+                    pushOp();
+                }
+                continue;
+            }
+            // if the code reaches this part that means the token is most likely not a symbol
+            // throw an error if values or variables are stacked next to each other
+            if (expTokens[i - 1] && !opsRegex.test(expTokens[i - 1]) && !separatorRegex.test(expTokens[i - 1]))
+                throw Error('something is wrong at 2: ' + expTokens.slice(i - 1, i + 2).join(' '));
+            if (expTokens[i + 1] === '(') {
+                if (expTokens[i - 1] !== '.') {
+                    postfixedTokens.push(globalSymbol);
+                    stackOp('.' + expTokens[i] + '()');
+                    continue;
+                }
+                postfixOps[postfixOps.length - 1] += expTokens[i] + '()';
+                continue;
+            }
+            postfixedTokens.push(expTokens[i]);
+        }
+        // push all remaining operators
+        while (postfixOps.length > 0) {
+            if (peek(postfixOps) === '(')
+                throw Error('uneven number of brackets, ")" missing');
+            pushOp();
+        }
+        console.log(postfixedTokens.join(''));
+        // convert postfix string into expression tree
+        var root = new Expression_1.Expression(this);
+        var expressionParentStack = [root];
+        setSelfExpression(expressionParentStack[0], postfixedTokens[0]);
+        if (postfixedTokens.length == 1) {
+            return expressionParentStack[0];
+        }
+        for (let i = 1; i < postfixedTokens.length; i++) {
+            if (postfixedTokens[i] === '(') {
+                if (opsRegex.test(postfixedTokens[i - 1])) {
+                    const oldParent = expressionParentStack.pop();
+                    if (!oldParent)
+                        throw Error('expressionParentStack is emtpy, this is a bug in the compiler');
+                    const newParent = new Expression_1.Expression(this, null, oldParent.isSelfExpression() ? oldParent.getFirst() : oldParent, []);
+                    expressionParentStack.push(newParent);
+                    if (root == newParent)
+                        root = newParent;
+                }
+                continue;
+            }
+            if (postfixedTokens[i] === ')') {
+                if (!opsRegex.test(postfixedTokens[i + 1]))
+                    throw Error('there is no operator after the closing curly bracket');
+                if (postfixedTokens[i - 1] === '(') {
+                    i += 1;
+                    const parent = peek(expressionParentStack);
+                    if (/^\..+/.test(postfixedTokens[i])) {
+                        parent.setTrigger('.');
+                        parent.addArg(postfixedTokens[i].substring(1));
+                    }
+                    else {
+                        throw Error('there is not supposed to be any operator that accepts 0 parameters other than methods');
+                        // parent.setTrigger(postfixedTokens[i])
+                        // parent.setArgs([])
+                    }
+                    continue;
+                }
+                i += 1;
+                const lastParameter = expressionParentStack.pop();
+                if (!lastParameter)
+                    throw Error('lastParameter undefined, something is wrong here');
+                const first = lastParameter.getFirst();
+                if (first == null)
+                    throw Error('lastParameter first is not supposed to be null but it is, something is wrong here');
+                const parent = peek(expressionParentStack);
+                parent.addArg(lastParameter.isSelfExpression() ? first : lastParameter);
+                if (/^\..+/.test(postfixedTokens[i])) {
+                    parent.setTrigger('.');
+                    parent.setArgs([postfixedTokens[i].substring(1), ...((_a = parent.getArgs()) !== null && _a !== void 0 ? _a : [])]);
+                }
+                else {
+                    parent.setTrigger(postfixedTokens[i]);
+                }
+                continue;
+            }
+            // if the code reaches this part then the current token is most likely a variable or an argument
+            if (postfixedTokens[i - 1] === '(') {
+                const newParent = new Expression_1.Expression(this);
+                setSelfExpression(newParent, postfixedTokens[i]);
+                expressionParentStack.push(newParent);
+                continue;
+            }
+            // if the code reaches this part then this part is where the next argument starts
+            const lastParameter = expressionParentStack.pop();
+            if (!lastParameter)
+                throw Error('lastParameter undefined, something is wrong here');
+            const first = lastParameter.getFirst();
+            if (first == null)
+                throw Error('lastParameter first is not supposed to be null but it is, something is wrong here');
+            const parent = peek(expressionParentStack);
+            parent.addArg(lastParameter.isSelfExpression() ? first : lastParameter);
+            const newParent = new Expression_1.Expression(this);
+            setSelfExpression(newParent, postfixedTokens[i]);
+            expressionParentStack.push(newParent);
+        }
+        console.log(expressionParentStack.length);
+        return expressionParentStack[0];
+        function setSelfExpression(expression, value) {
+            try {
+                expression.setFirst(Terminal.wrap(value));
+            }
+            catch (err) {
+                expression.setFirst(value);
+            }
+            expression.setTrigger(null);
+            expression.setArgs(null);
+        }
+        function peek(stack) {
+            return stack[stack.length - 1];
+        }
+        function opStackable(prevOp, op) {
+            if (prevOp == undefined || prevOp === '(')
+                return true;
+            if (/^\./.test(op))
+                return true;
+            if (/^\./.test(prevOp))
+                return false;
+            for (let i = 0; i < priority.length; i++) {
+                if (priority[i].includes(op))
+                    return true;
+                if (priority[i].includes(prevOp))
+                    return false;
+            }
+            return true;
+        }
+        function stackOp(op) {
+            postfixedTokens.push('(');
+            postfixOps.push(op);
+        }
+        function pushOp() {
+            const op = postfixOps.pop();
+            if (!op)
+                return;
+            postfixedTokens.push(')');
+            postfixedTokens.push(op);
         }
     }
     compile() {
-        //this.currentCommand = new StartCommand(this, this._compile(this.content).startCommand)
+        this.currentCommand = this._compile(Terminal.tokenize(this.content)).startCommand;
     }
     execute() {
         this.running = true;
@@ -602,7 +928,7 @@ class Terminal {
 }
 exports.Terminal = Terminal;
 
-},{"./BoolWrapper":2,"./BranchCommand":3,"./NumberWrapper":7,"./SingleCommand":8,"./StartCommand":9,"./StringWrapper":10,"./Wrapper":14}],12:[function(require,module,exports){
+},{"./BoolWrapper":2,"./BranchCommand":3,"./Expression":6,"./NumberWrapper":7,"./SingleCommand":8,"./StartCommand":9,"./StringWrapper":10,"./Wrapper":14}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VoidWrapper = void 0;
