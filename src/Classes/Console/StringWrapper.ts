@@ -57,11 +57,12 @@ export class StringWrapper extends Wrapper{
 
     constructor(value:string){
         super(value);
+        this.type="string"
     }
 
     public processExpression(trigger: string, args: Wrapper[]): Wrapper {
         const argCount =  args.length
-        const expHandler = BoolWrapper.processes.find(x => {
+        const expHandler = StringWrapper.processes.find(x => {
             return x.trigger === trigger && x.arguments == argCount
         })
 

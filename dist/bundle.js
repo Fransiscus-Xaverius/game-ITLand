@@ -66,7 +66,6 @@ class CanvasView {
             }
         };
         window.onresize = (evt) => {
-            console.log('resized');
             const target = this.canvas;
             if (!target)
                 return;
@@ -164,6 +163,7 @@ const Wrapper_1 = require("./Wrapper");
 class BoolWrapper extends Wrapper_1.Wrapper {
     constructor(value) {
         super(value);
+        this.type = "boolean";
     }
     processExpression(trigger, args) {
         const argCount = args.length;
@@ -400,6 +400,7 @@ const Wrapper_1 = require("./Wrapper");
 class NumberWrapper extends Wrapper_1.Wrapper {
     constructor(value) {
         super(value);
+        this.type = "number";
     }
     processExpression(trigger, args) {
         const argCount = args.length;
@@ -561,6 +562,7 @@ const Wrapper_1 = require("./Wrapper");
 class PlayerWrapper extends Wrapper_1.Wrapper {
     constructor(value) {
         super(value);
+        this.type = "playerUnit";
     }
     processExpression(trigger, args) {
         const argCount = args.length;
@@ -715,10 +717,11 @@ const Wrapper_1 = require("./Wrapper");
 class StringWrapper extends Wrapper_1.Wrapper {
     constructor(value) {
         super(value);
+        this.type = "string";
     }
     processExpression(trigger, args) {
         const argCount = args.length;
-        const expHandler = BoolWrapper_1.BoolWrapper.processes.find(x => {
+        const expHandler = StringWrapper.processes.find(x => {
             return x.trigger === trigger && x.arguments == argCount;
         });
         if (!expHandler)
@@ -835,6 +838,37 @@ class Terminal {
                         default:
                             throw Error("this method, '" + args[0].getValue() + "' doesn't exist globally");
                     }
+                }
+            },
+            {
+                trigger: ".",
+                arguments: 3,
+                process: (self, args) => {
+                    switch (args[0].getValue()) {
+                        case 'random()':
+                            if (args[1] instanceof NumberWrapper_1.NumberWrapper && args[2] instanceof NumberWrapper_1.NumberWrapper)
+                                return new NumberWrapper_1.NumberWrapper(Math.floor(Math.random() * args[2].getValue() + args[1].getValue()));
+                        default:
+                            throw Error("this method, '" + args[0].getValue() + "' doesn't exist globally");
+                    }
+                }
+            },
+            {
+                trigger: "-",
+                arguments: 1,
+                process: (self, args) => {
+                    if (args[0] instanceof NumberWrapper_1.NumberWrapper)
+                        return new NumberWrapper_1.NumberWrapper(-args[0].getValue());
+                    throw Error("you tried to negate " + args[0].getValue() + ", you can't negate things that aren't numbers");
+                }
+            },
+            {
+                trigger: "!",
+                arguments: 1,
+                process: (self, args) => {
+                    if (args[0] instanceof BoolWrapper_1.BoolWrapper)
+                        return new BoolWrapper_1.BoolWrapper(!args[0].getValue());
+                    throw Error("you tried to use the not operator (!) on " + args[0].getValue() + ", you can't do this to things that aren't booleans");
                 }
             },
         ];
@@ -957,7 +991,7 @@ class Terminal {
                 return this.player.processExpression(trigger, args);
             }
             catch (err2) {
-                throw Error("this method, '" + args[0].getValue() + "' doesn't exist globally");
+                throw err1;
             }
         }
     }
@@ -1002,7 +1036,7 @@ class Terminal {
                         else {
                             condition = this.compileExpression(conditionTokens);
                         }
-                        const temp = new BranchCommand_1.BranchCommand(this, condition);
+                        var temp = new BranchCommand_1.BranchCommand(this, condition);
                         setNextCommand(temp);
                         // if true
                         if (codeTokens[++i] !== '{') {
@@ -1047,6 +1081,89 @@ class Terminal {
                                 placeholderCommands = [...compiledBlockCommands.endCommands];
                             }
                         }
+                        while (codeTokens[i + 1] === 'else' && codeTokens[i + 2] === 'if') {
+                            i += 2;
+                            if (codeTokens[++i] !== '(')
+                                throw Error('if syntax error, correct syntax ex. : if(a == "test"){ moveUp(); }');
+                            const conditionTokens = [];
+                            var bracketCounter = 1;
+                            while (bracketCounter > 0) {
+                                i++;
+                                if (i >= codeTokens.length)
+                                    throw Error('there is an opened bracket, missing )');
+                                switch (codeTokens[i]) {
+                                    case '(':
+                                        bracketCounter++;
+                                        break;
+                                    case ')':
+                                        bracketCounter--;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if (bracketCounter > 0) {
+                                    conditionTokens.push(codeTokens[i]);
+                                }
+                            }
+                            var condition;
+                            if (conditionTokens.length == 1) {
+                                try {
+                                    condition = Terminal.wrap(conditionTokens[0]);
+                                }
+                                catch (err) {
+                                    condition = Terminal.checkVariableName(conditionTokens[0]);
+                                }
+                            }
+                            else {
+                                condition = this.compileExpression(conditionTokens);
+                            }
+                            const elseif = new BranchCommand_1.BranchCommand(this, condition);
+                            temp.setFalseNextCommand(elseif);
+                            temp = elseif;
+                            // if true
+                            if (codeTokens[++i] !== '{') {
+                                const commandTokens = [codeTokens[i]];
+                                while (codeTokens[++i] !== ';') {
+                                    if (i >= codeTokens.length)
+                                        throw Error('missing curly braces, if ex. if(true){moveRight();}');
+                                    commandTokens.push(codeTokens[i]);
+                                }
+                                const compiledCommand = this.compileSingleCommand(this, commandTokens);
+                                temp.setTrueNextCommand(compiledCommand);
+                                placeholderCommands = [...placeholderCommands, compiledCommand];
+                            }
+                            else {
+                                const codeBlockTokens = [codeTokens[++i]];
+                                var bracketCounter = 1;
+                                if (codeTokens[i] === '}') {
+                                    const empty = new StartCommand_1.StartCommand(this);
+                                    temp.setTrueNextCommand(empty);
+                                    placeholderCommands = [...placeholderCommands, empty];
+                                }
+                                else {
+                                    while (bracketCounter > 0) {
+                                        if (i >= codeTokens.length)
+                                            throw Error('there is an open curly bracket, missing }');
+                                        switch (codeTokens[++i]) {
+                                            case '{':
+                                                bracketCounter++;
+                                                break;
+                                            case '}':
+                                                bracketCounter--;
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        if (bracketCounter > 0) {
+                                            codeBlockTokens.push(codeTokens[i]);
+                                        }
+                                    }
+                                    const compiledBlockCommands = this._compile(codeBlockTokens);
+                                    temp.setTrueNextCommand(compiledBlockCommands.startCommand);
+                                    placeholderCommands = [...placeholderCommands, ...compiledBlockCommands.endCommands];
+                                }
+                            }
+                        }
                         // if false
                         if (codeTokens[++i] === 'else') {
                             if (codeTokens[++i] !== '{') {
@@ -1066,7 +1183,7 @@ class Terminal {
                                 if (codeTokens[i] === '}') {
                                     const empty = new StartCommand_1.StartCommand(this);
                                     temp.setFalseNextCommand(empty);
-                                    placeholderCommands = [empty];
+                                    placeholderCommands = [...placeholderCommands, empty];
                                 }
                                 else {
                                     while (bracketCounter > 0) {
@@ -1099,10 +1216,176 @@ class Terminal {
                     break;
                 case "while":
                     {
+                        if (codeTokens[++i] !== '(')
+                            throw Error('while syntax error, correct syntax ex. : while(a == "up"){ moveUp(); }');
+                        const conditionTokens = [];
+                        var bracketCounter = 1;
+                        while (bracketCounter > 0) {
+                            i++;
+                            if (i >= codeTokens.length)
+                                throw Error('there is an opened bracket, missing )');
+                            switch (codeTokens[i]) {
+                                case '(':
+                                    bracketCounter++;
+                                    break;
+                                case ')':
+                                    bracketCounter--;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if (bracketCounter > 0) {
+                                conditionTokens.push(codeTokens[i]);
+                            }
+                        }
+                        var condition;
+                        if (conditionTokens.length == 1) {
+                            try {
+                                condition = Terminal.wrap(conditionTokens[0]);
+                            }
+                            catch (err) {
+                                condition = Terminal.checkVariableName(conditionTokens[0]);
+                            }
+                        }
+                        else {
+                            condition = this.compileExpression(conditionTokens);
+                        }
+                        var temp = new BranchCommand_1.BranchCommand(this, condition);
+                        setNextCommand(temp);
+                        // if true
+                        if (codeTokens[++i] !== '{') {
+                            const commandTokens = [codeTokens[i]];
+                            while (codeTokens[++i] !== ';') {
+                                if (i >= codeTokens.length)
+                                    throw Error('missing curly braces, if ex. if(true){moveRight();}');
+                                commandTokens.push(codeTokens[i]);
+                            }
+                            const compiledCommand = this.compileSingleCommand(this, commandTokens);
+                            temp.setTrueNextCommand(compiledCommand);
+                            placeholderCommands = [compiledCommand];
+                        }
+                        else {
+                            const codeBlockTokens = [codeTokens[++i]];
+                            var bracketCounter = 1;
+                            if (codeTokens[i] === '}') {
+                                const empty = new StartCommand_1.StartCommand(this);
+                                temp.setTrueNextCommand(empty);
+                                placeholderCommands = [empty];
+                            }
+                            else {
+                                while (bracketCounter > 0) {
+                                    if (i >= codeTokens.length)
+                                        throw Error('there is an open curly bracket, missing }');
+                                    switch (codeTokens[++i]) {
+                                        case '{':
+                                            bracketCounter++;
+                                            break;
+                                        case '}':
+                                            bracketCounter--;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    if (bracketCounter > 0) {
+                                        codeBlockTokens.push(codeTokens[i]);
+                                    }
+                                }
+                                const compiledBlockCommands = this._compile(codeBlockTokens);
+                                temp.setTrueNextCommand(compiledBlockCommands.startCommand);
+                                placeholderCommands = [...compiledBlockCommands.endCommands];
+                            }
+                        }
+                        setNextCommand(temp);
+                        placeholderCommands = [temp];
                     }
                     break;
                 case "for":
                     {
+                        if (codeTokens[++i] !== '(')
+                            throw Error('for syntax error, correct syntax ex. : for(index = 0 to 8){ moveUp(index); }');
+                        const commandTokens = [];
+                        var bracketCounter = 1;
+                        while (bracketCounter > 0) {
+                            i++;
+                            if (i >= codeTokens.length)
+                                throw Error('there is an opened bracket, missing )');
+                            switch (codeTokens[i]) {
+                                case '(':
+                                    bracketCounter++;
+                                    break;
+                                case ')':
+                                    bracketCounter--;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if (bracketCounter > 0) {
+                                commandTokens.push(codeTokens[i]);
+                            }
+                        }
+                        if (commandTokens[1] !== '=')
+                            throw Error('for syntax error, it needs to have an assignment, correct syntax ex. : for(index = 0 to 8){ moveUp(index); }');
+                        const splitIndex = commandTokens.indexOf('to');
+                        if (splitIndex == -1)
+                            throw Error("for syntax error, it needs to have a 'to' keyword, correct syntax ex. : for(index = 0 to 8){ moveUp(index); }");
+                        const assignmentCommand = this.compileSingleCommand(this, commandTokens.slice(0, splitIndex));
+                        const targetExpression = this.compileExpression(commandTokens.slice(splitIndex + 1));
+                        const conditionExpression = new Expression_1.Expression(this, "<=", commandTokens[0], [targetExpression]);
+                        const incrementCommand = this.compileSingleCommand(this, [commandTokens[0], '=', commandTokens[0], '+', '1']);
+                        const conditionCommand = new BranchCommand_1.BranchCommand(this, conditionExpression);
+                        setNextCommand(assignmentCommand);
+                        assignmentCommand.setNextCommand(conditionCommand);
+                        incrementCommand.setNextCommand(conditionCommand);
+                        placeholderCommands = [conditionCommand];
+                        if (codeTokens[++i] !== '{') {
+                            const commandTokens = [codeTokens[i]];
+                            while (codeTokens[++i] !== ';') {
+                                if (i >= codeTokens.length)
+                                    throw Error('missing curly braces, if ex. if(true){moveRight();}');
+                                commandTokens.push(codeTokens[i]);
+                            }
+                            const compiledCommand = this.compileSingleCommand(this, commandTokens);
+                            conditionCommand.setTrueNextCommand(compiledCommand);
+                            compiledCommand.setNextCommand(incrementCommand);
+                        }
+                        else {
+                            const codeBlockTokens = [codeTokens[++i]];
+                            var bracketCounter = 1;
+                            if (codeTokens[i] === '}') {
+                                const empty = new StartCommand_1.StartCommand(this);
+                                conditionCommand.setTrueNextCommand(empty);
+                                empty.setNextCommand(incrementCommand);
+                            }
+                            else {
+                                while (bracketCounter > 0) {
+                                    if (i >= codeTokens.length)
+                                        throw Error('there is an open curly bracket, missing }');
+                                    switch (codeTokens[++i]) {
+                                        case '{':
+                                            bracketCounter++;
+                                            break;
+                                        case '}':
+                                            bracketCounter--;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    if (bracketCounter > 0) {
+                                        codeBlockTokens.push(codeTokens[i]);
+                                    }
+                                }
+                                const compiledBlockCommands = this._compile(codeBlockTokens);
+                                conditionCommand.setTrueNextCommand(compiledBlockCommands.startCommand);
+                                compiledBlockCommands.endCommands.forEach(x => {
+                                    if (x instanceof StartCommand_1.StartCommand)
+                                        x.setNextCommand(incrementCommand);
+                                    if (x instanceof SingleCommand_1.SingleCommand)
+                                        x.setNextCommand(incrementCommand);
+                                    if (x instanceof BranchCommand_1.BranchCommand)
+                                        x.setFalseNextCommand(incrementCommand);
+                                });
+                            }
+                        }
                     }
                     break;
                 default:
@@ -1158,7 +1441,6 @@ class Terminal {
     }
     compileExpression(expTokens) {
         var _a;
-        const unarySymbol = '@u';
         const globalSymbol = '@g';
         const postfixedTokens = [];
         const postfixOps = [];
@@ -1180,7 +1462,7 @@ class Terminal {
             if (opsRegex.test(expTokens[i])) {
                 //check if this is a unary operator by looking at the token before, if it's an operator or a bracket then this operator is most likely to be unary
                 if (unaryOpsRegex.test(expTokens[i]) && (!expTokens[i - 1] || (opsRegex.test(expTokens[i - 1]) && expTokens[i - 1] !== '.') || separatorRegex.test(expTokens[i - 1]))) {
-                    postfixedTokens.push(unarySymbol);
+                    postfixedTokens.push(globalSymbol);
                     stackOp(expTokens[i]);
                     continue;
                 }
@@ -1385,6 +1667,7 @@ class VoidWrapper extends Wrapper_1.Wrapper {
     }
     setValue(value) {
         super.setValue(value);
+        this.type = "void";
     }
 }
 exports.VoidWrapper = VoidWrapper;
@@ -1397,6 +1680,7 @@ const VoidWrapper_1 = require("./VoidWrapper");
 class WaitWrapper extends VoidWrapper_1.VoidWrapper {
     constructor(command) {
         super();
+        this.type = "wait";
         this.command = command;
     }
 }
@@ -1409,6 +1693,7 @@ exports.Wrapper = void 0;
 class Wrapper {
     constructor(value) {
         this.value = null;
+        this.type = "wrapper";
         this.setValue(value);
     }
     log() {
@@ -1878,6 +2163,7 @@ class PlayerUnit extends Entity_1.Entity {
                 (_a = this.terminal.currentCommand) === null || _a === void 0 ? void 0 : _a.Execute();
             }
             catch (err) {
+                throw err;
                 console.log('Runtime ' + err);
                 this.terminal.stop();
             }

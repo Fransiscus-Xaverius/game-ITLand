@@ -54,6 +54,7 @@ export class PlayerWrapper extends Wrapper{
 
     constructor(value:PlayerUnit){
         super(value);
+        this.type ="playerUnit"
     }
 
     public processExpression(trigger:string, args:Wrapper[]):Wrapper{

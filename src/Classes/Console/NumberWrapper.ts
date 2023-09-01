@@ -128,6 +128,7 @@ export class NumberWrapper extends Wrapper{
 
     constructor(value:number){
         super(value);
+        this.type="number"
     }
 
     public processExpression(trigger: string, args: Wrapper[]): Wrapper {

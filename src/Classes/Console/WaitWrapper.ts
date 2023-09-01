@@ -8,6 +8,7 @@ export class WaitWrapper extends VoidWrapper{
 
     constructor(command:string){
         super()
+        this.type = "wait"
         this.command = command;
     }
 }

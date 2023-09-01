@@ -77,7 +77,6 @@ export class CanvasView{
         }
 
         window.onresize = (evt) => {
-            console.log('resized')
             const target = this.canvas as HTMLCanvasElement
             if(!target) return
             canvas.width = canvas.clientWidth

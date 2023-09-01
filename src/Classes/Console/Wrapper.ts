@@ -2,6 +2,7 @@ import { ExpressionHandler } from "./ExpressionHandler"
 
 export abstract class Wrapper {
     private value:any = null
+    public type:string = "wrapper"
     static processes:ExpressionHandler[] = []
 
     constructor(value:any){

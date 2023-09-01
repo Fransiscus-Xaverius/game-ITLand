@@ -12,5 +12,6 @@ export class VoidWrapper extends Wrapper{
 
     public setValue(value:null){
         super.setValue(value);
+        this.type = "void"
     }
 }

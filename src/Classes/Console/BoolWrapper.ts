@@ -59,6 +59,7 @@ export class BoolWrapper extends Wrapper{
     ]
     constructor(value:boolean){
         super(value);
+        this.type = "boolean"
     }
 
     public processExpression(trigger: string, args: Wrapper[]): Wrapper {
