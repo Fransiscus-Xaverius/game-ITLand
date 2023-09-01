@@ -1060,9 +1060,10 @@ class Terminal {
                             }
                             else {
                                 while (bracketCounter > 0) {
+                                    i++;
                                     if (i >= codeTokens.length)
                                         throw Error('there is an open curly bracket, missing }');
-                                    switch (codeTokens[++i]) {
+                                    switch (codeTokens[i]) {
                                         case '{':
                                             bracketCounter++;
                                             break;
@@ -1165,7 +1166,8 @@ class Terminal {
                             }
                         }
                         // if false
-                        if (codeTokens[++i] === 'else') {
+                        if (codeTokens[i + 1] === 'else') {
+                            i++;
                             if (codeTokens[++i] !== '{') {
                                 const commandTokens = [codeTokens[i]];
                                 while (codeTokens[++i] !== ';') {
@@ -1341,7 +1343,7 @@ class Terminal {
                             const commandTokens = [codeTokens[i]];
                             while (codeTokens[++i] !== ';') {
                                 if (i >= codeTokens.length)
-                                    throw Error('missing curly braces, if ex. if(true){moveRight();}');
+                                    throw Error('missing semicolon , if ex. if(true)moveRight();');
                                 commandTokens.push(codeTokens[i]);
                             }
                             const compiledCommand = this.compileSingleCommand(this, commandTokens);
@@ -1588,7 +1590,6 @@ class Terminal {
             setSelfExpression(newParent, postfixedTokens[i]);
             expressionParentStack.push(newParent);
         }
-        // console.log(expressionParentStack.length)
         return expressionParentStack[0];
         function setSelfExpression(expression, value) {
             try {
@@ -2163,7 +2164,6 @@ class PlayerUnit extends Entity_1.Entity {
                 (_a = this.terminal.currentCommand) === null || _a === void 0 ? void 0 : _a.Execute();
             }
             catch (err) {
-                throw err;
                 console.log('Runtime ' + err);
                 this.terminal.stop();
             }
@@ -2431,6 +2431,7 @@ class TerminalView {
                 this.terminal.execute();
             }
             catch (err) {
+                throw err;
                 console.log('Compile Time ' + err);
             }
         };

@@ -53,7 +53,6 @@ export class PlayerUnit extends Entity{
                 this.terminal.currentCommand?.Execute()
             }
             catch(err){
-                throw err;
                 console.log('Runtime ' + err)
                 this.terminal.stop()
             }

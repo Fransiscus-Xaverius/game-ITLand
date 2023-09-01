@@ -50,6 +50,7 @@ export class TerminalView{
                 this.terminal.execute()
             }
             catch(err){
+                throw err;
                 console.log('Compile Time ' + err)
             }
         }

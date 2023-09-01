@@ -214,6 +214,7 @@ export class Terminal{
         for (let i = 0; i < codeTokens.length; i++) {
             switch(codeTokens[i]){
                 case "if" : {
+                    
                     if(codeTokens[++i] !== '(') throw Error('if syntax error, correct syntax ex. : if(a == "test"){ moveUp(); }')
                     const conditionTokens:string[] = [];
                     var bracketCounter = 1
@@ -236,6 +237,7 @@ export class Terminal{
                         }
                     }
 
+
                     var condition:Expression|Wrapper|string;
                     if(conditionTokens.length == 1){
                         try{
@@ -248,6 +250,7 @@ export class Terminal{
                     else{
                         condition = this.compileExpression(conditionTokens)
                     }
+                    
 
                     var temp = new BranchCommand(this, condition)
                     setNextCommand(temp);
@@ -276,8 +279,9 @@ export class Terminal{
                         else{
 
                             while(bracketCounter > 0){
+                                i++
                                 if(i >= codeTokens.length) throw Error('there is an open curly bracket, missing }')
-                                switch(codeTokens[++i]){
+                                switch(codeTokens[i]){
                                     case '{':
                                         bracketCounter++;
                                         break;
@@ -322,6 +326,7 @@ export class Terminal{
                                 conditionTokens.push(codeTokens[i])
                             }
                         }
+
 
                         var condition:Expression|Wrapper|string;
                         if(conditionTokens.length == 1){
@@ -389,7 +394,8 @@ export class Terminal{
                     }
 
                     // if false
-                    if(codeTokens[++i] === 'else'){
+                    if(codeTokens[i + 1] === 'else'){
+                        i++;
                         if(codeTokens[++i] !== '{') {
                             const commandTokens:string[] = [codeTokens[i]];
                             while(codeTokens[++i] !== ';'){
@@ -566,7 +572,7 @@ export class Terminal{
                     if(codeTokens[++i] !== '{') {
                         const commandTokens:string[] = [codeTokens[i]];
                         while(codeTokens[++i] !== ';'){
-                            if(i >= codeTokens.length) throw Error('missing curly braces, if ex. if(true){moveRight();}')
+                            if(i >= codeTokens.length) throw Error('missing semicolon , if ex. if(true)moveRight();')
                             commandTokens.push(codeTokens[i])
                         }
 
@@ -619,7 +625,7 @@ export class Terminal{
                         commandTokens.push(codeTokens[i])
                         if(i > codeTokens.length) throw Error('missing ;')
                     }while(codeTokens[++i] !== ';');
-
+                    
                     const compiledCommand = this.compileSingleCommand(this, commandTokens)
                     setNextCommand(compiledCommand)
                     placeholderCommands = [compiledCommand]
@@ -666,6 +672,7 @@ export class Terminal{
     }
 
     private compileExpression(expTokens:string[]):Expression{
+        
         const globalSymbol:string = '@g'
         const postfixedTokens:string[] = []
         const postfixOps:string[]  = []
@@ -830,7 +837,6 @@ export class Terminal{
             expressionParentStack.push(newParent)
         }
 
-        // console.log(expressionParentStack.length)
         return expressionParentStack[0];
 
         
