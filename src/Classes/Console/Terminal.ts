@@ -9,18 +9,54 @@ import { NumberWrapper } from "./NumberWrapper";
 import { BoolWrapper } from "./BoolWrapper";
 import { StringWrapper } from "./StringWrapper";
 import { BranchCommand } from "./BranchCommand";
+import { ExpressionHandler } from "./ExpressionHandler";
+import { PlayerUnit } from "../GameObjects/PlayerUnit";
+import { PlayerWrapper } from "./PlayerWrapper";
 
 export class Terminal{
     public content:string = "";
     public running:boolean = false
     public currentCommand:Command|null = null
     private variables:Map<string, Wrapper> = new Map();
+    private player:PlayerWrapper;
+    private globalExpressionHandlers:ExpressionHandler[] = [
+        {
+            trigger:".",
+            arguments:1,
+            process:(self:VoidWrapper, args:Wrapper[])=>{
+                switch(args[0].getValue()){
+                    case 'alert()':
+                        console.log('alert')
+                        return new StringWrapper('alert!');
+                    default:
+                        throw Error("this method / property, '" + args[0].getValue() + "' doesn't exist globally");
+                }
+            }
+        },
+        {
+            trigger:".",
+            arguments:2,
+            process:(self:VoidWrapper, args:Wrapper[])=>{
+                switch(args[0].getValue()){
+                    case 'alert()':
+                        console.log(args[1].getValue())
+                        return args[1];
+                    default:
+                        throw Error("this method, '" + args[0].getValue() + "' doesn't exist globally");
+                }
+            }
+        },
+    ]
+
+    constructor(playerUnit:PlayerUnit){
+        this.player = new PlayerWrapper(playerUnit)
+    }
 
     public static wrap(value:string):Wrapper{
         if(value === 'true' || value === 'false') return new BoolWrapper(value === 'true')
         if(!isNaN(+value)) return new NumberWrapper(+value)
-        if((/^".*"$/ && (value.match(/"/g) || []).length == 2)) return new StringWrapper(value.replace('"', ''))
-        if((/^'.*'$/ && (value.match(/'/g) || []).length == 2)) return new StringWrapper(value.replace("'", ''))
+        if((/^".*"$/ && (value.match(/"/g) || []).length == 2)) return new StringWrapper(value.replace(/"/g, ''))
+        if((/^'.*'$/ && (value.match(/'/g) || []).length == 2)) return new StringWrapper(value.replace(/'/g, ''))
         throw Error(value + " is not a boolean, number, or string")
     }
 
@@ -34,6 +70,7 @@ export class Terminal{
             const char = code[i];
             if(stringBuilder.length > 0){
                 if(stringOp.test(stringBuilder[0])){
+                    if(i == code.length - 1) throw Error('there is an open string, missing "/\' ')
                     stringBuilder += char
                     if(stringBuilder[0] === char) pushStringBuilder()
                     continue;
@@ -114,6 +151,34 @@ export class Terminal{
         this.variables.set(variableName, wrapperValue)
     }
 
+    public processGlobalExpression(trigger:string, args:Wrapper[]):Wrapper{
+        const expHandler = this.globalExpressionHandlers.find(x => {
+            return x.trigger === trigger && x.arguments == args.length
+        })
+
+        if(!expHandler) {
+            try{
+                return this.player.processExpression(trigger,args);
+            }
+            catch(err){
+                throw Error("this method, '" + args[0].getValue() + "' doesn't exist globally");
+            }
+        }
+
+        try{
+            return expHandler.process(new VoidWrapper(), args);
+        }
+        catch(err1){
+            try{
+                return this.player.processExpression(trigger,args);
+            }
+            catch(err2){
+                throw Error("this method, '" + args[0].getValue() + "' doesn't exist globally");
+            }
+        }
+        
+    }
+
     private _compile(codeTokens:string[]):{startCommand:Command, endCommands:Command[]}{
         const startCommand:StartCommand = new StartCommand(this)
         var placeholderCommands:Command[] = [startCommand]
@@ -126,6 +191,7 @@ export class Terminal{
                     var bracketCounter = 1
                     while(bracketCounter > 0){
                         i++;
+                        if(i >= codeTokens.length) throw Error('there is an opened bracket, missing )')
                         switch(codeTokens[i]){
                             case '(':
                                 bracketCounter++;
@@ -162,6 +228,7 @@ export class Terminal{
                     if(codeTokens[++i] !== '{') {
                         const commandTokens:string[] = [codeTokens[i]];
                         while(codeTokens[++i] !== ';'){
+                            if(i >= codeTokens.length) throw Error('missing curly braces, if ex. if(true){moveRight();}')
                             commandTokens.push(codeTokens[i])
                         }
 
@@ -173,44 +240,15 @@ export class Terminal{
                     else{
                         const codeBlockTokens:string[] = [codeTokens[++i]];
                         var bracketCounter = 1;
-                        while(bracketCounter > 0){
-                            switch(codeTokens[++i]){
-                                case '{':
-                                    bracketCounter++;
-                                    break;
-                                case '}':
-                                    bracketCounter--;
-                                    break;
-                                default:
-                                    break;
-                            }
-    
-                            if(bracketCounter > 0){
-                                codeBlockTokens.push(codeTokens[i])
-                            }
-                        }
-                        const compiledBlockCommands = this._compile(codeBlockTokens)
-                        temp.setTrueNextCommand(compiledBlockCommands.startCommand)
-                        placeholderCommands = [...compiledBlockCommands.endCommands]
-                    }
-
-                    // if false
-                    if(codeTokens[++i] === 'else'){
-                        if(codeTokens[++i] !== '{') {
-                            const commandTokens:string[] = [codeTokens[i]];
-                            while(codeTokens[++i] !== ';'){
-                                commandTokens.push(codeTokens[i])
-                            }
-    
-                            const compiledCommand = this.compileSingleCommand(this, commandTokens)
-                            temp.setFalseNextCommand(compiledCommand)
-                            placeholderCommands.push(compiledCommand)
-                            
+                        if(codeTokens[i] === '}'){
+                            const empty = new StartCommand(this)
+                            temp.setTrueNextCommand(empty)
+                            placeholderCommands = [empty]
                         }
                         else{
-                            const codeBlockTokens:string[] = [codeTokens[++i]];
-                            var bracketCounter = 1;
+
                             while(bracketCounter > 0){
+                                if(i >= codeTokens.length) throw Error('there is an open curly bracket, missing }')
                                 switch(codeTokens[++i]){
                                     case '{':
                                         bracketCounter++;
@@ -227,8 +265,56 @@ export class Terminal{
                                 }
                             }
                             const compiledBlockCommands = this._compile(codeBlockTokens)
-                            temp.setFalseNextCommand(compiledBlockCommands.startCommand)
-                            placeholderCommands = [...placeholderCommands, ...compiledBlockCommands.endCommands]
+                            temp.setTrueNextCommand(compiledBlockCommands.startCommand)
+                            placeholderCommands = [...compiledBlockCommands.endCommands]
+
+                        }
+                    }
+
+                    // if false
+                    if(codeTokens[++i] === 'else'){
+                        if(codeTokens[++i] !== '{') {
+                            const commandTokens:string[] = [codeTokens[i]];
+                            while(codeTokens[++i] !== ';'){
+                                if(i >= codeTokens.length) throw Error('missing curly braces, if ex. if(true){moveRight();}')
+                                commandTokens.push(codeTokens[i])
+                            }
+    
+                            const compiledCommand = this.compileSingleCommand(this, commandTokens)
+                            temp.setFalseNextCommand(compiledCommand)
+                            placeholderCommands.push(compiledCommand)
+                            
+                        }
+                        else{
+                            const codeBlockTokens:string[] = [codeTokens[++i]];
+                            var bracketCounter = 1;
+                            if(codeTokens[i] === '}'){
+                                const empty = new StartCommand(this)
+                                temp.setFalseNextCommand(empty)
+                                placeholderCommands = [empty]
+                            }
+                            else{
+                                while(bracketCounter > 0){
+                                    if(i >= codeTokens.length) throw Error('there is an open curly bracket, missing }')
+                                    switch(codeTokens[++i]){
+                                        case '{':
+                                            bracketCounter++;
+                                            break;
+                                        case '}':
+                                            bracketCounter--;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+            
+                                    if(bracketCounter > 0){
+                                        codeBlockTokens.push(codeTokens[i])
+                                    }
+                                }
+                                const compiledBlockCommands = this._compile(codeBlockTokens)
+                                temp.setFalseNextCommand(compiledBlockCommands.startCommand)
+                                placeholderCommands = [...placeholderCommands, ...compiledBlockCommands.endCommands]
+                            }
                         }
                     }
                     else{
@@ -243,6 +329,7 @@ export class Terminal{
 
                 } break;
                 default : {
+                    if(codeTokens[i] === ';') continue
                     const commandTokens:string[] = [];
                     do{
                         commandTokens.push(codeTokens[i])
@@ -253,7 +340,6 @@ export class Terminal{
                     setNextCommand(compiledCommand)
                     placeholderCommands = [compiledCommand]
 
-                    console.log(compiledCommand)
                 } break;
             }
         }
@@ -268,6 +354,7 @@ export class Terminal{
         
         function setNextCommand(command:Command){
             placeholderCommands.forEach(x => {
+                if(x instanceof StartCommand) x.setNextCommand(command)
                 if(x instanceof SingleCommand) x.setNextCommand(command)
                 if(x instanceof BranchCommand) x.setFalseNextCommand(command)
             })
@@ -276,7 +363,7 @@ export class Terminal{
 
     private compileSingleCommand(terminal:Terminal, commandTokens:string[]):SingleCommand{
         const assignment = commandTokens.includes('=')
-        var variable:string|undefined = undefined;
+        var variable:string = "";
         var expression:Expression;
 
         if(assignment && commandTokens.indexOf('=') != 1) throw Error('invalid assignment syntax, valid ex. a = 3')
@@ -315,7 +402,6 @@ export class Terminal{
 
         // postfixify
         for (let i = 0; i < expTokens.length; i++) {
-            console.log(postfixOps)
             if(opsRegex.test(expTokens[i])){
 
                 //check if this is a unary operator by looking at the token before, if it's an operator or a bracket then this operator is most likely to be unary
@@ -333,9 +419,6 @@ export class Terminal{
                     pushOp()
                 }
                 stackOp(expTokens[i])
-
-
-
                 continue;
             }
 
@@ -383,7 +466,6 @@ export class Terminal{
         }
 
 
-        console.log(postfixedTokens.join(''))
 
         // convert postfix string into expression tree
         var root:Expression = new Expression(this)
@@ -418,7 +500,7 @@ export class Terminal{
                     const parent = peek(expressionParentStack)
                     if(/^\..+/.test(postfixedTokens[i])){
                         parent.setTrigger('.')
-                        parent.addArg(postfixedTokens[i].substring(1))
+                        parent.addArg(new StringWrapper(postfixedTokens[i].substring(1)))
                     }
                     else{
                         throw Error('there is not supposed to be any operator that accepts 0 parameters other than methods')
@@ -439,7 +521,7 @@ export class Terminal{
 
                 if(/^\..+/.test(postfixedTokens[i])){
                     parent.setTrigger('.')
-                    parent.setArgs([ postfixedTokens[i].substring(1), ...(parent.getArgs() ?? []) ])
+                    parent.setArgs([ new StringWrapper(postfixedTokens[i].substring(1)), ...(parent.getArgs() ?? []) ])
                 }
                 else{
                     parent.setTrigger(postfixedTokens[i])
@@ -449,27 +531,23 @@ export class Terminal{
             }
 
             // if the code reaches this part then the current token is most likely a variable or an argument
-            if(postfixedTokens[i-1] === '('){
-                const newParent = new Expression(this)
-                setSelfExpression(newParent, postfixedTokens[i])
-                expressionParentStack.push(newParent)
-                continue
-            }
 
-            // if the code reaches this part then this part is where the next argument starts
-            const lastParameter = expressionParentStack.pop()
-            if(!lastParameter) throw Error('lastParameter undefined, something is wrong here')
-            const first = lastParameter.getFirst()
-            if(first == null) throw Error('lastParameter first is not supposed to be null but it is, something is wrong here')
-            const parent = peek(expressionParentStack)
-            parent.addArg(lastParameter.isSelfExpression() ? first: lastParameter)
+            if(postfixedTokens[i-1] !== '('){
+                // if the code reaches this part then this part is where the next argument starts
+                const lastParameter = expressionParentStack.pop()
+                if(!lastParameter) throw Error('lastParameter undefined, something is wrong here')
+                const first = lastParameter.getFirst()
+                if(first == null) throw Error('lastParameter first is not supposed to be null but it is, something is wrong here')
+                const parent = peek(expressionParentStack)
+                parent.addArg(lastParameter.isSelfExpression() ? first: lastParameter)
+            }
 
             const newParent = new Expression(this)
             setSelfExpression(newParent, postfixedTokens[i])
             expressionParentStack.push(newParent)
         }
 
-        console.log(expressionParentStack.length)
+        // console.log(expressionParentStack.length)
         return expressionParentStack[0];
 
         
@@ -494,8 +572,8 @@ export class Terminal{
             if(/^\./.test(op)) return true;
             if(/^\./.test(prevOp)) return false;
             for (let i = 0; i < priority.length; i++) {
-                if(priority[i].includes(op)) return true
                 if(priority[i].includes(prevOp)) return false
+                if(priority[i].includes(op)) return true
             }
             return true;
         }
@@ -515,13 +593,20 @@ export class Terminal{
 
 
     public compile():void{
-        this.currentCommand = this._compile(Terminal.tokenize(this.content)).startCommand
-        
+        const compiled = this._compile(Terminal.tokenize(this.content))
+        compiled.endCommands.forEach(x => {
+            if(x instanceof StartCommand) x.setNextCommand(new EndCommand(this))
+            if(x instanceof SingleCommand) x.setNextCommand(new EndCommand(this))
+            if(x instanceof BranchCommand) x.setFalseNextCommand(new EndCommand(this))
+        })
+        this.variables = new Map()
+        this.currentCommand = new StartCommand(this, compiled.startCommand)
+
+        console.log(this.currentCommand)
     }
 
     public execute():void{
         this.running = true
-        alert(Terminal.tokenize(this.content))
     }
 
     public stop():void{

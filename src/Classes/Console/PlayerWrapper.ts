@@ -27,7 +27,25 @@ export class PlayerWrapper extends Wrapper{
                     case 'moveRight()':
                         return new WaitWrapper('move right 1');
                     default:
-                        throw Error('something is wrong with what you wrote');
+                        throw Error("this method / property, '" + args[0].getValue() + "' doesn't exist in a player unit");
+                }
+            }
+        },
+        {
+            trigger:".",
+            arguments:2,
+            process:(self:PlayerWrapper, args:Wrapper[])=>{
+                switch(args[0]?.getValue()){
+                    case 'moveUp()':
+                        return new WaitWrapper('move up ' + args[1].getValue());
+                    case 'moveDown()':
+                        return new WaitWrapper('move down ' + args[1].getValue());
+                    case 'moveLeft()':
+                        return new WaitWrapper('move left ' + args[1].getValue());
+                    case 'moveRight()':
+                        return new WaitWrapper('move right ' + args[1].getValue());
+                    default:
+                        throw Error("this method / property, '" + args[0].getValue() + "' doesn't exist in a player unit");
                 }
             }
         },

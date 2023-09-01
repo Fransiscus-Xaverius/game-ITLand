@@ -50,16 +50,23 @@ export class Expression{
     public getResult(): Wrapper {
         if(this.first == null) throw Error('something went wrong with the expression, the first is null')
 
-        const first = this.first instanceof Wrapper ? 
-            this.first : 
-            this.first instanceof Expression ? 
-                this.first.getResult() : 
-                this.terminal.getVariable(this.first)
-        ;
-
-        if(this.trigger == null && this.args == null){
-            return first;
-        } 
+        var first;
+        try{
+            first = this.first instanceof Wrapper ? 
+                this.first : 
+                this.first instanceof Expression ? 
+                    this.first.getResult() : 
+                    this.terminal.getVariable(this.first)
+            ;
+    
+            if(this.trigger == null && this.args == null){
+                return first;
+            } 
+        }
+        catch(err){
+            if(this.first !== '@g') throw err;
+            // console.log('error passed');
+        }
 
         if(this.args == null || this.trigger == null) throw Error('something went wrong with the expression, the args or the trigger is null')
         if(this.first instanceof VoidWrapper) throw Error('there is something wrong with your code, this.first returns void')
@@ -77,7 +84,19 @@ export class Expression{
             if(args[index] instanceof VoidWrapper) throw Error('there is something wrong with your code')
         }
 
-        return first.processExpression(this.trigger, args)
+        // accessing global function
+        if(this.first === '@g'){
+            return this.terminal.processGlobalExpression(this.trigger, args);
+            // const argCount = args.length
+            // const expHandler = this.terminal.globalExpressionHandlers.find(x => {
+            //     return x.trigger === this.trigger && x.arguments == argCount
+            // })
+
+            // if(!expHandler) throw Error('something is wrong with what you wrote')
+            // return expHandler.process(new VoidWrapper(), args);
+        }
+
+        return first!.processExpression(this.trigger, args)
     }
     
 } 

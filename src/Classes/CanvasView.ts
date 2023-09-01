@@ -14,7 +14,8 @@ export class CanvasView{
     private maxCanvasSize:number = 1
     private defaultTilesPerCanvas:number = 10
     private renderRadius:number = 6
-    private middleMousePressed:boolean = false
+    private moveMouseTriggerPressed:boolean = false
+    private cameraMoved:boolean = false
     private cameraPosition:Point = {x:0, y:0}
 
     public onClick?: (gridCoordinate:Point)=>void;
@@ -45,25 +46,31 @@ export class CanvasView{
         }
 
         this.canvas.onmousedown = (evt) => {
-            if(evt.button == 1) {
-                this.middleMousePressed = true
+            if(evt.button == 0) {
+                this.moveMouseTriggerPressed = true
                 evt.preventDefault();
                 return false;
             }
         }
 
         this.canvas.onmouseup = (evt) => {
-            if(evt.button == 1) {
-                this.middleMousePressed = false
+            
+            if(evt.button == 0) {
+                if(!this.cameraMoved)console.log('click!')
+
+                this.cameraMoved = false
+                this.moveMouseTriggerPressed = false
             }
         }
 
         this.canvas.onmouseleave = (evt) => {
-            this.middleMousePressed = false
+            this.cameraMoved = false
+            this.moveMouseTriggerPressed = false
         }
 
         this.canvas.onmousemove = (evt) => {
-            if(this.middleMousePressed) {
+            if(this.moveMouseTriggerPressed) {
+                this.cameraMoved = true
                 this.cameraPosition.x -= (evt.movementX) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
                 this.cameraPosition.y -= (evt.movementY) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
             }

@@ -22,7 +22,7 @@ export class TerminalView{
         const inputListener = (evt:Event) => {
             if(!this.terminal)return
             const target = evt.target as HTMLTextAreaElement
-            console.log(target)
+            // console.log(target)
             this.terminal.content = target.value
         }
         
@@ -44,8 +44,14 @@ export class TerminalView{
     public setExecuteButton(value:HTMLButtonElement|null):void{
         const executeClickListener = (evt:MouseEvent) => {
             if(!this.terminal) return
-            this.terminal.compile()
-            this.terminal.execute()
+            try{
+
+                this.terminal.compile()
+                this.terminal.execute()
+            }
+            catch(err){
+                console.log('Compile Time ' + err)
+            }
         }
         if(this.executeButton) this.executeButton.removeEventListener('click', executeClickListener)
         value?.addEventListener('click', executeClickListener)

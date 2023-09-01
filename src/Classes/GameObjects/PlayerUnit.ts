@@ -12,12 +12,16 @@ export class PlayerUnit extends Entity{
     private isMoving:boolean = false
     private moveSpeed:number = 1
     private lerpProgress:number = 0
-    public terminal:Terminal = new Terminal()
+    private moveProgress:number = 0
+    private moveIteration:number = 0
+    private direction:Direction = Direction.None;
+    public terminal:Terminal;
     public inventory:Inventory = new Inventory()
     public equipped:IEquippable|null = null
 
     constructor(coordinate:Point, moveSpeed:number = 1, animations:Animation[]=[]){
-        super(coordinate, animations);
+        super(coordinate, animations)
+        this.terminal = new Terminal(this)
         this.originalCoordinate = {...this.coordinate}
         this.setMoveSpeed(moveSpeed)
     }
@@ -44,45 +48,71 @@ export class PlayerUnit extends Entity{
     }
 
     public update(deltaTime: number): void {
-        if(this.terminal.running) this.terminal.currentCommand?.Execute()
+        if(this.terminal.running) {
+            try{
+                this.terminal.currentCommand?.Execute()
+            }
+            catch(err){
+                console.log('Runtime ' + err)
+                this.terminal.stop()
+            }
+        }
         var currentCommand = this.terminal.currentCommand
         
         if(currentCommand instanceof SingleCommand){
             const asyncTask = currentCommand.getAsyncTask()
-            if(asyncTask){
+            if(asyncTask && this.terminal.running){
                 const taskDetail = asyncTask.split(' ')
                 if(taskDetail[0] === 'move'){
-                    var direction = Direction.None;
                     switch(taskDetail[1]){
                         case 'up':
-                            direction = Direction.Up;
+                            this.direction = Direction.Up;
                             break;
                         case 'down':
-                            direction = Direction.Down;
+                            this.direction = Direction.Down;
                             break;
                         case 'left':
-                            direction = Direction.Left;
+                            this.direction = Direction.Left;
                             break;
                         case 'right':
-                            direction = Direction.Right;
+                            this.direction = Direction.Right;
                             break;
                         default:
-                            direction = Direction.None;
+                            this.direction = Direction.None;
                             break;
                     }
-                    if(!this.isMoving)this.move(direction)
+                    this.moveIteration = Number.parseInt(taskDetail[2])
+                    if(!this.isMoving)this.move(this.direction)
                 }
             }
-            if(!this.isMoving) 
-            this.lerpProgress += deltaTime * this.moveSpeed
+            if(this.isMoving)  this.lerpProgress += deltaTime * this.moveSpeed
             if(this.lerpProgress >= 1){
+                this.moveProgress += 1;
                 this.lerpProgress = 0;
                 this.originalCoordinate = this.coordinate;
+                this.isMoving = false
+                if(this.moveProgress < this.moveIteration) {
+                    if(!this.terminal.running){
+                        this.moveProgress  = 0
+                        this.moveIteration = 0
+                        this.playAnimation('idle')
+                        return
+                    }
+                    this.move(this.direction)
+                    return
+                }
+                this.moveProgress  = 0
+                this.moveIteration = 0
                 currentCommand = currentCommand.jumpNextCommand()
-                currentCommand.Execute()
+                try{
+                    currentCommand.Execute()
+                }
+                catch(err){
+                    console.log('Runtime ' + err)
+                    this.terminal.stop()
+                }
                 if(!(currentCommand instanceof SingleCommand) || !(currentCommand.getAsyncTask()?.startsWith('move '))){
                     this.playAnimation('idle')
-                    this.isMoving = false;
                 }
             }
         }

@@ -70,7 +70,6 @@ export class Grid{
     }
 
     public addEntity(entity:Entity):void{
-        console.log("add");
         const index = this.entities.indexOf(entity)
         if(index != -1) {
             if(entity.getGrid() != this) entity.setGrid(this)

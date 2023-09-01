@@ -24,6 +24,7 @@ export class BranchCommand extends Command{
     }
 
     public Execute(): void {
+        if(!this.terminal.running) return;
         if(!this.trueNextCommand || !this.falseNextCommand)throw new Error("true and false nextCommands needs to be instantiated");
         const condition = this.condition instanceof Wrapper ? 
             this.condition : 

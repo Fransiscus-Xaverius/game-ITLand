@@ -8,7 +8,7 @@ export class Shop {
 
         if (shopHTML) {
             shopHTML.innerHTML = ""
-            console.log(shopHTML)
+            // console.log(shopHTML)
             let shopTemp: HTMLDivElement | null = document.createElement('div');
             shopTemp.className = "shop"
             for (let i = 0; i < this.item.length; i++) {
@@ -17,7 +17,7 @@ export class Shop {
                 shopTemp.appendChild(shop1);
             }
             shopHTML.appendChild(shopTemp)
-            console.log(shopTemp)
+            // console.log(shopTemp)
         }
     }
 }

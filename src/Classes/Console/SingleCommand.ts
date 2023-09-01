@@ -7,15 +7,16 @@ import { WaitWrapper } from "./WaitWrapper";
 export class SingleCommand extends Command{
     private nextCommand:Command|null
     private expression:Expression
-    private variableToSet?:string
+    private variableToSet:string = ""
 
     private asyncTask:string|null
 
-    constructor(terminal:Terminal, expression:Expression, nextCommand:Command|null, variableToSet?:string){
+    constructor(terminal:Terminal, expression:Expression, nextCommand:Command|null, variableToSet:string){
         super(terminal)
         this.nextCommand = nextCommand
         this.expression = expression
         this.asyncTask = null
+        this.variableToSet = variableToSet
     }
 
     public setNextCommand(value:Command):void{
@@ -37,7 +38,7 @@ export class SingleCommand extends Command{
     }
 
     public Execute(): void {
-        if(!this.isSynced()) return;
+        if(!this.isSynced() || !this.terminal.running) return;
         const result = this.expression.getResult()
         if(this.variableToSet){
             if(result instanceof VoidWrapper) throw Error("you can't put nothing in variable " + this.variableToSet)

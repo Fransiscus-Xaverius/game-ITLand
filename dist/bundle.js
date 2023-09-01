@@ -14,7 +14,8 @@ class CanvasView {
         this.maxCanvasSize = 1;
         this.defaultTilesPerCanvas = 10;
         this.renderRadius = 6;
-        this.middleMousePressed = false;
+        this.moveMouseTriggerPressed = false;
+        this.cameraMoved = false;
         this.cameraPosition = { x: 0, y: 0 };
         this.setCanvas(canvas);
     }
@@ -39,22 +40,27 @@ class CanvasView {
             this.setCanvasScale(this.canvasScale * (1 - (evt.deltaY * 0.001)));
         };
         this.canvas.onmousedown = (evt) => {
-            if (evt.button == 1) {
-                this.middleMousePressed = true;
+            if (evt.button == 0) {
+                this.moveMouseTriggerPressed = true;
                 evt.preventDefault();
                 return false;
             }
         };
         this.canvas.onmouseup = (evt) => {
-            if (evt.button == 1) {
-                this.middleMousePressed = false;
+            if (evt.button == 0) {
+                if (!this.cameraMoved)
+                    console.log('click!');
+                this.cameraMoved = false;
+                this.moveMouseTriggerPressed = false;
             }
         };
         this.canvas.onmouseleave = (evt) => {
-            this.middleMousePressed = false;
+            this.cameraMoved = false;
+            this.moveMouseTriggerPressed = false;
         };
         this.canvas.onmousemove = (evt) => {
-            if (this.middleMousePressed) {
+            if (this.moveMouseTriggerPressed) {
+                this.cameraMoved = true;
                 this.cameraPosition.x -= (evt.movementX) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize);
                 this.cameraPosition.y -= (evt.movementY) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize);
             }
@@ -150,7 +156,7 @@ class CanvasView {
 }
 exports.CanvasView = CanvasView;
 
-},{"./GameObjects/PlayerUnit":24,"./GameObjects/Tile":25}],2:[function(require,module,exports){
+},{"./GameObjects/PlayerUnit":25,"./GameObjects/Tile":26}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BoolWrapper = void 0;
@@ -161,11 +167,11 @@ class BoolWrapper extends Wrapper_1.Wrapper {
     }
     processExpression(trigger, args) {
         const argCount = args.length;
-        const expHandler = Wrapper_1.Wrapper.processes.find(x => {
+        const expHandler = BoolWrapper.processes.find(x => {
             return x.trigger === trigger && x.arguments == argCount;
         });
         if (!expHandler)
-            throw Error('something is wrong with what you wrote');
+            throw Error("this operator, '" + trigger + "' doesn't exist for boolean");
         return expHandler.process(this, args);
     }
     getValue() {
@@ -176,8 +182,68 @@ class BoolWrapper extends Wrapper_1.Wrapper {
     }
 }
 exports.BoolWrapper = BoolWrapper;
+BoolWrapper.processes = [
+    {
+        trigger: "",
+        arguments: 0,
+        process: (self, args) => {
+            return self;
+        }
+    },
+    {
+        trigger: ".",
+        arguments: 1,
+        process: (self, args) => {
+            var _a;
+            switch ((_a = args[0]) === null || _a === void 0 ? void 0 : _a.getValue()) {
+                default:
+                    throw Error("this method / property, '" + args[0].getValue() + "' doesn't exist in a boolean");
+            }
+        }
+    },
+    {
+        trigger: "==",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof BoolWrapper)
+                return new BoolWrapper(self.getValue() == arg.getValue());
+            return new BoolWrapper(false);
+        }
+    },
+    {
+        trigger: "!=",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof BoolWrapper)
+                return new BoolWrapper(self.getValue() != arg.getValue());
+            return new BoolWrapper(true);
+        }
+    },
+    {
+        trigger: "&&",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof BoolWrapper)
+                return new BoolWrapper(self.getValue() && arg.getValue());
+            throw new Error("you can't compare " + self.getValue() + " with " + arg.getValue() + " because " + arg.getValue() + " is not a boolean");
+        }
+    },
+    {
+        trigger: "||",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof BoolWrapper)
+                return new BoolWrapper(self.getValue() || arg.getValue());
+            throw new Error("you can't compare " + self.getValue() + " with " + arg.getValue() + " because " + arg.getValue() + " is not a boolean");
+        }
+    },
+];
 
-},{"./Wrapper":14}],3:[function(require,module,exports){
+},{"./Wrapper":15}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BranchCommand = void 0;
@@ -198,6 +264,8 @@ class BranchCommand extends Command_1.Command {
         this.falseNextCommand = value;
     }
     Execute() {
+        if (!this.terminal.running)
+            return;
         if (!this.trueNextCommand || !this.falseNextCommand)
             throw new Error("true and false nextCommands needs to be instantiated");
         const condition = this.condition instanceof Wrapper_1.Wrapper ?
@@ -212,7 +280,7 @@ class BranchCommand extends Command_1.Command {
 }
 exports.BranchCommand = BranchCommand;
 
-},{"./Command":4,"./Expression":6,"./Wrapper":14}],4:[function(require,module,exports){
+},{"./Command":4,"./Expression":6,"./Wrapper":15}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Command = void 0;
@@ -276,13 +344,21 @@ class Expression {
     getResult() {
         if (this.first == null)
             throw Error('something went wrong with the expression, the first is null');
-        const first = this.first instanceof Wrapper_1.Wrapper ?
-            this.first :
-            this.first instanceof Expression ?
-                this.first.getResult() :
-                this.terminal.getVariable(this.first);
-        if (this.trigger == null && this.args == null) {
-            return first;
+        var first;
+        try {
+            first = this.first instanceof Wrapper_1.Wrapper ?
+                this.first :
+                this.first instanceof Expression ?
+                    this.first.getResult() :
+                    this.terminal.getVariable(this.first);
+            if (this.trigger == null && this.args == null) {
+                return first;
+            }
+        }
+        catch (err) {
+            if (this.first !== '@g')
+                throw err;
+            // console.log('error passed');
         }
         if (this.args == null || this.trigger == null)
             throw Error('something went wrong with the expression, the args or the trigger is null');
@@ -299,15 +375,27 @@ class Expression {
             if (args[index] instanceof VoidWrapper_1.VoidWrapper)
                 throw Error('there is something wrong with your code');
         }
+        // accessing global function
+        if (this.first === '@g') {
+            return this.terminal.processGlobalExpression(this.trigger, args);
+            // const argCount = args.length
+            // const expHandler = this.terminal.globalExpressionHandlers.find(x => {
+            //     return x.trigger === this.trigger && x.arguments == argCount
+            // })
+            // if(!expHandler) throw Error('something is wrong with what you wrote')
+            // return expHandler.process(new VoidWrapper(), args);
+        }
         return first.processExpression(this.trigger, args);
     }
 }
 exports.Expression = Expression;
 
-},{"./VoidWrapper":12,"./Wrapper":14}],7:[function(require,module,exports){
+},{"./VoidWrapper":13,"./Wrapper":15}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NumberWrapper = void 0;
+const BoolWrapper_1 = require("./BoolWrapper");
+const StringWrapper_1 = require("./StringWrapper");
 const Wrapper_1 = require("./Wrapper");
 class NumberWrapper extends Wrapper_1.Wrapper {
     constructor(value) {
@@ -315,7 +403,168 @@ class NumberWrapper extends Wrapper_1.Wrapper {
     }
     processExpression(trigger, args) {
         const argCount = args.length;
-        const expHandler = Wrapper_1.Wrapper.processes.find(x => {
+        const expHandler = NumberWrapper.processes.find(x => {
+            return x.trigger === trigger && x.arguments == argCount;
+        });
+        if (!expHandler)
+            throw Error("this operator, '" + trigger + "' doesn't exist for number");
+        return expHandler.process(this, args);
+    }
+    getValue() {
+        return super.getValue();
+    }
+    setValue(value) {
+        super.setValue(value);
+    }
+}
+exports.NumberWrapper = NumberWrapper;
+NumberWrapper.processes = [
+    {
+        trigger: "",
+        arguments: 0,
+        process: (self, args) => {
+            return self;
+        }
+    },
+    {
+        trigger: ".",
+        arguments: 1,
+        process: (self, args) => {
+            switch (args[0].getValue()) {
+                case 'toString()':
+                    return new StringWrapper_1.StringWrapper(self.getValue().toString());
+                default:
+                    throw Error("this method / property, '" + args[0].getValue() + "' doesn't exist in a number");
+            }
+        }
+    },
+    {
+        trigger: "+",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof StringWrapper_1.StringWrapper)
+                return new StringWrapper_1.StringWrapper(self.getValue() + arg.getValue());
+            if (arg instanceof NumberWrapper)
+                return new NumberWrapper(self.getValue() + arg.getValue());
+            throw new Error("you can't add " + self.getValue() + " and " + arg.getValue());
+        }
+    },
+    {
+        trigger: "-",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof NumberWrapper)
+                return new NumberWrapper(self.getValue() - arg.getValue());
+            throw new Error("you can't subtract " + self.getValue() + " by " + arg.getValue());
+        }
+    },
+    {
+        trigger: "*",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof NumberWrapper)
+                return new NumberWrapper(self.getValue() * arg.getValue());
+            throw new Error("you can't multiply " + self.getValue() + " with " + arg.getValue());
+        }
+    },
+    {
+        trigger: "/",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof NumberWrapper)
+                return new NumberWrapper(self.getValue() / arg.getValue());
+            throw new Error("you can't divide " + self.getValue() + " by " + arg.getValue());
+        }
+    },
+    {
+        trigger: "%",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof NumberWrapper)
+                return new NumberWrapper(self.getValue() % arg.getValue());
+            throw new Error("you can't mod " + self.getValue() + " by " + arg.getValue());
+        }
+    },
+    {
+        trigger: "==",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof NumberWrapper)
+                return new BoolWrapper_1.BoolWrapper(self.getValue() == arg.getValue());
+            return new BoolWrapper_1.BoolWrapper(false);
+        }
+    },
+    {
+        trigger: "!=",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof NumberWrapper)
+                return new BoolWrapper_1.BoolWrapper(self.getValue() != arg.getValue());
+            return new BoolWrapper_1.BoolWrapper(true);
+        }
+    },
+    {
+        trigger: "<=",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof NumberWrapper)
+                return new BoolWrapper_1.BoolWrapper(self.getValue() <= arg.getValue());
+            throw new Error("you can't compare " + self.getValue() + " with " + arg.getValue() + " because " + arg.getValue() + " is a string");
+        }
+    },
+    {
+        trigger: ">=",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof NumberWrapper)
+                return new BoolWrapper_1.BoolWrapper(self.getValue() >= arg.getValue());
+            throw new Error("you can't compare " + self.getValue() + " with " + arg.getValue() + " because " + arg.getValue() + " is a string");
+        }
+    },
+    {
+        trigger: "<",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof NumberWrapper)
+                return new BoolWrapper_1.BoolWrapper(self.getValue() < arg.getValue());
+            throw new Error("you can't compare " + self.getValue() + " with " + arg.getValue() + " because " + arg.getValue() + " is a string");
+        }
+    },
+    {
+        trigger: ">",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof NumberWrapper)
+                return new BoolWrapper_1.BoolWrapper(self.getValue() > arg.getValue());
+            throw new Error("you can't compare " + self.getValue() + " with " + arg.getValue() + " because " + arg.getValue() + " is a string");
+        }
+    },
+];
+
+},{"./BoolWrapper":2,"./StringWrapper":11,"./Wrapper":15}],8:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PlayerWrapper = void 0;
+const WaitWrapper_1 = require("./WaitWrapper");
+const Wrapper_1 = require("./Wrapper");
+class PlayerWrapper extends Wrapper_1.Wrapper {
+    constructor(value) {
+        super(value);
+    }
+    processExpression(trigger, args) {
+        const argCount = args.length;
+        const expHandler = PlayerWrapper.processes.find(x => {
             return x.trigger === trigger && x.arguments == argCount;
         });
         if (!expHandler)
@@ -329,9 +578,56 @@ class NumberWrapper extends Wrapper_1.Wrapper {
         super.setValue(value);
     }
 }
-exports.NumberWrapper = NumberWrapper;
+exports.PlayerWrapper = PlayerWrapper;
+PlayerWrapper.processes = [
+    {
+        trigger: "",
+        arguments: 0,
+        process: (self, args) => {
+            return self;
+        }
+    },
+    {
+        trigger: ".",
+        arguments: 1,
+        process: (self, args) => {
+            var _a;
+            switch ((_a = args[0]) === null || _a === void 0 ? void 0 : _a.getValue()) {
+                case 'moveUp()':
+                    return new WaitWrapper_1.WaitWrapper('move up 1');
+                case 'moveDown()':
+                    return new WaitWrapper_1.WaitWrapper('move down 1');
+                case 'moveLeft()':
+                    return new WaitWrapper_1.WaitWrapper('move left 1');
+                case 'moveRight()':
+                    return new WaitWrapper_1.WaitWrapper('move right 1');
+                default:
+                    throw Error("this method / property, '" + args[0].getValue() + "' doesn't exist in a player unit");
+            }
+        }
+    },
+    {
+        trigger: ".",
+        arguments: 2,
+        process: (self, args) => {
+            var _a;
+            switch ((_a = args[0]) === null || _a === void 0 ? void 0 : _a.getValue()) {
+                case 'moveUp()':
+                    return new WaitWrapper_1.WaitWrapper('move up ' + args[1].getValue());
+                case 'moveDown()':
+                    return new WaitWrapper_1.WaitWrapper('move down ' + args[1].getValue());
+                case 'moveLeft()':
+                    return new WaitWrapper_1.WaitWrapper('move left ' + args[1].getValue());
+                case 'moveRight()':
+                    return new WaitWrapper_1.WaitWrapper('move right ' + args[1].getValue());
+                default:
+                    throw Error("this method / property, '" + args[0].getValue() + "' doesn't exist in a player unit");
+            }
+        }
+    },
+];
 
-},{"./Wrapper":14}],8:[function(require,module,exports){
+},{"./WaitWrapper":14,"./Wrapper":15}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SingleCommand = void 0;
@@ -341,9 +637,11 @@ const WaitWrapper_1 = require("./WaitWrapper");
 class SingleCommand extends Command_1.Command {
     constructor(terminal, expression, nextCommand, variableToSet) {
         super(terminal);
+        this.variableToSet = "";
         this.nextCommand = nextCommand;
         this.expression = expression;
         this.asyncTask = null;
+        this.variableToSet = variableToSet;
     }
     setNextCommand(value) {
         this.nextCommand = value;
@@ -361,7 +659,7 @@ class SingleCommand extends Command_1.Command {
         return this.asyncTask == null;
     }
     Execute() {
-        if (!this.isSynced())
+        if (!this.isSynced() || !this.terminal.running)
             return;
         const result = this.expression.getResult();
         if (this.variableToSet) {
@@ -380,7 +678,7 @@ class SingleCommand extends Command_1.Command {
 }
 exports.SingleCommand = SingleCommand;
 
-},{"./Command":4,"./VoidWrapper":12,"./WaitWrapper":13}],9:[function(require,module,exports){
+},{"./Command":4,"./VoidWrapper":13,"./WaitWrapper":14}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StartCommand = void 0;
@@ -407,22 +705,25 @@ class StartCommand extends Command_1.Command {
 }
 exports.StartCommand = StartCommand;
 
-},{"./Command":4,"./EndCommand":5}],10:[function(require,module,exports){
+},{"./Command":4,"./EndCommand":5}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StringWrapper = void 0;
+const BoolWrapper_1 = require("./BoolWrapper");
+const NumberWrapper_1 = require("./NumberWrapper");
 const Wrapper_1 = require("./Wrapper");
 class StringWrapper extends Wrapper_1.Wrapper {
     constructor(value) {
         super(value);
     }
     processExpression(trigger, args) {
-        if (!trigger)
-            this.log();
-        const handler = StringWrapper.processes.find(x => x.trigger === trigger);
-        if (!handler)
-            throw new Error("There's something wrong with your code");
-        return handler.process(this, args);
+        const argCount = args.length;
+        const expHandler = BoolWrapper_1.BoolWrapper.processes.find(x => {
+            return x.trigger === trigger && x.arguments == argCount;
+        });
+        if (!expHandler)
+            throw Error("this operator, '" + trigger + "' doesn't exist for string");
+        return expHandler.process(this, args);
     }
     getValue() {
         return super.getValue();
@@ -432,27 +733,112 @@ class StringWrapper extends Wrapper_1.Wrapper {
     }
 }
 exports.StringWrapper = StringWrapper;
-StringWrapper.functions = [];
-StringWrapper.procedures = [];
+StringWrapper.processes = [
+    {
+        trigger: "",
+        arguments: 0,
+        process: (self, args) => {
+            return self;
+        }
+    },
+    {
+        trigger: ".",
+        arguments: 1,
+        process: (self, args) => {
+            var _a;
+            switch ((_a = args[0]) === null || _a === void 0 ? void 0 : _a.getValue()) {
+                case 'toNumber()':
+                    const val = +self.getValue();
+                    return new NumberWrapper_1.NumberWrapper(val);
+                default:
+                    throw Error("this method / property, '" + args[0].getValue() + "' doesn't exist in a string");
+            }
+        }
+    },
+    {
+        trigger: "+",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof NumberWrapper_1.NumberWrapper)
+                return new StringWrapper(self.getValue() + arg.getValue());
+            if (arg instanceof StringWrapper)
+                return new StringWrapper(self.getValue() + arg.getValue());
+            throw new Error("you can't add " + self.getValue() + " and " + arg.getValue());
+        }
+    },
+    {
+        trigger: "==",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof StringWrapper)
+                return new BoolWrapper_1.BoolWrapper(self.getValue() == arg.getValue());
+            return new BoolWrapper_1.BoolWrapper(false);
+        }
+    },
+    {
+        trigger: "!=",
+        arguments: 1,
+        process: (self, args) => {
+            const arg = args[0];
+            if (arg instanceof StringWrapper)
+                return new BoolWrapper_1.BoolWrapper(self.getValue() != arg.getValue());
+            return new BoolWrapper_1.BoolWrapper(true);
+        }
+    },
+];
 
-},{"./Wrapper":14}],11:[function(require,module,exports){
+},{"./BoolWrapper":2,"./NumberWrapper":7,"./Wrapper":15}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Terminal = void 0;
+const EndCommand_1 = require("./EndCommand");
 const Expression_1 = require("./Expression");
 const SingleCommand_1 = require("./SingleCommand");
 const StartCommand_1 = require("./StartCommand");
+const VoidWrapper_1 = require("./VoidWrapper");
 const Wrapper_1 = require("./Wrapper");
 const NumberWrapper_1 = require("./NumberWrapper");
 const BoolWrapper_1 = require("./BoolWrapper");
 const StringWrapper_1 = require("./StringWrapper");
 const BranchCommand_1 = require("./BranchCommand");
+const PlayerWrapper_1 = require("./PlayerWrapper");
 class Terminal {
-    constructor() {
+    constructor(playerUnit) {
         this.content = "";
         this.running = false;
         this.currentCommand = null;
         this.variables = new Map();
+        this.globalExpressionHandlers = [
+            {
+                trigger: ".",
+                arguments: 1,
+                process: (self, args) => {
+                    switch (args[0].getValue()) {
+                        case 'alert()':
+                            console.log('alert');
+                            return new StringWrapper_1.StringWrapper('alert!');
+                        default:
+                            throw Error("this method / property, '" + args[0].getValue() + "' doesn't exist globally");
+                    }
+                }
+            },
+            {
+                trigger: ".",
+                arguments: 2,
+                process: (self, args) => {
+                    switch (args[0].getValue()) {
+                        case 'alert()':
+                            console.log(args[1].getValue());
+                            return args[1];
+                        default:
+                            throw Error("this method, '" + args[0].getValue() + "' doesn't exist globally");
+                    }
+                }
+            },
+        ];
+        this.player = new PlayerWrapper_1.PlayerWrapper(playerUnit);
     }
     static wrap(value) {
         if (value === 'true' || value === 'false')
@@ -460,9 +846,9 @@ class Terminal {
         if (!isNaN(+value))
             return new NumberWrapper_1.NumberWrapper(+value);
         if ((/^".*"$/ && (value.match(/"/g) || []).length == 2))
-            return new StringWrapper_1.StringWrapper(value.replace('"', ''));
+            return new StringWrapper_1.StringWrapper(value.replace(/"/g, ''));
         if ((/^'.*'$/ && (value.match(/'/g) || []).length == 2))
-            return new StringWrapper_1.StringWrapper(value.replace("'", ''));
+            return new StringWrapper_1.StringWrapper(value.replace(/'/g, ''));
         throw Error(value + " is not a boolean, number, or string");
     }
     static tokenize(code) {
@@ -475,6 +861,8 @@ class Terminal {
             const char = code[i];
             if (stringBuilder.length > 0) {
                 if (stringOp.test(stringBuilder[0])) {
+                    if (i == code.length - 1)
+                        throw Error('there is an open string, missing "/\' ');
                     stringBuilder += char;
                     if (stringBuilder[0] === char)
                         pushStringBuilder();
@@ -549,6 +937,30 @@ class Terminal {
         }
         this.variables.set(variableName, wrapperValue);
     }
+    processGlobalExpression(trigger, args) {
+        const expHandler = this.globalExpressionHandlers.find(x => {
+            return x.trigger === trigger && x.arguments == args.length;
+        });
+        if (!expHandler) {
+            try {
+                return this.player.processExpression(trigger, args);
+            }
+            catch (err) {
+                throw Error("this method, '" + args[0].getValue() + "' doesn't exist globally");
+            }
+        }
+        try {
+            return expHandler.process(new VoidWrapper_1.VoidWrapper(), args);
+        }
+        catch (err1) {
+            try {
+                return this.player.processExpression(trigger, args);
+            }
+            catch (err2) {
+                throw Error("this method, '" + args[0].getValue() + "' doesn't exist globally");
+            }
+        }
+    }
     _compile(codeTokens) {
         const startCommand = new StartCommand_1.StartCommand(this);
         var placeholderCommands = [startCommand];
@@ -562,6 +974,8 @@ class Terminal {
                         var bracketCounter = 1;
                         while (bracketCounter > 0) {
                             i++;
+                            if (i >= codeTokens.length)
+                                throw Error('there is an opened bracket, missing )');
                             switch (codeTokens[i]) {
                                 case '(':
                                     bracketCounter++;
@@ -594,6 +1008,8 @@ class Terminal {
                         if (codeTokens[++i] !== '{') {
                             const commandTokens = [codeTokens[i]];
                             while (codeTokens[++i] !== ';') {
+                                if (i >= codeTokens.length)
+                                    throw Error('missing curly braces, if ex. if(true){moveRight();}');
                                 commandTokens.push(codeTokens[i]);
                             }
                             const compiledCommand = this.compileSingleCommand(this, commandTokens);
@@ -603,40 +1019,15 @@ class Terminal {
                         else {
                             const codeBlockTokens = [codeTokens[++i]];
                             var bracketCounter = 1;
-                            while (bracketCounter > 0) {
-                                switch (codeTokens[++i]) {
-                                    case '{':
-                                        bracketCounter++;
-                                        break;
-                                    case '}':
-                                        bracketCounter--;
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                if (bracketCounter > 0) {
-                                    codeBlockTokens.push(codeTokens[i]);
-                                }
-                            }
-                            const compiledBlockCommands = this._compile(codeBlockTokens);
-                            temp.setTrueNextCommand(compiledBlockCommands.startCommand);
-                            placeholderCommands = [...compiledBlockCommands.endCommands];
-                        }
-                        // if false
-                        if (codeTokens[++i] === 'else') {
-                            if (codeTokens[++i] !== '{') {
-                                const commandTokens = [codeTokens[i]];
-                                while (codeTokens[++i] !== ';') {
-                                    commandTokens.push(codeTokens[i]);
-                                }
-                                const compiledCommand = this.compileSingleCommand(this, commandTokens);
-                                temp.setFalseNextCommand(compiledCommand);
-                                placeholderCommands.push(compiledCommand);
+                            if (codeTokens[i] === '}') {
+                                const empty = new StartCommand_1.StartCommand(this);
+                                temp.setTrueNextCommand(empty);
+                                placeholderCommands = [empty];
                             }
                             else {
-                                const codeBlockTokens = [codeTokens[++i]];
-                                var bracketCounter = 1;
                                 while (bracketCounter > 0) {
+                                    if (i >= codeTokens.length)
+                                        throw Error('there is an open curly bracket, missing }');
                                     switch (codeTokens[++i]) {
                                         case '{':
                                             bracketCounter++;
@@ -652,8 +1043,53 @@ class Terminal {
                                     }
                                 }
                                 const compiledBlockCommands = this._compile(codeBlockTokens);
-                                temp.setFalseNextCommand(compiledBlockCommands.startCommand);
-                                placeholderCommands = [...placeholderCommands, ...compiledBlockCommands.endCommands];
+                                temp.setTrueNextCommand(compiledBlockCommands.startCommand);
+                                placeholderCommands = [...compiledBlockCommands.endCommands];
+                            }
+                        }
+                        // if false
+                        if (codeTokens[++i] === 'else') {
+                            if (codeTokens[++i] !== '{') {
+                                const commandTokens = [codeTokens[i]];
+                                while (codeTokens[++i] !== ';') {
+                                    if (i >= codeTokens.length)
+                                        throw Error('missing curly braces, if ex. if(true){moveRight();}');
+                                    commandTokens.push(codeTokens[i]);
+                                }
+                                const compiledCommand = this.compileSingleCommand(this, commandTokens);
+                                temp.setFalseNextCommand(compiledCommand);
+                                placeholderCommands.push(compiledCommand);
+                            }
+                            else {
+                                const codeBlockTokens = [codeTokens[++i]];
+                                var bracketCounter = 1;
+                                if (codeTokens[i] === '}') {
+                                    const empty = new StartCommand_1.StartCommand(this);
+                                    temp.setFalseNextCommand(empty);
+                                    placeholderCommands = [empty];
+                                }
+                                else {
+                                    while (bracketCounter > 0) {
+                                        if (i >= codeTokens.length)
+                                            throw Error('there is an open curly bracket, missing }');
+                                        switch (codeTokens[++i]) {
+                                            case '{':
+                                                bracketCounter++;
+                                                break;
+                                            case '}':
+                                                bracketCounter--;
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        if (bracketCounter > 0) {
+                                            codeBlockTokens.push(codeTokens[i]);
+                                        }
+                                    }
+                                    const compiledBlockCommands = this._compile(codeBlockTokens);
+                                    temp.setFalseNextCommand(compiledBlockCommands.startCommand);
+                                    placeholderCommands = [...placeholderCommands, ...compiledBlockCommands.endCommands];
+                                }
                             }
                         }
                         else {
@@ -671,6 +1107,8 @@ class Terminal {
                     break;
                 default:
                     {
+                        if (codeTokens[i] === ';')
+                            continue;
                         const commandTokens = [];
                         do {
                             commandTokens.push(codeTokens[i]);
@@ -680,7 +1118,6 @@ class Terminal {
                         const compiledCommand = this.compileSingleCommand(this, commandTokens);
                         setNextCommand(compiledCommand);
                         placeholderCommands = [compiledCommand];
-                        console.log(compiledCommand);
                     }
                     break;
             }
@@ -691,6 +1128,8 @@ class Terminal {
         };
         function setNextCommand(command) {
             placeholderCommands.forEach(x => {
+                if (x instanceof StartCommand_1.StartCommand)
+                    x.setNextCommand(command);
                 if (x instanceof SingleCommand_1.SingleCommand)
                     x.setNextCommand(command);
                 if (x instanceof BranchCommand_1.BranchCommand)
@@ -700,7 +1139,7 @@ class Terminal {
     }
     compileSingleCommand(terminal, commandTokens) {
         const assignment = commandTokens.includes('=');
-        var variable = undefined;
+        var variable = "";
         var expression;
         if (assignment && commandTokens.indexOf('=') != 1)
             throw Error('invalid assignment syntax, valid ex. a = 3');
@@ -738,7 +1177,6 @@ class Terminal {
         ];
         // postfixify
         for (let i = 0; i < expTokens.length; i++) {
-            console.log(postfixOps);
             if (opsRegex.test(expTokens[i])) {
                 //check if this is a unary operator by looking at the token before, if it's an operator or a bracket then this operator is most likely to be unary
                 if (unaryOpsRegex.test(expTokens[i]) && (!expTokens[i - 1] || (opsRegex.test(expTokens[i - 1]) && expTokens[i - 1] !== '.') || separatorRegex.test(expTokens[i - 1]))) {
@@ -797,7 +1235,6 @@ class Terminal {
                 throw Error('uneven number of brackets, ")" missing');
             pushOp();
         }
-        console.log(postfixedTokens.join(''));
         // convert postfix string into expression tree
         var root = new Expression_1.Expression(this);
         var expressionParentStack = [root];
@@ -826,7 +1263,7 @@ class Terminal {
                     const parent = peek(expressionParentStack);
                     if (/^\..+/.test(postfixedTokens[i])) {
                         parent.setTrigger('.');
-                        parent.addArg(postfixedTokens[i].substring(1));
+                        parent.addArg(new StringWrapper_1.StringWrapper(postfixedTokens[i].substring(1)));
                     }
                     else {
                         throw Error('there is not supposed to be any operator that accepts 0 parameters other than methods');
@@ -846,7 +1283,7 @@ class Terminal {
                 parent.addArg(lastParameter.isSelfExpression() ? first : lastParameter);
                 if (/^\..+/.test(postfixedTokens[i])) {
                     parent.setTrigger('.');
-                    parent.setArgs([postfixedTokens[i].substring(1), ...((_a = parent.getArgs()) !== null && _a !== void 0 ? _a : [])]);
+                    parent.setArgs([new StringWrapper_1.StringWrapper(postfixedTokens[i].substring(1)), ...((_a = parent.getArgs()) !== null && _a !== void 0 ? _a : [])]);
                 }
                 else {
                     parent.setTrigger(postfixedTokens[i]);
@@ -854,26 +1291,22 @@ class Terminal {
                 continue;
             }
             // if the code reaches this part then the current token is most likely a variable or an argument
-            if (postfixedTokens[i - 1] === '(') {
-                const newParent = new Expression_1.Expression(this);
-                setSelfExpression(newParent, postfixedTokens[i]);
-                expressionParentStack.push(newParent);
-                continue;
+            if (postfixedTokens[i - 1] !== '(') {
+                // if the code reaches this part then this part is where the next argument starts
+                const lastParameter = expressionParentStack.pop();
+                if (!lastParameter)
+                    throw Error('lastParameter undefined, something is wrong here');
+                const first = lastParameter.getFirst();
+                if (first == null)
+                    throw Error('lastParameter first is not supposed to be null but it is, something is wrong here');
+                const parent = peek(expressionParentStack);
+                parent.addArg(lastParameter.isSelfExpression() ? first : lastParameter);
             }
-            // if the code reaches this part then this part is where the next argument starts
-            const lastParameter = expressionParentStack.pop();
-            if (!lastParameter)
-                throw Error('lastParameter undefined, something is wrong here');
-            const first = lastParameter.getFirst();
-            if (first == null)
-                throw Error('lastParameter first is not supposed to be null but it is, something is wrong here');
-            const parent = peek(expressionParentStack);
-            parent.addArg(lastParameter.isSelfExpression() ? first : lastParameter);
             const newParent = new Expression_1.Expression(this);
             setSelfExpression(newParent, postfixedTokens[i]);
             expressionParentStack.push(newParent);
         }
-        console.log(expressionParentStack.length);
+        // console.log(expressionParentStack.length)
         return expressionParentStack[0];
         function setSelfExpression(expression, value) {
             try {
@@ -896,10 +1329,10 @@ class Terminal {
             if (/^\./.test(prevOp))
                 return false;
             for (let i = 0; i < priority.length; i++) {
-                if (priority[i].includes(op))
-                    return true;
                 if (priority[i].includes(prevOp))
                     return false;
+                if (priority[i].includes(op))
+                    return true;
             }
             return true;
         }
@@ -916,11 +1349,21 @@ class Terminal {
         }
     }
     compile() {
-        this.currentCommand = this._compile(Terminal.tokenize(this.content)).startCommand;
+        const compiled = this._compile(Terminal.tokenize(this.content));
+        compiled.endCommands.forEach(x => {
+            if (x instanceof StartCommand_1.StartCommand)
+                x.setNextCommand(new EndCommand_1.EndCommand(this));
+            if (x instanceof SingleCommand_1.SingleCommand)
+                x.setNextCommand(new EndCommand_1.EndCommand(this));
+            if (x instanceof BranchCommand_1.BranchCommand)
+                x.setFalseNextCommand(new EndCommand_1.EndCommand(this));
+        });
+        this.variables = new Map();
+        this.currentCommand = new StartCommand_1.StartCommand(this, compiled.startCommand);
+        console.log(this.currentCommand);
     }
     execute() {
         this.running = true;
-        alert(Terminal.tokenize(this.content));
     }
     stop() {
         this.running = false;
@@ -928,7 +1371,7 @@ class Terminal {
 }
 exports.Terminal = Terminal;
 
-},{"./BoolWrapper":2,"./BranchCommand":3,"./Expression":6,"./NumberWrapper":7,"./SingleCommand":8,"./StartCommand":9,"./StringWrapper":10,"./Wrapper":14}],12:[function(require,module,exports){
+},{"./BoolWrapper":2,"./BranchCommand":3,"./EndCommand":5,"./Expression":6,"./NumberWrapper":7,"./PlayerWrapper":8,"./SingleCommand":9,"./StartCommand":10,"./StringWrapper":11,"./VoidWrapper":13,"./Wrapper":15}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VoidWrapper = void 0;
@@ -946,7 +1389,7 @@ class VoidWrapper extends Wrapper_1.Wrapper {
 }
 exports.VoidWrapper = VoidWrapper;
 
-},{"./Wrapper":14}],13:[function(require,module,exports){
+},{"./Wrapper":15}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WaitWrapper = void 0;
@@ -959,7 +1402,7 @@ class WaitWrapper extends VoidWrapper_1.VoidWrapper {
 }
 exports.WaitWrapper = WaitWrapper;
 
-},{"./VoidWrapper":12}],14:[function(require,module,exports){
+},{"./VoidWrapper":13}],15:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Wrapper = void 0;
@@ -990,14 +1433,14 @@ class Wrapper {
 exports.Wrapper = Wrapper;
 Wrapper.processes = [];
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameManager = void 0;
 const Grid_1 = require("./GameObjects/Grid");
 const Player_1 = require("./Player");
 class GameManager {
-    constructor(canvasView = null, terminalView = null) {
+    constructor(canvasView = null, terminalView = null, shopView) {
         this.lastTimeStamp = 0;
         this.deltaTime = 0;
         this.isRunning = false;
@@ -1007,10 +1450,18 @@ class GameManager {
         this.grid = new Grid_1.Grid({ x: 100, y: 100 });
         this.canvasView = null;
         this.activePlayerUnit = null;
+        this.shopView = null;
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
         this.grid.addEntity(this.player.units[0]);
         this.setActivePlayerUnit(this.player.units[0]);
+        this.setShopView(shopView);
+    }
+    setShopView(shopView) {
+        this.shopView = shopView;
+    }
+    getShopView() {
+        return this.shopView;
     }
     getDeltatime() {
         return this.deltaTime;
@@ -1072,7 +1523,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./GameObjects/Grid":22,"./Player":27}],16:[function(require,module,exports){
+},{"./GameObjects/Grid":23,"./Player":28}],17:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -1117,7 +1568,7 @@ class Animated {
 }
 exports.Animated = Animated;
 
-},{"./ChainedAnimation":18,"./GroupAnimation":23}],17:[function(require,module,exports){
+},{"./ChainedAnimation":19,"./GroupAnimation":24}],18:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animation = void 0;
@@ -1150,7 +1601,7 @@ class Animation {
 exports.Animation = Animation;
 Animation.assets = {};
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChainedAnimation = void 0;
@@ -1184,7 +1635,7 @@ class ChainedAnimation extends Animation_1.Animation {
 }
 exports.ChainedAnimation = ChainedAnimation;
 
-},{"./Animation":17}],19:[function(require,module,exports){
+},{"./Animation":18}],20:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Direction = void 0;
@@ -1197,7 +1648,7 @@ var Direction;
     Direction[Direction["None"] = 4] = "None";
 })(Direction || (exports.Direction = Direction = {}));
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Entity = void 0;
@@ -1256,7 +1707,7 @@ class Entity extends Animated_1.Animated {
 }
 exports.Entity = Entity;
 
-},{"./Animated":16}],21:[function(require,module,exports){
+},{"./Animated":17}],22:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grass = void 0;
@@ -1276,7 +1727,7 @@ class Grass extends Tile_1.Tile {
 }
 exports.Grass = Grass;
 
-},{"./GroupAnimation":23,"./Tile":25}],22:[function(require,module,exports){
+},{"./GroupAnimation":24,"./Tile":26}],23:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grid = void 0;
@@ -1336,7 +1787,6 @@ class Grid {
         });
     }
     addEntity(entity) {
-        console.log("add");
         const index = this.entities.indexOf(entity);
         if (index != -1) {
             if (entity.getGrid() != this)
@@ -1364,7 +1814,7 @@ class Grid {
 }
 exports.Grid = Grid;
 
-},{"./Grass":21,"./GroupAnimation":23,"./PlayerUnit":24}],23:[function(require,module,exports){
+},{"./Grass":22,"./GroupAnimation":24,"./PlayerUnit":25}],24:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupAnimation = void 0;
@@ -1378,7 +1828,7 @@ class GroupAnimation extends Animation_1.Animation {
 exports.GroupAnimation = GroupAnimation;
 GroupAnimation.animations = [];
 
-},{"./Animation":17}],24:[function(require,module,exports){
+},{"./Animation":18}],25:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerUnit = void 0;
@@ -1393,9 +1843,12 @@ class PlayerUnit extends Entity_1.Entity {
         this.isMoving = false;
         this.moveSpeed = 1;
         this.lerpProgress = 0;
-        this.terminal = new Terminal_1.Terminal();
+        this.moveProgress = 0;
+        this.moveIteration = 0;
+        this.direction = Direction_1.Direction.None;
         this.inventory = new Inventory_1.Inventory();
         this.equipped = null;
+        this.terminal = new Terminal_1.Terminal(this);
         this.originalCoordinate = Object.assign({}, this.coordinate);
         this.setMoveSpeed(moveSpeed);
     }
@@ -1420,46 +1873,72 @@ class PlayerUnit extends Entity_1.Entity {
     }
     update(deltaTime) {
         var _a, _b;
-        if (this.terminal.running)
-            (_a = this.terminal.currentCommand) === null || _a === void 0 ? void 0 : _a.Execute();
+        if (this.terminal.running) {
+            try {
+                (_a = this.terminal.currentCommand) === null || _a === void 0 ? void 0 : _a.Execute();
+            }
+            catch (err) {
+                console.log('Runtime ' + err);
+                this.terminal.stop();
+            }
+        }
         var currentCommand = this.terminal.currentCommand;
         if (currentCommand instanceof SingleCommand_1.SingleCommand) {
             const asyncTask = currentCommand.getAsyncTask();
-            if (asyncTask) {
+            if (asyncTask && this.terminal.running) {
                 const taskDetail = asyncTask.split(' ');
                 if (taskDetail[0] === 'move') {
-                    var direction = Direction_1.Direction.None;
                     switch (taskDetail[1]) {
                         case 'up':
-                            direction = Direction_1.Direction.Up;
+                            this.direction = Direction_1.Direction.Up;
                             break;
                         case 'down':
-                            direction = Direction_1.Direction.Down;
+                            this.direction = Direction_1.Direction.Down;
                             break;
                         case 'left':
-                            direction = Direction_1.Direction.Left;
+                            this.direction = Direction_1.Direction.Left;
                             break;
                         case 'right':
-                            direction = Direction_1.Direction.Right;
+                            this.direction = Direction_1.Direction.Right;
                             break;
                         default:
-                            direction = Direction_1.Direction.None;
+                            this.direction = Direction_1.Direction.None;
                             break;
                     }
+                    this.moveIteration = Number.parseInt(taskDetail[2]);
                     if (!this.isMoving)
-                        this.move(direction);
+                        this.move(this.direction);
                 }
             }
-            if (!this.isMoving)
+            if (this.isMoving)
                 this.lerpProgress += deltaTime * this.moveSpeed;
             if (this.lerpProgress >= 1) {
+                this.moveProgress += 1;
                 this.lerpProgress = 0;
                 this.originalCoordinate = this.coordinate;
+                this.isMoving = false;
+                if (this.moveProgress < this.moveIteration) {
+                    if (!this.terminal.running) {
+                        this.moveProgress = 0;
+                        this.moveIteration = 0;
+                        this.playAnimation('idle');
+                        return;
+                    }
+                    this.move(this.direction);
+                    return;
+                }
+                this.moveProgress = 0;
+                this.moveIteration = 0;
                 currentCommand = currentCommand.jumpNextCommand();
-                currentCommand.Execute();
+                try {
+                    currentCommand.Execute();
+                }
+                catch (err) {
+                    console.log('Runtime ' + err);
+                    this.terminal.stop();
+                }
                 if (!(currentCommand instanceof SingleCommand_1.SingleCommand) || !((_b = currentCommand.getAsyncTask()) === null || _b === void 0 ? void 0 : _b.startsWith('move '))) {
                     this.playAnimation('idle');
-                    this.isMoving = false;
                 }
             }
         }
@@ -1506,7 +1985,7 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/SingleCommand":8,"../Console/Terminal":11,"../Items/Inventory":26,"./Direction":19,"./Entity":20}],25:[function(require,module,exports){
+},{"../Console/SingleCommand":9,"../Console/Terminal":12,"../Items/Inventory":27,"./Direction":20,"./Entity":21}],26:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tile = void 0;
@@ -1520,7 +1999,7 @@ class Tile extends Animated_1.Animated {
 exports.Tile = Tile;
 Tile.defaultTileResolution = { x: 32, y: 32 };
 
-},{"./Animated":16}],26:[function(require,module,exports){
+},{"./Animated":17}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
@@ -1528,7 +2007,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -1548,7 +2027,78 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":17,"./GameObjects/ChainedAnimation":18,"./GameObjects/PlayerUnit":24}],28:[function(require,module,exports){
+},{"./GameObjects/Animation":18,"./GameObjects/ChainedAnimation":19,"./GameObjects/PlayerUnit":25}],29:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Shop = void 0;
+class Shop {
+    constructor() {
+        this.item = ["hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1"];
+    }
+    open(shopHTML) {
+        if (shopHTML) {
+            shopHTML.innerHTML = "";
+            // console.log(shopHTML)
+            let shopTemp = document.createElement('div');
+            shopTemp.className = "shop";
+            for (let i = 0; i < this.item.length; i++) {
+                let shop1 = document.createElement('div');
+                shop1.className = `${this.item[i]} item-in-shop`;
+                shopTemp.appendChild(shop1);
+            }
+            shopHTML.appendChild(shopTemp);
+            // console.log(shopTemp)
+        }
+    }
+}
+exports.Shop = Shop;
+
+},{}],30:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ShopView = void 0;
+class ShopView {
+    constructor(shopButton, shop = null, shopHTML = null) {
+        this.shop = null;
+        this.shopButton = null;
+        this.shopHTML = null;
+        this.setShop(shop);
+        this.setShopButton(shopButton);
+        this.setShopHTML(shopHTML);
+    }
+    initShopButton() {
+        var _a;
+        if (this.shopButton) {
+            (_a = this.shopButton) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
+                if (this.shop) {
+                    this.shop.open(this.getShopHTML());
+                }
+            });
+        }
+    }
+    setShopHTML(shopHTML) {
+        this.shopHTML = shopHTML;
+    }
+    getShopHTML() {
+        return this.shopHTML;
+    }
+    setShopButton(shopButton) {
+        this.shopButton = shopButton;
+        this.initShopButton();
+    }
+    getShopButton() {
+        return this.shopButton;
+    }
+    setShop(value) {
+        this.shop = value;
+    }
+    getShop() {
+        return this.shop;
+    }
+}
+exports.ShopView = ShopView;
+
+},{}],31:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -1569,7 +2119,7 @@ class TerminalView {
             if (!this.terminal)
                 return;
             const target = evt.target;
-            console.log(target);
+            // console.log(target)
             this.terminal.content = target.value;
         };
         if (value) {
@@ -1590,8 +2140,13 @@ class TerminalView {
         const executeClickListener = (evt) => {
             if (!this.terminal)
                 return;
-            this.terminal.compile();
-            this.terminal.execute();
+            try {
+                this.terminal.compile();
+                this.terminal.execute();
+            }
+            catch (err) {
+                console.log('Compile Time ' + err);
+            }
         };
         if (this.executeButton)
             this.executeButton.removeEventListener('click', executeClickListener);
@@ -1612,7 +2167,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],29:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -1634,7 +2189,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":17,"./Classes/GameObjects/GroupAnimation":23}],30:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":18,"./Classes/GameObjects/GroupAnimation":24}],33:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -1643,13 +2198,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const CanvasView_1 = require("./Classes/CanvasView");
 const TerminalView_1 = require("./Classes/TerminalView");
 const GameManager_1 = require("./Classes/GameManager");
+const ShopView_1 = require("./Classes/ShopView");
 const loadAsset_1 = __importDefault(require("./loadAsset"));
+const Shop_1 = require("./Classes/Shop");
 window.onload = () => {
     var _a, _b, _c, _d;
     const canvas = document.querySelector("#view");
     const terminal = document.querySelector("#console");
     const executeButton = document.querySelector("#executeButton");
     const stopButton = document.querySelector("#stopButton");
+    const shopButton = document.querySelector(".button-shop");
+    const shopHTML = document.querySelector(".shop-html");
+    const shop = new Shop_1.Shop();
     if (canvas == null)
         throw new Error("Canvas not found");
     if (terminal == null)
@@ -1658,11 +2218,13 @@ window.onload = () => {
         throw new Error("Start button not found");
     if (stopButton == null)
         throw new Error("Stop button not found");
+    if (shopButton == null)
+        throw new Error("Shop button not found");
     canvas.width = (_b = (_a = canvas.parentElement) === null || _a === void 0 ? void 0 : _a.clientWidth) !== null && _b !== void 0 ? _b : window.innerWidth;
     canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
     (0, loadAsset_1.default)();
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton));
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, shopHTML));
     game.start();
 };
 
-},{"./Classes/CanvasView":1,"./Classes/GameManager":15,"./Classes/TerminalView":28,"./loadAsset":29}]},{},[30]);
+},{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/Shop":29,"./Classes/ShopView":30,"./Classes/TerminalView":31,"./loadAsset":32}]},{},[33]);
