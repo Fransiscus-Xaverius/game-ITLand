@@ -20,24 +20,6 @@ window.onload = () => {
     if (shopButton == null) throw new Error("Shop button not found");
     canvas.width = canvas.parentElement?.clientWidth ?? window.innerWidth
     canvas.height = canvas.parentElement?.clientHeight ?? window.innerHeight
-    document.addEventListener('keypress', (e)=>{
-        const key = e.key;
-        if(key==='w'){
-            
-        }
-        else if(key==='a'){
-
-        }
-        else if(key==='s'){
-
-        }
-        else if(key==='d'){
-
-        }
-        else if(key==='q'){
-
-        }
-    })
 
     loadAsset()
     const game = new GameManager(
@@ -46,5 +28,30 @@ window.onload = () => {
         new ShopView(shopButton, shop, shopHTML)
     )
     game.start()
+    document.addEventListener('keypress', (e) => {
+        const key = e.key;
+        const consoles = document.getElementById("console") as HTMLTextAreaElement;
+        const start = document.getElementsByClassName("button start")[0] as HTMLButtonElement;
+        console.log(consoles.value)
+        if (key === 'w') {
+            consoles.value = "moveUp();";
+            start.click();
+        }
+        else if (key === 'a') {
+            consoles.value = "moveLeft();";
+            start.click();
+        }
+        else if (key === 's') {
+            consoles.value = "moveDown();";
+            start.click();
+        }
+        else if (key === 'd') {
+            consoles.value = "moveRight();";
+            start.click();
+        }
+        else if (key === 'q') {
+
+        }
+    })
 }
 
