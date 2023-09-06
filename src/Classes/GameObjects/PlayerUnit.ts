@@ -47,7 +47,16 @@ export class PlayerUnit extends Entity{
         }
     }
 
+    public getLerpProgress(){
+        return this.lerpProgress
+    }
+
+    public setLerpProgress(value:number){
+        this.lerpProgress = value;
+    }
+
     public update(deltaTime: number): void {
+        console.log(this.lerpProgress);
         if(this.terminal.running) {
             try{
                 this.terminal.currentCommand?.Execute()

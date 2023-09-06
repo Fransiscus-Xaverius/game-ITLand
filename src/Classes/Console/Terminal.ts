@@ -80,6 +80,10 @@ export class Terminal{
         this.player = new PlayerWrapper(playerUnit)
     }
 
+    public setContent(value:string){
+        this.content = value;
+    }
+
     public static wrap(value:string):Wrapper{
         if(value === 'true' || value === 'false') return new BoolWrapper(value === 'true')
         if(!isNaN(+value)) return new NumberWrapper(+value)

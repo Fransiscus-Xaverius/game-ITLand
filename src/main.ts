@@ -4,6 +4,7 @@ import { GameManager } from './Classes/GameManager';
 import { ShopView } from './Classes/ShopView';
 import loadAsset from './loadAsset'
 import { Shop } from './Classes/Shop';
+import { Direction } from './Classes/GameObjects/Direction';
 
 window.onload = () => {
     const canvas = document.querySelector("#view") as HTMLCanvasElement
@@ -27,6 +28,31 @@ window.onload = () => {
         new TerminalView(terminal, executeButton, stopButton),
         new ShopView(shopButton, shop, shopHTML)
     )
-    game.start()
+    game.start();
+    const pUnit = game.getActivePlayerUnit();
+    document.addEventListener('keydown', (e)=>{
+        let consoles = terminal;
+        const key = e.key;
+        if (key === 'w') {
+            consoles.value = ("moveUp();")
+           executeButton.click();
+           
+        }
+        if (key === 'a') {
+            consoles.value = ("moveLeft();")
+            executeButton.click();
+        }
+        if (key === 's') {
+            consoles.value = ("moveDown();")
+            executeButton.click();
+        }
+        if (key === 'd') {
+            consoles.value = ("moveRight();")
+            executeButton.click();
+        }
+        if (key === 'q') {
+        }
+        console.clear()
+    })
 }
 

@@ -45,7 +45,9 @@ export class TerminalView{
         const executeClickListener = (evt:MouseEvent) => {
             if(!this.terminal) return
             try{
-
+                // const terminal2 = document.querySelector("#console") as HTMLTextAreaElement
+                console.log(this.textArea?.value||"");
+                this.terminal.setContent(this.textArea?.value||"");
                 this.terminal.compile()
                 this.terminal.execute()
             }

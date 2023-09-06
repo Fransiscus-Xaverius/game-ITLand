@@ -874,6 +874,9 @@ class Terminal {
         ];
         this.player = new PlayerWrapper_1.PlayerWrapper(playerUnit);
     }
+    setContent(value) {
+        this.content = value;
+    }
     static wrap(value) {
         if (value === 'true' || value === 'false')
             return new BoolWrapper_1.BoolWrapper(value === 'true');
@@ -1757,6 +1760,9 @@ class GameManager {
         (_a = this.terminalView) === null || _a === void 0 ? void 0 : _a.setTerminal((_b = value === null || value === void 0 ? void 0 : value.terminal) !== null && _b !== void 0 ? _b : null);
         this.activePlayerUnit = value;
     }
+    getActivePlayerUnit() {
+        return this.activePlayerUnit;
+    }
     setCanvasView(canvasView) {
         this.canvasView = canvasView;
     }
@@ -2157,8 +2163,15 @@ class PlayerUnit extends Entity_1.Entity {
             this.setMoveSpeed(this.moveSpeed);
         }
     }
+    getLerpProgress() {
+        return this.lerpProgress;
+    }
+    setLerpProgress(value) {
+        this.lerpProgress = value;
+    }
     update(deltaTime) {
         var _a, _b;
+        console.log(this.lerpProgress);
         if (this.terminal.running) {
             try {
                 (_a = this.terminal.currentCommand) === null || _a === void 0 ? void 0 : _a.Execute();
@@ -2424,9 +2437,13 @@ class TerminalView {
     }
     setExecuteButton(value) {
         const executeClickListener = (evt) => {
+            var _a, _b;
             if (!this.terminal)
                 return;
             try {
+                // const terminal2 = document.querySelector("#console") as HTMLTextAreaElement
+                console.log(((_a = this.textArea) === null || _a === void 0 ? void 0 : _a.value) || "");
+                this.terminal.setContent(((_b = this.textArea) === null || _b === void 0 ? void 0 : _b.value) || "");
                 this.terminal.compile();
                 this.terminal.execute();
             }
@@ -2512,6 +2529,46 @@ window.onload = () => {
     (0, loadAsset_1.default)();
     const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, shopHTML));
     game.start();
+    const pUnit = game.getActivePlayerUnit();
+    document.addEventListener('keydown', (e) => {
+        let consoles = terminal;
+        const key = e.key;
+        if (key === 'w') {
+            consoles.value = ("moveUp();");
+            executeButton.click();
+        }
+        if (key === 'a') {
+            consoles.value = ("moveLeft();");
+            executeButton.click();
+        }
+        if (key === 's') {
+            consoles.value = ("moveDown();");
+            executeButton.click();
+        }
+        if (key === 'd') {
+            // pUnit?.move(Direction.Right);
+            // var Moving = true;
+            // while(Moving){
+            //     console.log('moving')
+            //     var curLerp = pUnit?.getLerpProgress()||0;
+            //     if(Moving){
+            //         curLerp+=0.1+0.1;
+            //         pUnit?.setLerpProgress(curLerp);
+            //     }
+            //     if(curLerp>=1){
+            //         pUnit?.playAnimation('idle');
+            //         pUnit?.move(Direction.None);
+            //         Moving = false;
+            //     }
+            // }
+            // console.log('done');
+            consoles.value = ("moveRight();");
+            executeButton.click();
+        }
+        if (key === 'q') {
+        }
+        console.clear();
+    });
 };
 
 },{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/Shop":29,"./Classes/ShopView":30,"./Classes/TerminalView":31,"./loadAsset":32}]},{},[33]);
