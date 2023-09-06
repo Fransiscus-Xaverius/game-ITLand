@@ -20,6 +20,24 @@ window.onload = () => {
     if (shopButton == null) throw new Error("Shop button not found");
     canvas.width = canvas.parentElement?.clientWidth ?? window.innerWidth
     canvas.height = canvas.parentElement?.clientHeight ?? window.innerHeight
+    document.addEventListener('keypress', (e)=>{
+        const key = e.key;
+        if(key==='w'){
+            
+        }
+        else if(key==='a'){
+
+        }
+        else if(key==='s'){
+
+        }
+        else if(key==='d'){
+
+        }
+        else if(key==='q'){
+
+        }
+    })
 
     loadAsset()
     const game = new GameManager(
