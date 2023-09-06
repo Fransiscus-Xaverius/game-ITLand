@@ -179,7 +179,6 @@ export class Terminal{
                 wrapperValue = this.getVariable(variableName)
             }
         }
-
         this.variables.set(variableName, wrapperValue)
     }
 
@@ -208,7 +207,6 @@ export class Terminal{
                 throw err1;
             }
         }
-        
     }
 
     private _compile(codeTokens:string[]):{startCommand:Command, endCommands:Command[]}{

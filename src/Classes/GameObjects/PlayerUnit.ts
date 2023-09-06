@@ -55,6 +55,8 @@ export class PlayerUnit extends Entity{
         this.lerpProgress = value;
     }
 
+   
+
     public update(deltaTime: number): void {
         console.log(this.lerpProgress);
         if(this.terminal.running) {
@@ -68,63 +70,63 @@ export class PlayerUnit extends Entity{
         }
         var currentCommand = this.terminal.currentCommand
         
-        if(currentCommand instanceof SingleCommand){
-            const asyncTask = currentCommand.getAsyncTask()
-            if(asyncTask && this.terminal.running){
-                const taskDetail = asyncTask.split(' ')
-                if(taskDetail[0] === 'move'){
-                    switch(taskDetail[1]){
-                        case 'up':
-                            this.direction = Direction.Up;
-                            break;
-                        case 'down':
-                            this.direction = Direction.Down;
-                            break;
-                        case 'left':
-                            this.direction = Direction.Left;
-                            break;
-                        case 'right':
-                            this.direction = Direction.Right;
-                            break;
-                        default:
-                            this.direction = Direction.None;
-                            break;
-                    }
-                    this.moveIteration = Number.parseInt(taskDetail[2])
-                    if(!this.isMoving)this.move(this.direction)
-                }
-            }
+        // if(currentCommand instanceof SingleCommand){
+        //     const asyncTask = currentCommand.getAsyncTask()
+        //     if(asyncTask && this.terminal.running){
+        //         const taskDetail = asyncTask.split(' ')
+        //         if(taskDetail[0] === 'move'){
+        //             switch(taskDetail[1]){
+        //                 case 'up':
+        //                     this.direction = Direction.Up;
+        //                     break;
+        //                 case 'down':
+        //                     this.direction = Direction.Down;
+        //                     break;
+        //                 case 'left':
+        //                     this.direction = Direction.Left;
+        //                     break;
+        //                 case 'right':
+        //                     this.direction = Direction.Right;
+        //                     break;
+        //                 default:
+        //                     this.direction = Direction.None;
+        //                     break;
+        //             }
+        //             this.moveIteration = Number.parseInt(taskDetail[2])
+        //             if(!this.isMoving)this.move(this.direction)
+        //         }
+        //     }
             if(this.isMoving)  this.lerpProgress += deltaTime * this.moveSpeed
             if(this.lerpProgress >= 1){
                 this.moveProgress += 1;
                 this.lerpProgress = 0;
                 this.originalCoordinate = this.coordinate;
                 this.isMoving = false
-                if(this.moveProgress < this.moveIteration) {
-                    if(!this.terminal.running){
-                        this.moveProgress  = 0
-                        this.moveIteration = 0
-                        this.playAnimation('idle')
-                        return
-                    }
-                    this.move(this.direction)
-                    return
-                }
-                this.moveProgress  = 0
-                this.moveIteration = 0
-                currentCommand = currentCommand.jumpNextCommand()
-                try{
-                    currentCommand.Execute()
-                }
-                catch(err){
-                    console.log('Runtime ' + err)
-                    this.terminal.stop()
-                }
-                if(!(currentCommand instanceof SingleCommand) || !(currentCommand.getAsyncTask()?.startsWith('move '))){
-                    this.playAnimation('idle')
-                }
+                this.playAnimation('idle');
+                // if(this.moveProgress < this.moveIteration) {
+                //     if(!this.terminal.running){
+                //         this.moveProgress  = 0
+                //         this.moveIteration = 0
+                //         this.playAnimation('idle')
+                //         return
+                //     }
+                //     this.move(this.direction)
+                //     return
+                // }
+                // this.moveProgress  = 0
+                // this.moveIteration = 0
+                // currentCommand = currentCommand.jumpNextCommand()
+                // try{
+                //     currentCommand.Execute()
+                // }
+                // catch(err){
+                //     console.log('Runtime ' + err)
+                //     this.terminal.stop()
+                // }
+                // if(!(currentCommand instanceof SingleCommand) || !(currentCommand.getAsyncTask()?.startsWith('move '))){
+                //     this.playAnimation('idle')
+                // }
             }
-        }
     }
 
     public getSpriteCoordinate(): Point {
@@ -138,6 +140,10 @@ export class PlayerUnit extends Entity{
             x: this.originalCoordinate.x - coordDiff.x * this.lerpProgress,
             y: this.originalCoordinate.y - coordDiff.y * this.lerpProgress,
         }
+    }
+
+    public Dig(){
+        
     }
 
     public move(direction: Direction):void{

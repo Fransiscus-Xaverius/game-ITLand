@@ -11,6 +11,8 @@ export default function loadAsset():void{
     player_idle.src = "./dist/Assets/Prototype/itland_ptype_player_idle.png"
     const player_walk = new Image()
     player_walk.src = "./dist/Assets/Prototype/itland_ptype_player_walk.png"
+    const player_dig  = new Image()
+    
 
     Animation.assets['grass_tile'] = grass
     Animation.assets['flowery_grass_tile'] = flowergrass
@@ -22,15 +24,15 @@ export default function loadAsset():void{
             "grass_tile", 
             grass,
             {x:32, y:32},
-            1,
-            0
+            1, //number of frames
+            0 //speed
         ),
         new GroupAnimation(
             "flowery_grass_tile", 
-            flowergrass,
+            flowergrass, //
             {x:32, y:32},
-            2,
-            1
+            2, //number of frames
+            1 //speed
         )
     )
 }

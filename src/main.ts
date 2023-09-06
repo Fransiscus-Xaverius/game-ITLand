@@ -15,7 +15,6 @@ window.onload = () => {
     const shopHTML = document.querySelector(".shop-html") as HTMLDivElement
     const shop = new Shop() as Shop
     if (canvas == null) throw new Error("Canvas not found");
-    if (terminal == null) throw new Error("Console not found");
     if (executeButton == null) throw new Error("Start button not found");
     if (stopButton == null) throw new Error("Stop button not found");
     if (shopButton == null) throw new Error("Shop button not found");
@@ -31,24 +30,18 @@ window.onload = () => {
     game.start();
     const pUnit = game.getActivePlayerUnit();
     document.addEventListener('keydown', (e)=>{
-        let consoles = terminal;
         const key = e.key;
         if (key === 'w') {
-            consoles.value = ("moveUp();")
-           executeButton.click();
-           
+            pUnit?.move(Direction.Up);
         }
         if (key === 'a') {
-            consoles.value = ("moveLeft();")
-            executeButton.click();
+            pUnit?.move(Direction.Left);
         }
         if (key === 's') {
-            consoles.value = ("moveDown();")
-            executeButton.click();
+            pUnit?.move(Direction.Down);
         }
         if (key === 'd') {
-            consoles.value = ("moveRight();")
-            executeButton.click();
+            pUnit?.move(Direction.Right);
         }
         if (key === 'q') {
         }

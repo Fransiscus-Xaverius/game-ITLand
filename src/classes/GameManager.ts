@@ -81,6 +81,7 @@ export class GameManager {
             this.grid.update(this.deltaTime)
             return
         }
+        this.canvasView.setCameraPosition(this.activePlayerUnit?.getSpriteCoordinate()||{x:0,y:0});
         const camPos = this.canvasView.getCameraPosition()
         const scaledRenderRadius = this.canvasView.getScaledRenderRadius()
         this.grid.update(this.deltaTime, {

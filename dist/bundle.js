@@ -36,9 +36,10 @@ class CanvasView {
         this.context = this.canvas.getContext("2d");
         this.context.imageSmoothingEnabled = false;
         this.maxCanvasSize = Math.max(this.canvas.width, this.canvas.height);
-        this.canvas.onwheel = (evt) => {
-            this.setCanvasScale(this.canvasScale * (1 - (evt.deltaY * 0.001)));
-        };
+        // this.canvas.onwheel = (evt) => {
+        //     this.setCanvasScale(this.canvasScale * (1-(evt.deltaY * 0.001)))
+        // }
+        this.setCanvasScale(0.25);
         this.canvas.onmousedown = (evt) => {
             if (evt.button == 0) {
                 this.moveMouseTriggerPressed = true;
@@ -58,13 +59,13 @@ class CanvasView {
             this.cameraMoved = false;
             this.moveMouseTriggerPressed = false;
         };
-        this.canvas.onmousemove = (evt) => {
-            if (this.moveMouseTriggerPressed) {
-                this.cameraMoved = true;
-                this.cameraPosition.x -= (evt.movementX) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize);
-                this.cameraPosition.y -= (evt.movementY) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize);
-            }
-        };
+        // this.canvas.onmousemove = (evt) => {
+        //     if(this.moveMouseTriggerPressed) {
+        //         this.cameraMoved = true
+        //         this.cameraPosition.x -= (evt.movementX) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
+        //         this.cameraPosition.y -= (evt.movementY) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
+        //     }
+        // }
         window.onresize = (evt) => {
             const target = this.canvas;
             if (!target)
@@ -1790,10 +1791,12 @@ class GameManager {
         cancelAnimationFrame(this.animationFrameId);
     }
     update() {
+        var _a;
         if (!this.canvasView) {
             this.grid.update(this.deltaTime);
             return;
         }
+        this.canvasView.setCameraPosition(((_a = this.activePlayerUnit) === null || _a === void 0 ? void 0 : _a.getSpriteCoordinate()) || { x: 0, y: 0 });
         const camPos = this.canvasView.getCameraPosition();
         const scaledRenderRadius = this.canvasView.getScaledRenderRadius();
         this.grid.update(this.deltaTime, {
@@ -2124,7 +2127,6 @@ GroupAnimation.animations = [];
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerUnit = void 0;
-const SingleCommand_1 = require("../Console/SingleCommand");
 const Terminal_1 = require("../Console/Terminal");
 const Inventory_1 = require("../Items/Inventory");
 const Direction_1 = require("./Direction");
@@ -2170,7 +2172,7 @@ class PlayerUnit extends Entity_1.Entity {
         this.lerpProgress = value;
     }
     update(deltaTime) {
-        var _a, _b;
+        var _a;
         console.log(this.lerpProgress);
         if (this.terminal.running) {
             try {
@@ -2182,64 +2184,63 @@ class PlayerUnit extends Entity_1.Entity {
             }
         }
         var currentCommand = this.terminal.currentCommand;
-        if (currentCommand instanceof SingleCommand_1.SingleCommand) {
-            const asyncTask = currentCommand.getAsyncTask();
-            if (asyncTask && this.terminal.running) {
-                const taskDetail = asyncTask.split(' ');
-                if (taskDetail[0] === 'move') {
-                    switch (taskDetail[1]) {
-                        case 'up':
-                            this.direction = Direction_1.Direction.Up;
-                            break;
-                        case 'down':
-                            this.direction = Direction_1.Direction.Down;
-                            break;
-                        case 'left':
-                            this.direction = Direction_1.Direction.Left;
-                            break;
-                        case 'right':
-                            this.direction = Direction_1.Direction.Right;
-                            break;
-                        default:
-                            this.direction = Direction_1.Direction.None;
-                            break;
-                    }
-                    this.moveIteration = Number.parseInt(taskDetail[2]);
-                    if (!this.isMoving)
-                        this.move(this.direction);
-                }
-            }
-            if (this.isMoving)
-                this.lerpProgress += deltaTime * this.moveSpeed;
-            if (this.lerpProgress >= 1) {
-                this.moveProgress += 1;
-                this.lerpProgress = 0;
-                this.originalCoordinate = this.coordinate;
-                this.isMoving = false;
-                if (this.moveProgress < this.moveIteration) {
-                    if (!this.terminal.running) {
-                        this.moveProgress = 0;
-                        this.moveIteration = 0;
-                        this.playAnimation('idle');
-                        return;
-                    }
-                    this.move(this.direction);
-                    return;
-                }
-                this.moveProgress = 0;
-                this.moveIteration = 0;
-                currentCommand = currentCommand.jumpNextCommand();
-                try {
-                    currentCommand.Execute();
-                }
-                catch (err) {
-                    console.log('Runtime ' + err);
-                    this.terminal.stop();
-                }
-                if (!(currentCommand instanceof SingleCommand_1.SingleCommand) || !((_b = currentCommand.getAsyncTask()) === null || _b === void 0 ? void 0 : _b.startsWith('move '))) {
-                    this.playAnimation('idle');
-                }
-            }
+        // if(currentCommand instanceof SingleCommand){
+        //     const asyncTask = currentCommand.getAsyncTask()
+        //     if(asyncTask && this.terminal.running){
+        //         const taskDetail = asyncTask.split(' ')
+        //         if(taskDetail[0] === 'move'){
+        //             switch(taskDetail[1]){
+        //                 case 'up':
+        //                     this.direction = Direction.Up;
+        //                     break;
+        //                 case 'down':
+        //                     this.direction = Direction.Down;
+        //                     break;
+        //                 case 'left':
+        //                     this.direction = Direction.Left;
+        //                     break;
+        //                 case 'right':
+        //                     this.direction = Direction.Right;
+        //                     break;
+        //                 default:
+        //                     this.direction = Direction.None;
+        //                     break;
+        //             }
+        //             this.moveIteration = Number.parseInt(taskDetail[2])
+        //             if(!this.isMoving)this.move(this.direction)
+        //         }
+        //     }
+        if (this.isMoving)
+            this.lerpProgress += deltaTime * this.moveSpeed;
+        if (this.lerpProgress >= 1) {
+            this.moveProgress += 1;
+            this.lerpProgress = 0;
+            this.originalCoordinate = this.coordinate;
+            this.isMoving = false;
+            this.playAnimation('idle');
+            // if(this.moveProgress < this.moveIteration) {
+            //     if(!this.terminal.running){
+            //         this.moveProgress  = 0
+            //         this.moveIteration = 0
+            //         this.playAnimation('idle')
+            //         return
+            //     }
+            //     this.move(this.direction)
+            //     return
+            // }
+            // this.moveProgress  = 0
+            // this.moveIteration = 0
+            // currentCommand = currentCommand.jumpNextCommand()
+            // try{
+            //     currentCommand.Execute()
+            // }
+            // catch(err){
+            //     console.log('Runtime ' + err)
+            //     this.terminal.stop()
+            // }
+            // if(!(currentCommand instanceof SingleCommand) || !(currentCommand.getAsyncTask()?.startsWith('move '))){
+            //     this.playAnimation('idle')
+            // }
         }
     }
     getSpriteCoordinate() {
@@ -2253,6 +2254,8 @@ class PlayerUnit extends Entity_1.Entity {
             x: this.originalCoordinate.x - coordDiff.x * this.lerpProgress,
             y: this.originalCoordinate.y - coordDiff.y * this.lerpProgress,
         };
+    }
+    Dig() {
     }
     move(direction) {
         if (this.isMoving || direction == Direction_1.Direction.None)
@@ -2284,7 +2287,7 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/SingleCommand":9,"../Console/Terminal":12,"../Items/Inventory":27,"./Direction":20,"./Entity":21}],26:[function(require,module,exports){
+},{"../Console/Terminal":12,"../Items/Inventory":27,"./Direction":20,"./Entity":21}],26:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tile = void 0;
@@ -2485,11 +2488,17 @@ function loadAsset() {
     player_idle.src = "./dist/Assets/Prototype/itland_ptype_player_idle.png";
     const player_walk = new Image();
     player_walk.src = "./dist/Assets/Prototype/itland_ptype_player_walk.png";
+    const player_dig = new Image();
     Animation_1.Animation.assets['grass_tile'] = grass;
     Animation_1.Animation.assets['flowery_grass_tile'] = flowergrass;
     Animation_1.Animation.assets['player_idle'] = player_idle;
     Animation_1.Animation.assets['player_walk'] = player_walk;
-    GroupAnimation_1.GroupAnimation.animations.push(new GroupAnimation_1.GroupAnimation("grass_tile", grass, { x: 32, y: 32 }, 1, 0), new GroupAnimation_1.GroupAnimation("flowery_grass_tile", flowergrass, { x: 32, y: 32 }, 2, 1));
+    GroupAnimation_1.GroupAnimation.animations.push(new GroupAnimation_1.GroupAnimation("grass_tile", grass, { x: 32, y: 32 }, 1, //number of frames
+    0 //speed
+    ), new GroupAnimation_1.GroupAnimation("flowery_grass_tile", flowergrass, //
+    { x: 32, y: 32 }, 2, //number of frames
+    1 //speed
+    ));
 }
 exports.default = loadAsset;
 
@@ -2505,6 +2514,7 @@ const GameManager_1 = require("./Classes/GameManager");
 const ShopView_1 = require("./Classes/ShopView");
 const loadAsset_1 = __importDefault(require("./loadAsset"));
 const Shop_1 = require("./Classes/Shop");
+const Direction_1 = require("./Classes/GameObjects/Direction");
 window.onload = () => {
     var _a, _b, _c, _d;
     const canvas = document.querySelector("#view");
@@ -2516,8 +2526,6 @@ window.onload = () => {
     const shop = new Shop_1.Shop();
     if (canvas == null)
         throw new Error("Canvas not found");
-    if (terminal == null)
-        throw new Error("Console not found");
     if (executeButton == null)
         throw new Error("Start button not found");
     if (stopButton == null)
@@ -2531,39 +2539,18 @@ window.onload = () => {
     game.start();
     const pUnit = game.getActivePlayerUnit();
     document.addEventListener('keydown', (e) => {
-        let consoles = terminal;
         const key = e.key;
         if (key === 'w') {
-            consoles.value = ("moveUp();");
-            executeButton.click();
+            pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Up);
         }
         if (key === 'a') {
-            consoles.value = ("moveLeft();");
-            executeButton.click();
+            pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Left);
         }
         if (key === 's') {
-            consoles.value = ("moveDown();");
-            executeButton.click();
+            pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Down);
         }
         if (key === 'd') {
-            // pUnit?.move(Direction.Right);
-            // var Moving = true;
-            // while(Moving){
-            //     console.log('moving')
-            //     var curLerp = pUnit?.getLerpProgress()||0;
-            //     if(Moving){
-            //         curLerp+=0.1+0.1;
-            //         pUnit?.setLerpProgress(curLerp);
-            //     }
-            //     if(curLerp>=1){
-            //         pUnit?.playAnimation('idle');
-            //         pUnit?.move(Direction.None);
-            //         Moving = false;
-            //     }
-            // }
-            // console.log('done');
-            consoles.value = ("moveRight();");
-            executeButton.click();
+            pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Right);
         }
         if (key === 'q') {
         }
@@ -2571,4 +2558,4 @@ window.onload = () => {
     });
 };
 
-},{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/Shop":29,"./Classes/ShopView":30,"./Classes/TerminalView":31,"./loadAsset":32}]},{},[33]);
+},{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/GameObjects/Direction":20,"./Classes/Shop":29,"./Classes/ShopView":30,"./Classes/TerminalView":31,"./loadAsset":32}]},{},[33]);

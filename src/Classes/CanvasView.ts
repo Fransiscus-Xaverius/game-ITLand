@@ -41,9 +41,11 @@ export class CanvasView{
         this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D
         this.context.imageSmoothingEnabled = false
         this.maxCanvasSize = Math.max(this.canvas.width, this.canvas.height)
-        this.canvas.onwheel = (evt) => {
-            this.setCanvasScale(this.canvasScale * (1-(evt.deltaY * 0.001)))
-        }
+        // this.canvas.onwheel = (evt) => {
+        //     this.setCanvasScale(this.canvasScale * (1-(evt.deltaY * 0.001)))
+        // }
+
+        this.setCanvasScale(0.25);
 
         this.canvas.onmousedown = (evt) => {
             if(evt.button == 0) {
@@ -68,13 +70,13 @@ export class CanvasView{
             this.moveMouseTriggerPressed = false
         }
 
-        this.canvas.onmousemove = (evt) => {
-            if(this.moveMouseTriggerPressed) {
-                this.cameraMoved = true
-                this.cameraPosition.x -= (evt.movementX) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
-                this.cameraPosition.y -= (evt.movementY) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
-            }
-        }
+        // this.canvas.onmousemove = (evt) => {
+        //     if(this.moveMouseTriggerPressed) {
+        //         this.cameraMoved = true
+        //         this.cameraPosition.x -= (evt.movementX) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
+        //         this.cameraPosition.y -= (evt.movementY) / ((this.canvasScale / this.defaultTilesPerCanvas) * this.maxCanvasSize)
+        //     }
+        // }
 
         window.onresize = (evt) => {
             const target = this.canvas as HTMLCanvasElement
