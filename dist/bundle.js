@@ -2509,33 +2509,23 @@ window.onload = () => {
         throw new Error("Shop button not found");
     canvas.width = (_b = (_a = canvas.parentElement) === null || _a === void 0 ? void 0 : _a.clientWidth) !== null && _b !== void 0 ? _b : window.innerWidth;
     canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
-    (0, loadAsset_1.default)();
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, shopHTML));
-    game.start();
     document.addEventListener('keypress', (e) => {
         const key = e.key;
-        const consoles = document.getElementById("console");
-        const start = document.getElementsByClassName("button start")[0];
-        console.log(consoles.value);
         if (key === 'w') {
-            consoles.value = "moveUp();";
-            start.click();
+            alert("hello");
         }
         else if (key === 'a') {
-            consoles.value = "moveLeft();";
-            start.click();
         }
         else if (key === 's') {
-            consoles.value = "moveDown();";
-            start.click();
         }
         else if (key === 'd') {
-            consoles.value = "moveRight();";
-            start.click();
         }
         else if (key === 'q') {
         }
     });
+    (0, loadAsset_1.default)();
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, shopHTML));
+    game.start();
 };
 
 },{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/Shop":29,"./Classes/ShopView":30,"./Classes/TerminalView":31,"./loadAsset":32}]},{},[33]);
