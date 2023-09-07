@@ -7,6 +7,9 @@ import { GroupAnimation } from "./GroupAnimation";
 import { PlayerUnit } from "./PlayerUnit";
 import { Sand } from "./Sand";
 import { Gravel } from "./Gravel";
+import { Rock } from "./Rock";
+import { ChainedAnimation } from "./ChainedAnimation";
+import { Animation } from "./Animation"
 
 export class Grid{
     public readonly size:Point
@@ -35,6 +38,19 @@ export class Grid{
                     else{
                         this.tiles[i].push(new Gravel({x:j, y:i}))
                     }
+                }
+                if(Math.round(Math.random())){
+                    const rock = new Rock({x:j,y:i});
+                    rock.addAnimation(new ChainedAnimation(
+                        rock,
+                        'rock',
+                        Animation.assets['rock'],
+                        {x:32,y:32},
+                        1,
+                        -1,
+                        1
+                    ))
+                    this.addEntity(rock);
                 }
             }
         }
@@ -105,5 +121,4 @@ export class Grid{
             entity.setGrid(null)
         }
     }
-
 }

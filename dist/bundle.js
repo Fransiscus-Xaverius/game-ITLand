@@ -156,7 +156,7 @@ class CanvasView {
 }
 exports.CanvasView = CanvasView;
 
-},{"./GameObjects/PlayerUnit":26,"./GameObjects/Tile":28}],2:[function(require,module,exports){
+},{"./GameObjects/PlayerUnit":26,"./GameObjects/Tile":29}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BoolWrapper = void 0;
@@ -1818,7 +1818,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./GameObjects/Grid":24,"./Player":30}],17:[function(require,module,exports){
+},{"./GameObjects/Grid":24,"./Player":31}],17:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -2022,7 +2022,7 @@ class Grass extends Tile_1.Tile {
 }
 exports.Grass = Grass;
 
-},{"./GroupAnimation":25,"./Tile":28}],23:[function(require,module,exports){
+},{"./GroupAnimation":25,"./Tile":29}],23:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Gravel = void 0;
@@ -2041,7 +2041,7 @@ class Gravel extends Tile_1.Tile {
 }
 exports.Gravel = Gravel;
 
-},{"./GroupAnimation":25,"./Tile":28}],24:[function(require,module,exports){
+},{"./GroupAnimation":25,"./Tile":29}],24:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grid = void 0;
@@ -2050,6 +2050,9 @@ const GroupAnimation_1 = require("./GroupAnimation");
 const PlayerUnit_1 = require("./PlayerUnit");
 const Sand_1 = require("./Sand");
 const Gravel_1 = require("./Gravel");
+const Rock_1 = require("./Rock");
+const ChainedAnimation_1 = require("./ChainedAnimation");
+const Animation_1 = require("./Animation");
 class Grid {
     constructor(size) {
         this.size = size;
@@ -2071,6 +2074,11 @@ class Grid {
                     else {
                         this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
                     }
+                }
+                if (Math.round(Math.random())) {
+                    const rock = new Rock_1.Rock({ x: j, y: i });
+                    rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
+                    this.addEntity(rock);
                 }
             }
         }
@@ -2140,7 +2148,7 @@ class Grid {
 }
 exports.Grid = Grid;
 
-},{"./Grass":22,"./Gravel":23,"./GroupAnimation":25,"./PlayerUnit":26,"./Sand":27}],25:[function(require,module,exports){
+},{"./Animation":18,"./ChainedAnimation":19,"./Grass":22,"./Gravel":23,"./GroupAnimation":25,"./PlayerUnit":26,"./Rock":27,"./Sand":28}],25:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupAnimation = void 0;
@@ -2301,6 +2309,7 @@ class PlayerUnit extends Entity_1.Entity {
                 this.playAnimation('walk');
                 break;
             default:
+                this.playAnimation('walk');
                 break;
         }
         const nextCoord = Object.assign({}, this.coordinate);
@@ -2328,7 +2337,22 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/Terminal":12,"../Items/Inventory":29,"./Direction":20,"./Entity":21}],27:[function(require,module,exports){
+},{"../Console/Terminal":12,"../Items/Inventory":30,"./Direction":20,"./Entity":21}],27:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Rock = void 0;
+const Entity_1 = require("./Entity");
+const Animation_1 = require("./Animation");
+const ChainedAnimation_1 = require("./ChainedAnimation");
+class Rock extends Entity_1.Entity {
+    constructor(coordinate, animations = []) {
+        super(coordinate, animations);
+        const animation = new ChainedAnimation_1.ChainedAnimation(this, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1);
+    }
+}
+exports.Rock = Rock;
+
+},{"./Animation":18,"./ChainedAnimation":19,"./Entity":21}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sand = void 0;
@@ -2346,7 +2370,7 @@ class Sand extends Tile_1.Tile {
 }
 exports.Sand = Sand;
 
-},{"./GroupAnimation":25,"./Tile":28}],28:[function(require,module,exports){
+},{"./GroupAnimation":25,"./Tile":29}],29:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tile = void 0;
@@ -2360,7 +2384,7 @@ class Tile extends Animated_1.Animated {
 exports.Tile = Tile;
 Tile.defaultTileResolution = { x: 32, y: 32 };
 
-},{"./Animated":17}],29:[function(require,module,exports){
+},{"./Animated":17}],30:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
@@ -2368,7 +2392,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -2389,7 +2413,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":18,"./GameObjects/ChainedAnimation":19,"./GameObjects/PlayerUnit":26}],31:[function(require,module,exports){
+},{"./GameObjects/Animation":18,"./GameObjects/ChainedAnimation":19,"./GameObjects/PlayerUnit":26}],32:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
@@ -2415,7 +2439,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -2460,7 +2484,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -2534,7 +2558,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -2556,12 +2580,16 @@ function loadAsset() {
     gravel_tile.src = "./dist/Assets/Prototype/gravel.png";
     const player_walk_reverse = new Image();
     player_walk_reverse.src = "./dist/Assets/Prototype/itland_ptype_player_walk_mirrored.png";
+    //Other Entities
+    const rock = new Image();
+    rock.src = './dist/Assets/Prototype/rock.png';
     Animation_1.Animation.assets['grass_tile'] = grass;
     Animation_1.Animation.assets['flowery_grass_tile'] = flowergrass;
     Animation_1.Animation.assets['player_idle'] = player_idle;
     Animation_1.Animation.assets['player_walk'] = player_walk;
     Animation_1.Animation.assets['player_walk_reverse'] = player_walk_reverse;
     Animation_1.Animation.assets['sand'] = sand_tile;
+    Animation_1.Animation.assets['rock'] = rock;
     GroupAnimation_1.GroupAnimation.animations.push(new GroupAnimation_1.GroupAnimation("grass_tile", grass, { x: 32, y: 32 }, 1, //number of frames
     0 //speed
     ), new GroupAnimation_1.GroupAnimation("flowery_grass_tile", flowergrass, //
@@ -2571,7 +2599,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":18,"./Classes/GameObjects/GroupAnimation":25}],35:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":18,"./Classes/GameObjects/GroupAnimation":25}],36:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -2627,4 +2655,4 @@ window.onload = () => {
     });
 };
 
-},{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/GameObjects/Direction":20,"./Classes/Shop":31,"./Classes/ShopView":32,"./Classes/TerminalView":33,"./loadAsset":34}]},{},[35]);
+},{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/GameObjects/Direction":20,"./Classes/Shop":32,"./Classes/ShopView":33,"./Classes/TerminalView":34,"./loadAsset":35}]},{},[36]);

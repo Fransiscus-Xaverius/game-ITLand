@@ -20,12 +20,17 @@ export default function loadAsset():void{
     const player_walk_reverse = new Image();
     player_walk_reverse.src = "./dist/Assets/Prototype/itland_ptype_player_walk_mirrored.png"
 
+    //Other Entities
+    const rock = new Image();
+    rock.src = './dist/Assets/Prototype/rock.png'
+
     Animation.assets['grass_tile'] = grass
     Animation.assets['flowery_grass_tile'] = flowergrass
     Animation.assets['player_idle'] = player_idle
     Animation.assets['player_walk'] = player_walk
     Animation.assets['player_walk_reverse'] = player_walk_reverse
     Animation.assets['sand'] = sand_tile
+    Animation.assets['rock'] = rock
 
     GroupAnimation.animations.push(
         new GroupAnimation(

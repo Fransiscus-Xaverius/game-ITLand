@@ -156,6 +156,7 @@ export class PlayerUnit extends Entity{
             this.playAnimation('walk')
             break;
         default:
+            this.playAnimation('walk')
             break;
         }
         const nextCoord:Point = {...this.coordinate};
