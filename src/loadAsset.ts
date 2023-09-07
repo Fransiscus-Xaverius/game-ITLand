@@ -12,12 +12,15 @@ export default function loadAsset():void{
     const player_walk = new Image()
     player_walk.src = "./dist/Assets/Prototype/itland_ptype_player_walk.png"
     const player_dig  = new Image()
+    const sand_tile = new Image()
+    sand_tile.src = "./dist/Assets/Prototype/sand.png"
     
 
     Animation.assets['grass_tile'] = grass
     Animation.assets['flowery_grass_tile'] = flowergrass
     Animation.assets['player_idle'] = player_idle
     Animation.assets['player_walk'] = player_walk
+    Animation.assets['sand'] = sand_tile
 
     GroupAnimation.animations.push(
         new GroupAnimation(
@@ -33,6 +36,13 @@ export default function loadAsset():void{
             {x:32, y:32},
             2, //number of frames
             1 //speed
+        ),
+        new GroupAnimation(
+            "sand_tile",
+            sand_tile,
+            {x:32, y:32},
+            1,
+            0
         )
     )
 }

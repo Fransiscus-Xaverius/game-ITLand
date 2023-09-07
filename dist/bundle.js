@@ -156,7 +156,7 @@ class CanvasView {
 }
 exports.CanvasView = CanvasView;
 
-},{"./GameObjects/PlayerUnit":25,"./GameObjects/Tile":26}],2:[function(require,module,exports){
+},{"./GameObjects/PlayerUnit":25,"./GameObjects/Tile":27}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BoolWrapper = void 0;
@@ -1818,7 +1818,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./GameObjects/Grid":23,"./Player":28}],17:[function(require,module,exports){
+},{"./GameObjects/Grid":23,"./Player":29}],17:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -2022,13 +2022,14 @@ class Grass extends Tile_1.Tile {
 }
 exports.Grass = Grass;
 
-},{"./GroupAnimation":24,"./Tile":26}],23:[function(require,module,exports){
+},{"./GroupAnimation":24,"./Tile":27}],23:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grid = void 0;
 const Grass_1 = require("./Grass");
 const GroupAnimation_1 = require("./GroupAnimation");
 const PlayerUnit_1 = require("./PlayerUnit");
+const Sand_1 = require("./Sand");
 class Grid {
     constructor(size) {
         this.size = size;
@@ -2040,7 +2041,12 @@ class Grid {
             this.tiles.push([]);
             for (let j = 0; j < size.x; j++) {
                 this.entityGrid[i].push(null);
-                this.tiles[i].push(new Grass_1.Grass({ x: j, y: i }));
+                if (Math.round(Math.random())) {
+                    this.tiles[i].push(new Grass_1.Grass({ x: j, y: i }));
+                }
+                else {
+                    this.tiles[i].push(new Sand_1.Sand({ x: j, y: i }));
+                }
             }
         }
     }
@@ -2109,7 +2115,7 @@ class Grid {
 }
 exports.Grid = Grid;
 
-},{"./Grass":22,"./GroupAnimation":24,"./PlayerUnit":25}],24:[function(require,module,exports){
+},{"./Grass":22,"./GroupAnimation":24,"./PlayerUnit":25,"./Sand":26}],24:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupAnimation = void 0;
@@ -2287,7 +2293,25 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/Terminal":12,"../Items/Inventory":27,"./Direction":20,"./Entity":21}],26:[function(require,module,exports){
+},{"../Console/Terminal":12,"../Items/Inventory":28,"./Direction":20,"./Entity":21}],26:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Sand = void 0;
+const Tile_1 = require("./Tile");
+const GroupAnimation_1 = require("./GroupAnimation");
+class Sand extends Tile_1.Tile {
+    constructor(coordinate) {
+        super(coordinate);
+        this.addAnimation(GroupAnimation_1.GroupAnimation.animations[2]);
+    }
+    step(stepper) {
+        return;
+        throw new Error("Method not implemented.");
+    }
+}
+exports.Sand = Sand;
+
+},{"./GroupAnimation":24,"./Tile":27}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tile = void 0;
@@ -2301,7 +2325,7 @@ class Tile extends Animated_1.Animated {
 exports.Tile = Tile;
 Tile.defaultTileResolution = { x: 32, y: 32 };
 
-},{"./Animated":17}],27:[function(require,module,exports){
+},{"./Animated":17}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
@@ -2309,7 +2333,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -2329,7 +2353,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":18,"./GameObjects/ChainedAnimation":19,"./GameObjects/PlayerUnit":25}],29:[function(require,module,exports){
+},{"./GameObjects/Animation":18,"./GameObjects/ChainedAnimation":19,"./GameObjects/PlayerUnit":25}],30:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
@@ -2355,12 +2379,12 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
 class ShopView {
-    constructor(shopButton, shop = null, shopHTML = null) {
+    constructor(shopButton, shop, shopHTML) {
         this.shop = null;
         this.shopButton = null;
         this.shopHTML = null;
@@ -2400,7 +2424,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -2474,7 +2498,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -2489,20 +2513,23 @@ function loadAsset() {
     const player_walk = new Image();
     player_walk.src = "./dist/Assets/Prototype/itland_ptype_player_walk.png";
     const player_dig = new Image();
+    const sand_tile = new Image();
+    sand_tile.src = "./dist/Assets/Prototype/sand.png";
     Animation_1.Animation.assets['grass_tile'] = grass;
     Animation_1.Animation.assets['flowery_grass_tile'] = flowergrass;
     Animation_1.Animation.assets['player_idle'] = player_idle;
     Animation_1.Animation.assets['player_walk'] = player_walk;
+    Animation_1.Animation.assets['sand'] = sand_tile;
     GroupAnimation_1.GroupAnimation.animations.push(new GroupAnimation_1.GroupAnimation("grass_tile", grass, { x: 32, y: 32 }, 1, //number of frames
     0 //speed
     ), new GroupAnimation_1.GroupAnimation("flowery_grass_tile", flowergrass, //
     { x: 32, y: 32 }, 2, //number of frames
     1 //speed
-    ));
+    ), new GroupAnimation_1.GroupAnimation("sand_tile", sand_tile, { x: 32, y: 32 }, 1, 0));
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":18,"./Classes/GameObjects/GroupAnimation":24}],33:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":18,"./Classes/GameObjects/GroupAnimation":24}],34:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -2558,4 +2585,4 @@ window.onload = () => {
     });
 };
 
-},{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/GameObjects/Direction":20,"./Classes/Shop":29,"./Classes/ShopView":30,"./Classes/TerminalView":31,"./loadAsset":32}]},{},[33]);
+},{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/GameObjects/Direction":20,"./Classes/Shop":30,"./Classes/ShopView":31,"./Classes/TerminalView":32,"./loadAsset":33}]},{},[34]);
