@@ -55,10 +55,8 @@ export class PlayerUnit extends Entity{
         this.lerpProgress = value;
     }
 
-   
-
     public update(deltaTime: number): void {
-        console.log(this.lerpProgress);
+        // console.log(this.lerpProgress);
         if(this.terminal.running) {
             try{
                 this.terminal.currentCommand?.Execute()
@@ -149,7 +147,17 @@ export class PlayerUnit extends Entity{
     public move(direction: Direction):void{
         if(this.isMoving || direction == Direction.None) return;
         this.isMoving = true;
-        this.playAnimation('walk')
+        // this.playAnimation('walk')
+        switch (direction) {
+            case Direction.Left:
+            this.playAnimation('walk_reverse')
+            break;
+            case Direction.Right:
+            this.playAnimation('walk')
+            break;
+        default:
+            break;
+        }
         const nextCoord:Point = {...this.coordinate};
         switch (direction) {
             case Direction.Up:

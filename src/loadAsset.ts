@@ -17,12 +17,14 @@ export default function loadAsset():void{
     sand_tile.src = "./dist/Assets/Prototype/sand.png"
     const gravel_tile = new Image()
     gravel_tile.src = "./dist/Assets/Prototype/gravel.png"
-    
+    const player_walk_reverse = new Image();
+    player_walk_reverse.src = "./dist/Assets/Prototype/itland_ptype_player_walk_mirrored.png"
 
     Animation.assets['grass_tile'] = grass
     Animation.assets['flowery_grass_tile'] = flowergrass
     Animation.assets['player_idle'] = player_idle
     Animation.assets['player_walk'] = player_walk
+    Animation.assets['player_walk_reverse'] = player_walk_reverse
     Animation.assets['sand'] = sand_tile
 
     GroupAnimation.animations.push(
@@ -54,5 +56,5 @@ export default function loadAsset():void{
             1,
             0
         )
-    )
+    )     
 }

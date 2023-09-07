@@ -27,6 +27,16 @@ export class Player{
             "",
             4
         )
+        
+        p1.createAnimation(
+            "walk_reverse", 
+            Animation.assets['player_walk_reverse'],
+            {x:32, y:32},
+            4,
+            "",
+            4
+        )
+
         p1.setMoveSpeed(2);
         this.units.push(p1)
     }

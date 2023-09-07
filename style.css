@@ -56,13 +56,13 @@ body, html {
     height: 20%;
 }
 
-.button{
+/* .button{
 
-}
+} */
 
-.start{
+/* .start{
 
-}
+} */
 .shop{
     display: flex;
 }
@@ -73,6 +73,6 @@ body, html {
     border: 1px solid black;
 }
 
-.stop{
+/* .stop{
     
-}
+} */

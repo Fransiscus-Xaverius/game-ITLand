@@ -6,6 +6,7 @@ import { Animated } from "./Animated";
 import { GroupAnimation } from "./GroupAnimation";
 import { PlayerUnit } from "./PlayerUnit";
 import { Sand } from "./Sand";
+import { Gravel } from "./Gravel";
 
 export class Grid{
     public readonly size:Point
@@ -28,7 +29,12 @@ export class Grid{
                     this.tiles[i].push(new Grass({x:j, y:i}))
                 }
                 else{
-                    this.tiles[i].push(new Sand({x:j, y:i}))
+                    if(Math.round(Math.random())){
+                        this.tiles[i].push(new Sand({x:j, y:i}))
+                    }
+                    else{
+                        this.tiles[i].push(new Gravel({x:j, y:i}))
+                    }
                 }
             }
         }
