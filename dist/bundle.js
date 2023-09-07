@@ -2513,8 +2513,11 @@ function loadAsset() {
     const player_walk = new Image();
     player_walk.src = "./dist/Assets/Prototype/itland_ptype_player_walk.png";
     const player_dig = new Image();
+    //player.dig.src
     const sand_tile = new Image();
     sand_tile.src = "./dist/Assets/Prototype/sand.png";
+    const gravel_tile = new Image();
+    gravel_tile.src = "./dist/Assets/Prototype/gravel.png";
     Animation_1.Animation.assets['grass_tile'] = grass;
     Animation_1.Animation.assets['flowery_grass_tile'] = flowergrass;
     Animation_1.Animation.assets['player_idle'] = player_idle;
@@ -2525,7 +2528,7 @@ function loadAsset() {
     ), new GroupAnimation_1.GroupAnimation("flowery_grass_tile", flowergrass, //
     { x: 32, y: 32 }, 2, //number of frames
     1 //speed
-    ), new GroupAnimation_1.GroupAnimation("sand_tile", sand_tile, { x: 32, y: 32 }, 1, 0));
+    ), new GroupAnimation_1.GroupAnimation("sand_tile", sand_tile, { x: 32, y: 32 }, 1, 0), new GroupAnimation_1.GroupAnimation("gravel_tile", gravel_tile, { x: 32, y: 32 }, 1, 0));
 }
 exports.default = loadAsset;
 
