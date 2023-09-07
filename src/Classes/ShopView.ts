@@ -5,11 +5,7 @@ export class ShopView {
     private shopButton: HTMLButtonElement | null = null
     private shopHTML: HTMLDivElement | null = null
 
-    constructor(
-        shopButton: HTMLButtonElement | null,
-        shop: Shop | null = null,
-        shopHTML: HTMLDivElement | null = null
-    ) {
+    constructor(shopButton: HTMLButtonElement, shop: Shop, shopHTML: HTMLDivElement) {
         this.setShop(shop)
         this.setShopButton(shopButton)
         this.setShopHTML(shopHTML)
