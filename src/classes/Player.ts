@@ -8,7 +8,7 @@ export class Player{
     public units:PlayerUnit[] = []
 
     constructor(){
-        const p1 = new PlayerUnit({x:0,y:0})
+        const p1 = new PlayerUnit({x:1,y:1})
         
         p1.addAnimation(new ChainedAnimation(
             p1,

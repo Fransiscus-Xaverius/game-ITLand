@@ -2067,21 +2067,29 @@ class Grid {
             this.tiles.push([]);
             for (let j = 0; j < size.x; j++) {
                 this.entityGrid[i].push(null);
-                if (Math.round(Math.random())) {
-                    this.tiles[i].push(new Grass_1.Grass({ x: j, y: i }));
-                }
-                else {
-                    if (Math.round(Math.random())) {
-                        this.tiles[i].push(new Sand_1.Sand({ x: j, y: i }));
-                    }
-                    else {
-                        this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
-                    }
-                }
-                if (Math.round(Math.random()) && (j != 0 && i != 0)) {
+                if (i == 0 || j == 0) {
+                    this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
                     const rock = new Rock_1.Rock({ x: j, y: i });
                     rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
                     this.addEntity(rock);
+                }
+                else {
+                    if (Math.round(Math.random())) {
+                        this.tiles[i].push(new Grass_1.Grass({ x: j, y: i }));
+                    }
+                    else {
+                        if (Math.round(Math.random())) {
+                            this.tiles[i].push(new Sand_1.Sand({ x: j, y: i }));
+                        }
+                        else {
+                            this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
+                        }
+                    }
+                    if (Math.round(Math.random()) && (j != 1 && i != 1)) {
+                        const rock = new Rock_1.Rock({ x: j, y: i });
+                        rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
+                        this.addEntity(rock);
+                    }
                 }
             }
         }
@@ -2407,7 +2415,7 @@ class Player {
         this.gold = 500;
         this.energy = 0;
         this.units = [];
-        const p1 = new PlayerUnit_1.PlayerUnit({ x: 0, y: 0 });
+        const p1 = new PlayerUnit_1.PlayerUnit({ x: 1, y: 1 });
         p1.addAnimation(new ChainedAnimation_1.ChainedAnimation(p1, "idle", Animation_1.Animation.assets['player_idle'], { x: 32, y: 32 }, 2, -1, 1));
         p1.createAnimation("walk", Animation_1.Animation.assets['player_walk'], { x: 32, y: 32 }, 4, "", 4);
         p1.createAnimation("walk_reverse", Animation_1.Animation.assets['player_walk_reverse'], { x: 32, y: 32 }, 4, "", 4);

@@ -28,29 +28,45 @@ export class Grid{
             this.tiles.push([])
             for (let j = 0; j < size.x; j++) {
                 this.entityGrid[i].push(null)
-                if(Math.round(Math.random())){
-                    this.tiles[i].push(new Grass({x:j, y:i}))
+                if(i==0||j==0){
+                    this.tiles[i].push(new Gravel({x:j, y:i}))
+                    const rock = new Rock({x:j,y:i});
+                        rock.addAnimation(new ChainedAnimation(
+                            rock,
+                            'rock',
+                            Animation.assets['rock'],
+                            {x:32,y:32},
+                            1,
+                            -1,
+                            1
+                        ))
+                    this.addEntity(rock);
                 }
                 else{
                     if(Math.round(Math.random())){
-                        this.tiles[i].push(new Sand({x:j, y:i}))
+                        this.tiles[i].push(new Grass({x:j, y:i}))
                     }
                     else{
-                        this.tiles[i].push(new Gravel({x:j, y:i}))
+                        if(Math.round(Math.random())){
+                            this.tiles[i].push(new Sand({x:j, y:i}))
+                        }
+                        else{
+                            this.tiles[i].push(new Gravel({x:j, y:i}))
+                        }
                     }
-                }
-                if(Math.round(Math.random())&&(j!=0&&i!=0)){
-                    const rock = new Rock({x:j,y:i});
-                    rock.addAnimation(new ChainedAnimation(
-                        rock,
-                        'rock',
-                        Animation.assets['rock'],
-                        {x:32,y:32},
-                        1,
-                        -1,
-                        1
-                    ))
-                    this.addEntity(rock);
+                    if(Math.round(Math.random())&&(j!=1&&i!=1)){
+                        const rock = new Rock({x:j,y:i});
+                        rock.addAnimation(new ChainedAnimation(
+                            rock,
+                            'rock',
+                            Animation.assets['rock'],
+                            {x:32,y:32},
+                            1,
+                            -1,
+                            1
+                        ))
+                        this.addEntity(rock);
+                    }
                 }
             }
         }
