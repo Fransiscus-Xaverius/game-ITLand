@@ -1,50 +1,49 @@
-// import { Inventory } from "./Items/Inventory";
-// import { Shop } from "./Shop";
+import { Inventory } from "./Items/Inventory"
 
-// export class InventoryView {
-//     private inventory: Inventory | null = null
-//     private inventoryButton: HTMLButtonElement | null = null
-//     private inventoryHTML: HTMLDivElement | null = null
+export class InventoryView {
+    private inventory: Inventory | null = null
+    private inventoryButton: HTMLButtonElement | null = null
+    private inventoryShopElement: HTMLDivElement | null = null
 
-//     constructor(shopButton: HTMLButtonElement, shop: Shop, shopHTML: HTMLDivElement) {
-//         this.setShop(shop)
-//         this.setShopButton(shopButton)
-//         this.setShopHTML(shopHTML)
-//     }
+    constructor(inventoryButton: HTMLButtonElement, inventory: Inventory, inventoryShopElement: HTMLDivElement) {
+        this.setInventory(inventory)
+        this.setInventoryButton(inventoryButton)
+        this.setInventoryShopElement(inventoryShopElement)
+    }
 
 
-//     private initShopButton(): void {
-//         if (this.shopButton) {
-//             this.shopButton?.addEventListener('click', () => {
-//                 if (this.shop) {
-//                     this.shop.open(this.getShopHTML());
-//                 }
-//             });
-//         }
-//     }
+    private initInventoryButton(): void {
+        if (this.inventoryButton) {
+            this.inventoryButton?.addEventListener('click', () => {
+                if (this.inventory) {
+                    this.inventory.open(this.getInventoryShopElement());
+                }
+            });
+        }
+    }
 
-//     public setShopHTML(shopHTML: HTMLDivElement | null): void {
-//         this.shopHTML = shopHTML;
-//     }
+    public setInventoryShopElement(inventoryShopElement: HTMLDivElement | null): void {
+        this.inventoryShopElement = inventoryShopElement;
+    }
 
-//     public getShopHTML(): HTMLDivElement | null {
-//         return this.shopHTML;
-//     }
+    public getInventoryShopElement(): HTMLDivElement | null {
+        return this.inventoryShopElement;
+    }
 
-//     public setShopButton(shopButton: HTMLButtonElement | null): void {
-//         this.shopButton = shopButton;
-//         this.initShopButton();
-//     }
+    public setInventoryButton(inventoryButton: HTMLButtonElement | null): void {
+        this.inventoryButton = inventoryButton;
+        this.initInventoryButton();
+    }
 
-//     public getShopButton(): HTMLButtonElement | null {
-//         return this.shopButton;
-//     }
+    public getInventoryButton(): HTMLButtonElement | null {
+        return this.inventoryButton;
+    }
 
-//     public setShop(value: Shop | null): void {
-//         this.shop = value
-//     }
+    public setInventory(value: Inventory | null): void {
+        this.inventory = value
+    }
 
-//     public getShop(): Shop | null {
-//         return this.shop;
-//     }
-// }
+    public getInventory(): Inventory | null {
+        return this.inventory;
+    }
+}
