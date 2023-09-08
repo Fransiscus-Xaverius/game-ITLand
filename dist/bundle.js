@@ -1757,16 +1757,16 @@ class GameManager {
         this.setShopView(shopView);
     }
     apiRequest() {
-        const apiUrl = 'https://mixed-curious-locket.glitch.me/api/user/login';
+        const apiUrl = 'https://84b0-118-99-84-2.ngrok-free.app';
         const customHeaders = new Headers();
-        customHeaders.append('Content-Type', 'application/json');
-        customHeaders.append('name', 'Reditto4');
-        customHeaders.append('password', 'redittothebest');
+        // customHeaders.append('Content-Type', 'application/json');
+        // customHeaders.append('name', 'Reditto4');
+        // customHeaders.append('password', 'redittothebest');
         function fetchData() {
             return __awaiter(this, void 0, void 0, function* () {
                 try {
                     const response = yield fetch(apiUrl, {
-                        method: 'POST',
+                        method: 'GET',
                         headers: customHeaders,
                     });
                     const responseData = yield response.json();
