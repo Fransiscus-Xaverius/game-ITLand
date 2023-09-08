@@ -1,5 +1,5 @@
-export class API {
-    public apiRequest() {
+export let API = {
+    apiRequest: () => {
         const apiUrl = 'https://84b0-118-99-84-2.ngrok-free.app';
 
         const customHeaders = new Headers();
