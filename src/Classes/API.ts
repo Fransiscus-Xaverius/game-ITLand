@@ -17,13 +17,12 @@ export const API = {
         const responseData = await response.json();
   
         // Display the response data as a JSON alert (for debugging)
-        alert(JSON.stringify(responseData));
   
         // Assuming the response data has map and entity properties, return it
         return responseData; // Adjust this line based on your actual response structure
       } catch (error) {
         // Handle any errors (you can add error handling logic here)
-        console.error('Error:', error);
+        alert(error);
         throw error; // Re-throw the error if needed
       }
     },

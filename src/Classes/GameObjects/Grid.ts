@@ -17,16 +17,30 @@ export class Grid{
     public entities: Entity[]
     public entityGrid: (Entity|null)[][]
     public tiles: (Tile|null)[][]
-    public mapData: {
-        map: any[];
-        entity: any[];
-    };
+    public mapData: any
 
     constructor(size:Point){
         this.size = size
         this.entities = []
         this.entityGrid = []
         this.tiles = []
+        // this.mapData = {
+        //     map:[],
+        //     entity:[]
+        // };
+        
+        const fetchMapData = () => {
+            try {
+                return API.apiRequest();
+                // alert(JSON.stringify(await API.apiRequest()));
+            } catch (error) {
+                return error;
+            }
+        }
+
+        this.mapData = fetchMapData();
+        alert(this.mapData);
+        alert(JSON.stringify(this.mapData));
 
         for (let i = 0; i < size.y; i++) {
             this.entityGrid.push([])

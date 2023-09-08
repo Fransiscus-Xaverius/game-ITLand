@@ -1,5 +1,43 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.API = void 0;
+exports.API = {
+    apiRequest: () => __awaiter(void 0, void 0, void 0, function* () {
+        const apiUrl = 'https://84b0-118-99-84-2.ngrok-free.app';
+        const customHeaders = new Headers();
+        try {
+            const response = yield fetch(apiUrl, {
+                method: 'GET',
+                headers: customHeaders,
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const responseData = yield response.json();
+            // Display the response data as a JSON alert (for debugging)
+            // Assuming the response data has map and entity properties, return it
+            return responseData; // Adjust this line based on your actual response structure
+        }
+        catch (error) {
+            // Handle any errors (you can add error handling logic here)
+            alert(error);
+            throw error; // Re-throw the error if needed
+        }
+    }),
+};
+
+},{}],2:[function(require,module,exports){
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CanvasView = void 0;
 const Tile_1 = require("./GameObjects/Tile");
@@ -156,7 +194,7 @@ class CanvasView {
 }
 exports.CanvasView = CanvasView;
 
-},{"./GameObjects/PlayerUnit":26,"./GameObjects/Tile":29}],2:[function(require,module,exports){
+},{"./GameObjects/PlayerUnit":27,"./GameObjects/Tile":30}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BoolWrapper = void 0;
@@ -244,7 +282,7 @@ BoolWrapper.processes = [
     },
 ];
 
-},{"./Wrapper":15}],3:[function(require,module,exports){
+},{"./Wrapper":16}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BranchCommand = void 0;
@@ -281,7 +319,7 @@ class BranchCommand extends Command_1.Command {
 }
 exports.BranchCommand = BranchCommand;
 
-},{"./Command":4,"./Expression":6,"./Wrapper":15}],4:[function(require,module,exports){
+},{"./Command":5,"./Expression":7,"./Wrapper":16}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Command = void 0;
@@ -292,7 +330,7 @@ class Command {
 }
 exports.Command = Command;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EndCommand = void 0;
@@ -306,7 +344,7 @@ class EndCommand extends Command_1.Command {
 }
 exports.EndCommand = EndCommand;
 
-},{"./Command":4}],6:[function(require,module,exports){
+},{"./Command":5}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Expression = void 0;
@@ -391,7 +429,7 @@ class Expression {
 }
 exports.Expression = Expression;
 
-},{"./VoidWrapper":13,"./Wrapper":15}],7:[function(require,module,exports){
+},{"./VoidWrapper":14,"./Wrapper":16}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NumberWrapper = void 0;
@@ -554,7 +592,7 @@ NumberWrapper.processes = [
     },
 ];
 
-},{"./BoolWrapper":2,"./StringWrapper":11,"./Wrapper":15}],8:[function(require,module,exports){
+},{"./BoolWrapper":3,"./StringWrapper":12,"./Wrapper":16}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerWrapper = void 0;
@@ -630,7 +668,7 @@ PlayerWrapper.processes = [
     },
 ];
 
-},{"./WaitWrapper":14,"./Wrapper":15}],9:[function(require,module,exports){
+},{"./WaitWrapper":15,"./Wrapper":16}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SingleCommand = void 0;
@@ -681,7 +719,7 @@ class SingleCommand extends Command_1.Command {
 }
 exports.SingleCommand = SingleCommand;
 
-},{"./Command":4,"./VoidWrapper":13,"./WaitWrapper":14}],10:[function(require,module,exports){
+},{"./Command":5,"./VoidWrapper":14,"./WaitWrapper":15}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StartCommand = void 0;
@@ -708,7 +746,7 @@ class StartCommand extends Command_1.Command {
 }
 exports.StartCommand = StartCommand;
 
-},{"./Command":4,"./EndCommand":5}],11:[function(require,module,exports){
+},{"./Command":5,"./EndCommand":6}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StringWrapper = void 0;
@@ -793,7 +831,7 @@ StringWrapper.processes = [
     },
 ];
 
-},{"./BoolWrapper":2,"./NumberWrapper":7,"./Wrapper":15}],12:[function(require,module,exports){
+},{"./BoolWrapper":3,"./NumberWrapper":8,"./Wrapper":16}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Terminal = void 0;
@@ -1658,7 +1696,7 @@ class Terminal {
 }
 exports.Terminal = Terminal;
 
-},{"./BoolWrapper":2,"./BranchCommand":3,"./EndCommand":5,"./Expression":6,"./NumberWrapper":7,"./PlayerWrapper":8,"./SingleCommand":9,"./StartCommand":10,"./StringWrapper":11,"./VoidWrapper":13,"./Wrapper":15}],13:[function(require,module,exports){
+},{"./BoolWrapper":3,"./BranchCommand":4,"./EndCommand":6,"./Expression":7,"./NumberWrapper":8,"./PlayerWrapper":9,"./SingleCommand":10,"./StartCommand":11,"./StringWrapper":12,"./VoidWrapper":14,"./Wrapper":16}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VoidWrapper = void 0;
@@ -1677,7 +1715,7 @@ class VoidWrapper extends Wrapper_1.Wrapper {
 }
 exports.VoidWrapper = VoidWrapper;
 
-},{"./Wrapper":15}],14:[function(require,module,exports){
+},{"./Wrapper":16}],15:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WaitWrapper = void 0;
@@ -1691,7 +1729,7 @@ class WaitWrapper extends VoidWrapper_1.VoidWrapper {
 }
 exports.WaitWrapper = WaitWrapper;
 
-},{"./VoidWrapper":13}],15:[function(require,module,exports){
+},{"./VoidWrapper":14}],16:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Wrapper = void 0;
@@ -1723,17 +1761,8 @@ class Wrapper {
 exports.Wrapper = Wrapper;
 Wrapper.processes = [];
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameManager = void 0;
 const Grid_1 = require("./GameObjects/Grid");
@@ -1755,28 +1784,6 @@ class GameManager {
         this.grid.addEntity(this.player.units[0]);
         this.setActivePlayerUnit(this.player.units[0]);
         this.setShopView(shopView);
-    }
-    apiRequest() {
-        const apiUrl = 'https://84b0-118-99-84-2.ngrok-free.app';
-        const customHeaders = new Headers();
-        // customHeaders.append('Content-Type', 'application/json');
-        // customHeaders.append('name', 'Reditto4');
-        // customHeaders.append('password', 'redittothebest');
-        function fetchData() {
-            return __awaiter(this, void 0, void 0, function* () {
-                try {
-                    const response = yield fetch(apiUrl, {
-                        method: 'GET',
-                        headers: customHeaders,
-                    });
-                    const responseData = yield response.json();
-                    alert(JSON.stringify(responseData));
-                }
-                catch (error) {
-                }
-            });
-        }
-        fetchData();
     }
     setShopView(shopView) {
         this.shopView = shopView;
@@ -1852,7 +1859,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./GameObjects/Grid":24,"./Player":31}],17:[function(require,module,exports){
+},{"./GameObjects/Grid":25,"./Player":32}],18:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -1897,7 +1904,7 @@ class Animated {
 }
 exports.Animated = Animated;
 
-},{"./ChainedAnimation":19,"./GroupAnimation":25}],18:[function(require,module,exports){
+},{"./ChainedAnimation":20,"./GroupAnimation":26}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animation = void 0;
@@ -1930,7 +1937,7 @@ class Animation {
 exports.Animation = Animation;
 Animation.assets = {};
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChainedAnimation = void 0;
@@ -1964,7 +1971,7 @@ class ChainedAnimation extends Animation_1.Animation {
 }
 exports.ChainedAnimation = ChainedAnimation;
 
-},{"./Animation":18}],20:[function(require,module,exports){
+},{"./Animation":19}],21:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Direction = void 0;
@@ -1977,7 +1984,7 @@ var Direction;
     Direction[Direction["None"] = 4] = "None";
 })(Direction || (exports.Direction = Direction = {}));
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Entity = void 0;
@@ -2036,7 +2043,7 @@ class Entity extends Animated_1.Animated {
 }
 exports.Entity = Entity;
 
-},{"./Animated":17}],22:[function(require,module,exports){
+},{"./Animated":18}],23:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grass = void 0;
@@ -2056,7 +2063,7 @@ class Grass extends Tile_1.Tile {
 }
 exports.Grass = Grass;
 
-},{"./GroupAnimation":25,"./Tile":29}],23:[function(require,module,exports){
+},{"./GroupAnimation":26,"./Tile":30}],24:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Gravel = void 0;
@@ -2075,7 +2082,7 @@ class Gravel extends Tile_1.Tile {
 }
 exports.Gravel = Gravel;
 
-},{"./GroupAnimation":25,"./Tile":29}],24:[function(require,module,exports){
+},{"./GroupAnimation":26,"./Tile":30}],25:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grid = void 0;
@@ -2087,12 +2094,29 @@ const Gravel_1 = require("./Gravel");
 const Rock_1 = require("./Rock");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 const Animation_1 = require("./Animation");
+const API_1 = require("../API");
 class Grid {
     constructor(size) {
         this.size = size;
         this.entities = [];
         this.entityGrid = [];
         this.tiles = [];
+        // this.mapData = {
+        //     map:[],
+        //     entity:[]
+        // };
+        const fetchMapData = () => {
+            try {
+                return API_1.API.apiRequest();
+                // alert(JSON.stringify(await API.apiRequest()));
+            }
+            catch (error) {
+                return error;
+            }
+        };
+        this.mapData = fetchMapData();
+        alert(this.mapData);
+        alert(JSON.stringify(this.mapData));
         for (let i = 0; i < size.y; i++) {
             this.entityGrid.push([]);
             this.tiles.push([]);
@@ -2190,7 +2214,7 @@ class Grid {
 }
 exports.Grid = Grid;
 
-},{"./Animation":18,"./ChainedAnimation":19,"./Grass":22,"./Gravel":23,"./GroupAnimation":25,"./PlayerUnit":26,"./Rock":27,"./Sand":28}],25:[function(require,module,exports){
+},{"../API":1,"./Animation":19,"./ChainedAnimation":20,"./Grass":23,"./Gravel":24,"./GroupAnimation":26,"./PlayerUnit":27,"./Rock":28,"./Sand":29}],26:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupAnimation = void 0;
@@ -2204,7 +2228,7 @@ class GroupAnimation extends Animation_1.Animation {
 exports.GroupAnimation = GroupAnimation;
 GroupAnimation.animations = [];
 
-},{"./Animation":18}],26:[function(require,module,exports){
+},{"./Animation":19}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerUnit = void 0;
@@ -2379,7 +2403,7 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/Terminal":12,"../Items/Inventory":30,"./Direction":20,"./Entity":21}],27:[function(require,module,exports){
+},{"../Console/Terminal":13,"../Items/Inventory":31,"./Direction":21,"./Entity":22}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rock = void 0;
@@ -2394,7 +2418,7 @@ class Rock extends Entity_1.Entity {
 }
 exports.Rock = Rock;
 
-},{"./Animation":18,"./ChainedAnimation":19,"./Entity":21}],28:[function(require,module,exports){
+},{"./Animation":19,"./ChainedAnimation":20,"./Entity":22}],29:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sand = void 0;
@@ -2412,7 +2436,7 @@ class Sand extends Tile_1.Tile {
 }
 exports.Sand = Sand;
 
-},{"./GroupAnimation":25,"./Tile":29}],29:[function(require,module,exports){
+},{"./GroupAnimation":26,"./Tile":30}],30:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tile = void 0;
@@ -2426,7 +2450,7 @@ class Tile extends Animated_1.Animated {
 exports.Tile = Tile;
 Tile.defaultTileResolution = { x: 32, y: 32 };
 
-},{"./Animated":17}],30:[function(require,module,exports){
+},{"./Animated":18}],31:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
@@ -2434,7 +2458,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -2462,7 +2486,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":18,"./GameObjects/ChainedAnimation":19,"./GameObjects/PlayerUnit":26}],32:[function(require,module,exports){
+},{"./GameObjects/Animation":19,"./GameObjects/ChainedAnimation":20,"./GameObjects/PlayerUnit":27}],33:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
@@ -2488,7 +2512,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -2533,7 +2557,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -2607,7 +2631,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -2648,7 +2672,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":18,"./Classes/GameObjects/GroupAnimation":25}],36:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":19,"./Classes/GameObjects/GroupAnimation":26}],37:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -2679,7 +2703,6 @@ window.onload = () => {
     canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
     (0, loadAsset_1.default)();
     const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, shopHTML));
-    game.apiRequest();
     game.start();
     const pUnit = game.getActivePlayerUnit();
     //Shop
@@ -2707,4 +2730,4 @@ window.onload = () => {
     });
 };
 
-},{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/GameObjects/Direction":20,"./Classes/Shop":32,"./Classes/ShopView":33,"./Classes/TerminalView":34,"./loadAsset":35}]},{},[36]);
+},{"./Classes/CanvasView":2,"./Classes/GameManager":17,"./Classes/GameObjects/Direction":21,"./Classes/Shop":33,"./Classes/ShopView":34,"./Classes/TerminalView":35,"./loadAsset":36}]},{},[37]);
