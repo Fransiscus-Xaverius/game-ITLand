@@ -1764,6 +1764,9 @@ class GameManager {
     getActivePlayerUnit() {
         return this.activePlayerUnit;
     }
+    getPlayer() {
+        return this.player;
+    }
     setCanvasView(canvasView) {
         this.canvasView = canvasView;
     }
@@ -2075,7 +2078,7 @@ class Grid {
                         this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
                     }
                 }
-                if (Math.round(Math.random())) {
+                if (Math.round(Math.random()) && (j != 0 && i != 0)) {
                     const rock = new Rock_1.Rock({ x: j, y: i });
                     rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
                     this.addEntity(rock);
@@ -2401,7 +2404,8 @@ const ChainedAnimation_1 = require("./GameObjects/ChainedAnimation");
 const PlayerUnit_1 = require("./GameObjects/PlayerUnit");
 class Player {
     constructor() {
-        this.gold = 0;
+        this.gold = 500;
+        this.energy = 0;
         this.units = [];
         const p1 = new PlayerUnit_1.PlayerUnit({ x: 0, y: 0 });
         p1.addAnimation(new ChainedAnimation_1.ChainedAnimation(p1, "idle", Animation_1.Animation.assets['player_idle'], { x: 32, y: 32 }, 2, -1, 1));
@@ -2409,6 +2413,12 @@ class Player {
         p1.createAnimation("walk_reverse", Animation_1.Animation.assets['player_walk_reverse'], { x: 32, y: 32 }, 4, "", 4);
         p1.setMoveSpeed(2);
         this.units.push(p1);
+    }
+    getGold() {
+        return this.gold;
+    }
+    getEnergy() {
+        return this.energy;
     }
 }
 exports.Player = Player;
@@ -2613,6 +2623,7 @@ const loadAsset_1 = __importDefault(require("./loadAsset"));
 const Shop_1 = require("./Classes/Shop");
 const Direction_1 = require("./Classes/GameObjects/Direction");
 window.onload = () => {
+    //Main game
     var _a, _b, _c, _d;
     const canvas = document.querySelector("#view");
     const terminal = document.querySelector("#console");
@@ -2623,10 +2634,6 @@ window.onload = () => {
     const shop = new Shop_1.Shop();
     if (canvas == null)
         throw new Error("Canvas not found");
-    if (executeButton == null)
-        throw new Error("Start button not found");
-    if (stopButton == null)
-        throw new Error("Stop button not found");
     if (shopButton == null)
         throw new Error("Shop button not found");
     canvas.width = (_b = (_a = canvas.parentElement) === null || _a === void 0 ? void 0 : _a.clientWidth) !== null && _b !== void 0 ? _b : window.innerWidth;
@@ -2635,6 +2642,11 @@ window.onload = () => {
     const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, shopHTML));
     game.start();
     const pUnit = game.getActivePlayerUnit();
+    //Shop
+    //Quiz Section
+    // const curPlayer = game.getPlayer();
+    // const energyAmount = document.querySelector("#energyAmount") as HTMLDivElement
+    // energyAmount.value = `Energy: ${curPlayer.getEnergy()}`
     document.addEventListener('keydown', (e) => {
         const key = e.key;
         if (key === 'w') {

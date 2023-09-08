@@ -7,6 +7,9 @@ import { Shop } from './Classes/Shop';
 import { Direction } from './Classes/GameObjects/Direction';
 
 window.onload = () => {
+
+    //Main game
+
     const canvas = document.querySelector("#view") as HTMLCanvasElement
     const terminal = document.querySelector("#console") as HTMLTextAreaElement
     const executeButton = document.querySelector("#executeButton") as HTMLButtonElement
@@ -15,8 +18,6 @@ window.onload = () => {
     const shopHTML = document.querySelector(".shop-html") as HTMLDivElement
     const shop = new Shop() as Shop
     if (canvas == null) throw new Error("Canvas not found");
-    if (executeButton == null) throw new Error("Start button not found");
-    if (stopButton == null) throw new Error("Stop button not found");
     if (shopButton == null) throw new Error("Shop button not found");
     canvas.width = canvas.parentElement?.clientWidth ?? window.innerWidth
     canvas.height = canvas.parentElement?.clientHeight ?? window.innerHeight
@@ -29,6 +30,15 @@ window.onload = () => {
     )
     game.start();
     const pUnit = game.getActivePlayerUnit();
+
+    //Shop
+
+    //Quiz Section
+    // const curPlayer = game.getPlayer();
+    // const energyAmount = document.querySelector("#energyAmount") as HTMLDivElement
+    // energyAmount.value = `Energy: ${curPlayer.getEnergy()}`
+
+
     document.addEventListener('keydown', (e)=>{
         const key = e.key;
         if (key === 'w') {
@@ -47,5 +57,6 @@ window.onload = () => {
         }
         console.clear()
     })
+
 }
 

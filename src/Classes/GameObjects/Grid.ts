@@ -39,7 +39,7 @@ export class Grid{
                         this.tiles[i].push(new Gravel({x:j, y:i}))
                     }
                 }
-                if(Math.round(Math.random())){
+                if(Math.round(Math.random())&&(j!=0&&i!=0)){
                     const rock = new Rock({x:j,y:i});
                     rock.addAnimation(new ChainedAnimation(
                         rock,

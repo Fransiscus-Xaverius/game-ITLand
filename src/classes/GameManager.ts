@@ -47,6 +47,10 @@ export class GameManager {
         return this.activePlayerUnit;
     }
 
+    public getPlayer(){
+        return this.player;
+    }
+
     public setCanvasView(canvasView: CanvasView | null): void {
         this.canvasView = canvasView
     }

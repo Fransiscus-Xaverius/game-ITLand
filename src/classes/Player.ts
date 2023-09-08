@@ -3,7 +3,8 @@ import { ChainedAnimation } from "./GameObjects/ChainedAnimation";
 import { PlayerUnit } from "./GameObjects/PlayerUnit";
 
 export class Player{
-    private gold:number = 0
+    private gold:number = 500;
+    private energy:number = 0;
     public units:PlayerUnit[] = []
 
     constructor(){
@@ -40,4 +41,13 @@ export class Player{
         p1.setMoveSpeed(2);
         this.units.push(p1)
     }
+
+    public getGold(){
+        return this.gold;
+    }
+
+    public getEnergy(){
+        return this.energy;
+    }
+
 }
