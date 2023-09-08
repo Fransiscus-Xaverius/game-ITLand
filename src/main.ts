@@ -15,7 +15,7 @@ window.onload = () => {
     const executeButton = document.querySelector("#executeButton") as HTMLButtonElement
     const stopButton = document.querySelector("#stopButton") as HTMLButtonElement
     const shopButton = document.querySelector(".button-shop") as HTMLButtonElement
-    const shopHTML = document.querySelector(".shop-html") as HTMLDivElement
+    const shopHTML = document.querySelector(".shop-inventory") as HTMLDivElement
     const shop = new Shop() as Shop
     if (canvas == null) throw new Error("Canvas not found");
     if (shopButton == null) throw new Error("Shop button not found");

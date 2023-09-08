@@ -12,14 +12,14 @@ import { ChainedAnimation } from "./ChainedAnimation";
 import { Animation } from "./Animation"
 import { API } from "../API";
 
-export class Grid{
-    public readonly size:Point
+export class Grid {
+    public readonly size: Point
     public entities: Entity[]
-    public entityGrid: (Entity|null)[][]
-    public tiles: (Tile|null)[][]
+    public entityGrid: (Entity | null)[][]
+    public tiles: (Tile | null)[][]
     public mapData: any
 
-    constructor(size:Point){
+    constructor(size: Point) {
         this.size = size
         this.entities = []
         this.entityGrid = []
@@ -28,7 +28,7 @@ export class Grid{
         //     map:[],
         //     entity:[]
         // };
-        
+
         // const fetchMapData:()=>Promise = () => {
         //     try {
         //         return API.apiRequest();
@@ -50,7 +50,7 @@ export class Grid{
         //             callback(null, error); // Call the callback with the error
         //         });
         // };
-        
+
         // // Usage
         // fetchMapData((result, error) => {
         //     if (error) {
@@ -60,50 +60,79 @@ export class Grid{
         //     }
         // });
 
-        API.apiRequest().then((x)=>{
-            this.mapData = this.mapGeneration(x);
-        })
+        let mData = {
+            map: [],
+            entity: [],
+        };
 
-        alert(JSON.stringify(this.mapData));
+        // API.apiRequest()
+        //     .then((x) => {
+        //         alert(JSON.stringify(x))
+        //         let t = JSON.parse(JSON.stringify(x))
+
+        //         for (let i = 0;i < t.map.length;i++){
+        //             mData.map.push([]);
+        //         }
+
+        //         for (let i = 0; i < x.map.length; i++) {
+        //             mData.map.push([]);
+        //             for (let j = 0; j < x.map[i].length; j++) {
+        //                 mData.map[i].push(x.map[i][j]);
+        //             }
+        //             for (let j = 0; j < x.entity[i].length; j++) {
+        //                 mData.entity[i].push(x.entity[i][j]);
+        //             }
+        //         }
+        //         for (let i = 0; i < x.entity.length; i++) {
+        //             mData.entity.push([]);
+        //             for (let j = 0; j < x.entity[i].length; j++) {
+        //                 mData.entity[i].push(x.entity[i][j]);
+        //             }
+        //         }
+        //     });
+
+
+
+        // alert("outside 2 then " + this.mapData);
 
         for (let i = 0; i < this.size.y; i++) {
             this.entityGrid.push([])
             this.tiles.push([])
             for (let j = 0; j < this.size.x; j++) {
                 this.entityGrid[i].push(null)
-                if(i==0||j==0){
-                    this.tiles[i].push(new Gravel({x:j, y:i}))
-                    const rock = new Rock({x:j,y:i});
-                        rock.addAnimation(new ChainedAnimation(
-                            rock,
-                            'rock',
-                            Animation.assets['rock'],
-                            {x:32,y:32},
-                            1,
-                            -1,
-                            1
-                        ))
+                if (i == 0 || j == 0) {
+                    this.tiles[i].push(new Gravel({ x: j, y: i }))
+                    const rock = new Rock({ x: j, y: i });
+                    rock.addAnimation(new ChainedAnimation(
+                        rock,
+                        'rock',
+                        Animation.assets['rock'],
+                        { x: 32, y: 32 },
+                        1,
+                        -1,
+                        1
+                    ))
                     this.addEntity(rock);
                 }
-                else{
-                    if(Math.round(Math.random())){
-                        this.tiles[i].push(new Grass({x:j, y:i}))
+                else {
+                    if (Math.round(Math.random())) {
+                        this.tiles[i].push(new Grass({ x: j, y: i }))
                     }
-                    else{
-                        if(Math.round(Math.random())){
-                            this.tiles[i].push(new Sand({x:j, y:i}))
+                    else {
+                        if (Math.round(Math.random())) {
+                            this.tiles[i].push(new Sand({ x: j, y: i }))
                         }
-                        else{
-                            this.tiles[i].push(new Gravel({x:j, y:i}))
+                        else {
+                            this.tiles[i].push(new Gravel({ x: j, y: i }))
                         }
                     }
-                    if(Math.round(Math.random())&&(j!=1&&i!=1)){
-                        const rock = new Rock({x:j,y:i});
+                    if (Math.round(Math.random()) && (j != 1 && i != 1)) {
+                        const rock = new Rock({ x: j, y: i });
                         rock.addAnimation(new ChainedAnimation(
                             rock,
                             'rock',
                             Animation.assets['rock'],
-                            {x:32,y:32},
+                            { x: 32, y: 32 },
                             1,
                             -1,
                             1
@@ -115,16 +144,12 @@ export class Grid{
         }
     }
 
-    public mapGeneration(x:any){
-        return JSON.parse(x);
-    }
-
-    public update(deltaTime:number, updateArea:{position:Point, size:Point} | null = null, priorityUpdate:Animated[] = []):void{
+    public update(deltaTime: number, updateArea: { position: Point, size: Point } | null = null, priorityUpdate: Animated[] = []): void {
         GroupAnimation.animations.forEach(x => x.nextFrame(deltaTime))
 
-        if(!updateArea){
-            for(let i = 0; i < this.size.y; ++i){
-                for(let j = 0; j < this.size.x; ++j){
+        if (!updateArea) {
+            for (let i = 0; i < this.size.y; ++i) {
+                for (let j = 0; j < this.size.x; ++j) {
                     this.tiles[i]?.at(j)?.nextFrame(deltaTime)
                     this.entityGrid[i]?.at(j)?.nextFrame(deltaTime)
                 }
@@ -133,54 +158,54 @@ export class Grid{
         }
 
         const xStart = updateArea.position.x
-        const xEnd   = updateArea.position.x + updateArea.size.x
+        const xEnd = updateArea.position.x + updateArea.size.x
 
         const yStart = updateArea.position.y
-        const yEnd   = updateArea.position.y + updateArea.size.y
+        const yEnd = updateArea.position.y + updateArea.size.y
 
-        for(let i = yStart; i < yEnd; ++i){
-            for(let j = xStart; j < xEnd; ++j){
-                if(j < 0) continue;
+        for (let i = yStart; i < yEnd; ++i) {
+            for (let j = xStart; j < xEnd; ++j) {
+                if (j < 0) continue;
                 const tile = this.tiles[i]?.at(j)
                 const entity = this.entityGrid[i]?.at(j)
-                if(tile && !priorityUpdate.includes(tile))
+                if (tile && !priorityUpdate.includes(tile))
                     tile.nextFrame(deltaTime)
-                if(entity && !priorityUpdate.includes(entity)){
-                    if(entity instanceof PlayerUnit) entity.update(deltaTime);
+                if (entity && !priorityUpdate.includes(entity)) {
+                    if (entity instanceof PlayerUnit) entity.update(deltaTime);
                     entity.nextFrame(deltaTime)
                 }
             }
         }
 
         priorityUpdate.forEach(x => {
-            if(x instanceof PlayerUnit) x.update(deltaTime);
+            if (x instanceof PlayerUnit) x.update(deltaTime);
             x.nextFrame(deltaTime)
         })
 
-        
+
     }
 
-    public addEntity(entity:Entity):void{
+    public addEntity(entity: Entity): void {
         const index = this.entities.indexOf(entity)
-        if(index != -1) {
-            if(entity.getGrid() != this) entity.setGrid(this)
+        if (index != -1) {
+            if (entity.getGrid() != this) entity.setGrid(this)
             return
         }
-        if(this.entityGrid[entity.getCoordinate().y][entity.getCoordinate().x] != null){
+        if (this.entityGrid[entity.getCoordinate().y][entity.getCoordinate().x] != null) {
             throw Error("This coordinate is taken")
         }
         this.entities.push(entity)
         this.entityGrid[entity.getCoordinate().y][entity.getCoordinate().x] = entity
-        if(entity.getGrid() != this) entity.setGrid(this)
+        if (entity.getGrid() != this) entity.setGrid(this)
     }
 
-    public removeEntity(entity:Entity):void{
+    public removeEntity(entity: Entity): void {
         const index = this.entities.indexOf(entity)
-        if(index != -1){
+        if (index != -1) {
             this.entities.splice(index, 1)
             this.entityGrid[entity.getCoordinate().y][entity.getCoordinate().x] = null
         }
-        if(entity.getGrid() == this){
+        if (entity.getGrid() == this) {
             entity.setGrid(null)
         }
     }
