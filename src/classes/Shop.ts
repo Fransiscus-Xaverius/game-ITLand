@@ -2,7 +2,11 @@ import { Inventory } from "./Items/Inventory";
 import { Item } from "./Items/Item";
 
 export class Shop {
-    private item: Item[] = ["hello1", "hello1", "hello1"];
+    private item: Item[];
+    constructor() {
+        this.item = ["hello1", "hello1", "hello1"];
+    }
+
     public open(shopHTML: HTMLDivElement | null) {
         if (shopHTML) {
             shopHTML.innerHTML = ""
