@@ -1747,6 +1747,12 @@ class GameManager {
         this.setActivePlayerUnit(this.player.units[0]);
         this.setShopView(shopView);
     }
+    removeGridEntity() {
+        this.grid.entityGrid[0][0] = null;
+    }
+    alertEntity() {
+        console.log(this.grid.entities);
+    }
     setShopView(shopView) {
         this.shopView = shopView;
     }
@@ -2729,6 +2735,7 @@ window.onload = () => {
             pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Right);
         }
         if (key === 'q') {
+            game.removeGridEntity();
         }
         console.clear();
     });

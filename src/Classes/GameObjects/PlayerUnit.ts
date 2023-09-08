@@ -144,6 +144,14 @@ export class PlayerUnit extends Entity{
         
     }
 
+    public getX(){
+        return this.coordinate.x;
+    }
+
+    public getY(){
+        return this.coordinate.y;
+    }
+
     public move(direction: Direction):void{
         if(this.isMoving || direction == Direction.None) return;
         this.isMoving = true;

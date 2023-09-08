@@ -5,6 +5,7 @@ import { ShopView } from './Classes/ShopView';
 import loadAsset from './loadAsset'
 import { Shop } from './Classes/Shop';
 import { Direction } from './Classes/GameObjects/Direction';
+import { Point } from './Classes/GameObjects/Point';
 
 
 window.onload = () => {
@@ -30,7 +31,7 @@ window.onload = () => {
     )
     game.start();
     const pUnit = game.getActivePlayerUnit();
-
+    
     //Shop
 
     //Quiz Section
@@ -54,6 +55,19 @@ window.onload = () => {
             pUnit?.move(Direction.Right);
         }
         if (key === 'q') {
+            
+        }
+        if(key === 'i'){ //destroy top entity
+            
+        }
+        if(key === 'j'){ //destroy left entitiy
+
+        }
+        if(key === 'k'){ //destroy bottom entity
+
+        }
+        if(key === 'l'){ //destroy right entity
+
         }
         console.clear()
     })

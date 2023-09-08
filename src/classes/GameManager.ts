@@ -7,6 +7,7 @@ import { Direction } from './GameObjects/Direction';
 import { PlayerUnit } from './GameObjects/PlayerUnit';
 import { ShopView } from './ShopView';
 import { API } from './API';
+import { Entity } from './GameObjects/Entity';
 
 export class GameManager {
     private lastTimeStamp: number = 0;
@@ -28,6 +29,13 @@ export class GameManager {
         this.setShopView(shopView);
     }
 
+    public removeGridEntity(){
+        this.grid.entityGrid[0][0] = null;
+    }
+
+    public alertEntity(){
+        console.log(this.grid.entities);
+    }
 
     public setShopView(shopView: ShopView | null) {
         this.shopView = shopView;
