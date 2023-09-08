@@ -2429,7 +2429,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
 class Shop {
     constructor() {
-        this.item = ["hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1", "hello1"];
+        this.item = ["hello1", "hello1", "hello1"];
     }
     open(shopHTML) {
         if (shopHTML) {
