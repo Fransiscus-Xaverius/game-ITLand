@@ -6,6 +6,7 @@ import { Player } from './Player';
 import { Direction } from './GameObjects/Direction';
 import { PlayerUnit } from './GameObjects/PlayerUnit';
 import { ShopView } from './ShopView';
+import { API } from './API';
 
 export class GameManager {
     private lastTimeStamp: number = 0;
@@ -26,6 +27,7 @@ export class GameManager {
         this.setActivePlayerUnit(this.player.units[0]);
         this.setShopView(shopView);
     }
+
 
     public setShopView(shopView: ShopView | null) {
         this.shopView = shopView;

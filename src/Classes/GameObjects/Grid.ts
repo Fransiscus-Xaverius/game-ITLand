@@ -10,12 +10,17 @@ import { Gravel } from "./Gravel";
 import { Rock } from "./Rock";
 import { ChainedAnimation } from "./ChainedAnimation";
 import { Animation } from "./Animation"
+import { API } from "../API";
 
 export class Grid{
     public readonly size:Point
     public entities: Entity[]
     public entityGrid: (Entity|null)[][]
     public tiles: (Tile|null)[][]
+    public mapData: {
+        map: any[];
+        entity: any[];
+    };
 
     constructor(size:Point){
         this.size = size

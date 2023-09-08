@@ -28,7 +28,6 @@ window.onload = () => {
         new TerminalView(terminal, executeButton, stopButton),
         new ShopView(shopButton, shop, shopHTML)
     )
-    game.apiRequest();
     game.start();
     const pUnit = game.getActivePlayerUnit();
 
