@@ -1,25 +1,31 @@
-export let API = {
-    apiRequest: () => {
-        const apiUrl = 'https://84b0-118-99-84-2.ngrok-free.app';
-
-        const customHeaders = new Headers();
-        // customHeaders.append('Content-Type', 'application/json');
-        // customHeaders.append('name', 'Reditto4');
-        // customHeaders.append('password', 'redittothebest');
-
-        async function fetchData() {
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'GET',
-                    headers: customHeaders,
-                });
-                const responseData = await response.json();
-                alert(JSON.stringify(responseData));
-                return JSON.parse(responseData);
-            } catch (error) {
-
-            }
+export const API = {
+    apiRequest: async () => {
+      const apiUrl = 'https://84b0-118-99-84-2.ngrok-free.app';
+  
+      const customHeaders = new Headers();
+  
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: customHeaders,
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return fetchData();
-    }
-} 
+  
+        const responseData = await response.json();
+  
+        // Display the response data as a JSON alert (for debugging)
+        alert(JSON.stringify(responseData));
+  
+        // Assuming the response data has map and entity properties, return it
+        return responseData; // Adjust this line based on your actual response structure
+      } catch (error) {
+        // Handle any errors (you can add error handling logic here)
+        console.error('Error:', error);
+        throw error; // Re-throw the error if needed
+      }
+    },
+  };
+  
