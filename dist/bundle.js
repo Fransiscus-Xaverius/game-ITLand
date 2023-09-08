@@ -1725,6 +1725,15 @@ Wrapper.processes = [];
 
 },{}],16:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameManager = void 0;
 const Grid_1 = require("./GameObjects/Grid");
@@ -1746,6 +1755,28 @@ class GameManager {
         this.grid.addEntity(this.player.units[0]);
         this.setActivePlayerUnit(this.player.units[0]);
         this.setShopView(shopView);
+    }
+    apiRequest() {
+        const apiUrl = 'https://mixed-curious-locket.glitch.me/api/user/login';
+        const customHeaders = new Headers();
+        customHeaders.append('Content-Type', 'application/json');
+        customHeaders.append('name', 'Reditto4');
+        customHeaders.append('password', 'redittothebest');
+        function fetchData() {
+            return __awaiter(this, void 0, void 0, function* () {
+                try {
+                    const response = yield fetch(apiUrl, {
+                        method: 'POST',
+                        headers: customHeaders,
+                    });
+                    const responseData = yield response.json();
+                    alert(JSON.stringify(responseData));
+                }
+                catch (error) {
+                }
+            });
+        }
+        fetchData();
     }
     setShopView(shopView) {
         this.shopView = shopView;
@@ -2648,6 +2679,7 @@ window.onload = () => {
     canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
     (0, loadAsset_1.default)();
     const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, shopHTML));
+    game.apiRequest();
     game.start();
     const pUnit = game.getActivePlayerUnit();
     //Shop

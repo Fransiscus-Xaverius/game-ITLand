@@ -6,8 +6,8 @@ import loadAsset from './loadAsset'
 import { Shop } from './Classes/Shop';
 import { Direction } from './Classes/GameObjects/Direction';
 
-window.onload = () => {
 
+window.onload = () => {
     //Main game
 
     const canvas = document.querySelector("#view") as HTMLCanvasElement
@@ -28,6 +28,7 @@ window.onload = () => {
         new TerminalView(terminal, executeButton, stopButton),
         new ShopView(shopButton, shop, shopHTML)
     )
+    game.apiRequest();
     game.start();
     const pUnit = game.getActivePlayerUnit();
 
