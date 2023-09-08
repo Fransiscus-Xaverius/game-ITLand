@@ -29,23 +29,47 @@ export class Grid{
         //     entity:[]
         // };
         
-        const fetchMapData = () => {
-            try {
-                return API.apiRequest();
-                // alert(JSON.stringify(await API.apiRequest()));
-            } catch (error) {
-                return error;
-            }
-        }
+        // const fetchMapData:()=>Promise = () => {
+        //     try {
+        //         return API.apiRequest();
+        //         // alert(JSON.stringify(await API.apiRequest()));
+        //     } catch (error) {
+        //         return error;
+        //     }
+        // }
+        // fetchMapData().then((e)=>{
 
-        this.mapData = fetchMapData();
-        alert(this.mapData);
+        // })
+
+        // const fetchMapData = (callback: (result: any, error: any) => void) => {
+        //     API.apiRequest()
+        //         .then((result) => {
+        //             callback(result, null); // Call the callback with the result
+        //         })
+        //         .catch((error) => {
+        //             callback(null, error); // Call the callback with the error
+        //         });
+        // };
+        
+        // // Usage
+        // fetchMapData((result, error) => {
+        //     if (error) {
+        //         console.error('Error:', error);
+        //     } else {
+        //         this.mapData = result;
+        //     }
+        // });
+
+        API.apiRequest().then((x)=>{
+            this.mapData = this.mapGeneration(x);
+        })
+
         alert(JSON.stringify(this.mapData));
 
-        for (let i = 0; i < size.y; i++) {
+        for (let i = 0; i < this.size.y; i++) {
             this.entityGrid.push([])
             this.tiles.push([])
-            for (let j = 0; j < size.x; j++) {
+            for (let j = 0; j < this.size.x; j++) {
                 this.entityGrid[i].push(null)
                 if(i==0||j==0){
                     this.tiles[i].push(new Gravel({x:j, y:i}))
@@ -89,6 +113,10 @@ export class Grid{
                 }
             }
         }
+    }
+
+    public mapGeneration(x:any){
+        return JSON.parse(x);
     }
 
     public update(deltaTime:number, updateArea:{position:Point, size:Point} | null = null, priorityUpdate:Animated[] = []):void{
