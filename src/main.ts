@@ -55,7 +55,7 @@ window.onload = () => {
             pUnit?.move(Direction.Right);
         }
         if (key === 'q') {
-            
+            game.removeGridEntity();
         }
         if(key === 'i'){ //destroy top entity
             

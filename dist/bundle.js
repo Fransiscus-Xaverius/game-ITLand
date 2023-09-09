@@ -1748,7 +1748,7 @@ class GameManager {
         this.setShopView(shopView);
     }
     removeGridEntity() {
-        this.grid.entityGrid[0][0] = null;
+        this.grid.entityGrid[0][1] = null;
     }
     alertEntity() {
         console.log(this.grid.entities);
@@ -2372,6 +2372,12 @@ class PlayerUnit extends Entity_1.Entity {
     }
     Dig() {
     }
+    getX() {
+        return this.coordinate.x;
+    }
+    getY() {
+        return this.coordinate.y;
+    }
     move(direction) {
         if (this.isMoving || direction == Direction_1.Direction.None)
             return;
@@ -2736,6 +2742,14 @@ window.onload = () => {
         }
         if (key === 'q') {
             game.removeGridEntity();
+        }
+        if (key === 'i') { //destroy top entity
+        }
+        if (key === 'j') { //destroy left entitiy
+        }
+        if (key === 'k') { //destroy bottom entity
+        }
+        if (key === 'l') { //destroy right entity
         }
         console.clear();
     });

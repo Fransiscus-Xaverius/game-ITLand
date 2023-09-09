@@ -29,8 +29,8 @@ export class GameManager {
         this.setShopView(shopView);
     }
 
-    public removeGridEntity(){
-        this.grid.entityGrid[0][0] = null;
+    public removeGridEntity(){ 
+        this.grid.entityGrid[0][1] = null;
     }
 
     public alertEntity(){
