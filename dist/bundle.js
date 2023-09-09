@@ -1747,8 +1747,8 @@ class GameManager {
         this.setActivePlayerUnit(this.player.units[0]);
         this.setShopView(shopView);
     }
-    removeGridEntity() {
-        this.grid.entityGrid[0][1] = null;
+    removeGridEntity(x, y) {
+        this.grid.entityGrid[y][x] = null;
     }
     alertEntity() {
         console.log(this.grid.entities);
@@ -2132,7 +2132,7 @@ class Grid {
             this.tiles.push([]);
             for (let j = 0; j < this.size.x; j++) {
                 this.entityGrid[i].push(null);
-                if (i == 0 || j == 0) {
+                if (i == 0 || j == 0 || j == 99 || i == 99) {
                     this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
                     const rock = new Rock_1.Rock({ x: j, y: i });
                     rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
@@ -2471,6 +2471,37 @@ Tile.defaultTileResolution = { x: 32, y: 32 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
 class Inventory {
+    constructor() {
+        this.items = [];
+    }
+    open(inventoryShopElement) {
+        if (inventoryShopElement) {
+            inventoryShopElement.innerHTML = "";
+            // Create the card element
+            const cardElement = document.createElement('div');
+            cardElement.classList.add('card');
+            // Create the image element
+            const imageElement = document.createElement('img');
+            imageElement.classList.add('inventory-item-image');
+            imageElement.src = ''; // Set the image source as needed
+            imageElement.alt = ''; // Set the alt text as needed
+            // Create the name element
+            const nameElement = document.createElement('p');
+            nameElement.classList.add('inventory-item-name');
+            // Create the owned element
+            const ownedElement = document.createElement('h4');
+            ownedElement.classList.add('inventory-item-owned');
+            // Append the child elements to the card element
+            cardElement.appendChild(imageElement);
+            cardElement.appendChild(nameElement);
+            cardElement.appendChild(ownedElement);
+            // You can then append the cardElement to your container element
+            const cardContainer = document.getElementById('card-container'); // Assuming you have a container element in your HTML
+            if (cardContainer) {
+                cardContainer.appendChild(cardElement);
+            }
+        }
+    }
 }
 exports.Inventory = Inventory;
 
@@ -2498,6 +2529,9 @@ class Player {
     }
     getEnergy() {
         return this.energy;
+    }
+    getCoordinate() {
+        return this.units[0].getCoordinate();
     }
 }
 exports.Player = Player;
@@ -2533,29 +2567,29 @@ exports.Shop = Shop;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
 class ShopView {
-    constructor(shopButton, shop, shopHTML) {
+    constructor(shopButton, shop, inventoryShopElement) {
         this.shop = null;
         this.shopButton = null;
-        this.shopHTML = null;
+        this.inventoryShopElement = null;
         this.setShop(shop);
         this.setShopButton(shopButton);
-        this.setShopHTML(shopHTML);
+        this.setInventoryShopElement(inventoryShopElement);
     }
     initShopButton() {
         var _a;
         if (this.shopButton) {
             (_a = this.shopButton) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
                 if (this.shop) {
-                    this.shop.open(this.getShopHTML());
+                    this.shop.open(this.getInventoryShopElement());
                 }
             });
         }
     }
-    setShopHTML(shopHTML) {
-        this.shopHTML = shopHTML;
+    setInventoryShopElement(inventoryShopElement) {
+        this.inventoryShopElement = inventoryShopElement;
     }
-    getShopHTML() {
-        return this.shopHTML;
+    getInventoryShopElement() {
+        return this.inventoryShopElement;
     }
     setShopButton(shopButton) {
         this.shopButton = shopButton;
@@ -2709,7 +2743,7 @@ window.onload = () => {
     const executeButton = document.querySelector("#executeButton");
     const stopButton = document.querySelector("#stopButton");
     const shopButton = document.querySelector(".button-shop");
-    const shopHTML = document.querySelector(".shop-inventory");
+    const inventoryShopElement = document.querySelector(".shop-inventory");
     const shop = new Shop_1.Shop();
     if (canvas == null)
         throw new Error("Canvas not found");
@@ -2718,7 +2752,7 @@ window.onload = () => {
     canvas.width = (_b = (_a = canvas.parentElement) === null || _a === void 0 ? void 0 : _a.clientWidth) !== null && _b !== void 0 ? _b : window.innerWidth;
     canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
     (0, loadAsset_1.default)();
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, shopHTML));
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement));
     game.start();
     const pUnit = game.getActivePlayerUnit();
     //Shop
@@ -2741,15 +2775,26 @@ window.onload = () => {
             pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Right);
         }
         if (key === 'q') {
-            game.removeGridEntity();
         }
         if (key === 'i') { //destroy top entity
+            //for destroying crates, and stone entities.
+            const coords = game.getPlayer().getCoordinate();
+            game.removeGridEntity(coords.x, (coords.y - 1));
         }
         if (key === 'j') { //destroy left entitiy
+            //for destroying crates, and stone entities.
+            const coords = game.getPlayer().getCoordinate();
+            game.removeGridEntity((coords.x - 1), (coords.y));
         }
         if (key === 'k') { //destroy bottom entity
+            //for destroying crates, and stone entities.
+            const coords = game.getPlayer().getCoordinate();
+            game.removeGridEntity(coords.x, (coords.y + 1));
         }
         if (key === 'l') { //destroy right entity
+            //for destroying crates, and stone entities.
+            const coords = game.getPlayer().getCoordinate();
+            game.removeGridEntity((coords.x + 1), (coords.y));
         }
         console.clear();
     });

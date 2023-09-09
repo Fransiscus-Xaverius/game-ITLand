@@ -100,7 +100,7 @@ export class Grid {
             this.tiles.push([])
             for (let j = 0; j < this.size.x; j++) {
                 this.entityGrid[i].push(null)
-                if (i == 0 || j == 0) {
+                if (i == 0 || j == 0 || j == 99 || i == 99) {
                     this.tiles[i].push(new Gravel({ x: j, y: i }))
                     const rock = new Rock({ x: j, y: i });
                     rock.addAnimation(new ChainedAnimation(

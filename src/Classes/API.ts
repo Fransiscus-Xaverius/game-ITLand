@@ -1,5 +1,5 @@
 export const API = {
-    apiRequest: async () => {
+    apiRequest: async ():Promise<any> => {
       const apiUrl = 'https://84b0-118-99-84-2.ngrok-free.app';
   
       const customHeaders = new Headers();

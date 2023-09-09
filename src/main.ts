@@ -55,19 +55,27 @@ window.onload = () => {
             pUnit?.move(Direction.Right);
         }
         if (key === 'q') {
-            game.removeGridEntity();
-        }
-        if(key === 'i'){ //destroy top entity
             
         }
+        if(key === 'i'){ //destroy top entity
+            //for destroying crates, and stone entities.
+            const coords = game.getPlayer().getCoordinate();
+            game.removeGridEntity(coords.x, (coords.y-1));
+        }
         if(key === 'j'){ //destroy left entitiy
-
+            //for destroying crates, and stone entities.
+            const coords = game.getPlayer().getCoordinate();
+            game.removeGridEntity((coords.x-1), (coords.y));
         }
         if(key === 'k'){ //destroy bottom entity
-
+            //for destroying crates, and stone entities.
+            const coords = game.getPlayer().getCoordinate();
+            game.removeGridEntity(coords.x, (coords.y+1));
         }
         if(key === 'l'){ //destroy right entity
-
+            //for destroying crates, and stone entities.
+            const coords = game.getPlayer().getCoordinate();
+            game.removeGridEntity((coords.x+1), (coords.y));
         }
         console.clear()
     })

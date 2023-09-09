@@ -29,18 +29,18 @@ export class GameManager {
         this.setShopView(shopView);
     }
 
-    public removeGridEntity(){ 
-        this.grid.entityGrid[0][1] = null;
+    public removeGridEntity(x:number,y:number):void{ 
+        this.grid.entityGrid[y][x] = null;
     }
 
-    public alertEntity(){
+    public alertEntity():void{
         console.log(this.grid.entities);
     }
 
     public setShopView(shopView: ShopView | null) {
         this.shopView = shopView;
     }
-    public getShopView() {
+    public getShopView():ShopView|null {
         return this.shopView;
     }
 

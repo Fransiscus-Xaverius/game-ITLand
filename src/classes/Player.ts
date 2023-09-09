@@ -1,6 +1,7 @@
 import { Animation } from "./GameObjects/Animation";
 import { ChainedAnimation } from "./GameObjects/ChainedAnimation";
 import { PlayerUnit } from "./GameObjects/PlayerUnit";
+import { Point } from "./GameObjects/Point";
 
 export class Player{
     private gold:number = 500;
@@ -48,6 +49,10 @@ export class Player{
 
     public getEnergy(){
         return this.energy;
+    }
+
+    public getCoordinate():Point{
+        return this.units[0].getCoordinate();
     }
 
 }
