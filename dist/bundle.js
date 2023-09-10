@@ -1730,7 +1730,7 @@ exports.GameManager = void 0;
 const Grid_1 = require("./GameObjects/Grid");
 const Player_1 = require("./Player");
 class GameManager {
-    constructor(canvasView = null, terminalView = null, shopView) {
+    constructor(canvasView = null, terminalView = null, shopView, inventoryView = null) {
         this.lastTimeStamp = 0;
         this.deltaTime = 0;
         this.isRunning = false;
@@ -1741,11 +1741,19 @@ class GameManager {
         this.canvasView = null;
         this.activePlayerUnit = null;
         this.shopView = null;
+        this.inventoryView = null;
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
         this.grid.addEntity(this.player.units[0]);
         this.setActivePlayerUnit(this.player.units[0]);
         this.setShopView(shopView);
+        this.setInventoryView(inventoryView);
+    }
+    setInventoryView(inventoryView) {
+        this.inventoryView = inventoryView;
+    }
+    getInventoryView() {
+        return this.inventoryView;
     }
     removeGridEntity(x, y) {
         this.grid.entityGrid[y][x] = null;
@@ -1827,7 +1835,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./GameObjects/Grid":24,"./Player":31}],17:[function(require,module,exports){
+},{"./GameObjects/Grid":24,"./Player":34}],17:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -2419,7 +2427,7 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/Terminal":12,"../Items/Inventory":30,"./Direction":20,"./Entity":21}],27:[function(require,module,exports){
+},{"../Console/Terminal":12,"../Items/Inventory":32,"./Direction":20,"./Entity":21}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rock = void 0;
@@ -2469,43 +2477,156 @@ Tile.defaultTileResolution = { x: 32, y: 32 };
 },{"./Animated":17}],30:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InventoryView = void 0;
+class InventoryView {
+    constructor(inventoryButton, inventory, inventoryShopElement) {
+        this.inventory = null;
+        this.inventoryButton = null;
+        this.inventoryShopElement = null;
+        this.setInventory(inventory);
+        this.setInventoryShopElement(inventoryShopElement);
+        this.setInventoryButton(inventoryButton);
+    }
+    initInventoryButton() {
+        var _a;
+        if (this.inventoryButton) {
+            (_a = this.inventoryButton) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
+                if (this.inventory) {
+                    this.inventory.open(this.getInventoryShopElement());
+                }
+            });
+        }
+    }
+    setInventoryShopElement(inventoryShopElement) {
+        this.inventoryShopElement = inventoryShopElement;
+    }
+    getInventoryShopElement() {
+        return this.inventoryShopElement;
+    }
+    setInventoryButton(inventoryButton) {
+        this.inventoryButton = inventoryButton;
+        this.initInventoryButton();
+    }
+    getInventoryButton() {
+        return this.inventoryButton;
+    }
+    setInventory(value) {
+        this.inventory = value;
+    }
+    getInventory() {
+        return this.inventory;
+    }
+}
+exports.InventoryView = InventoryView;
+
+},{}],31:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Book = void 0;
+const Item_1 = require("./Item");
+//book is not equipable, rather a consumeable.
+class Book extends Item_1.Item {
+    constructor(imagePath, itemName) {
+        super(imagePath, itemName);
+    }
+}
+exports.Book = Book;
+
+},{"./Item":33}],32:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
+const Book_1 = require("./Book");
 class Inventory {
     constructor() {
         this.items = [];
+        this.items.push({
+            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        });
+        this.items.push({
+            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        });
+        this.items.push({
+            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        });
+        this.items.push({
+            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        });
+        this.items.push({
+            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        });
     }
     open(inventoryShopElement) {
         if (inventoryShopElement) {
             inventoryShopElement.innerHTML = "";
-            // Create the card element
-            const cardElement = document.createElement('div');
-            cardElement.classList.add('card');
-            // Create the image element
-            const imageElement = document.createElement('img');
-            imageElement.classList.add('inventory-item-image');
-            imageElement.src = ''; // Set the image source as needed
-            imageElement.alt = ''; // Set the alt text as needed
-            // Create the name element
-            const nameElement = document.createElement('p');
-            nameElement.classList.add('inventory-item-name');
-            // Create the owned element
-            const ownedElement = document.createElement('h4');
-            ownedElement.classList.add('inventory-item-owned');
-            // Append the child elements to the card element
-            cardElement.appendChild(imageElement);
-            cardElement.appendChild(nameElement);
-            cardElement.appendChild(ownedElement);
-            // You can then append the cardElement to your container element
-            const cardContainer = document.getElementById('card-container'); // Assuming you have a container element in your HTML
-            if (cardContainer) {
-                cardContainer.appendChild(cardElement);
+            for (let i = 0; i < this.items.length; i++) {
+                // Create the card element
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                // Create the image element
+                const imageElement = document.createElement('img');
+                imageElement.classList.add('inventory-item-image');
+                imageElement.classList.add('card-img-top');
+                imageElement.src = this.items[i].item.getImagePath();
+                imageElement.alt = ``;
+                const cardBody = document.createElement('div');
+                cardBody.classList.add('card-body');
+                // Create the name element
+                const nameElement = document.createElement('p');
+                nameElement.classList.add('inventory-item-name');
+                nameElement.classList.add('card-text');
+                nameElement.innerText = this.items[i].item.getItemName();
+                // Create the owned element
+                const ownedElement = document.createElement('h4');
+                ownedElement.classList.add('inventory-item-owned');
+                ownedElement.classList.add('card-title');
+                ownedElement.innerText = `${this.items[i].amount}`;
+                // Append the child elements to the card element
+                cardBody.appendChild(nameElement);
+                cardBody.appendChild(ownedElement);
+                cardElement.appendChild(imageElement);
+                cardElement.appendChild(cardBody);
+                // You can then append the cardElement to your container element
+                const cardContainer = document.querySelector('.shop-inventory'); // Assuming you have a container element in your HTML
+                if (cardContainer) {
+                    cardContainer.appendChild(cardElement);
+                }
             }
         }
     }
 }
 exports.Inventory = Inventory;
 
-},{}],31:[function(require,module,exports){
+},{"./Book":31}],33:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Item = void 0;
+class Item {
+    constructor(imagePath, itemName) {
+        this.imagePath = imagePath;
+        this.itemName = itemName;
+    }
+    getImagePath() {
+        return this.imagePath;
+    }
+    setImagePath(imagePath) {
+        this.imagePath = imagePath;
+    }
+    getItemName() {
+        return this.itemName;
+    }
+    setItemName(itemName) {
+        this.itemName = itemName;
+    }
+}
+exports.Item = Item;
+
+},{}],34:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -2536,13 +2657,14 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":18,"./GameObjects/ChainedAnimation":19,"./GameObjects/PlayerUnit":26}],32:[function(require,module,exports){
+},{"./GameObjects/Animation":18,"./GameObjects/ChainedAnimation":19,"./GameObjects/PlayerUnit":26}],35:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
+const Book_1 = require("./Items/Book");
 class Shop {
     constructor() {
-        this.item = ["hello1", "hello1", "hello1"];
+        this.item = [new Book_1.Book("../../dist/Assets/Prototype/buku1.png", "Book")];
     }
     open(shopHTML) {
         if (shopHTML) {
@@ -2552,7 +2674,8 @@ class Shop {
             shopTemp.className = "shop";
             for (let i = 0; i < this.item.length; i++) {
                 let shop1 = document.createElement('div');
-                shop1.className = `${this.item[i]} item-in-shop`;
+                shop1.innerText = `${this.item[i].getItemName()}`;
+                shop1.className = `${this.item[i].getItemName()} item-in-shop`;
                 shopTemp.appendChild(shop1);
             }
             shopHTML.appendChild(shopTemp);
@@ -2562,7 +2685,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{}],33:[function(require,module,exports){
+},{"./Items/Book":31}],36:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -2572,8 +2695,8 @@ class ShopView {
         this.shopButton = null;
         this.inventoryShopElement = null;
         this.setShop(shop);
-        this.setShopButton(shopButton);
         this.setInventoryShopElement(inventoryShopElement);
+        this.setShopButton(shopButton);
     }
     initShopButton() {
         var _a;
@@ -2607,7 +2730,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],34:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -2681,7 +2804,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],35:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -2722,7 +2845,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":18,"./Classes/GameObjects/GroupAnimation":25}],36:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":18,"./Classes/GameObjects/GroupAnimation":25}],39:[function(require,module,exports){
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -2735,6 +2858,8 @@ const ShopView_1 = require("./Classes/ShopView");
 const loadAsset_1 = __importDefault(require("./loadAsset"));
 const Shop_1 = require("./Classes/Shop");
 const Direction_1 = require("./Classes/GameObjects/Direction");
+const InventoryView_1 = require("./Classes/InventoryView");
+const Inventory_1 = require("./Classes/Items/Inventory");
 window.onload = () => {
     //Main game
     var _a, _b, _c, _d;
@@ -2743,8 +2868,10 @@ window.onload = () => {
     const executeButton = document.querySelector("#executeButton");
     const stopButton = document.querySelector("#stopButton");
     const shopButton = document.querySelector(".button-shop");
+    const inventoryButton = document.querySelector(".button-inventory");
     const inventoryShopElement = document.querySelector(".shop-inventory");
     const shop = new Shop_1.Shop();
+    const inventory = new Inventory_1.Inventory();
     if (canvas == null)
         throw new Error("Canvas not found");
     if (shopButton == null)
@@ -2752,7 +2879,7 @@ window.onload = () => {
     canvas.width = (_b = (_a = canvas.parentElement) === null || _a === void 0 ? void 0 : _a.clientWidth) !== null && _b !== void 0 ? _b : window.innerWidth;
     canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
     (0, loadAsset_1.default)();
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement));
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement));
     game.start();
     const pUnit = game.getActivePlayerUnit();
     //Shop
@@ -2800,4 +2927,4 @@ window.onload = () => {
     });
 };
 
-},{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/GameObjects/Direction":20,"./Classes/Shop":32,"./Classes/ShopView":33,"./Classes/TerminalView":34,"./loadAsset":35}]},{},[36]);
+},{"./Classes/CanvasView":1,"./Classes/GameManager":16,"./Classes/GameObjects/Direction":20,"./Classes/InventoryView":30,"./Classes/Items/Inventory":32,"./Classes/Shop":35,"./Classes/ShopView":36,"./Classes/TerminalView":37,"./loadAsset":38}]},{},[39]);

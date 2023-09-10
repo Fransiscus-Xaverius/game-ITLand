@@ -7,8 +7,8 @@ export class InventoryView {
 
     constructor(inventoryButton: HTMLButtonElement, inventory: Inventory, inventoryShopElement: HTMLDivElement) {
         this.setInventory(inventory)
-        this.setInventoryButton(inventoryButton)
         this.setInventoryShopElement(inventoryShopElement)
+        this.setInventoryButton(inventoryButton)
     }
 
 

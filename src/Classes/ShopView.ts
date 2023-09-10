@@ -7,8 +7,8 @@ export class ShopView {
 
     constructor(shopButton: HTMLButtonElement, shop: Shop, inventoryShopElement: HTMLDivElement) {
         this.setShop(shop)
-        this.setShopButton(shopButton)
         this.setInventoryShopElement(inventoryShopElement)
+        this.setShopButton(shopButton)
     }
 
 

@@ -73,6 +73,15 @@ body, html {
     border: 1px solid black;
 }
 
+.inventory-item-image{
+    width: 25%;
+    height: 25%;
+}
+.shop-inventory{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
 /* .stop{
     
 } */

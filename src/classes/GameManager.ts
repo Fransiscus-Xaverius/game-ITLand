@@ -8,6 +8,7 @@ import { PlayerUnit } from './GameObjects/PlayerUnit';
 import { ShopView } from './ShopView';
 import { API } from './API';
 import { Entity } from './GameObjects/Entity';
+import { InventoryView } from './InventoryView';
 
 export class GameManager {
     private lastTimeStamp: number = 0;
@@ -20,27 +21,38 @@ export class GameManager {
     private canvasView: CanvasView | null = null;
     private activePlayerUnit: PlayerUnit | null = null;
     private shopView: ShopView | null = null;
+    private inventoryView: InventoryView | null = null;
 
-    constructor(canvasView: CanvasView | null = null, terminalView: TerminalView | null = null, shopView: ShopView | null) {
+    constructor(canvasView: CanvasView | null = null, terminalView: TerminalView | null = null, shopView: ShopView | null, inventoryView: InventoryView | null = null) {
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
         this.grid.addEntity(this.player.units[0]);
         this.setActivePlayerUnit(this.player.units[0]);
         this.setShopView(shopView);
+        this.setInventoryView(inventoryView);
     }
 
-    public removeGridEntity(x:number,y:number):void{ 
+    public setInventoryView(inventoryView: InventoryView | null): void {
+        this.inventoryView = inventoryView;
+    }
+
+    public getInventoryView(): InventoryView | null {
+        return this.inventoryView;
+    }
+
+
+    public removeGridEntity(x: number, y: number): void {
         this.grid.entityGrid[y][x] = null;
     }
 
-    public alertEntity():void{
+    public alertEntity(): void {
         console.log(this.grid.entities);
     }
 
     public setShopView(shopView: ShopView | null) {
         this.shopView = shopView;
     }
-    public getShopView():ShopView|null {
+    public getShopView(): ShopView | null {
         return this.shopView;
     }
 
@@ -53,11 +65,11 @@ export class GameManager {
         this.activePlayerUnit = value
     }
 
-    public getActivePlayerUnit(){
+    public getActivePlayerUnit() {
         return this.activePlayerUnit;
     }
 
-    public getPlayer(){
+    public getPlayer() {
         return this.player;
     }
 
@@ -95,7 +107,7 @@ export class GameManager {
             this.grid.update(this.deltaTime)
             return
         }
-        this.canvasView.setCameraPosition(this.activePlayerUnit?.getSpriteCoordinate()||{x:0,y:0});
+        this.canvasView.setCameraPosition(this.activePlayerUnit?.getSpriteCoordinate() || { x: 0, y: 0 });
         const camPos = this.canvasView.getCameraPosition()
         const scaledRenderRadius = this.canvasView.getScaledRenderRadius()
         this.grid.update(this.deltaTime, {

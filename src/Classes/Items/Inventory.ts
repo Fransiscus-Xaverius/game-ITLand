@@ -1,42 +1,77 @@
 import { ItemStack } from "./ItemStack";
 import { Item } from "./Item";
+import { Book } from "./Book";
 
 export class Inventory {
-    private items: ItemStack[]
+    private items: ItemStack[];
     constructor() {
         this.items = []
+        this.items.push({
+            item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        })
+        this.items.push({
+            item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        })
+        this.items.push({
+            item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        })
+        this.items.push({
+            item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        })
+        this.items.push({
+            item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        })
     }
     public open(inventoryShopElement: HTMLDivElement | null) {
         if (inventoryShopElement) {
             inventoryShopElement.innerHTML = ""
-            // Create the card element
-            const cardElement = document.createElement('div');
-            cardElement.classList.add('card');
+            for (let i = 0; i < this.items.length; i++) {
+                // Create the card element
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
 
-            // Create the image element
-            const imageElement = document.createElement('img');
-            imageElement.classList.add('inventory-item-image');
-            imageElement.src = ''; // Set the image source as needed
-            imageElement.alt = ''; // Set the alt text as needed
+                // Create the image element
+                const imageElement = document.createElement('img');
+                imageElement.classList.add('inventory-item-image');
+                imageElement.classList.add('card-img-top');
+                imageElement.src = this.items[i].item.getImagePath();
+                imageElement.alt = ``
 
-            // Create the name element
-            const nameElement = document.createElement('p');
-            nameElement.classList.add('inventory-item-name');
+                const cardBody = document.createElement('div');
+                cardBody.classList.add('card-body');
 
-            // Create the owned element
-            const ownedElement = document.createElement('h4');
-            ownedElement.classList.add('inventory-item-owned');
+                // Create the name element
+                const nameElement = document.createElement('p');
+                nameElement.classList.add('inventory-item-name');
+                nameElement.classList.add('card-text');
+                nameElement.innerText = this.items[i].item.getItemName()
 
-            // Append the child elements to the card element
-            cardElement.appendChild(imageElement);
-            cardElement.appendChild(nameElement);
-            cardElement.appendChild(ownedElement);
+                // Create the owned element
+                const ownedElement = document.createElement('h4');
+                ownedElement.classList.add('inventory-item-owned');
+                ownedElement.classList.add('card-title');
+                ownedElement.innerText = `${this.items[i].amount}`
 
-            // You can then append the cardElement to your container element
-            const cardContainer = document.getElementById('card-container'); // Assuming you have a container element in your HTML
-            if (cardContainer) {
-                cardContainer.appendChild(cardElement);
+
+                // Append the child elements to the card element
+                cardBody.appendChild(nameElement);
+                cardBody.appendChild(ownedElement);
+
+                cardElement.appendChild(imageElement);
+                cardElement.appendChild(cardBody);
+
+                // You can then append the cardElement to your container element
+                const cardContainer = document.querySelector('.shop-inventory'); // Assuming you have a container element in your HTML
+                if (cardContainer) {
+                    cardContainer.appendChild(cardElement);
+                }
             }
+
         }
     }
 }
