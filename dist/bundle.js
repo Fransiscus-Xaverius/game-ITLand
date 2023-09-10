@@ -2560,6 +2560,26 @@ class Inventory {
             item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
             amount: 0
         });
+        this.items.push({
+            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        });
+        this.items.push({
+            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        });
+        this.items.push({
+            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        });
+        this.items.push({
+            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        });
+        this.items.push({
+            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        });
     }
     open(inventoryShopElement) {
         if (inventoryShopElement) {

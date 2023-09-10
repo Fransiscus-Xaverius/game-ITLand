@@ -26,6 +26,26 @@ export class Inventory {
             item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
             amount: 0
         })
+        this.items.push({
+            item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        })
+        this.items.push({
+            item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        })
+        this.items.push({
+            item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        })
+        this.items.push({
+            item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        })
+        this.items.push({
+            item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
+            amount: 0
+        })
     }
     public open(inventoryShopElement: HTMLDivElement | null) {
         if (inventoryShopElement) {
