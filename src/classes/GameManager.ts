@@ -9,6 +9,7 @@ import { ShopView } from './ShopView';
 import { API } from './API';
 import { Entity } from './GameObjects/Entity';
 import { InventoryView } from './InventoryView';
+import { Map } from './Map';
 
 export class GameManager {
     private lastTimeStamp: number = 0;
@@ -22,6 +23,7 @@ export class GameManager {
     private activePlayerUnit: PlayerUnit | null = null;
     private shopView: ShopView | null = null;
     private inventoryView: InventoryView | null = null;
+    public api:API | null = null;
 
     constructor(canvasView: CanvasView | null = null, terminalView: TerminalView | null = null, shopView: ShopView | null, inventoryView: InventoryView | null = null) {
         this.setCanvasView(canvasView);
@@ -30,6 +32,7 @@ export class GameManager {
         this.setActivePlayerUnit(this.player.units[0]);
         this.setShopView(shopView);
         this.setInventoryView(inventoryView);
+        this.api = new API();
     }
 
     public setInventoryView(inventoryView: InventoryView | null): void {
@@ -40,6 +43,13 @@ export class GameManager {
         return this.inventoryView;
     }
 
+    //API testing
+    public async testAPI(){
+        // let string1:string = ""; 
+        // await this.api?.getMap().then(e=>{string1 = e});
+        const string1 = await this.api?.getMap();
+        return string1;
+    }
 
     public removeGridEntity(x: number, y: number): void {
         this.grid.entityGrid[y][x] = null;

@@ -10,7 +10,7 @@ import { InventoryView } from './Classes/InventoryView';
 import { Inventory } from './Classes/Items/Inventory';
 
 
-window.onload = () => {
+window.onload = async () => {
     //Main game
 
     const canvas = document.querySelector("#view") as HTMLCanvasElement
@@ -36,7 +36,8 @@ window.onload = () => {
     )
     game.start();
     const pUnit = game.getActivePlayerUnit();
-
+    const map = await game.testAPI();
+    alert(map);
     //Shop
 
     //Quiz Section
