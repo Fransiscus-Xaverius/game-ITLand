@@ -65,13 +65,7 @@ body {
     height: 20%;
 }
 
-/* .button{
 
-} */
-
-/* .start{
-
-} */
 .shop {
     display: flex;
 }
@@ -87,13 +81,6 @@ body {
     height: 25%;
 }
 
-.shop-inventory {
-    height: 250px;
-    overflow: auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-}
-
 table,
 th,
 td {
@@ -107,10 +94,6 @@ td {
 .inventory-item-image{
     width: 25%;
     height: 25%;
-}
-.shop-inventory{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
 }
 .card {
     border: 1px solid black;
@@ -130,3 +113,40 @@ td {
 /* .stop{
     
 } */
+
+.card-shop{
+    height: 250px;
+    width: auto;
+    background-color: #303030;
+    padding: 8px;
+
+    font-size: 20px;
+    color: red;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.shop-img{
+    height: 50px;
+    width: auto;
+}
+
+.desc{
+    height: 50px;
+    width: 200px;
+}
+
+.content{
+    width: 200px;
+    height: 50px;
+    border: 1px solid black;
+}
+
+.special-content{
+    width: 200px;
+    height: 50px;
+    font-size: 16px;
+    border: 1px solid black;
+}

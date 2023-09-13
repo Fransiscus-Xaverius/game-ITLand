@@ -86,7 +86,12 @@ export class Inventory {
                 cardElement.appendChild(cardBody);
 
                 // You can then append the cardElement to your container element
-                const cardContainer = document.querySelector('.shop-inventory'); // Assuming you have a container element in your HTML
+                const cardContainer = document.querySelector('.shop-inventory') as HTMLDivElement;
+                cardContainer.style.display = "grid";
+                cardContainer.style.gridTemplateColumns = "1fr 1fr";
+                cardContainer.style.height = "200px";
+                cardContainer.style.overflow = "auto";
+                // Assuming you have a container element in your HTML
                 if (cardContainer) {
                     cardContainer.appendChild(cardElement);
                 }
