@@ -50,6 +50,26 @@ class API {
             console.log("got response:", res);
         });
     }
+    getQuestion() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const apiUrl = 'http://localhost:3000/question';
+                const response = yield fetch(apiUrl);
+                // alert(JSON.stringify(response));
+                if (!response.ok)
+                    throw new Error('Network Response was not ok');
+                const jsonString = yield response.text();
+                const jsonData = JSON.parse(jsonString);
+                // alert(JSON.stringify(jsonData));
+                // alert(jsonData);
+                return JSON.stringify(jsonData);
+            }
+            catch (error) {
+                // alert(JSON.stringify(error))
+                console.error("hello");
+            }
+        });
+    }
     getMap() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -1849,6 +1869,13 @@ class GameManager {
             return string1;
         });
     }
+    testAPIsoal() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const string1 = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.getQuestion());
+            return string1;
+        });
+    }
     removeGridEntity(x, y) {
         this.grid.entityGrid[y][x] = null;
     }
@@ -3059,12 +3086,17 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         throw new Error("Shop button not found");
     canvas.width = (_b = (_a = canvas.parentElement) === null || _a === void 0 ? void 0 : _a.clientWidth) !== null && _b !== void 0 ? _b : window.innerWidth;
     canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
+    const soalButton = document.querySelector("#get-soal");
     (0, loadAsset_1.default)();
     const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement));
     game.start();
     const pUnit = game.getActivePlayerUnit();
     const map = yield game.testAPI();
     alert(map);
+    soalButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+        const tAPI = yield game.testAPIsoal();
+        alert(tAPI);
+    }));
     //Shop
     //Quiz Section
     // const curPlayer = game.getPlayer();

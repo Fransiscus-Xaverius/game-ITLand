@@ -26,6 +26,7 @@ window.onload = async () => {
     if (shopButton == null) throw new Error("Shop button not found");
     canvas.width = canvas.parentElement?.clientWidth ?? window.innerWidth
     canvas.height = canvas.parentElement?.clientHeight ?? window.innerHeight
+    const soalButton = document.querySelector("#get-soal") as HTMLButtonElement;
 
     loadAsset()
     const game = new GameManager(
@@ -38,6 +39,10 @@ window.onload = async () => {
     const pUnit = game.getActivePlayerUnit();
     const map = await game.testAPI();
     alert(map);
+    soalButton.addEventListener('click', async () => {
+        const tAPI = await game.testAPIsoal();
+        alert(tAPI);
+    })
     //Shop
 
     //Quiz Section

@@ -50,6 +50,23 @@ export class API{
       })
   }
 
+  public async getQuestion(){
+    try {
+      const apiUrl = 'http://localhost:3000/question';
+      const response = await fetch(apiUrl);
+      // alert(JSON.stringify(response));
+      if(!response.ok) throw new Error('Network Response was not ok');
+      const jsonString = await response.text();
+      const jsonData = JSON.parse(jsonString);
+      // alert(JSON.stringify(jsonData));
+      // alert(jsonData);
+      return JSON.stringify(jsonData);
+    } catch (error) {
+      // alert(JSON.stringify(error))
+      console.error("hello")
+    }   
+  }
+
   public async getMap(){
     try {
       const apiUrl = 'http://localhost:3000/map';

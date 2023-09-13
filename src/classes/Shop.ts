@@ -59,8 +59,9 @@ export class Shop {
 
                 shopTemp.appendChild(shopImage);
                 shopTemp.appendChild(desc);
-
                 shopHTML.appendChild(shopTemp);
+                shopHTML.style.height = "200px";
+                shopHTML.style.overflow = "auto";
             }
             // console.log(shopTemp)
         }

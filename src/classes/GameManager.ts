@@ -51,6 +51,11 @@ export class GameManager {
         return string1;
     }
 
+    public async testAPIsoal(){
+        const string1 = await this.api?.getQuestion();
+        return string1;
+    }
+
     public removeGridEntity(x: number, y: number): void {
         this.grid.entityGrid[y][x] = null;
     }
