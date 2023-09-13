@@ -115,12 +115,12 @@ td {
 } */
 
 .card-shop{
-    height: 250px;
+    height: 200px;
     width: auto;
     background-color: #303030;
     padding: 8px;
 
-    font-size: 20px;
+    font-size: 16px;
     color: red;
 
     display: flex;
@@ -129,7 +129,7 @@ td {
 }
 
 .shop-img{
-    height: 50px;
+    height: 100px;
     width: auto;
 }
 
@@ -137,7 +137,10 @@ td {
     height: 50px;
     width: 200px;
 }
-
+.item-name{
+    height: 30px;
+    width: 200px;    
+}
 .content{
     width: 200px;
     height: 50px;

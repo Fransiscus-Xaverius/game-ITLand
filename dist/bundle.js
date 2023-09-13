@@ -2708,7 +2708,10 @@ exports.Shop = void 0;
 const Book_1 = require("./Items/Book");
 class Shop {
     constructor() {
-        this.item = [new Book_1.Book("dist/Assets/Prototype/buku1.png", "Book")];
+        this.item =
+            [
+                new Book_1.Book("dist/Assets/Prototype/buku1.png", "Book"), new Book_1.Book("dist/Assets/Prototype/buku1.png", "Book"), new Book_1.Book("dist/Assets/Prototype/buku1.png", "Book"), new Book_1.Book("dist/Assets/Prototype/buku1.png", "Book"),
+            ];
     }
     open(shopHTML) {
         if (shopHTML) {
@@ -2751,6 +2754,8 @@ class Shop {
                 shopTemp.appendChild(shopImage);
                 shopTemp.appendChild(desc);
                 shopHTML.appendChild(shopTemp);
+                shopHTML.style.height = "200px";
+                shopHTML.style.overflow = "auto";
             }
             // console.log(shopTemp)
         }
