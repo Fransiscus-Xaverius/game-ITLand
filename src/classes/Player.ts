@@ -51,6 +51,11 @@ export class Player{
         return this.energy;
     }
 
+    public action(price:number):Boolean{
+        if(this.energy>=price) return true;
+        return false;
+    }
+
     public getCoordinate():Point{
         return this.units[0].getCoordinate();
     }

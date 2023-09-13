@@ -140,16 +140,24 @@ export class PlayerUnit extends Entity{
         }
     }
 
-    public Dig(){
-        
-    }
-
     public getX(){
         return this.coordinate.x;
     }
 
     public getY(){
         return this.coordinate.y;
+    }
+
+    //In-game actions
+
+    public Dig(){
+        
+    }
+
+    public Mine(){
+        if(this.isMoving) return;
+        this.isMoving = true;
+        this.playAnimation('walk');
     }
 
     public move(direction: Direction):void{

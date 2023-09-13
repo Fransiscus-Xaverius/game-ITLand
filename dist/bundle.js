@@ -2386,6 +2386,12 @@ class PlayerUnit extends Entity_1.Entity {
     getY() {
         return this.coordinate.y;
     }
+    Mine() {
+        if (this.isMoving)
+            return;
+        this.isMoving = true;
+        this.playAnimation('walk');
+    }
     move(direction) {
         if (this.isMoving || direction == Direction_1.Direction.None)
             return;
@@ -2671,6 +2677,11 @@ class Player {
     getEnergy() {
         return this.energy;
     }
+    action(price) {
+        if (this.energy >= price)
+            return true;
+        return false;
+    }
     getCoordinate() {
         return this.units[0].getCoordinate();
     }
@@ -2909,6 +2920,7 @@ window.onload = () => {
     // energyAmount.value = `Energy: ${curPlayer.getEnergy()}`
     document.addEventListener('keydown', (e) => {
         const key = e.key;
+        let price = 5; //energy price for action.
         if (key === 'w') {
             pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Up);
         }
@@ -2926,6 +2938,7 @@ window.onload = () => {
         if (key === 'i') { //destroy top entity
             //for destroying crates, and stone entities.
             const coords = game.getPlayer().getCoordinate();
+            pUnit === null || pUnit === void 0 ? void 0 : pUnit.Mine();
             game.removeGridEntity(coords.x, (coords.y - 1));
         }
         if (key === 'j') { //destroy left entitiy

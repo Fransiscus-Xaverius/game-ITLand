@@ -47,6 +47,7 @@ window.onload = () => {
 
     document.addEventListener('keydown', (e) => {
         const key = e.key;
+        let price = 5; //energy price for action.
         if (key === 'w') {
             pUnit?.move(Direction.Up);
         }
@@ -65,6 +66,7 @@ window.onload = () => {
         if (key === 'i') { //destroy top entity
             //for destroying crates, and stone entities.
             const coords = game.getPlayer().getCoordinate();
+            pUnit?.Mine();
             game.removeGridEntity(coords.x, (coords.y - 1));
         }
         if (key === 'j') { //destroy left entitiy
