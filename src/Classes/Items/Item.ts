@@ -1,9 +1,11 @@
 export abstract class Item {
     private imagePath: string;
     private itemName: string;
-    constructor(imagePath: string, itemName: string) {
+    private itemDesc: string;
+    constructor(imagePath: string, itemName: string, itemDesc: string) {
         this.imagePath = imagePath;
         this.itemName = itemName;
+        this.itemDesc = itemDesc;
     }
 
     public getImagePath(): string {
@@ -23,6 +25,12 @@ export abstract class Item {
         this.itemName = itemName;
     }
 
+    public getItemDesc(): string {
+        return this.itemDesc;
+    }
 
+    public setItemDesc(itemDesc: string) {
+        this.itemDesc = itemDesc;
+    }
 
 }

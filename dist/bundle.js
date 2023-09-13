@@ -2378,13 +2378,14 @@ class PlayerUnit extends Entity_1.Entity {
             y: this.originalCoordinate.y - coordDiff.y * this.lerpProgress,
         };
     }
-    Dig() {
-    }
     getX() {
         return this.coordinate.x;
     }
     getY() {
         return this.coordinate.y;
+    }
+    //In-game actions
+    Dig() {
     }
     Mine() {
         if (this.isMoving)
@@ -2533,7 +2534,7 @@ const Item_1 = require("./Item");
 //book is not equipable, rather a consumeable.
 class Book extends Item_1.Item {
     constructor(imagePath, itemName) {
-        super(imagePath, itemName);
+        super(imagePath, itemName, "book 1");
     }
 }
 exports.Book = Book;
@@ -2618,7 +2619,12 @@ class Inventory {
                 cardElement.appendChild(imageElement);
                 cardElement.appendChild(cardBody);
                 // You can then append the cardElement to your container element
-                const cardContainer = document.querySelector('.shop-inventory'); // Assuming you have a container element in your HTML
+                const cardContainer = document.querySelector('.shop-inventory');
+                cardContainer.style.display = "grid";
+                cardContainer.style.gridTemplateColumns = "1fr 1fr";
+                cardContainer.style.height = "200px";
+                cardContainer.style.overflow = "auto";
+                // Assuming you have a container element in your HTML
                 if (cardContainer) {
                     cardContainer.appendChild(cardElement);
                 }
@@ -2633,9 +2639,10 @@ exports.Inventory = Inventory;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
 class Item {
-    constructor(imagePath, itemName) {
+    constructor(imagePath, itemName, itemDesc) {
         this.imagePath = imagePath;
         this.itemName = itemName;
+        this.itemDesc = itemDesc;
     }
     getImagePath() {
         return this.imagePath;
@@ -2648,6 +2655,12 @@ class Item {
     }
     setItemName(itemName) {
         this.itemName = itemName;
+    }
+    getItemDesc() {
+        return this.itemDesc;
+    }
+    setItemDesc(itemDesc) {
+        this.itemDesc = itemDesc;
     }
 }
 exports.Item = Item;
@@ -2695,21 +2708,50 @@ exports.Shop = void 0;
 const Book_1 = require("./Items/Book");
 class Shop {
     constructor() {
-        this.item = [new Book_1.Book("../../dist/Assets/Prototype/buku1.png", "Book")];
+        this.item = [new Book_1.Book("dist/Assets/Prototype/buku1.png", "Book")];
     }
     open(shopHTML) {
         if (shopHTML) {
             shopHTML.innerHTML = "";
             // console.log(shopHTML)
-            let shopTemp = document.createElement('div');
-            shopTemp.className = "shop";
+            shopHTML.style.display = "grid";
+            shopHTML.style.gridTemplateColumns = "1fr";
             for (let i = 0; i < this.item.length; i++) {
-                let shop1 = document.createElement('div');
-                shop1.innerText = `${this.item[i].getItemName()}`;
-                shop1.className = `${this.item[i].getItemName()} item-in-shop`;
-                shopTemp.appendChild(shop1);
+                // card shop
+                let shopTemp = document.createElement('div');
+                shopTemp.className = "card-shop";
+                // image shop
+                let shopImage = document.createElement("img");
+                shopImage.className = "shop-img";
+                shopImage.src = this.item[i].getImagePath();
+                // desc shop
+                let desc = document.createElement("div");
+                desc.className = "desc";
+                let itemName = document.createElement("div");
+                itemName.className = "content item-name";
+                itemName.innerHTML = this.item[i].getItemName();
+                let mainDesc = document.createElement("div");
+                mainDesc.className = "special-content main-desc";
+                mainDesc.innerHTML = this.item[i].getItemDesc();
+                let addBox = document.createElement("div");
+                addBox.className = "content add-box";
+                let itemQty = document.createElement("div");
+                itemQty.className = "item-qty";
+                let totalPrice = document.createElement("div");
+                totalPrice.className = "total-price";
+                addBox.appendChild(itemQty);
+                addBox.appendChild(totalPrice);
+                let buyButton = document.createElement("button");
+                buyButton.className = "content buy-button";
+                buyButton.innerHTML = "Buy";
+                desc.appendChild(itemName);
+                desc.appendChild(mainDesc);
+                desc.appendChild(addBox);
+                desc.appendChild(buyButton);
+                shopTemp.appendChild(shopImage);
+                shopTemp.appendChild(desc);
+                shopHTML.appendChild(shopTemp);
             }
-            shopHTML.appendChild(shopTemp);
             // console.log(shopTemp)
         }
     }
