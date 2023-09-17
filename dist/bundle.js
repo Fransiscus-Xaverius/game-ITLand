@@ -2989,11 +2989,23 @@ class Shop {
                 const plusBtn = document.createElement('div');
                 plusBtn.classList.add('btn', 'btn-success');
                 plusBtn.textContent = '+';
+                plusBtn.addEventListener("click", () => {
+                    const item = document.querySelector(`.item-${i}`);
+                    console.log(item);
+                    if (item) {
+                        const currentQty = parseInt(item.value) || 0;
+                        item.value = `${currentQty + 1}`;
+                    }
+                    else {
+                        console.error(`Element with class .item-${i} not found.`);
+                    }
+                });
                 colDiv1.appendChild(plusBtn);
                 const colDiv2 = document.createElement('div');
                 colDiv2.classList.add('col-sm-2');
-                const itemQtyDiv = document.createElement('div');
-                itemQtyDiv.classList.add('item-qty');
+                const itemQtyDiv = document.createElement('input');
+                itemQtyDiv.style.width = "30px";
+                itemQtyDiv.classList.add('item-qty', `item-${i}`);
                 itemQtyDiv.textContent = '10';
                 colDiv2.appendChild(itemQtyDiv);
                 const colDiv3 = document.createElement('div');
@@ -3001,6 +3013,19 @@ class Shop {
                 const minusBtn = document.createElement('div');
                 minusBtn.classList.add('btn', 'btn-danger');
                 minusBtn.textContent = '-';
+                minusBtn.addEventListener("click", () => {
+                    const item = document.querySelector(`.item-${i}`);
+                    console.log(item);
+                    if (item) {
+                        const currentQty = parseInt(item.value) || 0;
+                        if (currentQty > 1) {
+                            item.value = `${currentQty - 1}`;
+                        }
+                    }
+                    else {
+                        console.error(`Element with class .item-${i} not found.`);
+                    }
+                });
                 colDiv3.appendChild(minusBtn);
                 const colDiv4 = document.createElement('div');
                 colDiv4.classList.add('col-sm-6');
