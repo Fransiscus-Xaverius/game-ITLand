@@ -57,10 +57,11 @@ export class Shop {
                 plusBtn.classList.add('btn', 'btn-success');
                 plusBtn.textContent = '+';
                 plusBtn.addEventListener("click", () => {
-                    const item: HTMLDivElement | null = document.querySelector(`.item-${i}`);
+                    const item: HTMLInputElement | null = document.querySelector(`.item-${i}`);
+                    console.log(item)
                     if (item) {
-                        const currentQty = parseInt(item.innerText) || 0;
-                        item.innerText = `${currentQty + 1}`;
+                        const currentQty = parseInt(item.value) || 0;
+                        item.value = `${currentQty + 1}`;
                     } else {
                         console.error(`Element with class .item-${i} not found.`);
                     }
@@ -69,7 +70,8 @@ export class Shop {
 
                 const colDiv2: HTMLDivElement = document.createElement('div');
                 colDiv2.classList.add('col-sm-2');
-                const itemQtyDiv: HTMLDivElement = document.createElement('div');
+                const itemQtyDiv: HTMLInputElement = document.createElement('input');
+                itemQtyDiv.style.width = "30px";
                 itemQtyDiv.classList.add('item-qty', `item-${i}`);
                 itemQtyDiv.textContent = '10';
                 colDiv2.appendChild(itemQtyDiv);
@@ -79,6 +81,18 @@ export class Shop {
                 const minusBtn: HTMLDivElement = document.createElement('div');
                 minusBtn.classList.add('btn', 'btn-danger');
                 minusBtn.textContent = '-';
+                minusBtn.addEventListener("click", () => {
+                    const item: HTMLInputElement | null = document.querySelector(`.item-${i}`);
+                    console.log(item)
+                    if (item) {
+                        const currentQty = parseInt(item.value) || 0;
+                        if(currentQty > 1){
+                            item.value = `${currentQty - 1}`
+                        }
+                    } else {
+                        console.error(`Element with class .item-${i} not found.`);
+                    }
+                });
                 colDiv3.appendChild(minusBtn);
 
                 const colDiv4: HTMLDivElement = document.createElement('div');
@@ -109,7 +123,6 @@ export class Shop {
                 shopHTML.style.height = "200px";
                 shopHTML.style.overflow = "auto";
             }
-            // console.log(shopTemp)
         }
     }
 }
