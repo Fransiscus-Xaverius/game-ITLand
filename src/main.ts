@@ -9,7 +9,6 @@ import { Point } from './Classes/GameObjects/Point';
 import { InventoryView } from './Classes/InventoryView';
 import { Inventory } from './Classes/Items/Inventory';
 
-
 window.onload = async () => {
     //Main game
 
@@ -35,10 +34,12 @@ window.onload = async () => {
         new ShopView(shopButton, shop, inventoryShopElement),
         new InventoryView(inventoryButton, inventory, inventoryShopElement)
     )
+
     game.start();
+    await game.load();
     const pUnit = game.getActivePlayerUnit();
-    const map = await game.testAPI();
-    alert(map);
+    // const map = await game.testAPI();
+    // alert(map);
     soalButton.addEventListener('click', async () => {
         const tAPI = await game.testAPIsoal();
         alert(tAPI);
@@ -50,6 +51,7 @@ window.onload = async () => {
     // const energyAmount = document.querySelector("#energyAmount") as HTMLDivElement
     // energyAmount.value = `Energy: ${curPlayer.getEnergy()}`
 
+    
 
     document.addEventListener('keydown', (e) => {
         const key = e.key;

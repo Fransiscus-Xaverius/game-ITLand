@@ -3,6 +3,7 @@
     "build": "browserify -p [ tsify --target es6 ] src/main.ts -o dist/bundle.js"
   },
   "dependencies": {
+    "fs": "^0.0.1-security",
     "typescript": "^5.1.6"
   },
   "devDependencies": {

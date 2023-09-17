@@ -1,4 +1,4 @@
 export type Map = {
-    map:string[],
+    tile:string[],
     entity:string[]
 }

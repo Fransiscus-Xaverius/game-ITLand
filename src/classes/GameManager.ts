@@ -12,6 +12,7 @@ import { InventoryView } from './InventoryView';
 import { Map } from './Map';
 
 export class GameManager {
+    public api:API | null = null;
     private lastTimeStamp: number = 0;
     private deltaTime: number = 0;
     private isRunning: Boolean = false;
@@ -23,16 +24,26 @@ export class GameManager {
     private activePlayerUnit: PlayerUnit | null = null;
     private shopView: ShopView | null = null;
     private inventoryView: InventoryView | null = null;
-    public api:API | null = null;
+
 
     constructor(canvasView: CanvasView | null = null, terminalView: TerminalView | null = null, shopView: ShopView | null, inventoryView: InventoryView | null = null) {
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
-        this.grid.addEntity(this.player.units[0]);
-        this.setActivePlayerUnit(this.player.units[0]);
         this.setShopView(shopView);
         this.setInventoryView(inventoryView);
         this.api = new API();
+    }
+
+    public async load(){
+        alert('hello');
+        let map:Map = {tile:[], entity:[]}
+        map = await this.api?.gameStart()!; //use non-null assertion operator.
+        alert(map.tile.length);
+        //redoing load grid because the constructor cannot be an async function.
+        this.grid = new Grid({ x: 100, y: 100 });
+        this.grid.redo(map.tile, map.entity)
+        this.grid.addEntity(this.player.units[0]);
+        this.setActivePlayerUnit(this.player.units[0]);
     }
 
     public setInventoryView(inventoryView: InventoryView | null): void {
@@ -44,12 +55,10 @@ export class GameManager {
     }
 
     //API testing
-    public async testAPI(){
-        // let string1:string = ""; 
-        // await this.api?.getMap().then(e=>{string1 = e});
-        const string1 = await this.api?.getMap();
-        return string1;
-    }
+    // public async testAPI(){
+    //     const string1 = await this.api?.gameStart();
+    //     return string1;
+    // }
 
     public async testAPIsoal(){
         const string1 = await this.api?.getQuestion();

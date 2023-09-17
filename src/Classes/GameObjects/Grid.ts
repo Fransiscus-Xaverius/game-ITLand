@@ -91,10 +91,58 @@ export class Grid {
         //         }
         //     });
 
-
-
         // alert("outside 2 then " + this.mapData);
 
+        // for (let i = 0; i < this.size.y; i++) {
+        //     this.entityGrid.push([])
+        //     this.tiles.push([])
+        //     for (let j = 0; j < this.size.x; j++) {
+        //         this.entityGrid[i].push(null)
+        //         if (i == 0 || j == 0 || j == 99 || i == 99) {
+        //             this.tiles[i].push(new Gravel({ x: j, y: i }))
+        //             const rock = new Rock({ x: j, y: i });
+        //             rock.addAnimation(new ChainedAnimation(
+        //                 rock,
+        //                 'rock',
+        //                 Animation.assets['rock'],
+        //                 { x: 32, y: 32 },
+        //                 1,
+        //                 -1,
+        //                 1
+        //             ))
+        //             this.addEntity(rock);
+        //         }
+        //         else {
+        //             if (Math.round(Math.random())) {
+        //                 this.tiles[i].push(new Grass({ x: j, y: i }))
+        //             }
+        //             else {
+        //                 if (Math.round(Math.random())) {
+        //                     this.tiles[i].push(new Sand({ x: j, y: i }))
+        //                 }
+        //                 else {
+        //                     this.tiles[i].push(new Gravel({ x: j, y: i }))
+        //                 }
+        //             }
+        //             if (Math.round(Math.random()) && (j != 1 && i != 1)) {
+        //                 const rock = new Rock({ x: j, y: i });
+        //                 rock.addAnimation(new ChainedAnimation(
+        //                     rock,
+        //                     'rock',
+        //                     Animation.assets['rock'],
+        //                     { x: 32, y: 32 },
+        //                     1,
+        //                     -1,
+        //                     1
+        //                 ))
+        //                 this.addEntity(rock);
+        //             }
+        //         }
+        //     }
+        // }
+    }
+
+    public async redo(map: string[], entity: string[]){
         for (let i = 0; i < this.size.y; i++) {
             this.entityGrid.push([])
             this.tiles.push([])
@@ -115,18 +163,18 @@ export class Grid {
                     this.addEntity(rock);
                 }
                 else {
-                    if (Math.round(Math.random())) {
-                        this.tiles[i].push(new Grass({ x: j, y: i }))
+                    if(map[j][i] == "grass"){
+                        this.tiles[i].push(new Grass({x:j,y:i}));
                     }
                     else {
-                        if (Math.round(Math.random())) {
-                            this.tiles[i].push(new Sand({ x: j, y: i }))
+                        if(map[j][i] == "sand"){
+                            this.tiles[i].push(new Sand({x:j,y:i}));
                         }
-                        else {
-                            this.tiles[i].push(new Gravel({ x: j, y: i }))
+                        else{
+                            this.tiles[i].push(new Gravel({x:j, y:i}));
                         }
                     }
-                    if (Math.round(Math.random()) && (j != 1 && i != 1)) {
+                    if(entity[j][i]=="rock"){
                         const rock = new Rock({ x: j, y: i });
                         rock.addAnimation(new ChainedAnimation(
                             rock,
@@ -139,6 +187,32 @@ export class Grid {
                         ))
                         this.addEntity(rock);
                     }
+
+                    // if (Math.round(Math.random())) {
+                    //     this.tiles[i].push(new Grass({ x: j, y: i }))
+                    // }
+                    // else {
+                    //     if (Math.round(Math.random())) {
+                    //         this.tiles[i].push(new Sand({ x: j, y: i }))
+                    //     }
+                    //     else {
+                    //         this.tiles[i].push(new Gravel({ x: j, y: i }))
+                    //     }
+                    // }
+                    // if (Math.round(Math.random()) && (j != 1 && i != 1)) {
+                    //     const rock = new Rock({ x: j, y: i });
+                    //     rock.addAnimation(new ChainedAnimation(
+                    //         rock,
+                    //         'rock',
+                    //         Animation.assets['rock'],
+                    //         { x: 32, y: 32 },
+                    //         1,
+                    //         -1,
+                    //         1
+                    //     ))
+                    //     this.addEntity(rock);
+                    // }
+                    
                 }
             }
         }

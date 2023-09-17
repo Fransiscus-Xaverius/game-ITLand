@@ -1,36 +1,5 @@
 import {Map} from './Map';
 
-// export const API = {
-//     apiRequest: async ():Promise<any> => {
-//       const apiUrl = 'https://84b0-118-99-84-2.ngrok-free.app';
-  
-//       const customHeaders = new Headers();
-  
-//       try {
-//         const response = await fetch(apiUrl, {
-//           method: 'GET',
-//           headers: customHeaders,
-//         });
-  
-//         if (!response.ok) {
-//           throw new Error(`HTTP error! Status: ${response.status}`);
-//         }
-  
-//         const responseData = await response.json();
-  
-//         // Display the response data as a JSON alert (for debugging)
-  
-//         // Assuming the response data has map and entity properties, return it
-//         return responseData; // Adjust this line based on your actual response structure
-//       } catch (error) {
-//         // Handle any errors (you can add error handling logic here)
-//         alert(error);
-//         throw error; // Re-throw the error if needed
-//       }
-//     },
-
-//   };
-
 export class API{
 
   public sendSaveData(): Promise<void>{
@@ -68,6 +37,48 @@ export class API{
   }
 
   public async getMap(){
+    try {
+      const apiUrl = 'http://localhost:3000/map';
+      const response = await fetch(apiUrl);
+      if(!response.ok) throw new Error('Network Response was not ok');
+      const jsonString = await response.text();
+      const jsonData = JSON.parse(jsonString);
+      // alert(JSON.stringify(jsonData));
+      return JSON.stringify(jsonData);
+    } catch (error) {
+      console.error("hello")
+    }
+  }
+
+  public async gameStart(){
+    const apiUrl = 'http://localhost:3000/map';
+    const apiUrl2 = 'http://localhost:3000/entity';
+    alert("gamestart api");
+    let map:Map = {tile:[], entity:[]};
+    try {
+      const response = await fetch(apiUrl);
+      if(!response.ok) alert('error connecting to backend-api');
+      const jsonString = await response.text();
+      const jsonData = JSON.parse(jsonString);
+      map.tile = jsonData;
+    } catch (error) {
+      alert('error getting tile data');
+      console.error("hello")
+    }
+    try {
+      const response = await fetch(apiUrl2);
+      if(!response.ok) throw new Error('Network Response was not ok');
+      const jsonString = await response.text();
+      const jsonData = JSON.parse(jsonString);
+      map.entity = jsonData;
+    } catch (error) {
+      alert('error getting entity data');
+    }
+    
+    return map;
+  }
+
+  public async getEntity(){
     try {
       const apiUrl = 'http://localhost:3000/map';
       const response = await fetch(apiUrl);

@@ -11,29 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.API = void 0;
-// export const API = {
-//     apiRequest: async ():Promise<any> => {
-//       const apiUrl = 'https://84b0-118-99-84-2.ngrok-free.app';
-//       const customHeaders = new Headers();
-//       try {
-//         const response = await fetch(apiUrl, {
-//           method: 'GET',
-//           headers: customHeaders,
-//         });
-//         if (!response.ok) {
-//           throw new Error(`HTTP error! Status: ${response.status}`);
-//         }
-//         const responseData = await response.json();
-//         // Display the response data as a JSON alert (for debugging)
-//         // Assuming the response data has map and entity properties, return it
-//         return responseData; // Adjust this line based on your actual response structure
-//       } catch (error) {
-//         // Handle any errors (you can add error handling logic here)
-//         alert(error);
-//         throw error; // Re-throw the error if needed
-//       }
-//     },
-//   };
 class API {
     sendSaveData() {
         const apiUrl = 'https://5591-203-78-117-152.ngrok-free.app/';
@@ -71,6 +48,55 @@ class API {
         });
     }
     getMap() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const apiUrl = 'http://localhost:3000/map';
+                const response = yield fetch(apiUrl);
+                if (!response.ok)
+                    throw new Error('Network Response was not ok');
+                const jsonString = yield response.text();
+                const jsonData = JSON.parse(jsonString);
+                // alert(JSON.stringify(jsonData));
+                return JSON.stringify(jsonData);
+            }
+            catch (error) {
+                console.error("hello");
+            }
+        });
+    }
+    gameStart() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const apiUrl = 'http://localhost:3000/map';
+            const apiUrl2 = 'http://localhost:3000/entity';
+            alert("gamestart api");
+            let map = { tile: [], entity: [] };
+            try {
+                const response = yield fetch(apiUrl);
+                if (!response.ok)
+                    alert('error connecting to backend-api');
+                const jsonString = yield response.text();
+                const jsonData = JSON.parse(jsonString);
+                map.tile = jsonData;
+            }
+            catch (error) {
+                alert('error getting tile data');
+                console.error("hello");
+            }
+            try {
+                const response = yield fetch(apiUrl2);
+                if (!response.ok)
+                    throw new Error('Network Response was not ok');
+                const jsonString = yield response.text();
+                const jsonData = JSON.parse(jsonString);
+                map.entity = jsonData;
+            }
+            catch (error) {
+                alert('error getting entity data');
+            }
+            return map;
+        });
+    }
+    getEntity() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const apiUrl = 'http://localhost:3000/map';
@@ -1833,6 +1859,7 @@ const Player_1 = require("./Player");
 const API_1 = require("./API");
 class GameManager {
     constructor(canvasView = null, terminalView = null, shopView, inventoryView = null) {
+        this.api = null;
         this.lastTimeStamp = 0;
         this.deltaTime = 0;
         this.isRunning = false;
@@ -1844,14 +1871,25 @@ class GameManager {
         this.activePlayerUnit = null;
         this.shopView = null;
         this.inventoryView = null;
-        this.api = null;
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
-        this.grid.addEntity(this.player.units[0]);
-        this.setActivePlayerUnit(this.player.units[0]);
         this.setShopView(shopView);
         this.setInventoryView(inventoryView);
         this.api = new API_1.API();
+    }
+    load() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            alert('hello');
+            let map = { tile: [], entity: [] };
+            map = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.gameStart()); //use non-null assertion operator.
+            alert(map.tile.length);
+            //redoing load grid because the constructor cannot be an async function.
+            this.grid = new Grid_1.Grid({ x: 100, y: 100 });
+            this.grid.redo(map.tile, map.entity);
+            this.grid.addEntity(this.player.units[0]);
+            this.setActivePlayerUnit(this.player.units[0]);
+        });
     }
     setInventoryView(inventoryView) {
         this.inventoryView = inventoryView;
@@ -1860,15 +1898,10 @@ class GameManager {
         return this.inventoryView;
     }
     //API testing
-    testAPI() {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            // let string1:string = ""; 
-            // await this.api?.getMap().then(e=>{string1 = e});
-            const string1 = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.getMap());
-            return string1;
-        });
-    }
+    // public async testAPI(){
+    //     const string1 = await this.api?.gameStart();
+    //     return string1;
+    // }
     testAPIsoal() {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
@@ -2181,6 +2214,15 @@ exports.Gravel = Gravel;
 
 },{"./GroupAnimation":26,"./Tile":30}],25:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grid = void 0;
 const Grass_1 = require("./Grass");
@@ -2256,37 +2298,112 @@ class Grid {
         //         }
         //     });
         // alert("outside 2 then " + this.mapData);
-        for (let i = 0; i < this.size.y; i++) {
-            this.entityGrid.push([]);
-            this.tiles.push([]);
-            for (let j = 0; j < this.size.x; j++) {
-                this.entityGrid[i].push(null);
-                if (i == 0 || j == 0 || j == 99 || i == 99) {
-                    this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
-                    const rock = new Rock_1.Rock({ x: j, y: i });
-                    rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
-                    this.addEntity(rock);
-                }
-                else {
-                    if (Math.round(Math.random())) {
-                        this.tiles[i].push(new Grass_1.Grass({ x: j, y: i }));
-                    }
-                    else {
-                        if (Math.round(Math.random())) {
-                            this.tiles[i].push(new Sand_1.Sand({ x: j, y: i }));
-                        }
-                        else {
-                            this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
-                        }
-                    }
-                    if (Math.round(Math.random()) && (j != 1 && i != 1)) {
+        // for (let i = 0; i < this.size.y; i++) {
+        //     this.entityGrid.push([])
+        //     this.tiles.push([])
+        //     for (let j = 0; j < this.size.x; j++) {
+        //         this.entityGrid[i].push(null)
+        //         if (i == 0 || j == 0 || j == 99 || i == 99) {
+        //             this.tiles[i].push(new Gravel({ x: j, y: i }))
+        //             const rock = new Rock({ x: j, y: i });
+        //             rock.addAnimation(new ChainedAnimation(
+        //                 rock,
+        //                 'rock',
+        //                 Animation.assets['rock'],
+        //                 { x: 32, y: 32 },
+        //                 1,
+        //                 -1,
+        //                 1
+        //             ))
+        //             this.addEntity(rock);
+        //         }
+        //         else {
+        //             if (Math.round(Math.random())) {
+        //                 this.tiles[i].push(new Grass({ x: j, y: i }))
+        //             }
+        //             else {
+        //                 if (Math.round(Math.random())) {
+        //                     this.tiles[i].push(new Sand({ x: j, y: i }))
+        //                 }
+        //                 else {
+        //                     this.tiles[i].push(new Gravel({ x: j, y: i }))
+        //                 }
+        //             }
+        //             if (Math.round(Math.random()) && (j != 1 && i != 1)) {
+        //                 const rock = new Rock({ x: j, y: i });
+        //                 rock.addAnimation(new ChainedAnimation(
+        //                     rock,
+        //                     'rock',
+        //                     Animation.assets['rock'],
+        //                     { x: 32, y: 32 },
+        //                     1,
+        //                     -1,
+        //                     1
+        //                 ))
+        //                 this.addEntity(rock);
+        //             }
+        //         }
+        //     }
+        // }
+    }
+    redo(map, entity) {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (let i = 0; i < this.size.y; i++) {
+                this.entityGrid.push([]);
+                this.tiles.push([]);
+                for (let j = 0; j < this.size.x; j++) {
+                    this.entityGrid[i].push(null);
+                    if (i == 0 || j == 0 || j == 99 || i == 99) {
+                        this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
                         const rock = new Rock_1.Rock({ x: j, y: i });
                         rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
                         this.addEntity(rock);
                     }
+                    else {
+                        if (map[j][i] == "grass") {
+                            this.tiles[i].push(new Grass_1.Grass({ x: j, y: i }));
+                        }
+                        else {
+                            if (map[j][i] == "sand") {
+                                this.tiles[i].push(new Sand_1.Sand({ x: j, y: i }));
+                            }
+                            else {
+                                this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
+                            }
+                        }
+                        if (entity[j][i] == "rock") {
+                            const rock = new Rock_1.Rock({ x: j, y: i });
+                            rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
+                            this.addEntity(rock);
+                        }
+                        // if (Math.round(Math.random())) {
+                        //     this.tiles[i].push(new Grass({ x: j, y: i }))
+                        // }
+                        // else {
+                        //     if (Math.round(Math.random())) {
+                        //         this.tiles[i].push(new Sand({ x: j, y: i }))
+                        //     }
+                        //     else {
+                        //         this.tiles[i].push(new Gravel({ x: j, y: i }))
+                        //     }
+                        // }
+                        // if (Math.round(Math.random()) && (j != 1 && i != 1)) {
+                        //     const rock = new Rock({ x: j, y: i });
+                        //     rock.addAnimation(new ChainedAnimation(
+                        //         rock,
+                        //         'rock',
+                        //         Animation.assets['rock'],
+                        //         { x: 32, y: 32 },
+                        //         1,
+                        //         -1,
+                        //         1
+                        //     ))
+                        //     this.addEntity(rock);
+                        // }
+                    }
                 }
             }
-        }
+        });
     }
     update(deltaTime, updateArea = null, priorityUpdate = []) {
         var _a, _b, _c, _d, _e, _f;
@@ -3090,9 +3207,10 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     (0, loadAsset_1.default)();
     const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement));
     game.start();
+    yield game.load();
     const pUnit = game.getActivePlayerUnit();
-    const map = yield game.testAPI();
-    alert(map);
+    // const map = await game.testAPI();
+    // alert(map);
     soalButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
         const tAPI = yield game.testAPIsoal();
         alert(tAPI);
