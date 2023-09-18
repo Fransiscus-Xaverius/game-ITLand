@@ -8,6 +8,7 @@ import { Direction } from './Classes/GameObjects/Direction';
 import { Point } from './Classes/GameObjects/Point';
 import { InventoryView } from './Classes/InventoryView';
 import { Inventory } from './Classes/Items/Inventory';
+import { Question } from './Classes/Question';
 
 window.onload = async () => {
     //Main game
@@ -19,6 +20,7 @@ window.onload = async () => {
     const shopButton = document.querySelector(".button-shop") as HTMLButtonElement
     const inventoryButton = document.querySelector(".button-inventory") as HTMLButtonElement
     const inventoryShopElement = document.querySelector(".shop-inventory") as HTMLDivElement
+    const QuestionArea = document.querySelector("#question") as HTMLDivElement
     const shop = new Shop() as Shop
     const inventory = new Inventory() as Inventory
     if (canvas == null) throw new Error("Canvas not found");
@@ -42,7 +44,8 @@ window.onload = async () => {
     // alert(map);
     soalButton.addEventListener('click', async () => {
         const tAPI = await game.testAPIsoal();
-        alert(tAPI);
+        let q:Question = {text:tAPI?.text!, a:tAPI?.a!, b:tAPI?.b!, c:tAPI?.c!, d:tAPI?.d!, answer:tAPI?.answer!};
+        QuestionArea.innerHTML = q.text;
     })
     //Shop
 

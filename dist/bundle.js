@@ -27,26 +27,6 @@ class API {
             console.log("got response:", res);
         });
     }
-    getQuestion() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const apiUrl = 'http://localhost:3000/question';
-                const response = yield fetch(apiUrl);
-                // alert(JSON.stringify(response));
-                if (!response.ok)
-                    throw new Error('Network Response was not ok');
-                const jsonString = yield response.text();
-                const jsonData = JSON.parse(jsonString);
-                // alert(JSON.stringify(jsonData));
-                // alert(jsonData);
-                return JSON.stringify(jsonData);
-            }
-            catch (error) {
-                // alert(JSON.stringify(error))
-                console.error("hello");
-            }
-        });
-    }
     getMap() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -60,6 +40,31 @@ class API {
                 return JSON.stringify(jsonData);
             }
             catch (error) {
+                console.error("hello");
+            }
+        });
+    }
+    getQuestion() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const apiUrl = 'http://localhost:3000/question';
+                const response = yield fetch(apiUrl);
+                // alert(JSON.stringify(response));
+                let question = { text: "", a: "", b: "", c: "", d: "", answer: "" };
+                if (!response.ok)
+                    throw new Error('Network Response was not ok');
+                const jsonString = yield response.text();
+                const jsonData = JSON.parse(jsonString);
+                question.text = jsonData.text;
+                question.a = jsonData.a;
+                question.b = jsonData.b;
+                question.c = jsonData.c;
+                question.d = jsonData.d;
+                question.answer = jsonData.answer;
+                return question;
+            }
+            catch (error) {
+                // alert(JSON.stringify(error))
                 console.error("hello");
             }
         });
@@ -2997,23 +3002,21 @@ class Shop {
                 plusBtn.classList.add('btn', 'btn-success');
                 plusBtn.textContent = '+';
                 plusBtn.addEventListener("click", () => {
-                    document.addEventListener("DOMContentLoaded", () => {
-                        const item = document.querySelector(`.item-${i}`);
-                        const totalPriceContainer = document.querySelector(`total-price-container-item-${i}`);
-                        const totalPriceDiv = totalPriceContainer.querySelector(`total-price-item-${i}`);
-                        console.error(totalPriceDiv);
-                        if (item) {
-                            const currentQty = parseInt(item.value) || 0;
-                            item.value = `${currentQty + 1}`;
-                            const itemValue = parseInt(item.value);
-                            const itemPrice = this.item[i].getItemPrice();
-                            const totalPrice = itemValue * itemPrice;
-                            totalPriceDiv.innerText = `Gold ${totalPrice}`;
-                        }
-                        else {
-                            console.error(`Element with class .item-${i} not found.`);
-                        }
-                    });
+                    const item = document.querySelector(`.item-${i}`);
+                    const totalPriceContainer = document.querySelector(`total-price-container-item-${i}`);
+                    const totalPriceDiv = totalPriceContainer.querySelector(`total-price-item-${i}`);
+                    console.error(totalPriceDiv);
+                    if (item) {
+                        const currentQty = parseInt(item.value) || 0;
+                        item.value = `${currentQty + 1}`;
+                        const itemValue = parseInt(item.value);
+                        const itemPrice = this.item[i].getItemPrice();
+                        const totalPrice = itemValue * itemPrice;
+                        totalPriceDiv.innerText = `Gold ${totalPrice}`;
+                    }
+                    else {
+                        console.error(`Element with class .item-${i} not found.`);
+                    }
                 });
                 colDiv1.appendChild(plusBtn);
                 const colDiv2 = document.createElement('div');
@@ -3264,6 +3267,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     const shopButton = document.querySelector(".button-shop");
     const inventoryButton = document.querySelector(".button-inventory");
     const inventoryShopElement = document.querySelector(".shop-inventory");
+    const QuestionArea = document.querySelector("#question");
     const shop = new Shop_1.Shop();
     const inventory = new Inventory_1.Inventory();
     if (canvas == null)
@@ -3282,7 +3286,8 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     // alert(map);
     soalButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
         const tAPI = yield game.testAPIsoal();
-        alert(tAPI);
+        let q = { text: tAPI === null || tAPI === void 0 ? void 0 : tAPI.text, a: tAPI === null || tAPI === void 0 ? void 0 : tAPI.a, b: tAPI === null || tAPI === void 0 ? void 0 : tAPI.b, c: tAPI === null || tAPI === void 0 ? void 0 : tAPI.c, d: tAPI === null || tAPI === void 0 ? void 0 : tAPI.d, answer: tAPI === null || tAPI === void 0 ? void 0 : tAPI.answer };
+        QuestionArea.innerHTML = q.text;
     }));
     //Shop
     //Quiz Section

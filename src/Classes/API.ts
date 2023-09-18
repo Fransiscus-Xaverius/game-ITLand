@@ -1,4 +1,6 @@
+import { json } from 'stream/consumers';
 import {Map} from './Map';
+import { Question } from './Question';
 
 export class API{
 
@@ -19,23 +21,6 @@ export class API{
       })
   }
 
-  public async getQuestion(){
-    try {
-      const apiUrl = 'http://localhost:3000/question';
-      const response = await fetch(apiUrl);
-      // alert(JSON.stringify(response));
-      if(!response.ok) throw new Error('Network Response was not ok');
-      const jsonString = await response.text();
-      const jsonData = JSON.parse(jsonString);
-      // alert(JSON.stringify(jsonData));
-      // alert(jsonData);
-      return JSON.stringify(jsonData);
-    } catch (error) {
-      // alert(JSON.stringify(error))
-      console.error("hello")
-    }   
-  }
-
   public async getMap(){
     try {
       const apiUrl = 'http://localhost:3000/map';
@@ -48,6 +33,28 @@ export class API{
     } catch (error) {
       console.error("hello")
     }
+  }
+
+  public async getQuestion(){
+    try {
+      const apiUrl = 'http://localhost:3000/question';
+      const response = await fetch(apiUrl);
+      // alert(JSON.stringify(response));
+      let question:Question = {text:"", a:"", b:"", c:"", d:"", answer:""};
+      if(!response.ok) throw new Error('Network Response was not ok');
+      const jsonString = await response.text();
+      const jsonData = JSON.parse(jsonString);
+      question.text = jsonData.text;
+      question.a = jsonData.a;
+      question.b = jsonData.b;
+      question.c = jsonData.c;
+      question.d = jsonData.d;
+      question.answer = jsonData.answer;
+      return question;
+    } catch (error) {
+      // alert(JSON.stringify(error))
+      console.error("hello")
+    }   
   }
 
   public async gameStart(){
