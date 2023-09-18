@@ -23,6 +23,11 @@ export default function loadAsset():void{
     //Other Entities
     const rock = new Image();
     rock.src = './dist/Assets/Prototype/rock.png'
+    const iron_ore = new Image();
+
+    const gold_ore = new Image();
+
+    const silver_ore = new Image();
 
     Animation.assets['grass_tile'] = grass
     Animation.assets['flowery_grass_tile'] = flowergrass
@@ -31,6 +36,9 @@ export default function loadAsset():void{
     Animation.assets['player_walk_reverse'] = player_walk_reverse
     Animation.assets['sand'] = sand_tile
     Animation.assets['rock'] = rock
+    Animation.assets['iron_ore'] = iron_ore;
+    Animation.assets['gold_ore'] = gold_ore;
+    Animation.assets['silver_ore'] = silver_ore;
 
     GroupAnimation.animations.push(
         new GroupAnimation(
