@@ -2997,21 +2997,23 @@ class Shop {
                 plusBtn.classList.add('btn', 'btn-success');
                 plusBtn.textContent = '+';
                 plusBtn.addEventListener("click", () => {
-                    const item = document.querySelector(`.item-${i}`);
-                    const totalPriceContainer = document.querySelector(`total-price-container-item-${i}`);
-                    const totalPriceDiv = totalPriceContainer.querySelector(`total-price-item-${i}`);
-                    console.error(totalPriceDiv);
-                    if (item) {
-                        const currentQty = parseInt(item.value) || 0;
-                        item.value = `${currentQty + 1}`;
-                        const itemValue = parseInt(item.value);
-                        const itemPrice = this.item[i].getItemPrice();
-                        const totalPrice = itemValue * itemPrice;
-                        totalPriceDiv.innerText = `Gold ${totalPrice}`;
-                    }
-                    else {
-                        console.error(`Element with class .item-${i} not found.`);
-                    }
+                    document.addEventListener("DOMContentLoaded", () => {
+                        const item = document.querySelector(`.item-${i}`);
+                        const totalPriceContainer = document.querySelector(`total-price-container-item-${i}`);
+                        const totalPriceDiv = totalPriceContainer.querySelector(`total-price-item-${i}`);
+                        console.error(totalPriceDiv);
+                        if (item) {
+                            const currentQty = parseInt(item.value) || 0;
+                            item.value = `${currentQty + 1}`;
+                            const itemValue = parseInt(item.value);
+                            const itemPrice = this.item[i].getItemPrice();
+                            const totalPrice = itemValue * itemPrice;
+                            totalPriceDiv.innerText = `Gold ${totalPrice}`;
+                        }
+                        else {
+                            console.error(`Element with class .item-${i} not found.`);
+                        }
+                    });
                 });
                 colDiv1.appendChild(plusBtn);
                 const colDiv2 = document.createElement('div');
