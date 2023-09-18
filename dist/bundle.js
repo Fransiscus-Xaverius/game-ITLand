@@ -2974,14 +2974,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestionView = void 0;
 class QuestionView {
-    constructor(QuestionArea, UpdateButton, api) {
+    constructor(QuestionArea, UpdateButton, api, a, b, c, d) {
         this.QuestionArea = null;
         this.UpdateBtn = null;
         this.api = null;
         this.curQuestion = null;
+        this.AButton = null;
+        this.BButton = null;
+        this.CButton = null;
+        this.DButton = null;
         this.setQuestionArea(QuestionArea);
         this.setUpdateBtn(UpdateButton);
         this.setAPI(api);
+        this.setButtons(a, b, c, d);
+    }
+    setButtons(a, b, c, d) {
+        this.AButton = a;
+        this.BButton = b;
+        this.CButton = c;
+        this.DButton = d;
     }
     load() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -3000,15 +3011,57 @@ class QuestionView {
     setAPI(api) {
         this.api = api;
     }
+    checkAnswer(self, val) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (val == "") {
+                self.style.display = 'none';
+            }
+            else {
+                alert("nice");
+                yield this.UpdateQuestion();
+            }
+        });
+    }
+    resetAnswerButtons(a, b, c, d) {
+        //Object passed here to make sure it isn't null.
+        a.value = "";
+        b.value = "";
+        c.value = "";
+        d.value = "";
+        a.style.display = "block";
+        b.style.display = "block";
+        c.style.display = "block";
+        d.style.display = "block";
+    }
     UpdateQuestion() {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const reqAPI = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.getQuestion());
             let q = { text: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.text, a: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.a, b: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.b, c: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.c, d: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.d, answer: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.answer };
             this.curQuestion = q;
-            if (this.QuestionArea != null && this.curQuestion != null) {
+            if (this.QuestionArea != null && this.curQuestion != null && this.AButton && this.BButton && this.CButton && this.DButton) {
                 this.QuestionArea.innerHTML = this.curQuestion.text;
-                alert(q.text);
+                this.AButton.innerHTML = `A. ${q.a}`;
+                this.BButton.innerHTML = `B. ${q.b}`;
+                this.CButton.innerHTML = `C. ${q.c}`;
+                this.DButton.innerHTML = `D. ${q.d}`;
+                this.resetAnswerButtons(this.AButton, this.BButton, this.CButton, this.DButton);
+                switch (q.answer) {
+                    case 'a':
+                        this.AButton.value = "ans";
+                        break;
+                    case 'b':
+                        this.BButton.value = "ans";
+                        break;
+                    case 'c':
+                        this.CButton.value = "ans";
+                        break;
+                    case 'd':
+                        this.DButton.value = "ans";
+                        break;
+                    default:
+                        break;
+                }
             }
             else {
                 if (this.QuestionArea == null)
@@ -3353,8 +3406,12 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     canvas.width = (_b = (_a = canvas.parentElement) === null || _a === void 0 ? void 0 : _a.clientWidth) !== null && _b !== void 0 ? _b : window.innerWidth;
     canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
     const soalButton = document.querySelector("#get-soal");
+    const AButton = document.querySelector("#a");
+    const BButton = document.querySelector("#b");
+    const CButton = document.querySelector("#c");
+    const DButton = document.querySelector("#d");
     (0, loadAsset_1.default)();
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API()));
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton));
     game.start();
     yield game.load();
     const pUnit = game.getActivePlayerUnit();
@@ -3365,15 +3422,31 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     //     let q:Question = {text:tAPI?.text!, a:tAPI?.a!, b:tAPI?.b!, c:tAPI?.c!, d:tAPI?.d!, answer:tAPI?.answer!};
     //     QuestionArea.innerHTML = q.text;
     // })
-    soalButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
-        var _e;
-        yield ((_e = game.getQuestionView()) === null || _e === void 0 ? void 0 : _e.UpdateQuestion());
-    }));
     //Shop
     //Quiz Section
     // const curPlayer = game.getPlayer();
     // const energyAmount = document.querySelector("#energyAmount") as HTMLDivElement
     // energyAmount.value = `Energy: ${curPlayer.getEnergy()}`
+    soalButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+        var _e;
+        yield ((_e = game.getQuestionView()) === null || _e === void 0 ? void 0 : _e.UpdateQuestion());
+    }));
+    AButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+        var _f;
+        yield ((_f = game.getQuestionView()) === null || _f === void 0 ? void 0 : _f.checkAnswer(AButton, AButton.value));
+    }));
+    BButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+        var _g;
+        yield ((_g = game.getQuestionView()) === null || _g === void 0 ? void 0 : _g.checkAnswer(BButton, BButton.value));
+    }));
+    CButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+        var _h;
+        yield ((_h = game.getQuestionView()) === null || _h === void 0 ? void 0 : _h.checkAnswer(CButton, CButton.value));
+    }));
+    DButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+        var _j;
+        yield ((_j = game.getQuestionView()) === null || _j === void 0 ? void 0 : _j.checkAnswer(DButton, DButton.value));
+    }));
     document.addEventListener('keydown', (e) => {
         const key = e.key;
         let price = 5; //energy price for action.

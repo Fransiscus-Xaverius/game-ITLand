@@ -30,6 +30,10 @@ window.onload = async () => {
     canvas.width = canvas.parentElement?.clientWidth ?? window.innerWidth
     canvas.height = canvas.parentElement?.clientHeight ?? window.innerHeight
     const soalButton = document.querySelector("#get-soal") as HTMLButtonElement;
+    const AButton = document.querySelector("#a") as HTMLButtonElement;
+    const BButton = document.querySelector("#b") as HTMLButtonElement;
+    const CButton = document.querySelector("#c") as HTMLButtonElement;
+    const DButton = document.querySelector("#d") as HTMLButtonElement;
 
     loadAsset()
     const game = new GameManager(
@@ -37,7 +41,7 @@ window.onload = async () => {
         new TerminalView(terminal, executeButton, stopButton),
         new ShopView(shopButton, shop, inventoryShopElement),
         new InventoryView(inventoryButton, inventory, inventoryShopElement),
-        new QuestionView(QuestionArea, soalButton, new API())
+        new QuestionView(QuestionArea, soalButton, new API(), AButton, BButton, CButton, DButton)
     )
 
     game.start();
@@ -51,10 +55,6 @@ window.onload = async () => {
     //     QuestionArea.innerHTML = q.text;
     // })
 
-    soalButton.addEventListener('click', async()=>{
-        await game.getQuestionView()?.UpdateQuestion();
-    });
-
     //Shop
 
     //Quiz Section
@@ -62,6 +62,25 @@ window.onload = async () => {
     // const energyAmount = document.querySelector("#energyAmount") as HTMLDivElement
     // energyAmount.value = `Energy: ${curPlayer.getEnergy()}`
 
+    soalButton.addEventListener('click', async()=>{
+        await game.getQuestionView()?.UpdateQuestion();
+    });
+
+    AButton.addEventListener('click', async()=>{
+        await game.getQuestionView()?.checkAnswer(AButton,AButton.value);
+    })
+
+    BButton.addEventListener('click', async()=>{
+        await game.getQuestionView()?.checkAnswer(BButton,BButton.value);
+    })
+
+    CButton.addEventListener('click', async()=>{
+        await game.getQuestionView()?.checkAnswer(CButton,CButton.value);
+    })
+
+    DButton.addEventListener('click', async()=>{
+        await game.getQuestionView()?.checkAnswer(DButton,DButton.value);
+    })
     
 
     document.addEventListener('keydown', (e) => {
