@@ -5,6 +5,6 @@ import { Item } from "./Item";
 
 export class Book extends Item implements IEquippable {
     constructor(imagePath: string, itemName: string) {
-        super(imagePath, itemName, "book 1");
+        super(imagePath, itemName, "book 1",1000);
     }
 }

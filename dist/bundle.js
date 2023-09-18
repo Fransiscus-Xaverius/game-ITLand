@@ -2772,7 +2772,7 @@ const Item_1 = require("./Item");
 //book is not equipable, rather a consumeable.
 class Book extends Item_1.Item {
     constructor(imagePath, itemName) {
-        super(imagePath, itemName, "book 1");
+        super(imagePath, itemName, "book 1", 1000);
     }
 }
 exports.Book = Book;
@@ -2877,10 +2877,17 @@ exports.Inventory = Inventory;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
 class Item {
-    constructor(imagePath, itemName, itemDesc) {
+    constructor(imagePath, itemName, itemDesc, itemPrice) {
         this.imagePath = imagePath;
         this.itemName = itemName;
         this.itemDesc = itemDesc;
+        this.itemPrice = itemPrice;
+    }
+    getItemPrice() {
+        return this.itemPrice;
+    }
+    setItemPrice(itemPrice) {
+        this.itemPrice = itemPrice;
     }
     getImagePath() {
         return this.imagePath;
@@ -2991,10 +2998,16 @@ class Shop {
                 plusBtn.textContent = '+';
                 plusBtn.addEventListener("click", () => {
                     const item = document.querySelector(`.item-${i}`);
-                    console.log(item);
+                    const totalPriceContainer = document.querySelector(`total-price-container-item-${i}`);
+                    const totalPriceDiv = totalPriceContainer.querySelector(`total-price-item-${i}`);
+                    console.error(totalPriceDiv);
                     if (item) {
                         const currentQty = parseInt(item.value) || 0;
                         item.value = `${currentQty + 1}`;
+                        const itemValue = parseInt(item.value);
+                        const itemPrice = this.item[i].getItemPrice();
+                        const totalPrice = itemValue * itemPrice;
+                        totalPriceDiv.innerText = `Gold ${totalPrice}`;
                     }
                     else {
                         console.error(`Element with class .item-${i} not found.`);
@@ -3005,8 +3018,9 @@ class Shop {
                 colDiv2.classList.add('col-sm-2');
                 const itemQtyDiv = document.createElement('input');
                 itemQtyDiv.style.width = "30px";
+                itemQtyDiv.type = "number";
                 itemQtyDiv.classList.add('item-qty', `item-${i}`);
-                itemQtyDiv.textContent = '10';
+                itemQtyDiv.value = '1';
                 colDiv2.appendChild(itemQtyDiv);
                 const colDiv3 = document.createElement('div');
                 colDiv3.classList.add('col-sm-2');
@@ -3015,7 +3029,6 @@ class Shop {
                 minusBtn.textContent = '-';
                 minusBtn.addEventListener("click", () => {
                     const item = document.querySelector(`.item-${i}`);
-                    console.log(item);
                     if (item) {
                         const currentQty = parseInt(item.value) || 0;
                         if (currentQty > 1) {
@@ -3028,10 +3041,10 @@ class Shop {
                 });
                 colDiv3.appendChild(minusBtn);
                 const colDiv4 = document.createElement('div');
-                colDiv4.classList.add('col-sm-6');
+                colDiv4.classList.add('col-sm-6', `total-price-container-item-${i}`);
                 const totalPriceDiv = document.createElement('div');
-                totalPriceDiv.classList.add('total-price');
-                totalPriceDiv.textContent = 'Gold 10';
+                totalPriceDiv.classList.add('total-price', `total-price-item-${i}`);
+                totalPriceDiv.textContent = 'Gold ';
                 colDiv4.appendChild(totalPriceDiv);
                 addBox.appendChild(colDiv1);
                 addBox.appendChild(colDiv2);
@@ -3050,7 +3063,6 @@ class Shop {
                 shopHTML.style.height = "200px";
                 shopHTML.style.overflow = "auto";
             }
-            // console.log(shopTemp)
         }
     }
 }

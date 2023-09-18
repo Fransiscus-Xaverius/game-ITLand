@@ -58,10 +58,16 @@ export class Shop {
                 plusBtn.textContent = '+';
                 plusBtn.addEventListener("click", () => {
                     const item: HTMLInputElement | null = document.querySelector(`.item-${i}`);
-                    console.log(item)
+                    const totalPriceContainer = document.querySelector(`total-price-container-item-${i}`) as HTMLDivElement;
+                    const totalPriceDiv = totalPriceContainer.querySelector(`total-price-item-${i}`) as HTMLDivElement;
+                    console.error(totalPriceDiv)
                     if (item) {
                         const currentQty = parseInt(item.value) || 0;
                         item.value = `${currentQty + 1}`;
+                        const itemValue:number = parseInt(item.value);
+                        const itemPrice:number = this.item[i].getItemPrice();
+                        const totalPrice:number = itemValue * itemPrice;
+                        totalPriceDiv.innerText = `Gold ${totalPrice}`;
                     } else {
                         console.error(`Element with class .item-${i} not found.`);
                     }
@@ -72,8 +78,9 @@ export class Shop {
                 colDiv2.classList.add('col-sm-2');
                 const itemQtyDiv: HTMLInputElement = document.createElement('input');
                 itemQtyDiv.style.width = "30px";
+                itemQtyDiv.type = "number";
                 itemQtyDiv.classList.add('item-qty', `item-${i}`);
-                itemQtyDiv.textContent = '10';
+                itemQtyDiv.value = '1';
                 colDiv2.appendChild(itemQtyDiv);
 
                 const colDiv3: HTMLDivElement = document.createElement('div');
@@ -83,7 +90,6 @@ export class Shop {
                 minusBtn.textContent = '-';
                 minusBtn.addEventListener("click", () => {
                     const item: HTMLInputElement | null = document.querySelector(`.item-${i}`);
-                    console.log(item)
                     if (item) {
                         const currentQty = parseInt(item.value) || 0;
                         if(currentQty > 1){
@@ -96,10 +102,10 @@ export class Shop {
                 colDiv3.appendChild(minusBtn);
 
                 const colDiv4: HTMLDivElement = document.createElement('div');
-                colDiv4.classList.add('col-sm-6');
+                colDiv4.classList.add('col-sm-6',`total-price-container-item-${i}`);
                 const totalPriceDiv: HTMLDivElement = document.createElement('div');
-                totalPriceDiv.classList.add('total-price');
-                totalPriceDiv.textContent = 'Gold 10';
+                totalPriceDiv.classList.add('total-price',`total-price-item-${i}`);
+                totalPriceDiv.textContent = 'Gold ';
                 colDiv4.appendChild(totalPriceDiv);
 
                 addBox.appendChild(colDiv1);
