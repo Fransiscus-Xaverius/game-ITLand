@@ -9,6 +9,8 @@ import { Point } from './Classes/GameObjects/Point';
 import { InventoryView } from './Classes/InventoryView';
 import { Inventory } from './Classes/Items/Inventory';
 import { Question } from './Classes/Question';
+import { QuestionView } from './Classes/QuestionView';
+import { API } from './Classes/API';
 
 window.onload = async () => {
     //Main game
@@ -34,7 +36,8 @@ window.onload = async () => {
         new CanvasView(canvas),
         new TerminalView(terminal, executeButton, stopButton),
         new ShopView(shopButton, shop, inventoryShopElement),
-        new InventoryView(inventoryButton, inventory, inventoryShopElement)
+        new InventoryView(inventoryButton, inventory, inventoryShopElement),
+        new QuestionView(QuestionArea, soalButton, new API())
     )
 
     game.start();
@@ -42,11 +45,16 @@ window.onload = async () => {
     const pUnit = game.getActivePlayerUnit();
     // const map = await game.testAPI();
     // alert(map);
-    soalButton.addEventListener('click', async () => {
-        const tAPI = await game.testAPIsoal();
-        let q:Question = {text:tAPI?.text!, a:tAPI?.a!, b:tAPI?.b!, c:tAPI?.c!, d:tAPI?.d!, answer:tAPI?.answer!};
-        QuestionArea.innerHTML = q.text;
-    })
+    // soalButton.addEventListener('click', async () => {
+    //     const tAPI = await game.testAPIsoal();
+    //     let q:Question = {text:tAPI?.text!, a:tAPI?.a!, b:tAPI?.b!, c:tAPI?.c!, d:tAPI?.d!, answer:tAPI?.answer!};
+    //     QuestionArea.innerHTML = q.text;
+    // })
+
+    soalButton.addEventListener('click', async()=>{
+        await game.getQuestionView()?.UpdateQuestion();
+    });
+
     //Shop
 
     //Quiz Section

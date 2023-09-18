@@ -10,6 +10,8 @@ import { API } from './API';
 import { Entity } from './GameObjects/Entity';
 import { InventoryView } from './InventoryView';
 import { Map } from './Map';
+import { Question } from './Question';
+import { QuestionView } from './QuestionView';
 
 export class GameManager {
     public api:API | null = null;
@@ -24,18 +26,20 @@ export class GameManager {
     private activePlayerUnit: PlayerUnit | null = null;
     private shopView: ShopView | null = null;
     private inventoryView: InventoryView | null = null;
+    private questionView: QuestionView | null = null;
 
 
-    constructor(canvasView: CanvasView | null = null, terminalView: TerminalView | null = null, shopView: ShopView | null, inventoryView: InventoryView | null = null) {
+    constructor(canvasView: CanvasView | null = null, terminalView: TerminalView | null = null, shopView: ShopView | null, inventoryView: InventoryView | null = null, questionView: QuestionView | null = null) {
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
         this.setShopView(shopView);
         this.setInventoryView(inventoryView);
         this.api = new API();
+        this.setQuestionView(questionView);
     }
 
     public async load(){
-        alert('hello');
+        alert('await load');
         let map:Map = {tile:[], entity:[]}
         map = await this.api?.gameStart()!; //use non-null assertion operator.
         alert(map.tile.length);
@@ -44,6 +48,11 @@ export class GameManager {
         this.grid.redo(map.tile, map.entity)
         this.grid.addEntity(this.player.units[0]);
         this.setActivePlayerUnit(this.player.units[0]);
+        await this.questionView?.load();
+    }
+
+    public getQuestionView(): QuestionView |null {
+        return this.questionView;
     }
 
     public setInventoryView(inventoryView: InventoryView | null): void {
@@ -87,6 +96,10 @@ export class GameManager {
     public setActivePlayerUnit(value: PlayerUnit | null): void {
         this.terminalView?.setTerminal(value?.terminal ?? null)
         this.activePlayerUnit = value
+    }
+
+    public setQuestionView(questionView: QuestionView| null): void{
+        this.questionView = questionView;
     }
 
     public getActivePlayerUnit() {

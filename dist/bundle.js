@@ -1863,7 +1863,7 @@ const Grid_1 = require("./GameObjects/Grid");
 const Player_1 = require("./Player");
 const API_1 = require("./API");
 class GameManager {
-    constructor(canvasView = null, terminalView = null, shopView, inventoryView = null) {
+    constructor(canvasView = null, terminalView = null, shopView, inventoryView = null, questionView = null) {
         this.api = null;
         this.lastTimeStamp = 0;
         this.deltaTime = 0;
@@ -1876,16 +1876,18 @@ class GameManager {
         this.activePlayerUnit = null;
         this.shopView = null;
         this.inventoryView = null;
+        this.questionView = null;
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
         this.setShopView(shopView);
         this.setInventoryView(inventoryView);
         this.api = new API_1.API();
+        this.setQuestionView(questionView);
     }
     load() {
-        var _a;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            alert('hello');
+            alert('await load');
             let map = { tile: [], entity: [] };
             map = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.gameStart()); //use non-null assertion operator.
             alert(map.tile.length);
@@ -1894,7 +1896,11 @@ class GameManager {
             this.grid.redo(map.tile, map.entity);
             this.grid.addEntity(this.player.units[0]);
             this.setActivePlayerUnit(this.player.units[0]);
+            yield ((_b = this.questionView) === null || _b === void 0 ? void 0 : _b.load());
         });
+    }
+    getQuestionView() {
+        return this.questionView;
     }
     setInventoryView(inventoryView) {
         this.inventoryView = inventoryView;
@@ -1933,6 +1939,9 @@ class GameManager {
         var _a, _b;
         (_a = this.terminalView) === null || _a === void 0 ? void 0 : _a.setTerminal((_b = value === null || value === void 0 ? void 0 : value.terminal) !== null && _b !== void 0 ? _b : null);
         this.activePlayerUnit = value;
+    }
+    setQuestionView(questionView) {
+        this.questionView = questionView;
     }
     getActivePlayerUnit() {
         return this.activePlayerUnit;
@@ -2953,6 +2962,65 @@ exports.Player = Player;
 
 },{"./GameObjects/Animation":19,"./GameObjects/ChainedAnimation":20,"./GameObjects/PlayerUnit":27}],36:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.QuestionView = void 0;
+class QuestionView {
+    constructor(QuestionArea, UpdateButton, api) {
+        this.QuestionArea = null;
+        this.UpdateBtn = null;
+        this.api = null;
+        this.curQuestion = null;
+        this.setQuestionArea(QuestionArea);
+        this.setUpdateBtn(UpdateButton);
+        this.setAPI(api);
+    }
+    load() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.UpdateQuestion();
+        });
+    }
+    setQuestionArea(QuestionArea) {
+        this.QuestionArea = QuestionArea;
+    }
+    setUpdateBtn(UpdateBtn) {
+        this.UpdateBtn = UpdateBtn;
+    }
+    setCurQuestion(question) {
+        this.curQuestion = question;
+    }
+    setAPI(api) {
+        this.api = api;
+    }
+    UpdateQuestion() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const reqAPI = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.getQuestion());
+            let q = { text: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.text, a: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.a, b: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.b, c: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.c, d: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.d, answer: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.answer };
+            this.curQuestion = q;
+            if (this.QuestionArea != null && this.curQuestion != null) {
+                this.QuestionArea.innerHTML = this.curQuestion.text;
+                alert(q.text);
+            }
+            else {
+                if (this.QuestionArea == null)
+                    alert('memek null cok');
+            }
+        });
+    }
+}
+exports.QuestionView = QuestionView;
+
+},{}],37:[function(require,module,exports){
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
 const Book_1 = require("./Items/Book");
@@ -3073,7 +3141,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"./Items/Book":32}],37:[function(require,module,exports){
+},{"./Items/Book":32}],38:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -3118,7 +3186,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -3192,7 +3260,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -3217,6 +3285,9 @@ function loadAsset() {
     //Other Entities
     const rock = new Image();
     rock.src = './dist/Assets/Prototype/rock.png';
+    const iron_ore = new Image();
+    const gold_ore = new Image();
+    const silver_ore = new Image();
     Animation_1.Animation.assets['grass_tile'] = grass;
     Animation_1.Animation.assets['flowery_grass_tile'] = flowergrass;
     Animation_1.Animation.assets['player_idle'] = player_idle;
@@ -3224,6 +3295,9 @@ function loadAsset() {
     Animation_1.Animation.assets['player_walk_reverse'] = player_walk_reverse;
     Animation_1.Animation.assets['sand'] = sand_tile;
     Animation_1.Animation.assets['rock'] = rock;
+    Animation_1.Animation.assets['iron_ore'] = iron_ore;
+    Animation_1.Animation.assets['gold_ore'] = gold_ore;
+    Animation_1.Animation.assets['silver_ore'] = silver_ore;
     GroupAnimation_1.GroupAnimation.animations.push(new GroupAnimation_1.GroupAnimation("grass_tile", grass, { x: 32, y: 32 }, 1, //number of frames
     0 //speed
     ), new GroupAnimation_1.GroupAnimation("flowery_grass_tile", flowergrass, //
@@ -3233,7 +3307,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":19,"./Classes/GameObjects/GroupAnimation":26}],40:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":19,"./Classes/GameObjects/GroupAnimation":26}],41:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3257,6 +3331,8 @@ const Shop_1 = require("./Classes/Shop");
 const Direction_1 = require("./Classes/GameObjects/Direction");
 const InventoryView_1 = require("./Classes/InventoryView");
 const Inventory_1 = require("./Classes/Items/Inventory");
+const QuestionView_1 = require("./Classes/QuestionView");
+const API_1 = require("./Classes/API");
 window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     //Main game
     var _a, _b, _c, _d;
@@ -3278,16 +3354,20 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     canvas.height = (_d = (_c = canvas.parentElement) === null || _c === void 0 ? void 0 : _c.clientHeight) !== null && _d !== void 0 ? _d : window.innerHeight;
     const soalButton = document.querySelector("#get-soal");
     (0, loadAsset_1.default)();
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement));
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API()));
     game.start();
     yield game.load();
     const pUnit = game.getActivePlayerUnit();
     // const map = await game.testAPI();
     // alert(map);
+    // soalButton.addEventListener('click', async () => {
+    //     const tAPI = await game.testAPIsoal();
+    //     let q:Question = {text:tAPI?.text!, a:tAPI?.a!, b:tAPI?.b!, c:tAPI?.c!, d:tAPI?.d!, answer:tAPI?.answer!};
+    //     QuestionArea.innerHTML = q.text;
+    // })
     soalButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
-        const tAPI = yield game.testAPIsoal();
-        let q = { text: tAPI === null || tAPI === void 0 ? void 0 : tAPI.text, a: tAPI === null || tAPI === void 0 ? void 0 : tAPI.a, b: tAPI === null || tAPI === void 0 ? void 0 : tAPI.b, c: tAPI === null || tAPI === void 0 ? void 0 : tAPI.c, d: tAPI === null || tAPI === void 0 ? void 0 : tAPI.d, answer: tAPI === null || tAPI === void 0 ? void 0 : tAPI.answer };
-        QuestionArea.innerHTML = q.text;
+        var _e;
+        yield ((_e = game.getQuestionView()) === null || _e === void 0 ? void 0 : _e.UpdateQuestion());
     }));
     //Shop
     //Quiz Section
@@ -3336,4 +3416,4 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 
-},{"./Classes/CanvasView":2,"./Classes/GameManager":17,"./Classes/GameObjects/Direction":21,"./Classes/InventoryView":31,"./Classes/Items/Inventory":33,"./Classes/Shop":36,"./Classes/ShopView":37,"./Classes/TerminalView":38,"./loadAsset":39}]},{},[40]);
+},{"./Classes/API":1,"./Classes/CanvasView":2,"./Classes/GameManager":17,"./Classes/GameObjects/Direction":21,"./Classes/InventoryView":31,"./Classes/Items/Inventory":33,"./Classes/QuestionView":36,"./Classes/Shop":37,"./Classes/ShopView":38,"./Classes/TerminalView":39,"./loadAsset":40}]},{},[41]);
