@@ -3028,10 +3028,10 @@ class QuestionView {
         b.value = "";
         c.value = "";
         d.value = "";
-        a.style.display = "block";
-        b.style.display = "block";
-        c.style.display = "block";
-        d.style.display = "block";
+        a.style.display = "inline";
+        b.style.display = "inline";
+        c.style.display = "inline";
+        d.style.display = "inline";
     }
     UpdateQuestion() {
         var _a;
@@ -3065,7 +3065,7 @@ class QuestionView {
             }
             else {
                 if (this.QuestionArea == null)
-                    alert('memek null cok');
+                    alert('QuestionArea is null! please tell a nearby admin');
             }
         });
     }
@@ -3091,30 +3091,22 @@ class Shop {
             shopHTML.style.display = "grid";
             shopHTML.style.gridTemplateColumns = "1fr";
             for (let i = 0; i < this.item.length; i++) {
-                // card shop
-                let shopTemp = document.createElement('div');
-                shopTemp.className = "card-shop";
-                // image shop
-                let shopImage = document.createElement("img");
-                shopImage.className = "shop-img";
+                // Card shop
+                const shopTemp = document.createElement('div');
+                shopTemp.className = 'card-shop';
+                // Image shop
+                const shopImage = document.createElement('img');
+                shopImage.className = 'shop-img';
                 shopImage.src = this.item[i].getImagePath();
-                // desc shop
-                let desc = document.createElement("div");
-                desc.className = "desc";
-                let itemName = document.createElement("div");
-                itemName.className = "content item-name";
+                // Description shop
+                const desc = document.createElement('div');
+                desc.className = 'desc';
+                const itemName = document.createElement('div');
+                itemName.className = 'content item-name';
                 itemName.innerHTML = this.item[i].getItemName();
-                let mainDesc = document.createElement("div");
-                mainDesc.className = "special-content main-desc";
+                const mainDesc = document.createElement('div');
+                mainDesc.className = 'special-content main-desc';
                 mainDesc.innerHTML = this.item[i].getItemDesc();
-                // let addBox = document.createElement("div") as HTMLDivElement;
-                // addBox.className = "content add-box";
-                // let itemQty = document.createElement("div") as HTMLDivElement;
-                // itemQty.className = "item-qty";
-                // let totalPrice = document.createElement("div") as HTMLDivElement;
-                // totalPrice.className = "total-price";
-                // addBox.appendChild(itemQty);
-                // addBox.appendChild(totalPrice);
                 const addBox = document.createElement('div');
                 addBox.classList.add('row');
                 const colDiv1 = document.createElement('div');
@@ -3122,7 +3114,7 @@ class Shop {
                 const plusBtn = document.createElement('div');
                 plusBtn.classList.add('btn', 'btn-success');
                 plusBtn.textContent = '+';
-                plusBtn.addEventListener("click", () => {
+                plusBtn.addEventListener('click', () => {
                     const item = document.querySelector(`.item-${i}`);
                     const totalPriceContainer = document.querySelector(`total-price-container-item-${i}`);
                     const totalPriceDiv = totalPriceContainer.querySelector(`total-price-item-${i}`);
@@ -3143,8 +3135,8 @@ class Shop {
                 const colDiv2 = document.createElement('div');
                 colDiv2.classList.add('col-sm-2');
                 const itemQtyDiv = document.createElement('input');
-                itemQtyDiv.style.width = "30px";
-                itemQtyDiv.type = "number";
+                itemQtyDiv.style.width = '30px';
+                itemQtyDiv.type = 'number';
                 itemQtyDiv.classList.add('item-qty', `item-${i}`);
                 itemQtyDiv.value = '1';
                 colDiv2.appendChild(itemQtyDiv);
@@ -3153,7 +3145,7 @@ class Shop {
                 const minusBtn = document.createElement('div');
                 minusBtn.classList.add('btn', 'btn-danger');
                 minusBtn.textContent = '-';
-                minusBtn.addEventListener("click", () => {
+                minusBtn.addEventListener('click', () => {
                     const item = document.querySelector(`.item-${i}`);
                     if (item) {
                         const currentQty = parseInt(item.value) || 0;
@@ -3176,9 +3168,9 @@ class Shop {
                 addBox.appendChild(colDiv2);
                 addBox.appendChild(colDiv3);
                 addBox.appendChild(colDiv4);
-                let buyButton = document.createElement("button");
-                buyButton.className = "content buy-button";
-                buyButton.innerHTML = "Buy";
+                const buyButton = document.createElement('button');
+                buyButton.className = 'content buy-button';
+                buyButton.innerHTML = 'Buy';
                 desc.appendChild(itemName);
                 desc.appendChild(mainDesc);
                 desc.appendChild(addBox);
@@ -3186,8 +3178,8 @@ class Shop {
                 shopTemp.appendChild(shopImage);
                 shopTemp.appendChild(desc);
                 shopHTML.appendChild(shopTemp);
-                shopHTML.style.height = "200px";
-                shopHTML.style.overflow = "auto";
+                shopHTML.style.height = '200px';
+                shopHTML.style.overflow = 'auto';
             }
         }
     }
