@@ -1885,7 +1885,7 @@ class GameManager {
         this.setQuestionView(questionView);
     }
     load() {
-        var _a, _b;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             alert('await load');
             let map = { tile: [], entity: [] };
@@ -1896,7 +1896,9 @@ class GameManager {
             this.grid.redo(map.tile, map.entity);
             this.grid.addEntity(this.player.units[0]);
             this.setActivePlayerUnit(this.player.units[0]);
-            yield ((_b = this.questionView) === null || _b === void 0 ? void 0 : _b.load());
+            (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.setPlayer(this.player);
+            yield ((_c = this.questionView) === null || _c === void 0 ? void 0 : _c.load());
+            (_d = this.questionView) === null || _d === void 0 ? void 0 : _d.refreshStats();
         });
     }
     getQuestionView() {
@@ -2949,6 +2951,9 @@ class Player {
     getEnergy() {
         return this.energy;
     }
+    addEnergy(x) {
+        this.energy += x;
+    }
     action(price) {
         if (this.energy >= price)
             return true;
@@ -2974,7 +2979,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestionView = void 0;
 class QuestionView {
-    constructor(QuestionArea, UpdateButton, api, a, b, c, d) {
+    constructor(QuestionArea, UpdateButton, api, a, b, c, d, energyDiv) {
         this.QuestionArea = null;
         this.UpdateBtn = null;
         this.api = null;
@@ -2983,16 +2988,25 @@ class QuestionView {
         this.BButton = null;
         this.CButton = null;
         this.DButton = null;
+        this.energyDiv = null;
+        this.player = null;
         this.setQuestionArea(QuestionArea);
         this.setUpdateBtn(UpdateButton);
         this.setAPI(api);
         this.setButtons(a, b, c, d);
+        this.setEnergyDiv(energyDiv);
     }
     setButtons(a, b, c, d) {
         this.AButton = a;
         this.BButton = b;
         this.CButton = c;
         this.DButton = d;
+    }
+    refreshStats() {
+        var _a;
+        if (this.energyDiv) {
+            this.energyDiv.innerHTML = `Energy: ${(_a = this.player) === null || _a === void 0 ? void 0 : _a.getEnergy()}`;
+        }
     }
     load() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -3011,13 +3025,21 @@ class QuestionView {
     setAPI(api) {
         this.api = api;
     }
+    setEnergyDiv(energyDiv) {
+        this.energyDiv = energyDiv;
+    }
+    setPlayer(player) {
+        this.player = player;
+    }
     checkAnswer(self, val) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             if (val == "") {
                 self.style.display = 'none';
             }
             else {
-                alert("nice");
+                (_a = this.player) === null || _a === void 0 ? void 0 : _a.addEnergy(10);
+                this.refreshStats();
                 yield this.UpdateQuestion();
             }
         });
@@ -3402,8 +3424,9 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     const BButton = document.querySelector("#b");
     const CButton = document.querySelector("#c");
     const DButton = document.querySelector("#d");
+    const energyDiv = document.querySelector("#energyAmount");
     (0, loadAsset_1.default)();
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton));
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv));
     game.start();
     yield game.load();
     const pUnit = game.getActivePlayerUnit();

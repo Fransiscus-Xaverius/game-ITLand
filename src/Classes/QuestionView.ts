@@ -1,5 +1,6 @@
 import { Question } from "./Question";
 import { API } from "./API";
+import { Player } from "./Player";
 
 export class QuestionView {
 
@@ -11,12 +12,15 @@ export class QuestionView {
     private BButton: HTMLButtonElement | null = null;
     private CButton: HTMLButtonElement | null = null;
     private DButton: HTMLButtonElement | null = null;
+    private energyDiv: HTMLDivElement | null = null;
+    private player:Player | null = null;
 
-    constructor(QuestionArea: HTMLDivElement, UpdateButton: HTMLButtonElement, api:API, a:HTMLButtonElement, b:HTMLButtonElement, c:HTMLButtonElement, d:HTMLButtonElement){
+    constructor(QuestionArea: HTMLDivElement, UpdateButton: HTMLButtonElement, api:API, a:HTMLButtonElement, b:HTMLButtonElement, c:HTMLButtonElement, d:HTMLButtonElement, energyDiv:HTMLDivElement){
         this.setQuestionArea(QuestionArea);
         this.setUpdateBtn(UpdateButton);
         this.setAPI(api);
         this.setButtons(a,b,c,d);
+        this.setEnergyDiv(energyDiv);
     }
 
     public setButtons(a:HTMLButtonElement, b:HTMLButtonElement, c:HTMLButtonElement, d:HTMLButtonElement){
@@ -24,6 +28,12 @@ export class QuestionView {
         this.BButton = b;
         this.CButton = c;
         this.DButton = d;
+    }
+
+    public refreshStats(){
+        if(this.energyDiv){
+            this.energyDiv!.innerHTML = `Energy: ${this.player?.getEnergy()}`;
+        }
     }
 
     public async load(){
@@ -46,10 +56,19 @@ export class QuestionView {
         this.api = api;
     }
 
+    public setEnergyDiv(energyDiv:HTMLDivElement | null): void{
+        this.energyDiv = energyDiv;
+    }
+
+    public setPlayer(player:Player): void{
+        this.player = player;
+    }
+
     public async checkAnswer(self:HTMLButtonElement, val:string): Promise<void>{
         if(val==""){ self.style.display = 'none' }
         else{
-            alert("nice");
+            this.player?.addEnergy(10);
+            this.refreshStats();
             await this.UpdateQuestion();
         }
     }

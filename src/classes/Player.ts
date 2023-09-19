@@ -51,6 +51,10 @@ export class Player{
         return this.energy;
     }
 
+    public addEnergy(x:number){
+        this.energy+=x;
+    }
+
     public action(price:number):Boolean{
         if(this.energy>=price) return true;
         return false;

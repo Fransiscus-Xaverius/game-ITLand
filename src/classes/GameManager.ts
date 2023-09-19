@@ -48,7 +48,9 @@ export class GameManager {
         this.grid.redo(map.tile, map.entity)
         this.grid.addEntity(this.player.units[0]);
         this.setActivePlayerUnit(this.player.units[0]);
+        this.questionView?.setPlayer(this.player);
         await this.questionView?.load();
+        this.questionView?.refreshStats();
     }
 
     public getQuestionView(): QuestionView |null {
