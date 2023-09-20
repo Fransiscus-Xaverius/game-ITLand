@@ -2082,7 +2082,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./API":1,"./GameObjects/Direction":22,"./GameObjects/Grid":26,"./Player":36}],18:[function(require,module,exports){
+},{"./API":1,"./GameObjects/Direction":22,"./GameObjects/Grid":26,"./Player":39}],18:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -2362,118 +2362,15 @@ const Rock_1 = require("./Rock");
 const Chest_1 = require("./Chest");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 const Animation_1 = require("./Animation");
+const gold_ore_1 = require("./gold_ore");
+const silver_ore_1 = require("./silver_ore");
+const iron_ore_1 = require("./iron_ore");
 class Grid {
     constructor(size) {
         this.size = size;
         this.entities = [];
         this.entityGrid = [];
         this.tiles = [];
-        // this.mapData = {
-        //     map:[],
-        //     entity:[]
-        // };
-        // const fetchMapData:()=>Promise = () => {
-        //     try {
-        //         return API.apiRequest();
-        //         // alert(JSON.stringify(await API.apiRequest()));
-        //     } catch (error) {
-        //         return error;
-        //     }
-        // }
-        // fetchMapData().then((e)=>{
-        // })
-        // const fetchMapData = (callback: (result: any, error: any) => void) => {
-        //     API.apiRequest()
-        //         .then((result) => {
-        //             callback(result, null); // Call the callback with the result
-        //         })
-        //         .catch((error) => {
-        //             callback(null, error); // Call the callback with the error
-        //         });
-        // };
-        // // Usage
-        // fetchMapData((result, error) => {
-        //     if (error) {
-        //         console.error('Error:', error);
-        //     } else {
-        //         this.mapData = result;
-        //     }
-        // });
-        let mData = {
-            map: [],
-            entity: [],
-        };
-        // API.apiRequest()
-        //     .then((x) => {
-        //         alert(JSON.stringify(x))
-        //         let t = JSON.parse(JSON.stringify(x))
-        //         for (let i = 0;i < t.map.length;i++){
-        //             mData.map.push([]);
-        //         }
-        //         for (let i = 0; i < x.map.length; i++) {
-        //             mData.map.push([]);
-        //             for (let j = 0; j < x.map[i].length; j++) {
-        //                 mData.map[i].push(x.map[i][j]);
-        //             }
-        //             for (let j = 0; j < x.entity[i].length; j++) {
-        //                 mData.entity[i].push(x.entity[i][j]);
-        //             }
-        //         }
-        //         for (let i = 0; i < x.entity.length; i++) {
-        //             mData.entity.push([]);
-        //             for (let j = 0; j < x.entity[i].length; j++) {
-        //                 mData.entity[i].push(x.entity[i][j]);
-        //             }
-        //         }
-        //     });
-        // alert("outside 2 then " + this.mapData);
-        // for (let i = 0; i < this.size.y; i++) {
-        //     this.entityGrid.push([])
-        //     this.tiles.push([])
-        //     for (let j = 0; j < this.size.x; j++) {
-        //         this.entityGrid[i].push(null)
-        //         if (i == 0 || j == 0 || j == 99 || i == 99) {
-        //             this.tiles[i].push(new Gravel({ x: j, y: i }))
-        //             const rock = new Rock({ x: j, y: i });
-        //             rock.addAnimation(new ChainedAnimation(
-        //                 rock,
-        //                 'rock',
-        //                 Animation.assets['rock'],
-        //                 { x: 32, y: 32 },
-        //                 1,
-        //                 -1,
-        //                 1
-        //             ))
-        //             this.addEntity(rock);
-        //         }
-        //         else {
-        //             if (Math.round(Math.random())) {
-        //                 this.tiles[i].push(new Grass({ x: j, y: i }))
-        //             }
-        //             else {
-        //                 if (Math.round(Math.random())) {
-        //                     this.tiles[i].push(new Sand({ x: j, y: i }))
-        //                 }
-        //                 else {
-        //                     this.tiles[i].push(new Gravel({ x: j, y: i }))
-        //                 }
-        //             }
-        //             if (Math.round(Math.random()) && (j != 1 && i != 1)) {
-        //                 const rock = new Rock({ x: j, y: i });
-        //                 rock.addAnimation(new ChainedAnimation(
-        //                     rock,
-        //                     'rock',
-        //                     Animation.assets['rock'],
-        //                     { x: 32, y: 32 },
-        //                     1,
-        //                     -1,
-        //                     1
-        //                 ))
-        //                 this.addEntity(rock);
-        //             }
-        //         }
-        //     }
-        // }
     }
     redo(map, entity) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -2493,28 +2390,7 @@ class Grid {
                             this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
                         }
                     }
-                    if (entity[j][i] == "rock") {
-                        const rock = new Rock_1.Rock({ x: j, y: i });
-                        rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
-                        this.addEntity(rock);
-                    }
-                    else if (entity[j][i] == "chest") {
-                        const chest = new Chest_1.Chest({ x: j, y: i });
-                        chest.addAnimation(new ChainedAnimation_1.ChainedAnimation(chest, 'chest', Animation_1.Animation.assets['chest_normal'], { x: 32, y: 32 }, 1, -1, 1));
-                        this.addEntity(chest);
-                    }
-                    // if (Math.round(Math.random())) {
-                    //     this.tiles[i].push(new Grass({ x: j, y: i }))
-                    // }
-                    // else {
-                    //     if (Math.round(Math.random())) {
-                    //         this.tiles[i].push(new Sand({ x: j, y: i }))
-                    //     }
-                    //     else {
-                    //         this.tiles[i].push(new Gravel({ x: j, y: i }))
-                    //     }
-                    // }
-                    // if (Math.round(Math.random()) && (j != 1 && i != 1)) {
+                    // if(entity[j][i]=="rock"){
                     //     const rock = new Rock({ x: j, y: i });
                     //     rock.addAnimation(new ChainedAnimation(
                     //         rock,
@@ -2527,6 +2403,52 @@ class Grid {
                     //     ))
                     //     this.addEntity(rock);
                     // }
+                    // else if(entity[j][i]=="chest"){
+                    //     const chest = new Chest({x:j, y:i});
+                    //     chest.addAnimation(new ChainedAnimation(
+                    //         chest,
+                    //         'chest',
+                    //         Animation.assets['chest_normal'],
+                    //         {x:32, y:32},
+                    //         1,
+                    //         -1,
+                    //         1
+                    //     ))
+                    //     this.addEntity(chest);
+                    // }
+                    switch (entity[j][i]) {
+                        case 'rock':
+                            const rock = new Rock_1.Rock({ x: j, y: i });
+                            rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
+                            this.addEntity(rock);
+                            break;
+                        case 'iron_ore':
+                            const iron_ore = new iron_ore_1.Iron_ore({ x: j, y: i });
+                            iron_ore.addAnimation(new ChainedAnimation_1.ChainedAnimation(iron_ore, 'Iron_ore', Animation_1.Animation.assets['iron_ore'], { x: 32, y: 32 }, 1, -1, 1));
+                            this.addEntity(iron_ore);
+                            break;
+                        case 'silver_ore':
+                            const silver_ore = new silver_ore_1.Silver_ore({ x: j, y: i });
+                            silver_ore.addAnimation(new ChainedAnimation_1.ChainedAnimation(silver_ore, 'Silver_ore', Animation_1.Animation.assets['silver_ore'], { x: 32, y: 32 }, 1, -1, 1));
+                            this.addEntity(silver_ore);
+                            break;
+                        case 'gold_ore':
+                            const gold_ore = new gold_ore_1.Gold_ore({ x: j, y: i });
+                            gold_ore.addAnimation(new ChainedAnimation_1.ChainedAnimation(gold_ore, 'Gold_ore', Animation_1.Animation.assets['gold_ore'], { x: 32, y: 32 }, 1, -1, 1));
+                            this.addEntity(gold_ore);
+                            break;
+                        case 'chest':
+                            const chest = new Chest_1.Chest({ x: j, y: i });
+                            chest.addAnimation(new ChainedAnimation_1.ChainedAnimation(chest, 'chest', Animation_1.Animation.assets['chest_normal'], { x: 32, y: 32 }, 1, -1, 1));
+                            this.addEntity(chest);
+                            break;
+                        case 'medium_chest':
+                            break;
+                        case 'big_chest':
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         });
@@ -2599,7 +2521,7 @@ class Grid {
 }
 exports.Grid = Grid;
 
-},{"./Animation":19,"./ChainedAnimation":20,"./Chest":21,"./Grass":24,"./Gravel":25,"./GroupAnimation":27,"./PlayerUnit":28,"./Rock":29,"./Sand":30}],27:[function(require,module,exports){
+},{"./Animation":19,"./ChainedAnimation":20,"./Chest":21,"./Grass":24,"./Gravel":25,"./GroupAnimation":27,"./PlayerUnit":28,"./Rock":29,"./Sand":30,"./gold_ore":32,"./iron_ore":33,"./silver_ore":34}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupAnimation = void 0;
@@ -2801,7 +2723,7 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/Terminal":13,"../Items/Inventory":34,"./Direction":22,"./Entity":23}],29:[function(require,module,exports){
+},{"../Console/Terminal":13,"../Items/Inventory":37,"./Direction":22,"./Entity":23}],29:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rock = void 0;
@@ -2851,6 +2773,51 @@ Tile.defaultTileResolution = { x: 32, y: 32 };
 },{"./Animated":18}],32:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Gold_ore = void 0;
+const Entity_1 = require("./Entity");
+const Animation_1 = require("./Animation");
+const ChainedAnimation_1 = require("./ChainedAnimation");
+class Gold_ore extends Entity_1.Entity {
+    constructor(coordinate, animations = []) {
+        super(coordinate, animations, "Gold_ore", 3);
+        const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Gold_ore', Animation_1.Animation.assets['gold_ore'], { x: 32, y: 32 }, 1, -1, 1);
+    }
+}
+exports.Gold_ore = Gold_ore;
+
+},{"./Animation":19,"./ChainedAnimation":20,"./Entity":23}],33:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Iron_ore = void 0;
+const Entity_1 = require("./Entity");
+const Animation_1 = require("./Animation");
+const ChainedAnimation_1 = require("./ChainedAnimation");
+class Iron_ore extends Entity_1.Entity {
+    constructor(coordinate, animations = []) {
+        super(coordinate, animations, "Iron_ore", 2);
+        const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Iron_ore', Animation_1.Animation.assets['iron_ore'], { x: 32, y: 32 }, 1, -1, 1);
+    }
+}
+exports.Iron_ore = Iron_ore;
+
+},{"./Animation":19,"./ChainedAnimation":20,"./Entity":23}],34:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Silver_ore = void 0;
+const Entity_1 = require("./Entity");
+const Animation_1 = require("./Animation");
+const ChainedAnimation_1 = require("./ChainedAnimation");
+class Silver_ore extends Entity_1.Entity {
+    constructor(coordinate, animations = []) {
+        super(coordinate, animations, "Silver_ore", 2);
+        const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Silver_ore', Animation_1.Animation.assets['silver_ore'], { x: 32, y: 32 }, 1, -1, 1);
+    }
+}
+exports.Silver_ore = Silver_ore;
+
+},{"./Animation":19,"./ChainedAnimation":20,"./Entity":23}],35:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.InventoryView = void 0;
 class InventoryView {
     constructor(inventoryButton, inventory, inventoryShopElement) {
@@ -2893,7 +2860,7 @@ class InventoryView {
 }
 exports.InventoryView = InventoryView;
 
-},{}],33:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Book = void 0;
@@ -2906,7 +2873,7 @@ class Book extends Item_1.Item {
 }
 exports.Book = Book;
 
-},{"./Item":35}],34:[function(require,module,exports){
+},{"./Item":38}],37:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
@@ -3001,7 +2968,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{"./Book":33}],35:[function(require,module,exports){
+},{"./Book":36}],38:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
@@ -3039,7 +3006,7 @@ class Item {
 }
 exports.Item = Item;
 
-},{}],36:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -3107,7 +3074,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":19,"./GameObjects/ChainedAnimation":20,"./GameObjects/PlayerUnit":28}],37:[function(require,module,exports){
+},{"./GameObjects/Animation":19,"./GameObjects/ChainedAnimation":20,"./GameObjects/PlayerUnit":28}],40:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3236,7 +3203,7 @@ class QuestionView {
 }
 exports.QuestionView = QuestionView;
 
-},{}],38:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
@@ -3364,7 +3331,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"./Items/Book":33}],39:[function(require,module,exports){
+},{"./Items/Book":36}],42:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -3409,7 +3376,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],40:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -3483,7 +3450,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],41:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -3509,8 +3476,11 @@ function loadAsset() {
     const rock = new Image();
     rock.src = './dist/Assets/Prototype/rock.png';
     const iron_ore = new Image();
+    iron_ore.src = './dist/Assets/Prototype/iron_ore.png';
     const gold_ore = new Image();
+    gold_ore.src = './dist/Assets/Prototype/gold_ore.png';
     const silver_ore = new Image();
+    silver_ore.src = './dist/Assets/Prototype/silver_ore.png';
     const chest_normal = new Image();
     chest_normal.src = "./dist/Assets/Prototype/chest_normal_temp.png";
     const chest_medium = new Image();
@@ -3526,6 +3496,8 @@ function loadAsset() {
     Animation_1.Animation.assets['gold_ore'] = gold_ore;
     Animation_1.Animation.assets['silver_ore'] = silver_ore;
     Animation_1.Animation.assets['chest_normal'] = chest_normal;
+    Animation_1.Animation.assets['chest_medium'] = chest_medium;
+    Animation_1.Animation.assets['chest_large'] = chest_large;
     GroupAnimation_1.GroupAnimation.animations.push(new GroupAnimation_1.GroupAnimation("grass_tile", grass, { x: 32, y: 32 }, 1, //number of frames
     0 //speed
     ), new GroupAnimation_1.GroupAnimation("flowery_grass_tile", flowergrass, //
@@ -3535,7 +3507,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":19,"./Classes/GameObjects/GroupAnimation":27}],42:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":19,"./Classes/GameObjects/GroupAnimation":27}],45:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3688,4 +3660,4 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 
-},{"./Classes/API":1,"./Classes/CanvasView":2,"./Classes/GameManager":17,"./Classes/GameObjects/Direction":22,"./Classes/InventoryView":32,"./Classes/Items/Inventory":34,"./Classes/QuestionView":37,"./Classes/Shop":38,"./Classes/ShopView":39,"./Classes/TerminalView":40,"./loadAsset":41}]},{},[42]);
+},{"./Classes/API":1,"./Classes/CanvasView":2,"./Classes/GameManager":17,"./Classes/GameObjects/Direction":22,"./Classes/InventoryView":35,"./Classes/Items/Inventory":37,"./Classes/QuestionView":40,"./Classes/Shop":41,"./Classes/ShopView":42,"./Classes/TerminalView":43,"./loadAsset":44}]},{},[45]);

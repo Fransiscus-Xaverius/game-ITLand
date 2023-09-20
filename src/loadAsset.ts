@@ -24,11 +24,11 @@ export default function loadAsset():void{
     const rock = new Image();
     rock.src = './dist/Assets/Prototype/rock.png'
     const iron_ore = new Image();
-
+    iron_ore.src = './dist/Assets/Prototype/iron_ore.png'
     const gold_ore = new Image();
-
+    gold_ore.src = './dist/Assets/Prototype/gold_ore.png'
     const silver_ore = new Image();
-
+    silver_ore.src = './dist/Assets/Prototype/silver_ore.png'
     const chest_normal = new Image();
     chest_normal.src = "./dist/Assets/Prototype/chest_normal_temp.png";
     const chest_medium = new Image();
@@ -46,6 +46,8 @@ export default function loadAsset():void{
     Animation.assets['gold_ore'] = gold_ore;
     Animation.assets['silver_ore'] = silver_ore;
     Animation.assets['chest_normal'] = chest_normal;
+    Animation.assets['chest_medium'] = chest_medium;
+    Animation.assets['chest_large'] = chest_large;
 
     GroupAnimation.animations.push(
         new GroupAnimation(
