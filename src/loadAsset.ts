@@ -29,6 +29,12 @@ export default function loadAsset():void{
 
     const silver_ore = new Image();
 
+    const chest_normal = new Image();
+    chest_normal.src = "./dist/Assets/Prototype/chest_normal_temp.png";
+    const chest_medium = new Image();
+
+    const chest_large = new Image();
+
     Animation.assets['grass_tile'] = grass
     Animation.assets['flowery_grass_tile'] = flowergrass
     Animation.assets['player_idle'] = player_idle
@@ -39,6 +45,7 @@ export default function loadAsset():void{
     Animation.assets['iron_ore'] = iron_ore;
     Animation.assets['gold_ore'] = gold_ore;
     Animation.assets['silver_ore'] = silver_ore;
+    Animation.assets['chest_normal'] = chest_normal;
 
     GroupAnimation.animations.push(
         new GroupAnimation(

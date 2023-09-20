@@ -82,7 +82,6 @@ window.onload = async () => {
     DButton.addEventListener('click', async()=>{
         await game.getQuestionView()?.checkAnswer(DButton,DButton.value);
     })
-    
 
     document.addEventListener('keydown', (e) => {
         const key = e.key;
@@ -99,14 +98,39 @@ window.onload = async () => {
         if (key === 'd') {
             pUnit?.move(Direction.Right);
         }
-        if (key === 'q') {
 
+        //temp key to change equipment
+        if (key === 'q') {
+            const curEquip = game.getPlayer().getEquipment();
+            switch(curEquip){
+                case 1:
+                    game.getPlayer().setEquipment(2);
+                    break;
+                case 2:
+                    game.getPlayer().setEquipment(0);
+                    break;
+                case 0:
+                    game.getPlayer().setEquipment(1);
+                    break;
+                default:
+                    break;
+            }
+            alert(game.getPlayer().getEquipment());
         }
+
+        if(key==='1'){
+            game.getPlayer().setEquipmentLevels(1);
+        }
+        if(key==='2'){
+            game.getPlayer().setEquipmentLevels(2);
+        }
+
         if (key === 'i') { //destroy top entity
             //for destroying crates, and stone entities.
-            const coords = game.getPlayer().getCoordinate();
-            pUnit?.Mine();
-            game.removeGridEntity(coords.x, (coords.y - 1));
+            // const coords = game.getPlayer().getCoordinate();
+            // pUnit?.Mine();
+            // game.removeGridEntity(coords.x, (coords.y - 1)); 
+            game.Action(Direction.Up, game.getPlayer().getEquipment());
         }
         if (key === 'j') { //destroy left entitiy
             //for destroying crates, and stone entities.

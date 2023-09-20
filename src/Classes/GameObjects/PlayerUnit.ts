@@ -20,7 +20,7 @@ export class PlayerUnit extends Entity{
     public equipped:IEquippable|null = null
 
     constructor(coordinate:Point, moveSpeed:number = 1, animations:Animation[]=[]){
-        super(coordinate, animations)
+        super(coordinate, animations, "Player", 99)
         this.terminal = new Terminal(this)
         this.originalCoordinate = {...this.coordinate}
         this.setMoveSpeed(moveSpeed)
@@ -154,7 +154,7 @@ export class PlayerUnit extends Entity{
         
     }
 
-    public Mine(){
+    public Mine(){ //play mining animation
         if(this.isMoving) return;
         this.isMoving = true;
         this.playAnimation('walk');

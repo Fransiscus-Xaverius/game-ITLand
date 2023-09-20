@@ -6,14 +6,26 @@ import { Point } from "./Point";
 export abstract class Entity extends Animated{
     protected coordinate:Point
     protected grid:Grid | null = null
+    protected entityType:number | null = null
+    protected entityLevel:number | null = null
+    protected entityName:string | null = null
 
-    constructor(coordinate:Point, animations:Animation[] = []){
+    constructor(coordinate:Point, animations:Animation[] = [], entityName:string, entityLevel:number){
         super(animations)
         this.coordinate = coordinate
+        this.entityName = entityName
+        this.entityLevel = entityLevel
     }
 
     public getCoordinate():Point{
         return this.coordinate;
+    }
+
+    public getEntityName():String{
+        if(this.entityName){
+            return this.entityName;
+        }
+        return "";
     }
 
     public setCoordinate(value:Point, triggerTile?:boolean):void{
@@ -57,4 +69,13 @@ export abstract class Entity extends Animated{
         this.grid = grid
         this.grid?.addEntity(this)
     }
+
+    public getEntityLevel(){
+        return this.entityLevel;
+    }
+
+    public setEntityLevel(x:number):void{
+        this.entityLevel = x;
+    }
+
 }

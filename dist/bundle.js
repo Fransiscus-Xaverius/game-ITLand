@@ -279,7 +279,7 @@ class CanvasView {
 }
 exports.CanvasView = CanvasView;
 
-},{"./GameObjects/PlayerUnit":27,"./GameObjects/Tile":30}],3:[function(require,module,exports){
+},{"./GameObjects/PlayerUnit":28,"./GameObjects/Tile":31}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BoolWrapper = void 0;
@@ -1861,6 +1861,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameManager = void 0;
 const Grid_1 = require("./GameObjects/Grid");
 const Player_1 = require("./Player");
+const Direction_1 = require("./GameObjects/Direction");
 const API_1 = require("./API");
 class GameManager {
     constructor(canvasView = null, terminalView = null, shopView, inventoryView = null, questionView = null) {
@@ -1937,6 +1938,82 @@ class GameManager {
     getDeltatime() {
         return this.deltaTime;
     }
+    //change current equipment
+    changeEquipment() {
+    }
+    isGoodEnough(level, target) {
+        return level >= target;
+    }
+    //commit action
+    //actionType:
+    //0 = mine
+    //1 = break
+    //2 = dig
+    Action(direction, actionType) {
+        const coords = this.player.getCoordinate();
+        let temp = null;
+        switch (direction) {
+            case Direction_1.Direction.Up:
+                temp = this.grid.getEntity((coords.x), (coords.y - 1));
+                if (temp) {
+                    switch (actionType) {
+                        case 0: //equipping a pickaxe
+                            switch (temp.getEntityName()) {
+                                case 'Rock':
+                                    alert('this is a rock');
+                                    //if equipment is good enough
+                                    if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()))
+                                        this.removeGridEntity(coords.x, (coords.y - 1));
+                                    //if equipment is not good enough
+                                    else
+                                        alert('equipment is not good enough');
+                                    break;
+                                default: //wrong equipment to destroy entity
+                                    alert('this is the wrong tool!');
+                                    break;
+                            }
+                            break;
+                        case 1: //equipping a sword
+                            switch (temp.getEntityName()) {
+                                case 'Chest':
+                                    alert('this is a chest');
+                                    this.removeGridEntity(coords.x, (coords.y - 1));
+                                    break;
+                                default: //wrong equipment to destroy entity
+                                    alert('this is the wrong tool!');
+                                    break;
+                            }
+                            break;
+                        case 2: //equiping a shovel
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else {
+                    alert('no entity object');
+                }
+                break;
+            case Direction_1.Direction.Down:
+                // temp = this.grid.getEntity((coords.x), (coords.y-1));
+                // switch(temp){
+                //     case instanceof Rock:
+                //         alert('rock');
+                //         this.removeGridEntity(coords.x, (coords.y+1));
+                //         break;
+                //     default:
+                //         alert('not rock');
+                //         break;
+                // }
+                break;
+            case Direction_1.Direction.Left:
+                break;
+            case Direction_1.Direction.Right:
+                break;
+            default:
+                break;
+        }
+    }
     setActivePlayerUnit(value) {
         var _a, _b;
         (_a = this.terminalView) === null || _a === void 0 ? void 0 : _a.setTerminal((_b = value === null || value === void 0 ? void 0 : value.terminal) !== null && _b !== void 0 ? _b : null);
@@ -2005,7 +2082,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./API":1,"./GameObjects/Grid":25,"./Player":35}],18:[function(require,module,exports){
+},{"./API":1,"./GameObjects/Direction":22,"./GameObjects/Grid":26,"./Player":36}],18:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -2050,7 +2127,7 @@ class Animated {
 }
 exports.Animated = Animated;
 
-},{"./ChainedAnimation":20,"./GroupAnimation":26}],19:[function(require,module,exports){
+},{"./ChainedAnimation":20,"./GroupAnimation":27}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animation = void 0;
@@ -2120,6 +2197,24 @@ exports.ChainedAnimation = ChainedAnimation;
 },{"./Animation":19}],21:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Chest = void 0;
+const Entity_1 = require("./Entity");
+const Animation_1 = require("./Animation");
+const ChainedAnimation_1 = require("./ChainedAnimation");
+class Chest extends Entity_1.Entity {
+    constructor(coordinate, animations = []) {
+        super(coordinate, animations, "Chest", 1);
+        this.getLoot = function (min, max) {
+            return Math.random() * (max - min) + min;
+        };
+        const animation = new ChainedAnimation_1.ChainedAnimation(this, 'chest', Animation_1.Animation.assets['chest_normal'], { x: 32, y: 32 }, 1, -1, 1);
+    }
+}
+exports.Chest = Chest;
+
+},{"./Animation":19,"./ChainedAnimation":20,"./Entity":23}],22:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.Direction = void 0;
 var Direction;
 (function (Direction) {
@@ -2130,19 +2225,30 @@ var Direction;
     Direction[Direction["None"] = 4] = "None";
 })(Direction || (exports.Direction = Direction = {}));
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Entity = void 0;
 const Animated_1 = require("./Animated");
 class Entity extends Animated_1.Animated {
-    constructor(coordinate, animations = []) {
+    constructor(coordinate, animations = [], entityName, entityLevel) {
         super(animations);
         this.grid = null;
+        this.entityType = null;
+        this.entityLevel = null;
+        this.entityName = null;
         this.coordinate = coordinate;
+        this.entityName = entityName;
+        this.entityLevel = entityLevel;
     }
     getCoordinate() {
         return this.coordinate;
+    }
+    getEntityName() {
+        if (this.entityName) {
+            return this.entityName;
+        }
+        return "";
     }
     setCoordinate(value, triggerTile) {
         var _a;
@@ -2186,10 +2292,16 @@ class Entity extends Animated_1.Animated {
         this.grid = grid;
         (_a = this.grid) === null || _a === void 0 ? void 0 : _a.addEntity(this);
     }
+    getEntityLevel() {
+        return this.entityLevel;
+    }
+    setEntityLevel(x) {
+        this.entityLevel = x;
+    }
 }
 exports.Entity = Entity;
 
-},{"./Animated":18}],23:[function(require,module,exports){
+},{"./Animated":18}],24:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grass = void 0;
@@ -2209,7 +2321,7 @@ class Grass extends Tile_1.Tile {
 }
 exports.Grass = Grass;
 
-},{"./GroupAnimation":26,"./Tile":30}],24:[function(require,module,exports){
+},{"./GroupAnimation":27,"./Tile":31}],25:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Gravel = void 0;
@@ -2228,7 +2340,7 @@ class Gravel extends Tile_1.Tile {
 }
 exports.Gravel = Gravel;
 
-},{"./GroupAnimation":26,"./Tile":30}],25:[function(require,module,exports){
+},{"./GroupAnimation":27,"./Tile":31}],26:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -2247,6 +2359,7 @@ const PlayerUnit_1 = require("./PlayerUnit");
 const Sand_1 = require("./Sand");
 const Gravel_1 = require("./Gravel");
 const Rock_1 = require("./Rock");
+const Chest_1 = require("./Chest");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 const Animation_1 = require("./Animation");
 class Grid {
@@ -2369,54 +2482,51 @@ class Grid {
                 this.tiles.push([]);
                 for (let j = 0; j < this.size.x; j++) {
                     this.entityGrid[i].push(null);
-                    if (i == 0 || j == 0 || j == 99 || i == 99) {
-                        this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
+                    if (map[j][i] == "grass") {
+                        this.tiles[i].push(new Grass_1.Grass({ x: j, y: i }));
+                    }
+                    else {
+                        if (map[j][i] == "sand") {
+                            this.tiles[i].push(new Sand_1.Sand({ x: j, y: i }));
+                        }
+                        else {
+                            this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
+                        }
+                    }
+                    if (entity[j][i] == "rock") {
                         const rock = new Rock_1.Rock({ x: j, y: i });
                         rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
                         this.addEntity(rock);
                     }
-                    else {
-                        if (map[j][i] == "grass") {
-                            this.tiles[i].push(new Grass_1.Grass({ x: j, y: i }));
-                        }
-                        else {
-                            if (map[j][i] == "sand") {
-                                this.tiles[i].push(new Sand_1.Sand({ x: j, y: i }));
-                            }
-                            else {
-                                this.tiles[i].push(new Gravel_1.Gravel({ x: j, y: i }));
-                            }
-                        }
-                        if (entity[j][i] == "rock") {
-                            const rock = new Rock_1.Rock({ x: j, y: i });
-                            rock.addAnimation(new ChainedAnimation_1.ChainedAnimation(rock, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1));
-                            this.addEntity(rock);
-                        }
-                        // if (Math.round(Math.random())) {
-                        //     this.tiles[i].push(new Grass({ x: j, y: i }))
-                        // }
-                        // else {
-                        //     if (Math.round(Math.random())) {
-                        //         this.tiles[i].push(new Sand({ x: j, y: i }))
-                        //     }
-                        //     else {
-                        //         this.tiles[i].push(new Gravel({ x: j, y: i }))
-                        //     }
-                        // }
-                        // if (Math.round(Math.random()) && (j != 1 && i != 1)) {
-                        //     const rock = new Rock({ x: j, y: i });
-                        //     rock.addAnimation(new ChainedAnimation(
-                        //         rock,
-                        //         'rock',
-                        //         Animation.assets['rock'],
-                        //         { x: 32, y: 32 },
-                        //         1,
-                        //         -1,
-                        //         1
-                        //     ))
-                        //     this.addEntity(rock);
-                        // }
+                    else if (entity[j][i] == "chest") {
+                        const chest = new Chest_1.Chest({ x: j, y: i });
+                        chest.addAnimation(new ChainedAnimation_1.ChainedAnimation(chest, 'chest', Animation_1.Animation.assets['chest_normal'], { x: 32, y: 32 }, 1, -1, 1));
+                        this.addEntity(chest);
                     }
+                    // if (Math.round(Math.random())) {
+                    //     this.tiles[i].push(new Grass({ x: j, y: i }))
+                    // }
+                    // else {
+                    //     if (Math.round(Math.random())) {
+                    //         this.tiles[i].push(new Sand({ x: j, y: i }))
+                    //     }
+                    //     else {
+                    //         this.tiles[i].push(new Gravel({ x: j, y: i }))
+                    //     }
+                    // }
+                    // if (Math.round(Math.random()) && (j != 1 && i != 1)) {
+                    //     const rock = new Rock({ x: j, y: i });
+                    //     rock.addAnimation(new ChainedAnimation(
+                    //         rock,
+                    //         'rock',
+                    //         Animation.assets['rock'],
+                    //         { x: 32, y: 32 },
+                    //         1,
+                    //         -1,
+                    //         1
+                    //     ))
+                    //     this.addEntity(rock);
+                    // }
                 }
             }
         });
@@ -2473,6 +2583,9 @@ class Grid {
         if (entity.getGrid() != this)
             entity.setGrid(this);
     }
+    getEntity(x, y) {
+        return this.entityGrid[y][x];
+    }
     removeEntity(entity) {
         const index = this.entities.indexOf(entity);
         if (index != -1) {
@@ -2486,7 +2599,7 @@ class Grid {
 }
 exports.Grid = Grid;
 
-},{"./Animation":19,"./ChainedAnimation":20,"./Grass":23,"./Gravel":24,"./GroupAnimation":26,"./PlayerUnit":27,"./Rock":28,"./Sand":29}],26:[function(require,module,exports){
+},{"./Animation":19,"./ChainedAnimation":20,"./Chest":21,"./Grass":24,"./Gravel":25,"./GroupAnimation":27,"./PlayerUnit":28,"./Rock":29,"./Sand":30}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupAnimation = void 0;
@@ -2500,7 +2613,7 @@ class GroupAnimation extends Animation_1.Animation {
 exports.GroupAnimation = GroupAnimation;
 GroupAnimation.animations = [];
 
-},{"./Animation":19}],27:[function(require,module,exports){
+},{"./Animation":19}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerUnit = void 0;
@@ -2510,7 +2623,7 @@ const Direction_1 = require("./Direction");
 const Entity_1 = require("./Entity");
 class PlayerUnit extends Entity_1.Entity {
     constructor(coordinate, moveSpeed = 1, animations = []) {
-        super(coordinate, animations);
+        super(coordinate, animations, "Player", 99);
         this.isMoving = false;
         this.moveSpeed = 1;
         this.lerpProgress = 0;
@@ -2688,7 +2801,7 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/Terminal":13,"../Items/Inventory":33,"./Direction":21,"./Entity":22}],28:[function(require,module,exports){
+},{"../Console/Terminal":13,"../Items/Inventory":34,"./Direction":22,"./Entity":23}],29:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rock = void 0;
@@ -2697,13 +2810,13 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Rock extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations);
+        super(coordinate, animations, "Rock", 1);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
 exports.Rock = Rock;
 
-},{"./Animation":19,"./ChainedAnimation":20,"./Entity":22}],29:[function(require,module,exports){
+},{"./Animation":19,"./ChainedAnimation":20,"./Entity":23}],30:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sand = void 0;
@@ -2721,7 +2834,7 @@ class Sand extends Tile_1.Tile {
 }
 exports.Sand = Sand;
 
-},{"./GroupAnimation":26,"./Tile":30}],30:[function(require,module,exports){
+},{"./GroupAnimation":27,"./Tile":31}],31:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tile = void 0;
@@ -2735,7 +2848,7 @@ class Tile extends Animated_1.Animated {
 exports.Tile = Tile;
 Tile.defaultTileResolution = { x: 32, y: 32 };
 
-},{"./Animated":18}],31:[function(require,module,exports){
+},{"./Animated":18}],32:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InventoryView = void 0;
@@ -2780,7 +2893,7 @@ class InventoryView {
 }
 exports.InventoryView = InventoryView;
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Book = void 0;
@@ -2793,7 +2906,7 @@ class Book extends Item_1.Item {
 }
 exports.Book = Book;
 
-},{"./Item":34}],33:[function(require,module,exports){
+},{"./Item":35}],34:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
@@ -2888,7 +3001,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{"./Book":32}],34:[function(require,module,exports){
+},{"./Book":33}],35:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
@@ -2926,7 +3039,7 @@ class Item {
 }
 exports.Item = Item;
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -2934,10 +3047,24 @@ const Animation_1 = require("./GameObjects/Animation");
 const ChainedAnimation_1 = require("./GameObjects/ChainedAnimation");
 const PlayerUnit_1 = require("./GameObjects/PlayerUnit");
 class Player {
+    //this tells which item the player is holding
+    //0 = not holding anything
+    //1 = sword
+    //2 = pickaxe
+    //3 = shovel
     constructor() {
         this.gold = 500;
         this.energy = 0;
         this.units = [];
+        this.curEquip = 0;
+        //item effects
+        //each item changes the level depending on the tier
+        //Ex: Stone Pick = 1, Iron Pick = 2, Damascus Steel Pick = 3
+        //this interacts with entityType and Level.
+        this.swordLevel = 0;
+        this.pickaxeLevel = 0;
+        this.shovelLevel = 0;
+        this.EquipType = 0;
         const p1 = new PlayerUnit_1.PlayerUnit({ x: 1, y: 1 });
         p1.addAnimation(new ChainedAnimation_1.ChainedAnimation(p1, "idle", Animation_1.Animation.assets['player_idle'], { x: 32, y: 32 }, 2, -1, 1));
         p1.createAnimation("walk", Animation_1.Animation.assets['player_walk'], { x: 32, y: 32 }, 4, "", 4);
@@ -2962,10 +3089,25 @@ class Player {
     getCoordinate() {
         return this.units[0].getCoordinate();
     }
+    getEquipment() {
+        return this.EquipType;
+    }
+    setEquipment(x) {
+        this.EquipType = x;
+    }
+    getEquipmentLevels() {
+        return { sword: this.swordLevel, pickaxe: this.pickaxeLevel, shovel: this.shovelLevel };
+    }
+    //testing
+    setEquipmentLevels(x) {
+        this.swordLevel = x;
+        this.shovelLevel = x;
+        this.pickaxeLevel = x;
+    }
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":19,"./GameObjects/ChainedAnimation":20,"./GameObjects/PlayerUnit":27}],36:[function(require,module,exports){
+},{"./GameObjects/Animation":19,"./GameObjects/ChainedAnimation":20,"./GameObjects/PlayerUnit":28}],37:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3094,7 +3236,7 @@ class QuestionView {
 }
 exports.QuestionView = QuestionView;
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
@@ -3222,7 +3364,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"./Items/Book":32}],38:[function(require,module,exports){
+},{"./Items/Book":33}],39:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -3267,7 +3409,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -3341,7 +3483,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -3369,6 +3511,10 @@ function loadAsset() {
     const iron_ore = new Image();
     const gold_ore = new Image();
     const silver_ore = new Image();
+    const chest_normal = new Image();
+    chest_normal.src = "./dist/Assets/Prototype/chest_normal_temp.png";
+    const chest_medium = new Image();
+    const chest_large = new Image();
     Animation_1.Animation.assets['grass_tile'] = grass;
     Animation_1.Animation.assets['flowery_grass_tile'] = flowergrass;
     Animation_1.Animation.assets['player_idle'] = player_idle;
@@ -3379,6 +3525,7 @@ function loadAsset() {
     Animation_1.Animation.assets['iron_ore'] = iron_ore;
     Animation_1.Animation.assets['gold_ore'] = gold_ore;
     Animation_1.Animation.assets['silver_ore'] = silver_ore;
+    Animation_1.Animation.assets['chest_normal'] = chest_normal;
     GroupAnimation_1.GroupAnimation.animations.push(new GroupAnimation_1.GroupAnimation("grass_tile", grass, { x: 32, y: 32 }, 1, //number of frames
     0 //speed
     ), new GroupAnimation_1.GroupAnimation("flowery_grass_tile", flowergrass, //
@@ -3388,7 +3535,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":19,"./Classes/GameObjects/GroupAnimation":26}],41:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":19,"./Classes/GameObjects/GroupAnimation":27}],42:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3491,13 +3638,36 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         if (key === 'd') {
             pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Right);
         }
+        //temp key to change equipment
         if (key === 'q') {
+            const curEquip = game.getPlayer().getEquipment();
+            switch (curEquip) {
+                case 1:
+                    game.getPlayer().setEquipment(2);
+                    break;
+                case 2:
+                    game.getPlayer().setEquipment(0);
+                    break;
+                case 0:
+                    game.getPlayer().setEquipment(1);
+                    break;
+                default:
+                    break;
+            }
+            alert(game.getPlayer().getEquipment());
+        }
+        if (key === '1') {
+            game.getPlayer().setEquipmentLevels(1);
+        }
+        if (key === '2') {
+            game.getPlayer().setEquipmentLevels(2);
         }
         if (key === 'i') { //destroy top entity
             //for destroying crates, and stone entities.
-            const coords = game.getPlayer().getCoordinate();
-            pUnit === null || pUnit === void 0 ? void 0 : pUnit.Mine();
-            game.removeGridEntity(coords.x, (coords.y - 1));
+            // const coords = game.getPlayer().getCoordinate();
+            // pUnit?.Mine();
+            // game.removeGridEntity(coords.x, (coords.y - 1)); 
+            game.Action(Direction_1.Direction.Up, game.getPlayer().getEquipment());
         }
         if (key === 'j') { //destroy left entitiy
             //for destroying crates, and stone entities.
@@ -3518,4 +3688,4 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 
-},{"./Classes/API":1,"./Classes/CanvasView":2,"./Classes/GameManager":17,"./Classes/GameObjects/Direction":21,"./Classes/InventoryView":31,"./Classes/Items/Inventory":33,"./Classes/QuestionView":36,"./Classes/Shop":37,"./Classes/ShopView":38,"./Classes/TerminalView":39,"./loadAsset":40}]},{},[41]);
+},{"./Classes/API":1,"./Classes/CanvasView":2,"./Classes/GameManager":17,"./Classes/GameObjects/Direction":22,"./Classes/InventoryView":32,"./Classes/Items/Inventory":34,"./Classes/QuestionView":37,"./Classes/Shop":38,"./Classes/ShopView":39,"./Classes/TerminalView":40,"./loadAsset":41}]},{},[42]);

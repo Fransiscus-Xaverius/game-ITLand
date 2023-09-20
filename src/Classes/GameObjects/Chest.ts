@@ -5,17 +5,22 @@ import { Point } from "./Point";
 import { Animation } from "./Animation";
 import { ChainedAnimation } from "./ChainedAnimation";
 
-export class Rock extends Entity implements IDestructable{
+export class Chest extends Entity implements IDestructable{
     constructor(coordinate:Point, animations:Animation[] = []){
-        super(coordinate,animations, "Rock", 1);
+        super(coordinate,animations, "Chest", 1);
         const animation = new ChainedAnimation(
-            this,
-            'rock',
-            Animation.assets['rock'],
-            {x:32,y:32},
+            this, 
+            'chest',
+            Animation.assets['chest_normal'],
+            {x:32, y:32},
             1,
             -1,
             1
         )
     }
+
+    getLoot = function(min:number, max:number):number{
+        return Math.random() * (max - min) + min;
+    }
+
 }

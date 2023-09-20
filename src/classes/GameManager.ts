@@ -12,6 +12,7 @@ import { InventoryView } from './InventoryView';
 import { Map } from './Map';
 import { Question } from './Question';
 import { QuestionView } from './QuestionView';
+import { Rock } from './GameObjects/Rock';
 
 export class GameManager {
     public api:API | null = null;
@@ -93,6 +94,87 @@ export class GameManager {
 
     public getDeltatime(): number {
         return this.deltaTime
+    }
+
+    //change current equipment
+    public changeEquipment(){
+
+    }
+
+    public isGoodEnough(level:number, target:number):boolean{
+        return level>=target;
+    }
+
+    //commit action
+
+    //actionType:
+    //0 = mine
+    //1 = break
+    //2 = dig
+    public Action(direction: Direction, actionType:number){
+        const coords = this.player.getCoordinate();
+        let temp = null;
+        switch(direction){
+            case Direction.Up:
+                temp = this.grid.getEntity((coords.x), (coords.y-1));
+                if(temp){
+                    switch(actionType){
+                        case 0: //equipping a pickaxe
+                            switch(temp.getEntityName()){
+                                case 'Rock':
+                                    alert('this is a rock');
+                                    //if equipment is good enough
+                                    if(this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) this.removeGridEntity(coords.x, (coords.y-1));
+                                    //if equipment is not good enough
+                                    else alert('equipment is not good enough');
+                                    break;
+                                default: //wrong equipment to destroy entity
+                                    alert('this is the wrong tool!');
+                                    break;
+                            }
+                            break;
+                        case 1: //equipping a sword
+                            switch(temp.getEntityName()){
+                                case 'Chest':
+                                    alert('this is a chest');
+                                    this.removeGridEntity(coords.x, (coords.y-1));
+                                    break;
+                                default: //wrong equipment to destroy entity
+                                    alert('this is the wrong tool!');
+                                    break;
+                            }
+                            break;
+                        case 2: //equiping a shovel
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else{
+                    alert('no entity object');
+                }
+                break;
+            case Direction.Down:
+                // temp = this.grid.getEntity((coords.x), (coords.y-1));
+                // switch(temp){
+                //     case instanceof Rock:
+                //         alert('rock');
+                //         this.removeGridEntity(coords.x, (coords.y+1));
+                //         break;
+                //     default:
+                //         alert('not rock');
+                //         break;
+                // }
+                break;
+            case Direction.Left:
+                
+                break;
+            case Direction.Right:
+                
+                break;
+            default:
+                break;
+        }
     }
 
     public setActivePlayerUnit(value: PlayerUnit | null): void {
