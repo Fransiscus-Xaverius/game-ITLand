@@ -3138,16 +3138,13 @@ class Shop {
                 plusBtn.textContent = '+';
                 plusBtn.addEventListener('click', () => {
                     const item = document.querySelector(`.item-${i}`);
-                    const totalPriceContainer = document.querySelector(`total-price-container-item-${i}`);
-                    const totalPriceDiv = totalPriceContainer.querySelector(`total-price-item-${i}`);
-                    console.error(totalPriceDiv);
+                    const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
+                    const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
                     if (item) {
                         const currentQty = parseInt(item.value) || 0;
                         item.value = `${currentQty + 1}`;
-                        const itemValue = parseInt(item.value);
-                        const itemPrice = this.item[i].getItemPrice();
-                        const totalPrice = itemValue * itemPrice;
-                        totalPriceDiv.innerText = `Gold ${totalPrice}`;
+                        const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
+                        totalPriceDiv.textContent = `Gold ${totalPrice}`;
                     }
                     else {
                         console.error(`Element with class .item-${i} not found.`);
@@ -3161,6 +3158,19 @@ class Shop {
                 itemQtyDiv.type = 'number';
                 itemQtyDiv.classList.add('item-qty', `item-${i}`);
                 itemQtyDiv.value = '1';
+                itemQtyDiv.addEventListener('change', () => {
+                    const item = document.querySelector(`.item-${i}`);
+                    const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
+                    const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
+                    if (item) {
+                        const currentQty = parseInt(item.value) || 0;
+                        const totalPrice = currentQty * this.item[i].getItemPrice();
+                        totalPriceDiv.textContent = `Gold ${totalPrice}`;
+                    }
+                    else {
+                        console.error(`Element with class .item-${i} not found.`);
+                    }
+                });
                 colDiv2.appendChild(itemQtyDiv);
                 const colDiv3 = document.createElement('div');
                 colDiv3.classList.add('col-sm-2');
@@ -3169,11 +3179,15 @@ class Shop {
                 minusBtn.textContent = '-';
                 minusBtn.addEventListener('click', () => {
                     const item = document.querySelector(`.item-${i}`);
+                    const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
+                    const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
                     if (item) {
                         const currentQty = parseInt(item.value) || 0;
                         if (currentQty > 1) {
                             item.value = `${currentQty - 1}`;
                         }
+                        const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
+                        totalPriceDiv.textContent = `Gold ${totalPrice}`;
                     }
                     else {
                         console.error(`Element with class .item-${i} not found.`);
@@ -3184,7 +3198,7 @@ class Shop {
                 colDiv4.classList.add('col-sm-6', `total-price-container-item-${i}`);
                 const totalPriceDiv = document.createElement('div');
                 totalPriceDiv.classList.add('total-price', `total-price-item-${i}`);
-                totalPriceDiv.textContent = 'Gold ';
+                totalPriceDiv.textContent = `Gold ${parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()}`;
                 colDiv4.appendChild(totalPriceDiv);
                 addBox.appendChild(colDiv1);
                 addBox.appendChild(colDiv2);

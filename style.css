@@ -115,6 +115,10 @@ td {
     
 } */
 
+/* .shop-inventory{
+    overflow-x: hidden;
+} */
+
 .card-shop{
     height: 200px;
     width: auto;
@@ -127,6 +131,8 @@ td {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
+    overflow-x: hidden;
 }
 
 .shop-img{
