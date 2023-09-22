@@ -3,6 +3,14 @@
     src: url(/fonts/consolas/CONSOLA.TTF);
 }
 
+.login{
+    padding: 0;
+    margin: 0;
+}
+.game{
+    padding: 0;
+    margin: 0;
+}
 .asset {
     display: none;
 }

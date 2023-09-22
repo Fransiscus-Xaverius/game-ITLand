@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITLand</title>
+    <link href="./dist/scripts/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="login">
+        <div class="container">
+            <div class="row justify-content-center align-items-center" style="height: 100vh;">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="text-center">Login</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" id="username" placeholder="Enter username">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" placeholder="Password">
+                            </div>
+                            <button class="btn btn-primary btn-block" onclick="submitForm()">Login</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./dist/scripts/code.jquery.com_jquery-3.7.1.min.js" defer></script>
+    <script src="./dist/scripts/bootstrap.min.js" defer></script>
+
+    <script>
+        function submitForm() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const formData = {
+                username: username,
+                password: password
+            };
+
+            // Make a POST request to your Node.js backend
+            fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response from the backend
+                    console.log('Response from server:', data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>
