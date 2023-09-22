@@ -108,9 +108,9 @@ export class GameManager {
     //commit action
 
     //actionType:
-    //0 = mine
-    //1 = break
-    //2 = dig
+    //1 = mine
+    //2 = break
+    //3 = dig
     public Action(direction: Direction, actionType:number){
         const coords = this.player.getCoordinate();
         let temp = null;
@@ -119,21 +119,23 @@ export class GameManager {
                 temp = this.grid.getEntity((coords.x), (coords.y-1));
                 if(temp){
                     switch(actionType){
-                        case 0: //equipping a pickaxe
-                            switch(temp.getEntityName()){
-                                case 'Rock':
-                                    alert('this is a rock');
-                                    //if equipment is good enough
-                                    if(this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) this.removeGridEntity(coords.x, (coords.y-1));
-                                    //if equipment is not good enough
-                                    else alert('equipment is not good enough');
-                                    break;
-                                default: //wrong equipment to destroy entity
-                                    alert('this is the wrong tool!');
-                                    break;
+                        case 0: //not equipping anything.
+                            alert('Equip something');
+                            break;
+                        case 1: //equiping a pickaxe
+                            const entityname = temp.getEntityName();
+                            if(entityname == "Rock"|| entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore"){
+                                alert('this is a type of rock');
+                                //if equipment is good enough
+                                if(this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) this.removeGridEntity(coords.x, (coords.y-1));
+                                //if equipment is not good enough
+                                else alert('equipment is not good enough');
+                            }
+                            else{
+                                alert('this is the wrong tool');
                             }
                             break;
-                        case 1: //equipping a sword
+                        case 2: //equipping a sword
                             switch(temp.getEntityName()){
                                 case 'Chest':
                                     alert('this is a chest');
@@ -144,7 +146,7 @@ export class GameManager {
                                     break;
                             }
                             break;
-                        case 2: //equiping a shovel
+                        case 3: //equiping a shovel
                             break;
                         default:
                             break;
@@ -155,19 +157,62 @@ export class GameManager {
                 }
                 break;
             case Direction.Down:
-                // temp = this.grid.getEntity((coords.x), (coords.y-1));
-                // switch(temp){
-                //     case instanceof Rock:
-                //         alert('rock');
-                //         this.removeGridEntity(coords.x, (coords.y+1));
-                //         break;
-                //     default:
-                //         alert('not rock');
-                //         break;
-                // }
+                temp = this.grid.getEntity((coords.x), (coords.y+1));
+                if(temp){
+                    switch(actionType){
+                        case 0: //not equipping anything.
+                            alert('Equip something');
+                            break;
+                        case 1: //equiping a pickaxe
+                            const entityname = temp.getEntityName();
+                            if(entityname == "Rock"|| entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore"){
+                                alert('this is a type of rock');
+                                //if equipment is good enough
+                                if(this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) this.removeGridEntity(coords.x, (coords.y+1));
+                                //if equipment is not good enough
+                                else alert('equipment is not good enough');
+                            }
+                            else{
+                                alert('this is the wrong tool');
+                            }
+                            break;
+                        case 2: //equipping a sword
+                            break;
+                        case 3: //equiping a shovel
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 break;
             case Direction.Left:
-                
+                temp = this.grid.getEntity((coords.x-1), (coords.y));
+                if(temp){
+                    switch(actionType){
+                        case 0: //not equipping anything.
+                            alert('Equip something');
+                            break;
+                        case 1: //equiping a pickaxe
+                            const entityname = temp.getEntityName();
+                            if(entityname == "Rock"|| entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore"){
+                                alert('this is a type of rock');
+                                //if equipment is good enough
+                                if(this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) this.removeGridEntity((coords.x-1), (coords.y));
+                                //if equipment is not good enough
+                                else alert('equipment is not good enough');
+                            }
+                            else{
+                                alert('this is the wrong tool');
+                            }
+                            break;
+                        case 2: //equipping a sword
+                            break;
+                        case 3: //equiping a shovel
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 break;
             case Direction.Right:
                 

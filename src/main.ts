@@ -100,17 +100,28 @@ window.onload = async () => {
         }
 
         //temp key to change equipment
+        //0 = not equipping anything
+        //1 = pickaxe
+        //2 = sword
+        //3 = shovel
         if (key === 'q') {
             const curEquip = game.getPlayer().getEquipment();
             switch(curEquip){
-                case 1:
+                case 1: //equip pickaxe 
                     game.getPlayer().setEquipment(2);
+                    alert('equipped pickaxe');
                     break;
-                case 2:
+                case 2: //equip sword
+                    game.getPlayer().setEquipment(3);
+                    alert('equipped pickaxe');
+                    break;
+                case 3: //equip shovel
                     game.getPlayer().setEquipment(0);
+                    alert('equipped pickaxe');
                     break;
-                case 0:
+                case 0: //not equipping anything
                     game.getPlayer().setEquipment(1);
+                    alert('equipped pickaxe');
                     break;
                 default:
                     break;
@@ -124,6 +135,9 @@ window.onload = async () => {
         if(key==='2'){
             game.getPlayer().setEquipmentLevels(2);
         }
+        if(key==='3'){
+            game.getPlayer().setEquipmentLevels(3);
+        }
 
         if (key === 'i') { //destroy top entity
             //for destroying crates, and stone entities.
@@ -134,13 +148,11 @@ window.onload = async () => {
         }
         if (key === 'j') { //destroy left entitiy
             //for destroying crates, and stone entities.
-            const coords = game.getPlayer().getCoordinate();
-            game.removeGridEntity((coords.x - 1), (coords.y));
+            game.Action(Direction.Left, game.getPlayer().getEquipment());
         }
         if (key === 'k') { //destroy bottom entity
             //for destroying crates, and stone entities.
-            const coords = game.getPlayer().getCoordinate();
-            game.removeGridEntity(coords.x, (coords.y + 1));
+            game.Action(Direction.Down, game.getPlayer().getEquipment());
         }
         if (key === 'l') { //destroy right entity
             //for destroying crates, and stone entities.

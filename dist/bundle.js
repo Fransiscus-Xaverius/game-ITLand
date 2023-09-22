@@ -1946,9 +1946,9 @@ class GameManager {
     }
     //commit action
     //actionType:
-    //0 = mine
-    //1 = break
-    //2 = dig
+    //1 = mine
+    //2 = break
+    //3 = dig
     Action(direction, actionType) {
         const coords = this.player.getCoordinate();
         let temp = null;
@@ -1957,23 +1957,25 @@ class GameManager {
                 temp = this.grid.getEntity((coords.x), (coords.y - 1));
                 if (temp) {
                     switch (actionType) {
-                        case 0: //equipping a pickaxe
-                            switch (temp.getEntityName()) {
-                                case 'Rock':
-                                    alert('this is a rock');
-                                    //if equipment is good enough
-                                    if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()))
-                                        this.removeGridEntity(coords.x, (coords.y - 1));
-                                    //if equipment is not good enough
-                                    else
-                                        alert('equipment is not good enough');
-                                    break;
-                                default: //wrong equipment to destroy entity
-                                    alert('this is the wrong tool!');
-                                    break;
+                        case 0: //not equipping anything.
+                            alert('Equip something');
+                            break;
+                        case 1: //equiping a pickaxe
+                            const entityname = temp.getEntityName();
+                            if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
+                                alert('this is a type of rock');
+                                //if equipment is good enough
+                                if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()))
+                                    this.removeGridEntity(coords.x, (coords.y - 1));
+                                //if equipment is not good enough
+                                else
+                                    alert('equipment is not good enough');
+                            }
+                            else {
+                                alert('this is the wrong tool');
                             }
                             break;
-                        case 1: //equipping a sword
+                        case 2: //equipping a sword
                             switch (temp.getEntityName()) {
                                 case 'Chest':
                                     alert('this is a chest');
@@ -1984,7 +1986,7 @@ class GameManager {
                                     break;
                             }
                             break;
-                        case 2: //equiping a shovel
+                        case 3: //equiping a shovel
                             break;
                         default:
                             break;
@@ -1995,18 +1997,66 @@ class GameManager {
                 }
                 break;
             case Direction_1.Direction.Down:
-                // temp = this.grid.getEntity((coords.x), (coords.y-1));
-                // switch(temp){
-                //     case instanceof Rock:
-                //         alert('rock');
-                //         this.removeGridEntity(coords.x, (coords.y+1));
-                //         break;
-                //     default:
-                //         alert('not rock');
-                //         break;
-                // }
+                temp = this.grid.getEntity((coords.x), (coords.y + 1));
+                if (temp) {
+                    switch (actionType) {
+                        case 0: //not equipping anything.
+                            alert('Equip something');
+                            break;
+                        case 1: //equiping a pickaxe
+                            const entityname = temp.getEntityName();
+                            if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
+                                alert('this is a type of rock');
+                                //if equipment is good enough
+                                if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()))
+                                    this.removeGridEntity(coords.x, (coords.y + 1));
+                                //if equipment is not good enough
+                                else
+                                    alert('equipment is not good enough');
+                            }
+                            else {
+                                alert('this is the wrong tool');
+                            }
+                            break;
+                        case 2: //equipping a sword
+                            break;
+                        case 3: //equiping a shovel
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 break;
             case Direction_1.Direction.Left:
+                temp = this.grid.getEntity((coords.x - 1), (coords.y));
+                if (temp) {
+                    switch (actionType) {
+                        case 0: //not equipping anything.
+                            alert('Equip something');
+                            break;
+                        case 1: //equiping a pickaxe
+                            const entityname = temp.getEntityName();
+                            if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
+                                alert('this is a type of rock');
+                                //if equipment is good enough
+                                if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()))
+                                    this.removeGridEntity((coords.x - 1), (coords.y));
+                                //if equipment is not good enough
+                                else
+                                    alert('equipment is not good enough');
+                            }
+                            else {
+                                alert('this is the wrong tool');
+                            }
+                            break;
+                        case 2: //equipping a sword
+                            break;
+                        case 3: //equiping a shovel
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 break;
             case Direction_1.Direction.Right:
                 break;
@@ -3611,17 +3661,28 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
             pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Right);
         }
         //temp key to change equipment
+        //0 = not equipping anything
+        //1 = pickaxe
+        //2 = sword
+        //3 = shovel
         if (key === 'q') {
             const curEquip = game.getPlayer().getEquipment();
             switch (curEquip) {
-                case 1:
+                case 1: //equip pickaxe 
                     game.getPlayer().setEquipment(2);
+                    alert('equipped pickaxe');
                     break;
-                case 2:
+                case 2: //equip sword
+                    game.getPlayer().setEquipment(3);
+                    alert('equipped pickaxe');
+                    break;
+                case 3: //equip shovel
                     game.getPlayer().setEquipment(0);
+                    alert('equipped pickaxe');
                     break;
-                case 0:
+                case 0: //not equipping anything
                     game.getPlayer().setEquipment(1);
+                    alert('equipped pickaxe');
                     break;
                 default:
                     break;
@@ -3634,6 +3695,9 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         if (key === '2') {
             game.getPlayer().setEquipmentLevels(2);
         }
+        if (key === '3') {
+            game.getPlayer().setEquipmentLevels(3);
+        }
         if (key === 'i') { //destroy top entity
             //for destroying crates, and stone entities.
             // const coords = game.getPlayer().getCoordinate();
@@ -3643,13 +3707,11 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         if (key === 'j') { //destroy left entitiy
             //for destroying crates, and stone entities.
-            const coords = game.getPlayer().getCoordinate();
-            game.removeGridEntity((coords.x - 1), (coords.y));
+            game.Action(Direction_1.Direction.Left, game.getPlayer().getEquipment());
         }
         if (key === 'k') { //destroy bottom entity
             //for destroying crates, and stone entities.
-            const coords = game.getPlayer().getCoordinate();
-            game.removeGridEntity(coords.x, (coords.y + 1));
+            game.Action(Direction_1.Direction.Down, game.getPlayer().getEquipment());
         }
         if (key === 'l') { //destroy right entity
             //for destroying crates, and stone entities.
