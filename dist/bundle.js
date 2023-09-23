@@ -2973,89 +2973,40 @@ exports.Inventory = void 0;
 const Book_1 = require("./Book");
 class Inventory {
     constructor() {
-        this.items = [];
-        this.items.push({
+        this.items = Array.from({ length: 10 }, () => ({
             item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
             amount: 0
-        });
-        this.items.push({
-            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
-            amount: 0
-        });
-        this.items.push({
-            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
-            amount: 0
-        });
-        this.items.push({
-            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
-            amount: 0
-        });
-        this.items.push({
-            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
-            amount: 0
-        });
-        this.items.push({
-            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
-            amount: 0
-        });
-        this.items.push({
-            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
-            amount: 0
-        });
-        this.items.push({
-            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
-            amount: 0
-        });
-        this.items.push({
-            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
-            amount: 0
-        });
-        this.items.push({
-            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
-            amount: 0
-        });
+        }));
     }
     open(inventoryShopElement) {
-        if (inventoryShopElement) {
-            inventoryShopElement.innerHTML = "";
-            for (let i = 0; i < this.items.length; i++) {
-                // Create the card element
-                const cardElement = document.createElement('div');
-                cardElement.classList.add('card');
-                // Create the image element
-                const imageElement = document.createElement('img');
-                imageElement.classList.add('inventory-item-image');
-                imageElement.classList.add('card-img-top');
-                imageElement.src = this.items[i].item.getImagePath();
-                imageElement.alt = ``;
-                const cardBody = document.createElement('div');
-                cardBody.classList.add('card-body');
-                // Create the name element
-                const nameElement = document.createElement('p');
-                nameElement.classList.add('inventory-item-name');
-                nameElement.classList.add('card-text');
-                nameElement.innerText = this.items[i].item.getItemName();
-                // Create the owned element
-                const ownedElement = document.createElement('h4');
-                ownedElement.classList.add('inventory-item-owned');
-                ownedElement.classList.add('card-title');
-                ownedElement.innerText = `${this.items[i].amount}`;
-                // Append the child elements to the card element
-                cardBody.appendChild(nameElement);
-                cardBody.appendChild(ownedElement);
-                cardElement.appendChild(imageElement);
-                cardElement.appendChild(cardBody);
-                // You can then append the cardElement to your container element
-                const cardContainer = document.querySelector('.shop-inventory');
-                cardContainer.style.display = "grid";
-                cardContainer.style.gridTemplateColumns = "1fr 1fr";
-                cardContainer.style.height = "200px";
-                cardContainer.style.overflow = "auto";
-                // Assuming you have a container element in your HTML
-                if (cardContainer) {
-                    cardContainer.appendChild(cardElement);
-                }
-            }
+        if (!inventoryShopElement)
+            return;
+        inventoryShopElement.innerHTML = "";
+        const cardContainer = document.querySelector('.shop-inventory');
+        cardContainer.style.display = "grid";
+        cardContainer.style.gridTemplateColumns = "1fr 1fr";
+        cardContainer.style.height = "200px";
+        cardContainer.style.overflow = "auto";
+        for (const { item, amount } of this.items) {
+            const cardElement = document.createElement('div');
+            cardElement.classList.add('card');
+            const imageElement = document.createElement('img');
+            imageElement.classList.add('inventory-item-image', 'card-img-top');
+            imageElement.src = item.getImagePath();
+            imageElement.alt = ``;
+            const cardBody = document.createElement('div');
+            cardBody.classList.add('card-body');
+            const nameElement = document.createElement('p');
+            nameElement.classList.add('inventory-item-name', 'card-text');
+            nameElement.innerText = item.getItemName();
+            const ownedElement = document.createElement('h4');
+            ownedElement.classList.add('inventory-item-owned', 'card-title');
+            ownedElement.innerText = `${amount}`;
+            cardBody.appendChild(nameElement);
+            cardBody.appendChild(ownedElement);
+            cardElement.appendChild(imageElement);
+            cardElement.appendChild(cardBody);
+            cardContainer.appendChild(cardElement);
         }
     }
 }
@@ -3441,21 +3392,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
 class ShopView {
     constructor(shopButton, shop, inventoryShopElement) {
-        this.shop = null;
-        this.shopButton = null;
-        this.inventoryShopElement = null;
-        this.setShop(shop);
-        this.setInventoryShopElement(inventoryShopElement);
-        this.setShopButton(shopButton);
+        this.shop = shop;
+        this.inventoryShopElement = inventoryShopElement;
+        this.shopButton = shopButton;
+        this.initShopButton();
     }
     initShopButton() {
-        var _a;
         if (this.shopButton) {
-            (_a = this.shopButton) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
-                if (this.shop) {
-                    this.shop.open(this.getInventoryShopElement());
-                }
+            this.shopButton.addEventListener('click', () => {
+                this.openShop();
             });
+        }
+    }
+    openShop() {
+        if (this.shop) {
+            this.shop.open(this.inventoryShopElement);
         }
     }
     setInventoryShopElement(inventoryShopElement) {
@@ -3771,32 +3722,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         console.clear();
     });
-    // fullscreenHandler();
 });
-// const fullscreenHandler = () => {
-//     if (window.innerHeight === screen.height) {
-//         document.body.style.backgroundColor = "red";
-//     } else {
-//         document.body.style.backgroundColor = "blue";
-//     }
-// }
-// document.addEventListener("fullscreenchange", fullscreenHandler);
-// function fullscreenHandler() {
-//     if (document.fullscreenElement) {
-//         document.body.style.backgroundColor = "red";
-//     } else {
-//         document.body.style.backgroundColor = "blue";
-//     }
-// }
-// document.addEventListener("fullscreenchange", fullscreenHandler);
-// function fullscreenHandler() {
-//     if (window.screen.width === window.innerWidth && window.screen.height === window.innerHeight) {
-//         document.body.style.backgroundColor = "red";
-//     } else {
-//         document.body.style.backgroundColor = "blue";
-//     }
-// }
-// document.addEventListener("resize", fullscreenHandler);
 function fullscreenHandler() {
     const isFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
     if (!isFullscreen) {

@@ -1,24 +1,28 @@
 import { Inventory } from "./Items/Inventory"
 
 export class InventoryView {
-    private inventory: Inventory | null = null
-    private inventoryButton: HTMLButtonElement | null = null
-    private inventoryShopElement: HTMLDivElement | null = null
+    private inventory: Inventory | null;
+    private inventoryButton: HTMLButtonElement | null;
+    private inventoryShopElement: HTMLDivElement | null;
 
     constructor(inventoryButton: HTMLButtonElement, inventory: Inventory, inventoryShopElement: HTMLDivElement) {
-        this.setInventory(inventory)
-        this.setInventoryShopElement(inventoryShopElement)
-        this.setInventoryButton(inventoryButton)
+        this.inventory = inventory;
+        this.inventoryShopElement = inventoryShopElement;
+        this.inventoryButton = inventoryButton;
+        this.initInventoryButton();
     }
-
 
     private initInventoryButton(): void {
         if (this.inventoryButton) {
-            this.inventoryButton?.addEventListener('click', () => {
-                if (this.inventory) {
-                    this.inventory.open(this.getInventoryShopElement());
-                }
+            this.inventoryButton.addEventListener('click', () => {
+                this.openInventory();
             });
+        }
+    }
+
+    private openInventory(): void {
+        if (this.inventory) {
+            this.inventory.open(this.inventoryShopElement);
         }
     }
 
@@ -40,7 +44,7 @@ export class InventoryView {
     }
 
     public setInventory(value: Inventory | null): void {
-        this.inventory = value
+        this.inventory = value;
     }
 
     public getInventory(): Inventory | null {
