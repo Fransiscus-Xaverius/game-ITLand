@@ -158,8 +158,6 @@ window.onload = async () => {
         }
         console.clear()
 
-
-
     })
 
 }

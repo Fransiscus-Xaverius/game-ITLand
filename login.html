@@ -6,6 +6,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ITLand</title>
     <link href="./dist/scripts/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            /* background-image: url('./dist/images/pirate-background.jpg'); */
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .card-header {
+            background-color: #8B4513;
+            color: #fff;
+        }
+
+        .card-body {
+            background-color: #F5DEB3;
+        }
+
+        .form-control {
+            background-color: #F5DEB3;
+            border-color: #8B4513;
+            color: #8B4513;
+        }
+
+        .btn-primary {
+            background-color: #8B4513;
+            border-color: #8B4513;
+        }
+
+        .btn-primary:hover {
+            background-color: #F5DEB3;
+            color: #8B4513;
+        }
+
+        .form-group label {
+            color: #8B4513;
+            font-weight: bold;
+        }
+
+        .form-group input::placeholder {
+            color: #8B4513;
+            opacity: 0.5;
+        }
+
+        .form-group input:focus {
+            border-color: #F5DEB3;
+            box-shadow: none;
+        }
+
+        .btn-block {
+            margin-top: 20px;
+        }
+
+        .btn-block:hover {
+            background-color: #F5DEB3;
+            color: #8B4513;
+        }
+    </style>
 </head>
 
 <body>
@@ -15,18 +71,18 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="text-center">Login</h3>
+                            <h3 class="text-center">Pirate Login</h3>
                         </div>
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" id="username" placeholder="Enter username">
+                                <label for="username">Pirate Name</label>
+                                <input type="text" class="form-control" id="username" placeholder="Enter pirate name">
                             </div>
                             <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" placeholder="Password">
+                                <label for="password">Secret Code</label>
+                                <input type="password" class="form-control" id="password" placeholder="Secret code">
                             </div>
-                            <button class="btn btn-primary btn-block" onclick="submitForm()">Login</button>
+                            <button class="btn btn-primary btn-block" onclick="submitForm()">Set Sail</button>
                         </div>
                     </div>
                 </div>
@@ -56,13 +112,10 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    // console.log(data.token);
                     if (data) {
-                        // console.log(data)
                         if (data.token) {
-                            // console.log(data.token);
                             sessionStorage.setItem("game_itland", data.token);
-                            
+                            window.location.href = "./index.html";
                         }
                     }
                 })
