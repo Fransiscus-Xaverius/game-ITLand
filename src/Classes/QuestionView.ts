@@ -13,14 +13,20 @@ export class QuestionView {
     private CButton: HTMLButtonElement | null = null;
     private DButton: HTMLButtonElement | null = null;
     private energyDiv: HTMLDivElement | null = null;
+    private goldDiv: HTMLDivElement | null = null;
     private player:Player | null = null;
 
-    constructor(QuestionArea: HTMLDivElement, UpdateButton: HTMLButtonElement, api:API, a:HTMLButtonElement, b:HTMLButtonElement, c:HTMLButtonElement, d:HTMLButtonElement, energyDiv:HTMLDivElement){
+    constructor(QuestionArea: HTMLDivElement, UpdateButton: HTMLButtonElement, api:API, a:HTMLButtonElement, b:HTMLButtonElement, c:HTMLButtonElement, d:HTMLButtonElement, energyDiv:HTMLDivElement, goldDiv:HTMLDivElement){
         this.setQuestionArea(QuestionArea);
         this.setUpdateBtn(UpdateButton);
         this.setAPI(api);
         this.setButtons(a,b,c,d);
         this.setEnergyDiv(energyDiv);
+        this.setGoldDiv(goldDiv);
+    }
+
+    public setGoldDiv(goldDiv:HTMLDivElement){
+        this.goldDiv = goldDiv;
     }
 
     public setButtons(a:HTMLButtonElement, b:HTMLButtonElement, c:HTMLButtonElement, d:HTMLButtonElement){
@@ -33,6 +39,9 @@ export class QuestionView {
     public refreshStats(){
         if(this.energyDiv){
             this.energyDiv!.innerHTML = `Energy: ${this.player?.getEnergy()}`;
+        }
+        if(this.goldDiv){
+            this.goldDiv!.innerHTML = `Gold: ${this.player?.getGold()}`;
         }
     }
 

@@ -29,7 +29,6 @@ export class GameManager {
     private inventoryView: InventoryView | null = null;
     private questionView: QuestionView | null = null;
 
-
     constructor(canvasView: CanvasView | null = null, terminalView: TerminalView | null = null, shopView: ShopView | null, inventoryView: InventoryView | null = null, questionView: QuestionView | null = null) {
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
@@ -78,6 +77,8 @@ export class GameManager {
     }
 
     public removeGridEntity(x: number, y: number): void {
+        this.player.addGold(this.grid.entityGrid[y][x]?.entityDrop()!);
+        this.questionView?.refreshStats();
         this.grid.entityGrid[y][x] = null;
     }
 

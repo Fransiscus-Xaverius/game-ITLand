@@ -1924,6 +1924,9 @@ class GameManager {
         });
     }
     removeGridEntity(x, y) {
+        var _a, _b;
+        this.player.addGold((_a = this.grid.entityGrid[y][x]) === null || _a === void 0 ? void 0 : _a.entityDrop());
+        (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.refreshStats();
         this.grid.entityGrid[y][x] = null;
     }
     alertEntity() {
@@ -3138,6 +3141,9 @@ class Player {
     addEnergy(x) {
         this.energy += x;
     }
+    addGold(x) {
+        this.gold += x;
+    }
     action(price) {
         if (this.energy >= price)
             return true;
@@ -3178,7 +3184,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestionView = void 0;
 class QuestionView {
-    constructor(QuestionArea, UpdateButton, api, a, b, c, d, energyDiv) {
+    constructor(QuestionArea, UpdateButton, api, a, b, c, d, energyDiv, goldDiv) {
         this.QuestionArea = null;
         this.UpdateBtn = null;
         this.api = null;
@@ -3188,12 +3194,17 @@ class QuestionView {
         this.CButton = null;
         this.DButton = null;
         this.energyDiv = null;
+        this.goldDiv = null;
         this.player = null;
         this.setQuestionArea(QuestionArea);
         this.setUpdateBtn(UpdateButton);
         this.setAPI(api);
         this.setButtons(a, b, c, d);
         this.setEnergyDiv(energyDiv);
+        this.setGoldDiv(goldDiv);
+    }
+    setGoldDiv(goldDiv) {
+        this.goldDiv = goldDiv;
     }
     setButtons(a, b, c, d) {
         this.AButton = a;
@@ -3202,9 +3213,12 @@ class QuestionView {
         this.DButton = d;
     }
     refreshStats() {
-        var _a;
+        var _a, _b;
         if (this.energyDiv) {
             this.energyDiv.innerHTML = `Energy: ${(_a = this.player) === null || _a === void 0 ? void 0 : _a.getEnergy()}`;
+        }
+        if (this.goldDiv) {
+            this.goldDiv.innerHTML = `Gold: ${(_b = this.player) === null || _b === void 0 ? void 0 : _b.getGold()}`;
         }
     }
     load() {
@@ -3648,8 +3662,9 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     const CButton = document.querySelector("#c");
     const DButton = document.querySelector("#d");
     const energyDiv = document.querySelector("#energyAmount");
+    const goldDiv = document.querySelector("#goldAmount");
     (0, loadAsset_1.default)();
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv));
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv, goldDiv));
     game.start();
     yield game.load();
     const pUnit = game.getActivePlayerUnit();
