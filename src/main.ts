@@ -141,9 +141,6 @@ window.onload = async () => {
 
         if (key === 'i') { //destroy top entity
             //for destroying crates, and stone entities.
-            // const coords = game.getPlayer().getCoordinate();
-            // pUnit?.Mine();
-            // game.removeGridEntity(coords.x, (coords.y - 1)); 
             game.Action(Direction.Up, game.getPlayer().getEquipment());
         }
         if (key === 'j') { //destroy left entitiy
@@ -156,10 +153,12 @@ window.onload = async () => {
         }
         if (key === 'l') { //destroy right entity
             //for destroying crates, and stone entities.
-            const coords = game.getPlayer().getCoordinate();
-            game.removeGridEntity((coords.x + 1), (coords.y));
+            game.Action(Direction.Right, game.getPlayer().getEquipment());
         }
         console.clear()
+
+
+
     })
 
 }

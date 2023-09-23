@@ -9,12 +9,16 @@ export abstract class Entity extends Animated{
     protected entityType:number | null = null
     protected entityLevel:number | null = null
     protected entityName:string | null = null
+    protected minValue:number | null = null;
+    protected maxValue:number | null = null;
 
-    constructor(coordinate:Point, animations:Animation[] = [], entityName:string, entityLevel:number){
+    constructor(coordinate:Point, animations:Animation[] = [], entityName:string, entityLevel:number, minValue:number, maxValue:number){
         super(animations)
         this.coordinate = coordinate
         this.entityName = entityName
         this.entityLevel = entityLevel
+        this.minValue = minValue
+        this.maxValue = maxValue
     }
 
     public getCoordinate():Point{
@@ -76,6 +80,15 @@ export abstract class Entity extends Animated{
 
     public setEntityLevel(x:number):void{
         this.entityLevel = x;
+    }
+
+    public entityDrop():number{
+        if(this.minValue!=null&&this.maxValue!=null){
+            return Math.round(Math.random() * this.maxValue!) + this.minValue!;
+        }
+        else{
+            return 0; //if this returns into 0 there's sumting wong
+        }
     }
 
 }

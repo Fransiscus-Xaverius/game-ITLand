@@ -110,7 +110,9 @@ export class GameManager {
     //actionType:
     //1 = mine
     //2 = break
-    //3 = dig
+    
+    //Direction.Under = dig
+
     public Action(direction: Direction, actionType:number){
         const coords = this.player.getCoordinate();
         let temp = null;
@@ -146,9 +148,8 @@ export class GameManager {
                                     break;
                             }
                             break;
-                        case 3: //equiping a shovel
-                            break;
                         default:
+                            alert('Invalid action!');
                             break;
                     }
                 }
@@ -178,9 +179,8 @@ export class GameManager {
                             break;
                         case 2: //equipping a sword
                             break;
-                        case 3: //equiping a shovel
-                            break;
                         default:
+                            alert('Invalid action!');
                             break;
                     }
                 }
@@ -207,15 +207,41 @@ export class GameManager {
                             break;
                         case 2: //equipping a sword
                             break;
-                        case 3: //equiping a shovel
-                            break;
                         default:
+                            alert('Invalid action!');
                             break;
                     }
                 }
                 break;
             case Direction.Right:
-                
+                temp = this.grid.getEntity((coords.x+1), (coords.y));
+                if(temp){
+                    switch(actionType){
+                        case 0: //not equipping anything.
+                            alert('Equip something');
+                            break;
+                        case 1: //equiping a pickaxe
+                            const entityname = temp.getEntityName();
+                            if(entityname == "Rock"|| entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore"){
+                                alert('this is a type of rock');
+                                //if equipment is good enough
+                                if(this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) this.removeGridEntity((coords.x+1), (coords.y));
+                                //if equipment is not good enough
+                                else alert('equipment is not good enough');
+                            }
+                            else{
+                                alert('this is the wrong tool');
+                            }
+                            break;
+                        case 2: //equipping a sword
+                            break;
+                        default:
+                            alert('Invalid action!');
+                            break;
+                    }
+                }
+                break;
+            case Direction.Under: //shovel
                 break;
             default:
                 break;

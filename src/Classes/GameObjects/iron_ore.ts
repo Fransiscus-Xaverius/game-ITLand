@@ -7,7 +7,7 @@ import { ChainedAnimation } from "./ChainedAnimation";
 
 export class Iron_ore extends Entity implements IDestructable{
     constructor(coordinate:Point, animations:Animation[] = []){
-        super(coordinate,animations, "Iron_ore", 2);
+        super(coordinate,animations, "Iron_ore", 2, 20, 100);
         const animation = new ChainedAnimation(
             this,
             'Iron_ore',

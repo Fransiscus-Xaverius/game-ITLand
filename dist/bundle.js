@@ -1948,7 +1948,7 @@ class GameManager {
     //actionType:
     //1 = mine
     //2 = break
-    //3 = dig
+    //Direction.Under = dig
     Action(direction, actionType) {
         const coords = this.player.getCoordinate();
         let temp = null;
@@ -1986,9 +1986,8 @@ class GameManager {
                                     break;
                             }
                             break;
-                        case 3: //equiping a shovel
-                            break;
                         default:
+                            alert('Invalid action!');
                             break;
                     }
                 }
@@ -2020,9 +2019,8 @@ class GameManager {
                             break;
                         case 2: //equipping a sword
                             break;
-                        case 3: //equiping a shovel
-                            break;
                         default:
+                            alert('Invalid action!');
                             break;
                     }
                 }
@@ -2051,14 +2049,43 @@ class GameManager {
                             break;
                         case 2: //equipping a sword
                             break;
-                        case 3: //equiping a shovel
-                            break;
                         default:
+                            alert('Invalid action!');
                             break;
                     }
                 }
                 break;
             case Direction_1.Direction.Right:
+                temp = this.grid.getEntity((coords.x + 1), (coords.y));
+                if (temp) {
+                    switch (actionType) {
+                        case 0: //not equipping anything.
+                            alert('Equip something');
+                            break;
+                        case 1: //equiping a pickaxe
+                            const entityname = temp.getEntityName();
+                            if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
+                                alert('this is a type of rock');
+                                //if equipment is good enough
+                                if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()))
+                                    this.removeGridEntity((coords.x + 1), (coords.y));
+                                //if equipment is not good enough
+                                else
+                                    alert('equipment is not good enough');
+                            }
+                            else {
+                                alert('this is the wrong tool');
+                            }
+                            break;
+                        case 2: //equipping a sword
+                            break;
+                        default:
+                            alert('Invalid action!');
+                            break;
+                    }
+                }
+                break;
+            case Direction_1.Direction.Under: //shovel
                 break;
             default:
                 break;
@@ -2253,7 +2280,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Chest extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Chest", 1);
+        super(coordinate, animations, "Chest", 1, 10, 50);
         this.getLoot = function (min, max) {
             return Math.random() * (max - min) + min;
         };
@@ -2272,7 +2299,8 @@ var Direction;
     Direction[Direction["Down"] = 1] = "Down";
     Direction[Direction["Left"] = 2] = "Left";
     Direction[Direction["Right"] = 3] = "Right";
-    Direction[Direction["None"] = 4] = "None";
+    Direction[Direction["Under"] = 4] = "Under";
+    Direction[Direction["None"] = 5] = "None";
 })(Direction || (exports.Direction = Direction = {}));
 
 },{}],23:[function(require,module,exports){
@@ -2281,15 +2309,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Entity = void 0;
 const Animated_1 = require("./Animated");
 class Entity extends Animated_1.Animated {
-    constructor(coordinate, animations = [], entityName, entityLevel) {
+    constructor(coordinate, animations = [], entityName, entityLevel, minValue, maxValue) {
         super(animations);
         this.grid = null;
         this.entityType = null;
         this.entityLevel = null;
         this.entityName = null;
+        this.minValue = null;
+        this.maxValue = null;
         this.coordinate = coordinate;
         this.entityName = entityName;
         this.entityLevel = entityLevel;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
     }
     getCoordinate() {
         return this.coordinate;
@@ -2347,6 +2379,14 @@ class Entity extends Animated_1.Animated {
     }
     setEntityLevel(x) {
         this.entityLevel = x;
+    }
+    entityDrop() {
+        if (this.minValue != null && this.maxValue != null) {
+            return Math.round(Math.random() * this.maxValue) + this.minValue;
+        }
+        else {
+            return 0; //if this returns into 0 there's sumting wong
+        }
     }
 }
 exports.Entity = Entity;
@@ -2595,7 +2635,7 @@ const Direction_1 = require("./Direction");
 const Entity_1 = require("./Entity");
 class PlayerUnit extends Entity_1.Entity {
     constructor(coordinate, moveSpeed = 1, animations = []) {
-        super(coordinate, animations, "Player", 99);
+        super(coordinate, animations, "Player", 99, 99, 99);
         this.isMoving = false;
         this.moveSpeed = 1;
         this.lerpProgress = 0;
@@ -2782,7 +2822,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Rock extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Rock", 1);
+        super(coordinate, animations, "Rock", 1, 10, 50);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
@@ -2829,7 +2869,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Gold_ore extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Gold_ore", 3);
+        super(coordinate, animations, "Gold_ore", 3, 80, 400);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Gold_ore', Animation_1.Animation.assets['gold_ore'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
@@ -2844,7 +2884,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Iron_ore extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Iron_ore", 2);
+        super(coordinate, animations, "Iron_ore", 2, 20, 100);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Iron_ore', Animation_1.Animation.assets['iron_ore'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
@@ -2859,7 +2899,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Silver_ore extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Silver_ore", 2);
+        super(coordinate, animations, "Silver_ore", 2, 40, 200);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Silver_ore', Animation_1.Animation.assets['silver_ore'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
@@ -3700,9 +3740,6 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         if (key === 'i') { //destroy top entity
             //for destroying crates, and stone entities.
-            // const coords = game.getPlayer().getCoordinate();
-            // pUnit?.Mine();
-            // game.removeGridEntity(coords.x, (coords.y - 1)); 
             game.Action(Direction_1.Direction.Up, game.getPlayer().getEquipment());
         }
         if (key === 'j') { //destroy left entitiy
@@ -3715,8 +3752,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         if (key === 'l') { //destroy right entity
             //for destroying crates, and stone entities.
-            const coords = game.getPlayer().getCoordinate();
-            game.removeGridEntity((coords.x + 1), (coords.y));
+            game.Action(Direction_1.Direction.Right, game.getPlayer().getEquipment());
         }
         console.clear();
     });
