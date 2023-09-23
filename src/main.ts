@@ -34,6 +34,7 @@ window.onload = async () => {
     const CButton = document.querySelector("#c") as HTMLButtonElement;
     const DButton = document.querySelector("#d") as HTMLButtonElement;
     const energyDiv = document.querySelector("#energyAmount") as HTMLDivElement;
+    const goldDiv = document.querySelector("#goldAmount") as HTMLDivElement;
 
     loadAsset()
     const game = new GameManager(
@@ -41,7 +42,7 @@ window.onload = async () => {
         new TerminalView(terminal, executeButton, stopButton),
         new ShopView(shopButton, shop, inventoryShopElement),
         new InventoryView(inventoryButton, inventory, inventoryShopElement),
-        new QuestionView(QuestionArea, soalButton, new API(), AButton, BButton, CButton, DButton, energyDiv)
+        new QuestionView(QuestionArea, soalButton, new API(), AButton, BButton, CButton, DButton, energyDiv, goldDiv)
     )
 
     game.start();
