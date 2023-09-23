@@ -8,7 +8,7 @@
     <link href="./dist/scripts/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-image: url('./dist/images/pirate-background.jpg');
+            /* background-image: url('./dist/images/pirate-background.jpg'); */
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -74,17 +74,15 @@
                             <h3 class="text-center">Pirate Login</h3>
                         </div>
                         <div class="card-body">
-                            <form>
-                                <div class="form-group">
-                                    <label for="username">Pirate Name</label>
-                                    <input type="text" class="form-control" id="username" placeholder="Enter pirate name">
-                                </div>
-                                <div class="form-group">
-                                    <label for="password">Secret Code</label>
-                                    <input type="password" class="form-control" id="password" placeholder="Secret code">
-                                </div>
-                                <button class="btn btn-primary btn-block" onclick="submitForm()">Set Sail</button>
-                            </form>
+                            <div class="form-group">
+                                <label for="username">Pirate Name</label>
+                                <input type="text" class="form-control" id="username" placeholder="Enter pirate name">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Secret Code</label>
+                                <input type="password" class="form-control" id="password" placeholder="Secret code">
+                            </div>
+                            <button class="btn btn-primary btn-block" onclick="submitForm()">Set Sail</button>
                         </div>
                     </div>
                 </div>
@@ -114,7 +112,6 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    // console.log(data)
                     if (data) {
                         if (data.token) {
                             sessionStorage.setItem("game_itland", data.token);
