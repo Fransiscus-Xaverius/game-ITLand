@@ -14,7 +14,6 @@ import { API } from './Classes/API';
 
 window.onload = async () => {
     //Main game
-
     const canvas = document.querySelector("#view") as HTMLCanvasElement
     const terminal = document.querySelector("#console") as HTMLTextAreaElement
     const executeButton = document.querySelector("#executeButton") as HTMLButtonElement
@@ -63,24 +62,24 @@ window.onload = async () => {
     // const energyAmount = document.querySelector("#energyAmount") as HTMLDivElement
     // energyAmount.value = `Energy: ${curPlayer.getEnergy()}`
 
-    soalButton.addEventListener('click', async()=>{
+    soalButton.addEventListener('click', async () => {
         await game.getQuestionView()?.UpdateQuestion();
     });
 
-    AButton.addEventListener('click', async()=>{
-        await game.getQuestionView()?.checkAnswer(AButton,AButton.value);
+    AButton.addEventListener('click', async () => {
+        await game.getQuestionView()?.checkAnswer(AButton, AButton.value);
     })
 
-    BButton.addEventListener('click', async()=>{
-        await game.getQuestionView()?.checkAnswer(BButton,BButton.value);
+    BButton.addEventListener('click', async () => {
+        await game.getQuestionView()?.checkAnswer(BButton, BButton.value);
     })
 
-    CButton.addEventListener('click', async()=>{
-        await game.getQuestionView()?.checkAnswer(CButton,CButton.value);
+    CButton.addEventListener('click', async () => {
+        await game.getQuestionView()?.checkAnswer(CButton, CButton.value);
     })
 
-    DButton.addEventListener('click', async()=>{
-        await game.getQuestionView()?.checkAnswer(DButton,DButton.value);
+    DButton.addEventListener('click', async () => {
+        await game.getQuestionView()?.checkAnswer(DButton, DButton.value);
     })
 
     document.addEventListener('keydown', (e) => {
@@ -106,7 +105,7 @@ window.onload = async () => {
         //3 = shovel
         if (key === 'q') {
             const curEquip = game.getPlayer().getEquipment();
-            switch(curEquip){
+            switch (curEquip) {
                 case 1: //equip pickaxe 
                     game.getPlayer().setEquipment(2);
                     alert('equipped pickaxe');
@@ -129,13 +128,13 @@ window.onload = async () => {
             alert(game.getPlayer().getEquipment());
         }
 
-        if(key==='1'){
+        if (key === '1') {
             game.getPlayer().setEquipmentLevels(1);
         }
-        if(key==='2'){
+        if (key === '2') {
             game.getPlayer().setEquipmentLevels(2);
         }
-        if(key==='3'){
+        if (key === '3') {
             game.getPlayer().setEquipmentLevels(3);
         }
 
@@ -156,8 +155,28 @@ window.onload = async () => {
             game.Action(Direction.Right, game.getPlayer().getEquipment());
         }
         console.clear()
-
     })
 
 }
+function fullscreenHandler() {
+    const isFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
+    if (!isFullscreen) {
+        document.body.style.backgroundColor = "red";
+    } else {
+        document.body.style.backgroundColor = "white";
+    }
+}
 
+let resizeTimeout: number | null = null;
+
+function handleResize() {
+    if (resizeTimeout !== null) {
+        window.cancelAnimationFrame(resizeTimeout);
+    }
+    resizeTimeout = window.requestAnimationFrame(() => {
+        fullscreenHandler();
+        resizeTimeout = null;
+    });
+}
+
+window.addEventListener("resize", handleResize);

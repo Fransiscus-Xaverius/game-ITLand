@@ -3624,8 +3624,8 @@ const Inventory_1 = require("./Classes/Items/Inventory");
 const QuestionView_1 = require("./Classes/QuestionView");
 const API_1 = require("./Classes/API");
 window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
-    //Main game
     var _a, _b, _c, _d;
+    //Main game
     const canvas = document.querySelector("#view");
     const terminal = document.querySelector("#console");
     const executeButton = document.querySelector("#executeButton");
@@ -3756,6 +3756,51 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         console.clear();
     });
+    // fullscreenHandler();
 });
+// const fullscreenHandler = () => {
+//     if (window.innerHeight === screen.height) {
+//         document.body.style.backgroundColor = "red";
+//     } else {
+//         document.body.style.backgroundColor = "blue";
+//     }
+// }
+// document.addEventListener("fullscreenchange", fullscreenHandler);
+// function fullscreenHandler() {
+//     if (document.fullscreenElement) {
+//         document.body.style.backgroundColor = "red";
+//     } else {
+//         document.body.style.backgroundColor = "blue";
+//     }
+// }
+// document.addEventListener("fullscreenchange", fullscreenHandler);
+// function fullscreenHandler() {
+//     if (window.screen.width === window.innerWidth && window.screen.height === window.innerHeight) {
+//         document.body.style.backgroundColor = "red";
+//     } else {
+//         document.body.style.backgroundColor = "blue";
+//     }
+// }
+// document.addEventListener("resize", fullscreenHandler);
+function fullscreenHandler() {
+    const isFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
+    if (!isFullscreen) {
+        document.body.style.backgroundColor = "red";
+    }
+    else {
+        document.body.style.backgroundColor = "white";
+    }
+}
+let resizeTimeout = null;
+function handleResize() {
+    if (resizeTimeout !== null) {
+        window.cancelAnimationFrame(resizeTimeout);
+    }
+    resizeTimeout = window.requestAnimationFrame(() => {
+        fullscreenHandler();
+        resizeTimeout = null;
+    });
+}
+window.addEventListener("resize", handleResize);
 
 },{"./Classes/API":1,"./Classes/CanvasView":2,"./Classes/GameManager":17,"./Classes/GameObjects/Direction":22,"./Classes/InventoryView":35,"./Classes/Items/Inventory":37,"./Classes/QuestionView":40,"./Classes/Shop":41,"./Classes/ShopView":42,"./Classes/TerminalView":43,"./loadAsset":44}]},{},[45]);
