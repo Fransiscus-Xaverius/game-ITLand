@@ -3,14 +3,16 @@
     src: url(/fonts/consolas/CONSOLA.TTF);
 }
 
-.login{
+.login {
     padding: 0;
     margin: 0;
 }
-.game{
+
+.game {
     padding: 0;
     margin: 0;
 }
+
 .asset {
     display: none;
 }
@@ -100,34 +102,17 @@ td {
     height: 50%;
     width: 50%;
 }
-.inventory-item-image{
+
+.inventory-item-image {
     width: 25%;
     height: 25%;
 }
+
 .card {
     border: 1px solid black;
-    /* width: 300px; */
-    /* overflow: auto; */
 }
-/* .card-content {
-    float: left;
-}
-.item{
-    background-color: aliceblue;
-} */
-/* .card-content {
-    float: right;
-} */
 
-/* .stop{
-    
-} */
-
-/* .shop-inventory{
-    overflow-x: hidden;
-} */
-
-.card-shop{
+.card-shop {
     height: 200px;
     width: auto;
     background-color: #303030;
@@ -143,26 +128,28 @@ td {
     overflow-x: hidden;
 }
 
-.shop-img{
+.shop-img {
     height: 65%;
     width: auto;
 }
 
-.desc{
+.desc {
     height: 40px;
     width: 400px;
 }
-.item-name{
+
+.item-name {
     height: 25px;
-    width: 400px;    
+    width: 400px;
 }
-.content{
+
+.content {
     width: 400px;
     height: 40px;
     border: 1px solid black;
 }
 
-.special-content{
+.special-content {
     width: 400px;
     height: 40px;
     font-size: 16px;
