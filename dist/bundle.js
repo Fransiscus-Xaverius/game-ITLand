@@ -1938,10 +1938,20 @@ class GameManager {
             return string1;
         });
     }
+    logActivity(str) {
+        var _a;
+        const terminal = (_a = this.terminalView) === null || _a === void 0 ? void 0 : _a.getTextArea();
+        if (terminal) {
+            terminal.value = `\n${str}`;
+        }
+    }
     removeGridEntity(x, y) {
-        var _a, _b;
-        this.player.addGold((_a = this.grid.entityGrid[y][x]) === null || _a === void 0 ? void 0 : _a.entityDrop());
-        (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.refreshStats();
+        var _a, _b, _c;
+        const entName = (_a = this.grid.entityGrid[y][x]) === null || _a === void 0 ? void 0 : _a.getEntityName();
+        const drop = (_b = this.grid.entityGrid[y][x]) === null || _b === void 0 ? void 0 : _b.entityDrop();
+        this.player.addGold(drop);
+        this.logActivity(`Destroyed a ${entName} and got ${drop} gold coins!`);
+        (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.refreshStats();
         this.grid.entityGrid[y][x] = null;
     }
     alertEntity() {
@@ -1968,6 +1978,7 @@ class GameManager {
     //2 = break
     //Direction.Under = dig
     Action(direction, actionType) {
+        var _a;
         const coords = this.player.getCoordinate();
         let temp = null;
         switch (direction) {
@@ -1982,15 +1993,24 @@ class GameManager {
                             const entityname = temp.getEntityName();
                             if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
                                 alert('this is a type of rock');
-                                //if equipment is good enough
-                                if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()))
-                                    this.removeGridEntity(coords.x, (coords.y - 1));
-                                //if equipment is not good enough
+                                //if energy is enough
+                                if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
+                                    alert('good enough');
+                                    //if equipment is good enough
+                                    if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel())) {
+                                        this.removeGridEntity(coords.x, (coords.y - 1));
+                                        this.player.useEnergy(temp.getRequiredEnergy());
+                                        (_a = this.questionView) === null || _a === void 0 ? void 0 : _a.refreshStats();
+                                    }
+                                    //if equipment is not good enough
+                                    else
+                                        this.logActivity(`Upgrade your pickaxe to destroy this block!`);
+                                }
                                 else
-                                    alert('equipment is not good enough');
+                                    this.logActivity(`You need more energy to do this action!`);
                             }
                             else {
-                                alert('this is the wrong tool');
+                                this.logActivity('You cannot use a pickaxe to break this object! (wrong equipment used)');
                             }
                             break;
                         case 2: //equipping a sword
@@ -2032,7 +2052,7 @@ class GameManager {
                                     alert('equipment is not good enough');
                             }
                             else {
-                                alert('this is the wrong tool');
+                                this.logActivity('You cannot use a pickaxe to break this object! (wrong equipment used)');
                             }
                             break;
                         case 2: //equipping a sword
@@ -2298,7 +2318,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Chest extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Chest", 1, 10, 50);
+        super(coordinate, animations, "Chest", 1, 10, 50, 5);
         this.getLoot = function (min, max) {
             return Math.random() * (max - min) + min;
         };
@@ -2327,7 +2347,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Entity = void 0;
 const Animated_1 = require("./Animated");
 class Entity extends Animated_1.Animated {
-    constructor(coordinate, animations = [], entityName, entityLevel, minValue, maxValue) {
+    constructor(coordinate, animations = [], entityName, entityLevel, minValue, maxValue, requiredEnergy) {
         super(animations);
         this.grid = null;
         this.entityType = null;
@@ -2335,11 +2355,20 @@ class Entity extends Animated_1.Animated {
         this.entityName = null;
         this.minValue = null;
         this.maxValue = null;
+        this.requiredEnergy = null;
         this.coordinate = coordinate;
         this.entityName = entityName;
         this.entityLevel = entityLevel;
         this.minValue = minValue;
         this.maxValue = maxValue;
+        this.requiredEnergy = requiredEnergy;
+    }
+    getRequiredEnergy() {
+        if (this.requiredEnergy != null)
+            return this.requiredEnergy;
+        //if required energy is null then it will return -1
+        else
+            return -1;
     }
     getCoordinate() {
         return this.coordinate;
@@ -2653,7 +2682,7 @@ const Direction_1 = require("./Direction");
 const Entity_1 = require("./Entity");
 class PlayerUnit extends Entity_1.Entity {
     constructor(coordinate, moveSpeed = 1, animations = []) {
-        super(coordinate, animations, "Player", 99, 99, 99);
+        super(coordinate, animations, "Player", 99, 99, 99, 10000);
         this.isMoving = false;
         this.moveSpeed = 1;
         this.lerpProgress = 0;
@@ -2840,7 +2869,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Rock extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Rock", 1, 10, 50);
+        super(coordinate, animations, "Rock", 1, 10, 50, 5);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
@@ -2887,7 +2916,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Gold_ore extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Gold_ore", 3, 80, 400);
+        super(coordinate, animations, "Gold_ore", 3, 80, 400, 40);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Gold_ore', Animation_1.Animation.assets['gold_ore'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
@@ -2902,7 +2931,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Iron_ore extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Iron_ore", 2, 20, 100);
+        super(coordinate, animations, "Iron_ore", 2, 20, 100, 15);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Iron_ore', Animation_1.Animation.assets['iron_ore'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
@@ -2917,7 +2946,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Silver_ore extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Silver_ore", 2, 40, 200);
+        super(coordinate, animations, "Silver_ore", 2, 40, 200, 25);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Silver_ore', Animation_1.Animation.assets['silver_ore'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
@@ -3157,8 +3186,14 @@ class Player {
     addEnergy(x) {
         this.energy += x;
     }
+    useEnergy(x) {
+        this.energy -= x;
+    }
     addGold(x) {
         this.gold += x;
+    }
+    useGold(x) {
+        this.gold -= x;
     }
     action(price) {
         if (this.energy >= price)
@@ -3539,6 +3574,18 @@ class TerminalView {
             this.textArea.value = value.content;
         this.terminal = value;
     }
+    getTerminal() {
+        if (this.terminal)
+            return this.terminal;
+        else
+            return null;
+    }
+    getTextArea() {
+        if (this.textArea)
+            return this.textArea;
+        else
+            return null;
+    }
     setExecuteButton(value) {
         const executeClickListener = (evt) => {
             var _a, _b;
@@ -3746,19 +3793,19 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
             switch (curEquip) {
                 case 1: //equip pickaxe 
                     game.getPlayer().setEquipment(2);
-                    alert('equipped pickaxe');
+                    game.logActivity("Equipped Sword");
                     break;
                 case 2: //equip sword
                     game.getPlayer().setEquipment(3);
-                    alert('equipped pickaxe');
+                    game.logActivity("Equipped Shovel");
                     break;
                 case 3: //equip shovel
                     game.getPlayer().setEquipment(0);
-                    alert('equipped pickaxe');
+                    game.logActivity("Unequipped Tools");
                     break;
                 case 0: //not equipping anything
                     game.getPlayer().setEquipment(1);
-                    alert('equipped pickaxe');
+                    game.logActivity("Equipped Pickaxe");
                     break;
                 default:
                     break;

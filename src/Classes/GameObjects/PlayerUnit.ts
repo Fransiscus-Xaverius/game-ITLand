@@ -20,7 +20,7 @@ export class PlayerUnit extends Entity{
     public equipped:IEquippable|null = null
 
     constructor(coordinate:Point, moveSpeed:number = 1, animations:Animation[]=[]){
-        super(coordinate, animations, "Player", 99, 99, 99)
+        super(coordinate, animations, "Player", 99, 99, 99, 10000)
         this.terminal = new Terminal(this)
         this.originalCoordinate = {...this.coordinate}
         this.setMoveSpeed(moveSpeed)

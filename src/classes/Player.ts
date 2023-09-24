@@ -71,8 +71,16 @@ export class Player{
         this.energy+=x;
     }
 
+    public useEnergy(x:number){
+        this.energy-=x;
+    }
+
     public addGold(x:number){
         this.gold+=x;
+    }
+
+    public useGold(x:number){
+        this.gold-=x;
     }
 
     public action(price:number):Boolean{

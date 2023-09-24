@@ -109,19 +109,19 @@ window.onload = async () => {
             switch (curEquip) {
                 case 1: //equip pickaxe 
                     game.getPlayer().setEquipment(2);
-                    alert('equipped pickaxe');
+                    game.logActivity("Equipped Sword");
                     break;
                 case 2: //equip sword
                     game.getPlayer().setEquipment(3);
-                    alert('equipped pickaxe');
+                    game.logActivity("Equipped Shovel");
                     break;
                 case 3: //equip shovel
                     game.getPlayer().setEquipment(0);
-                    alert('equipped pickaxe');
+                    game.logActivity("Unequipped Tools");
                     break;
                 case 0: //not equipping anything
                     game.getPlayer().setEquipment(1);
-                    alert('equipped pickaxe');
+                    game.logActivity("Equipped Pickaxe");
                     break;
                 default:
                     break;
