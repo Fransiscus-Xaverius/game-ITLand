@@ -157,7 +157,13 @@ window.onload = async () => {
         }
         console.clear()
     })
-
+    const shopItem = document.querySelectorAll(".card-shop") as NodeListOf<HTMLDivElement>;
+    for (let i = 0; i < shopItem.length; i++) {
+        const cardShop: HTMLDivElement = shopItem[i];
+        const buyButton = cardShop.querySelector(".buy-button")?.addEventListener("click", () => { 
+            // pUnit.bu
+        });
+    }
 }
 function fullscreenHandler() {
     const isFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
