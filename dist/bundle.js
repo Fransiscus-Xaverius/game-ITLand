@@ -2194,6 +2194,8 @@ class GameManager {
         (_a = this.canvasView) === null || _a === void 0 ? void 0 : _a.render(this.grid);
         (_c = (_b = this.canvasView) === null || _b === void 0 ? void 0 : _b.getContext()) === null || _c === void 0 ? void 0 : _c.fillText("fps : " + (1 / this.deltaTime).toFixed(3), 10, 80);
     }
+    buy() {
+    }
 }
 exports.GameManager = GameManager;
 
@@ -3374,6 +3376,10 @@ class Shop {
                 new BookOfEnergyT3_1.BookOfEnergyTier3(),
             ];
     }
+    buy(itemIndex) {
+        const currentItem = this.item[itemIndex];
+        const currentPrice = currentItem.getItemPrice();
+    }
     open(shopHTML) {
         if (shopHTML) {
             shopHTML.innerHTML = "";
@@ -3476,6 +3482,9 @@ class Shop {
                 const buyButton = document.createElement('button');
                 buyButton.className = 'content buy-button';
                 buyButton.innerHTML = 'Buy';
+                buyButton.onclick = () => {
+                    this.buy(i);
+                };
                 desc.appendChild(itemName);
                 desc.appendChild(mainDesc);
                 desc.appendChild(addBox);
