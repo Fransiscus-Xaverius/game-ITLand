@@ -3054,11 +3054,21 @@ exports.BookOfEnergyTier3 = BookOfEnergyTier3;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
 const BookOfEnergyT1_1 = require("./BookOfEnergyT1");
+const BookOfEnergyT2_1 = require("./BookOfEnergyT2");
+const BookOfEnergyT3_1 = require("./BookOfEnergyT3");
 class Inventory {
     constructor() {
         this.items = [];
         this.items.push({
             item: new BookOfEnergyT1_1.BookOfEnergyTier1(),
+            amount: 0
+        });
+        this.items.push({
+            item: new BookOfEnergyT2_1.BookOfEnergyTier2(),
+            amount: 0
+        });
+        this.items.push({
+            item: new BookOfEnergyT3_1.BookOfEnergyTier3(),
             amount: 0
         });
     }
@@ -3096,7 +3106,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{"./BookOfEnergyT1":38}],42:[function(require,module,exports){
+},{"./BookOfEnergyT1":38,"./BookOfEnergyT2":39,"./BookOfEnergyT3":40}],42:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
