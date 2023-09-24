@@ -41,6 +41,16 @@ export class TerminalView{
         this.terminal = value
     }
 
+    public getTerminal(){
+        if(this.terminal) return this.terminal;
+        else return null;
+    }
+
+    public getTextArea(){
+        if(this.textArea) return this.textArea;
+        else return null;
+    }
+
     public setExecuteButton(value:HTMLButtonElement|null):void{
         const executeClickListener = (evt:MouseEvent) => {
             if(!this.terminal) return

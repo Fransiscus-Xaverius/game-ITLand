@@ -11,14 +11,22 @@ export abstract class Entity extends Animated{
     protected entityName:string | null = null
     protected minValue:number | null = null;
     protected maxValue:number | null = null;
+    protected requiredEnergy:number | null = null;
 
-    constructor(coordinate:Point, animations:Animation[] = [], entityName:string, entityLevel:number, minValue:number, maxValue:number){
+    constructor(coordinate:Point, animations:Animation[] = [], entityName:string, entityLevel:number, minValue:number, maxValue:number, requiredEnergy:number){
         super(animations)
         this.coordinate = coordinate
         this.entityName = entityName
         this.entityLevel = entityLevel
         this.minValue = minValue
         this.maxValue = maxValue
+        this.requiredEnergy = requiredEnergy
+    }
+
+    public getRequiredEnergy():number{
+        if(this.requiredEnergy!=null) return this.requiredEnergy;
+        //if required energy is null then it will return -1
+        else return -1;
     }
 
     public getCoordinate():Point{
