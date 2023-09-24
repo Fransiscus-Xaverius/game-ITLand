@@ -1,4 +1,19 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+module.exports={
+    "BookOfEnergyTier1Name": "Book Of Energy Tier 1",
+    "BookOfEnergyTier1Desc": "Basic energy guide, +<number> energy.",
+    "BookOfEnergyTier1Price": 1000,
+    "BookOfEnergyTier1ImagePath": "dist/Assets/Prototype/buku1.png",
+    "BookOfEnergyTier2Name": "Book Of Energy Tier 2",
+    "BookOfEnergyTier2Desc": "Advanced energy guide, +<number> energy.",
+    "BookOfEnergyTier2Price": 2000,
+    "BookOfEnergyTier2ImagePath": "dist/Assets/Prototype/buku2.png",
+    "BookOfEnergyTier3Name": "Book Of Energy Tier 3",
+    "BookOfEnergyTier3Desc": "Mastery energy guide, +<number> energy.",
+    "BookOfEnergyTier3Price": 3000,
+    "BookOfEnergyTier3ImagePath": "dist/Assets/Prototype/buku3.png"
+}
+},{}],2:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -121,7 +136,7 @@ class API {
 }
 exports.API = API;
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CanvasView = void 0;
@@ -279,7 +294,7 @@ class CanvasView {
 }
 exports.CanvasView = CanvasView;
 
-},{"./GameObjects/PlayerUnit":28,"./GameObjects/Tile":31}],3:[function(require,module,exports){
+},{"./GameObjects/PlayerUnit":29,"./GameObjects/Tile":32}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BoolWrapper = void 0;
@@ -367,7 +382,7 @@ BoolWrapper.processes = [
     },
 ];
 
-},{"./Wrapper":16}],4:[function(require,module,exports){
+},{"./Wrapper":17}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BranchCommand = void 0;
@@ -404,7 +419,7 @@ class BranchCommand extends Command_1.Command {
 }
 exports.BranchCommand = BranchCommand;
 
-},{"./Command":5,"./Expression":7,"./Wrapper":16}],5:[function(require,module,exports){
+},{"./Command":6,"./Expression":8,"./Wrapper":17}],6:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Command = void 0;
@@ -415,7 +430,7 @@ class Command {
 }
 exports.Command = Command;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EndCommand = void 0;
@@ -429,7 +444,7 @@ class EndCommand extends Command_1.Command {
 }
 exports.EndCommand = EndCommand;
 
-},{"./Command":5}],7:[function(require,module,exports){
+},{"./Command":6}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Expression = void 0;
@@ -514,7 +529,7 @@ class Expression {
 }
 exports.Expression = Expression;
 
-},{"./VoidWrapper":14,"./Wrapper":16}],8:[function(require,module,exports){
+},{"./VoidWrapper":15,"./Wrapper":17}],9:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NumberWrapper = void 0;
@@ -677,7 +692,7 @@ NumberWrapper.processes = [
     },
 ];
 
-},{"./BoolWrapper":3,"./StringWrapper":12,"./Wrapper":16}],9:[function(require,module,exports){
+},{"./BoolWrapper":4,"./StringWrapper":13,"./Wrapper":17}],10:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerWrapper = void 0;
@@ -753,7 +768,7 @@ PlayerWrapper.processes = [
     },
 ];
 
-},{"./WaitWrapper":15,"./Wrapper":16}],10:[function(require,module,exports){
+},{"./WaitWrapper":16,"./Wrapper":17}],11:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SingleCommand = void 0;
@@ -804,7 +819,7 @@ class SingleCommand extends Command_1.Command {
 }
 exports.SingleCommand = SingleCommand;
 
-},{"./Command":5,"./VoidWrapper":14,"./WaitWrapper":15}],11:[function(require,module,exports){
+},{"./Command":6,"./VoidWrapper":15,"./WaitWrapper":16}],12:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StartCommand = void 0;
@@ -831,7 +846,7 @@ class StartCommand extends Command_1.Command {
 }
 exports.StartCommand = StartCommand;
 
-},{"./Command":5,"./EndCommand":6}],12:[function(require,module,exports){
+},{"./Command":6,"./EndCommand":7}],13:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StringWrapper = void 0;
@@ -916,7 +931,7 @@ StringWrapper.processes = [
     },
 ];
 
-},{"./BoolWrapper":3,"./NumberWrapper":8,"./Wrapper":16}],13:[function(require,module,exports){
+},{"./BoolWrapper":4,"./NumberWrapper":9,"./Wrapper":17}],14:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Terminal = void 0;
@@ -1781,7 +1796,7 @@ class Terminal {
 }
 exports.Terminal = Terminal;
 
-},{"./BoolWrapper":3,"./BranchCommand":4,"./EndCommand":6,"./Expression":7,"./NumberWrapper":8,"./PlayerWrapper":9,"./SingleCommand":10,"./StartCommand":11,"./StringWrapper":12,"./VoidWrapper":14,"./Wrapper":16}],14:[function(require,module,exports){
+},{"./BoolWrapper":4,"./BranchCommand":5,"./EndCommand":7,"./Expression":8,"./NumberWrapper":9,"./PlayerWrapper":10,"./SingleCommand":11,"./StartCommand":12,"./StringWrapper":13,"./VoidWrapper":15,"./Wrapper":17}],15:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VoidWrapper = void 0;
@@ -1800,7 +1815,7 @@ class VoidWrapper extends Wrapper_1.Wrapper {
 }
 exports.VoidWrapper = VoidWrapper;
 
-},{"./Wrapper":16}],15:[function(require,module,exports){
+},{"./Wrapper":17}],16:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WaitWrapper = void 0;
@@ -1814,7 +1829,7 @@ class WaitWrapper extends VoidWrapper_1.VoidWrapper {
 }
 exports.WaitWrapper = WaitWrapper;
 
-},{"./VoidWrapper":14}],16:[function(require,module,exports){
+},{"./VoidWrapper":15}],17:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Wrapper = void 0;
@@ -1846,7 +1861,7 @@ class Wrapper {
 exports.Wrapper = Wrapper;
 Wrapper.processes = [];
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -2162,7 +2177,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./API":1,"./GameObjects/Direction":22,"./GameObjects/Grid":26,"./Player":39}],18:[function(require,module,exports){
+},{"./API":2,"./GameObjects/Direction":23,"./GameObjects/Grid":27,"./Player":43}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -2207,7 +2222,7 @@ class Animated {
 }
 exports.Animated = Animated;
 
-},{"./ChainedAnimation":20,"./GroupAnimation":27}],19:[function(require,module,exports){
+},{"./ChainedAnimation":21,"./GroupAnimation":28}],20:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animation = void 0;
@@ -2240,7 +2255,7 @@ class Animation {
 exports.Animation = Animation;
 Animation.assets = {};
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChainedAnimation = void 0;
@@ -2274,7 +2289,7 @@ class ChainedAnimation extends Animation_1.Animation {
 }
 exports.ChainedAnimation = ChainedAnimation;
 
-},{"./Animation":19}],21:[function(require,module,exports){
+},{"./Animation":20}],22:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chest = void 0;
@@ -2292,7 +2307,7 @@ class Chest extends Entity_1.Entity {
 }
 exports.Chest = Chest;
 
-},{"./Animation":19,"./ChainedAnimation":20,"./Entity":23}],22:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":21,"./Entity":24}],23:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Direction = void 0;
@@ -2306,7 +2321,7 @@ var Direction;
     Direction[Direction["None"] = 5] = "None";
 })(Direction || (exports.Direction = Direction = {}));
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Entity = void 0;
@@ -2394,7 +2409,7 @@ class Entity extends Animated_1.Animated {
 }
 exports.Entity = Entity;
 
-},{"./Animated":18}],24:[function(require,module,exports){
+},{"./Animated":19}],25:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grass = void 0;
@@ -2414,7 +2429,7 @@ class Grass extends Tile_1.Tile {
 }
 exports.Grass = Grass;
 
-},{"./GroupAnimation":27,"./Tile":31}],25:[function(require,module,exports){
+},{"./GroupAnimation":28,"./Tile":32}],26:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Gravel = void 0;
@@ -2433,7 +2448,7 @@ class Gravel extends Tile_1.Tile {
 }
 exports.Gravel = Gravel;
 
-},{"./GroupAnimation":27,"./Tile":31}],26:[function(require,module,exports){
+},{"./GroupAnimation":28,"./Tile":32}],27:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -2614,7 +2629,7 @@ class Grid {
 }
 exports.Grid = Grid;
 
-},{"./Animation":19,"./ChainedAnimation":20,"./Chest":21,"./Grass":24,"./Gravel":25,"./GroupAnimation":27,"./PlayerUnit":28,"./Rock":29,"./Sand":30,"./gold_ore":32,"./iron_ore":33,"./silver_ore":34}],27:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":21,"./Chest":22,"./Grass":25,"./Gravel":26,"./GroupAnimation":28,"./PlayerUnit":29,"./Rock":30,"./Sand":31,"./gold_ore":33,"./iron_ore":34,"./silver_ore":35}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupAnimation = void 0;
@@ -2628,7 +2643,7 @@ class GroupAnimation extends Animation_1.Animation {
 exports.GroupAnimation = GroupAnimation;
 GroupAnimation.animations = [];
 
-},{"./Animation":19}],28:[function(require,module,exports){
+},{"./Animation":20}],29:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerUnit = void 0;
@@ -2816,7 +2831,7 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/Terminal":13,"../Items/Inventory":37,"./Direction":22,"./Entity":23}],29:[function(require,module,exports){
+},{"../Console/Terminal":14,"../Items/Inventory":41,"./Direction":23,"./Entity":24}],30:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rock = void 0;
@@ -2831,7 +2846,7 @@ class Rock extends Entity_1.Entity {
 }
 exports.Rock = Rock;
 
-},{"./Animation":19,"./ChainedAnimation":20,"./Entity":23}],30:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":21,"./Entity":24}],31:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sand = void 0;
@@ -2849,7 +2864,7 @@ class Sand extends Tile_1.Tile {
 }
 exports.Sand = Sand;
 
-},{"./GroupAnimation":27,"./Tile":31}],31:[function(require,module,exports){
+},{"./GroupAnimation":28,"./Tile":32}],32:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tile = void 0;
@@ -2863,7 +2878,7 @@ class Tile extends Animated_1.Animated {
 exports.Tile = Tile;
 Tile.defaultTileResolution = { x: 32, y: 32 };
 
-},{"./Animated":18}],32:[function(require,module,exports){
+},{"./Animated":19}],33:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Gold_ore = void 0;
@@ -2878,7 +2893,7 @@ class Gold_ore extends Entity_1.Entity {
 }
 exports.Gold_ore = Gold_ore;
 
-},{"./Animation":19,"./ChainedAnimation":20,"./Entity":23}],33:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":21,"./Entity":24}],34:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Iron_ore = void 0;
@@ -2893,7 +2908,7 @@ class Iron_ore extends Entity_1.Entity {
 }
 exports.Iron_ore = Iron_ore;
 
-},{"./Animation":19,"./ChainedAnimation":20,"./Entity":23}],34:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":21,"./Entity":24}],35:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Silver_ore = void 0;
@@ -2908,27 +2923,27 @@ class Silver_ore extends Entity_1.Entity {
 }
 exports.Silver_ore = Silver_ore;
 
-},{"./Animation":19,"./ChainedAnimation":20,"./Entity":23}],35:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":21,"./Entity":24}],36:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InventoryView = void 0;
 class InventoryView {
     constructor(inventoryButton, inventory, inventoryShopElement) {
-        this.inventory = null;
-        this.inventoryButton = null;
-        this.inventoryShopElement = null;
-        this.setInventory(inventory);
-        this.setInventoryShopElement(inventoryShopElement);
-        this.setInventoryButton(inventoryButton);
+        this.inventory = inventory;
+        this.inventoryShopElement = inventoryShopElement;
+        this.inventoryButton = inventoryButton;
+        this.initInventoryButton();
     }
     initInventoryButton() {
-        var _a;
         if (this.inventoryButton) {
-            (_a = this.inventoryButton) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => {
-                if (this.inventory) {
-                    this.inventory.open(this.getInventoryShopElement());
-                }
+            this.inventoryButton.addEventListener('click', () => {
+                this.openInventory();
             });
+        }
+    }
+    openInventory() {
+        if (this.inventory) {
+            this.inventory.open(this.inventoryShopElement);
         }
     }
     setInventoryShopElement(inventoryShopElement) {
@@ -2953,30 +2968,70 @@ class InventoryView {
 }
 exports.InventoryView = InventoryView;
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Book = void 0;
 const Item_1 = require("./Item");
 //book is not equipable, rather a consumeable.
 class Book extends Item_1.Item {
-    constructor(imagePath, itemName) {
-        super(imagePath, itemName, "book 1", 1000);
+    constructor(imagePath, itemName, itemDesc, itemPrice) {
+        super(imagePath, itemName, itemDesc, itemPrice);
     }
 }
 exports.Book = Book;
 
-},{"./Item":38}],37:[function(require,module,exports){
+},{"./Item":42}],38:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BookOfEnergyTier1 = void 0;
+const Book_1 = require("./Book");
+const { BookOfEnergyTier1Name, BookOfEnergyTier1Desc, BookOfEnergyTier1Price, BookOfEnergyTier1ImagePath } = require('../../../dist/config/env.json');
+class BookOfEnergyTier1 extends Book_1.Book {
+    constructor() {
+        super(BookOfEnergyTier1ImagePath, BookOfEnergyTier1Name, BookOfEnergyTier1Desc, BookOfEnergyTier1Price);
+    }
+}
+exports.BookOfEnergyTier1 = BookOfEnergyTier1;
+
+},{"../../../dist/config/env.json":1,"./Book":37}],39:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BookOfEnergyTier2 = void 0;
+const Book_1 = require("./Book");
+const { BookOfEnergyTier2Name, BookOfEnergyTier2Desc, BookOfEnergyTier2Price, BookOfEnergyTier2ImagePath } = require('../../../dist/config/env.json');
+class BookOfEnergyTier2 extends Book_1.Book {
+    constructor() {
+        super(BookOfEnergyTier2ImagePath, BookOfEnergyTier2Name, BookOfEnergyTier2Desc, BookOfEnergyTier2Price);
+    }
+}
+exports.BookOfEnergyTier2 = BookOfEnergyTier2;
+
+},{"../../../dist/config/env.json":1,"./Book":37}],40:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BookOfEnergyTier3 = void 0;
+const Book_1 = require("./Book");
+const { BookOfEnergyTier3Name, BookOfEnergyTier3Desc, BookOfEnergyTier3Price, BookOfEnergyTier3ImagePath } = require('../../../dist/config/env.json');
+class BookOfEnergyTier3 extends Book_1.Book {
+    constructor() {
+        super(BookOfEnergyTier3ImagePath, BookOfEnergyTier3Name, BookOfEnergyTier3Desc, BookOfEnergyTier3Price);
+    }
+}
+exports.BookOfEnergyTier3 = BookOfEnergyTier3;
+
+},{"../../../dist/config/env.json":1,"./Book":37}],41:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
-const Book_1 = require("./Book");
+const BookOfEnergyT1_1 = require("./BookOfEnergyT1");
 class Inventory {
     constructor() {
-        this.items = Array.from({ length: 10 }, () => ({
-            item: new Book_1.Book("./dist/Assets/Prototype/buku1.png", "Book"),
+        this.items = [];
+        this.items.push({
+            item: new BookOfEnergyT1_1.BookOfEnergyTier1(),
             amount: 0
-        }));
+        });
     }
     open(inventoryShopElement) {
         if (!inventoryShopElement)
@@ -3012,7 +3067,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{"./Book":36}],38:[function(require,module,exports){
+},{"./BookOfEnergyT1":38}],42:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
@@ -3050,7 +3105,7 @@ class Item {
 }
 exports.Item = Item;
 
-},{}],39:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -3121,7 +3176,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":19,"./GameObjects/ChainedAnimation":20,"./GameObjects/PlayerUnit":28}],40:[function(require,module,exports){
+},{"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":21,"./GameObjects/PlayerUnit":29}],44:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3258,16 +3313,20 @@ class QuestionView {
 }
 exports.QuestionView = QuestionView;
 
-},{}],41:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
-const Book_1 = require("./Items/Book");
+const BookOfEnergyT1_1 = require("./Items/BookOfEnergyT1");
+const BookOfEnergyT2_1 = require("./Items/BookOfEnergyT2");
+const BookOfEnergyT3_1 = require("./Items/BookOfEnergyT3");
 class Shop {
     constructor() {
         this.item =
             [
-                new Book_1.Book("dist/Assets/Prototype/buku1.png", "Book"), new Book_1.Book("dist/Assets/Prototype/buku1.png", "Book"), new Book_1.Book("dist/Assets/Prototype/buku1.png", "Book"), new Book_1.Book("dist/Assets/Prototype/buku1.png", "Book"),
+                new BookOfEnergyT1_1.BookOfEnergyTier1(),
+                new BookOfEnergyT2_1.BookOfEnergyTier2(),
+                new BookOfEnergyT3_1.BookOfEnergyTier3(),
             ];
     }
     open(shopHTML) {
@@ -3322,6 +3381,7 @@ class Shop {
                 itemQtyDiv.type = 'number';
                 itemQtyDiv.classList.add('item-qty', `item-${i}`);
                 itemQtyDiv.value = '1';
+                itemQtyDiv.min = '1';
                 itemQtyDiv.addEventListener('change', () => {
                     const item = document.querySelector(`.item-${i}`);
                     const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
@@ -3386,7 +3446,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"./Items/Book":36}],42:[function(require,module,exports){
+},{"./Items/BookOfEnergyT1":38,"./Items/BookOfEnergyT2":39,"./Items/BookOfEnergyT3":40}],46:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -3431,7 +3491,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],43:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -3505,7 +3565,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],44:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -3562,7 +3622,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":19,"./Classes/GameObjects/GroupAnimation":27}],45:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":28}],49:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3744,4 +3804,4 @@ function handleResize() {
 }
 window.addEventListener("resize", handleResize);
 
-},{"./Classes/API":1,"./Classes/CanvasView":2,"./Classes/GameManager":17,"./Classes/GameObjects/Direction":22,"./Classes/InventoryView":35,"./Classes/Items/Inventory":37,"./Classes/QuestionView":40,"./Classes/Shop":41,"./Classes/ShopView":42,"./Classes/TerminalView":43,"./loadAsset":44}]},{},[45]);
+},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":23,"./Classes/InventoryView":36,"./Classes/Items/Inventory":41,"./Classes/QuestionView":44,"./Classes/Shop":45,"./Classes/ShopView":46,"./Classes/TerminalView":47,"./loadAsset":48}]},{},[49]);

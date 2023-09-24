@@ -1,15 +1,18 @@
 import { ItemStack } from "./ItemStack";
 import { Book } from "./Book";
+import { BookOfEnergyTier1 } from "./BookOfEnergyT1";
 
 export class Inventory {
     private items: ItemStack[];
 
     constructor() {
-        this.items = Array.from({ length: 10 }, () => ({
-            item: new Book("./dist/Assets/Prototype/buku1.png", "Book"),
+        this.items = []
+        this.items.push({
+            item: new BookOfEnergyTier1(),
             amount: 0
-        }));
+        })
     }
+
 
     public open(inventoryShopElement: HTMLDivElement | null) {
         if (!inventoryShopElement) return;

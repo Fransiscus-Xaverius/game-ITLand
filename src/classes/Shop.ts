@@ -1,13 +1,18 @@
 import { Book } from "./Items/Book";
 import { Inventory } from "./Items/Inventory";
 import { Item } from "./Items/Item";
+import { BookOfEnergyTier1 } from "./Items/BookOfEnergyT1";
+import { BookOfEnergyTier2 } from "./Items/BookOfEnergyT2";
+import { BookOfEnergyTier3 } from "./Items/BookOfEnergyT3";
 
 export class Shop {
     private item: Item[];
     constructor() {
         this.item =
             [
-                new Book("dist/Assets/Prototype/buku1.png", "Book"), new Book("dist/Assets/Prototype/buku1.png", "Book"), new Book("dist/Assets/Prototype/buku1.png", "Book"), new Book("dist/Assets/Prototype/buku1.png", "Book"),
+                new BookOfEnergyTier1(),
+                new BookOfEnergyTier2(),
+                new BookOfEnergyTier3(),
             ];
     }
 
@@ -69,6 +74,7 @@ export class Shop {
                 itemQtyDiv.type = 'number';
                 itemQtyDiv.classList.add('item-qty', `item-${i}`);
                 itemQtyDiv.value = '1';
+                itemQtyDiv.min = '1';
                 itemQtyDiv.addEventListener('change', () => {
                     const item: HTMLInputElement | null = document.querySelector(`.item-${i}`);
                     const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`) as HTMLDivElement;
