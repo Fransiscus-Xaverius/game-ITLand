@@ -7,6 +7,7 @@ import { BookOfEnergyTier3 } from "./Items/BookOfEnergyT3";
 
 export class Shop {
     private item: Item[];
+
     constructor() {
         this.item =
             [
@@ -126,6 +127,10 @@ export class Shop {
                 const buyButton = document.createElement('button') as HTMLButtonElement;
                 buyButton.className = 'content buy-button';
                 buyButton.innerHTML = 'Buy';
+                buyButton.addEventListener("click", () => {
+                    const totalPriceDiv = document.querySelector(`.total-price-item-${i}`) as HTMLDivElement;
+                    this.buy(totalPriceDiv)
+                })
 
                 desc.appendChild(itemName);
                 desc.appendChild(mainDesc);
