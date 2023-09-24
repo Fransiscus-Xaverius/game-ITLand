@@ -1,16 +1,26 @@
 import { ItemStack } from "./ItemStack";
 import { Book } from "./Book";
 import { BookOfEnergyTier1 } from "./BookOfEnergyT1";
+import { BookOfEnergyTier2 } from "./BookOfEnergyT2";
+import { BookOfEnergyTier3 } from "./BookOfEnergyT3";
 
 export class Inventory {
     private items: ItemStack[];
 
     constructor() {
-        this.items = []
+        this.items = [];
         this.items.push({
             item: new BookOfEnergyTier1(),
             amount: 0
-        })
+        });
+        this.items.push({
+            item: new BookOfEnergyTier2(),
+            amount: 0
+        });
+        this.items.push({
+            item: new BookOfEnergyTier3(),
+            amount: 0
+        });
     }
 
 
