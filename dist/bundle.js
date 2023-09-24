@@ -1900,21 +1900,31 @@ class GameManager {
         this.api = new API_1.API();
         this.setQuestionView(questionView);
     }
+    // public addToInventory(index: number, amount: number) {
+    //     this.inventoryView?.getInventory()?.addItemOwned(index, amount);
+    // }
+    setInventory() {
+        var _a, _b;
+        const tempInventory = (_a = this.inventoryView) === null || _a === void 0 ? void 0 : _a.getInventory();
+        (_b = this.shopView) === null || _b === void 0 ? void 0 : _b.setInventory(tempInventory);
+    }
     load() {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function* () {
+            (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
             alert('await load');
             let map = { tile: [], entity: [] };
-            map = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.gameStart()); //use non-null assertion operator.
+            map = yield ((_b = this.api) === null || _b === void 0 ? void 0 : _b.gameStart()); //use non-null assertion operator.
             alert(map.tile.length);
             //redoing load grid because the constructor cannot be an async function.
             this.grid = new Grid_1.Grid({ x: 100, y: 100 });
             this.grid.redo(map.tile, map.entity);
             this.grid.addEntity(this.player.units[0]);
             this.setActivePlayerUnit(this.player.units[0]);
-            (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.setPlayer(this.player);
-            yield ((_c = this.questionView) === null || _c === void 0 ? void 0 : _c.load());
-            (_d = this.questionView) === null || _d === void 0 ? void 0 : _d.refreshStats();
+            (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.setPlayer(this.player);
+            yield ((_d = this.questionView) === null || _d === void 0 ? void 0 : _d.load());
+            (_e = this.questionView) === null || _e === void 0 ? void 0 : _e.refreshStats();
+            this.setInventory();
         });
     }
     getQuestionView() {
@@ -2194,7 +2204,8 @@ class GameManager {
         (_a = this.canvasView) === null || _a === void 0 ? void 0 : _a.render(this.grid);
         (_c = (_b = this.canvasView) === null || _b === void 0 ? void 0 : _b.getContext()) === null || _c === void 0 ? void 0 : _c.fillText("fps : " + (1 / this.deltaTime).toFixed(3), 10, 80);
     }
-    buy() {
+    buyInit() {
+        const shopItem = document.querySelectorAll(".card-shop");
     }
 }
 exports.GameManager = GameManager;
@@ -3074,6 +3085,9 @@ class Inventory {
             amount: 0
         });
     }
+    addItemOwned(index, amount) {
+        this.items[index].amount += amount;
+    }
     open(inventoryShopElement) {
         if (!inventoryShopElement)
             return;
@@ -3369,6 +3383,8 @@ const BookOfEnergyT2_1 = require("./Items/BookOfEnergyT2");
 const BookOfEnergyT3_1 = require("./Items/BookOfEnergyT3");
 class Shop {
     constructor() {
+        this.player = null;
+        this.inventory = null;
         this.item =
             [
                 new BookOfEnergyT1_1.BookOfEnergyTier1(),
@@ -3376,9 +3392,17 @@ class Shop {
                 new BookOfEnergyT3_1.BookOfEnergyTier3(),
             ];
     }
-    buy(itemIndex) {
+    setPlayer(player) {
+        this.player = player;
+    }
+    setInventory(inventory) {
+        this.inventory = inventory;
+    }
+    totalPrice(itemIndex, qty) {
         const currentItem = this.item[itemIndex];
         const currentPrice = currentItem.getItemPrice();
+        const totalPrice = currentPrice * qty;
+        return totalPrice;
     }
     open(shopHTML) {
         if (shopHTML) {
@@ -3483,7 +3507,37 @@ class Shop {
                 buyButton.className = 'content buy-button';
                 buyButton.innerHTML = 'Buy';
                 buyButton.onclick = () => {
-                    this.buy(i);
+                    var _a, _b;
+                    const currentItem = this.item[i];
+                    const totalPriceDiv = document.querySelector(`.total-price-item-${i}`);
+                    const itemAmount = document.querySelector(`.item-${i}`);
+                    if (itemAmount) {
+                        if (totalPriceDiv) {
+                            if (this.player) {
+                                const playerGold = this.player.getGold();
+                                const priceContent = totalPriceDiv.textContent;
+                                // const price = parseInt(priceContent.split(' ')[1]);
+                                const price = 10;
+                                if (playerGold >= price) {
+                                    const currentQty = parseInt(itemAmount.value) || 0;
+                                    this.player.useGold(price);
+                                    const goldDiv = document.querySelector("#goldAmount");
+                                    if (goldDiv) {
+                                        goldDiv.innerHTML = `Gold: ${(_a = this.player) === null || _a === void 0 ? void 0 : _a.getGold()}`;
+                                    }
+                                    (_b = this.inventory) === null || _b === void 0 ? void 0 : _b.addItemOwned(i, currentQty);
+                                }
+                                else {
+                                    alert('Not enough gold!');
+                                }
+                            }
+                        }
+                    }
+                    // const item: HTMLInputElement | null = document.querySelector(`.item-${i}`);
+                    // if (item) {
+                    //     const currentQty: number = parseInt(item.value) || 0;
+                    //     const totalPrice = this.totalPrice(i, currentQty);
+                    // }
                 };
                 desc.appendChild(itemName);
                 desc.appendChild(mainDesc);
@@ -3510,6 +3564,14 @@ class ShopView {
         this.inventoryShopElement = inventoryShopElement;
         this.shopButton = shopButton;
         this.initShopButton();
+    }
+    setPlayer(player) {
+        var _a;
+        (_a = this.shop) === null || _a === void 0 ? void 0 : _a.setPlayer(player);
+    }
+    setInventory(inventory) {
+        var _a;
+        (_a = this.shop) === null || _a === void 0 ? void 0 : _a.setInventory(inventory);
     }
     initShopButton() {
         if (this.shopButton) {

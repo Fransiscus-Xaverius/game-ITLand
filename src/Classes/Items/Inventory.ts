@@ -1,5 +1,4 @@
 import { ItemStack } from "./ItemStack";
-import { Book } from "./Book";
 import { BookOfEnergyTier1 } from "./BookOfEnergyT1";
 import { BookOfEnergyTier2 } from "./BookOfEnergyT2";
 import { BookOfEnergyTier3 } from "./BookOfEnergyT3";
@@ -23,6 +22,9 @@ export class Inventory {
         });
     }
 
+    public addItemOwned(index: number, amount: number) {
+        this.items[index].amount += amount;
+    }
 
     public open(inventoryShopElement: HTMLDivElement | null) {
         if (!inventoryShopElement) return;

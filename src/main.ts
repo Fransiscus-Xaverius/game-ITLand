@@ -11,6 +11,7 @@ import { Inventory } from './Classes/Items/Inventory';
 import { Question } from './Classes/Question';
 import { QuestionView } from './Classes/QuestionView';
 import { API } from './Classes/API';
+import { Player } from './Classes/Player';
 
 window.onload = async () => {
     //Main game
@@ -157,7 +158,7 @@ window.onload = async () => {
         }
         console.clear()
     })
-    
+
 }
 function fullscreenHandler() {
     const isFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;

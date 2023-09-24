@@ -4,9 +4,12 @@ import { Item } from "./Items/Item";
 import { BookOfEnergyTier1 } from "./Items/BookOfEnergyT1";
 import { BookOfEnergyTier2 } from "./Items/BookOfEnergyT2";
 import { BookOfEnergyTier3 } from "./Items/BookOfEnergyT3";
+import { Player } from "./Player";
 
 export class Shop {
     private item: Item[];
+    private player: Player | null = null;
+    private inventory: Inventory | null = null;
 
     constructor() {
         this.item =
@@ -17,6 +20,19 @@ export class Shop {
             ];
     }
 
+    public setPlayer(player: Player | null) {
+        this.player = player;
+    }
+    public setInventory(inventory: Inventory | null) {
+        this.inventory = inventory;
+    }
+
+    public totalPrice(itemIndex: number, qty: number) {
+        const currentItem = this.item[itemIndex];
+        const currentPrice = currentItem.getItemPrice();
+        const totalPrice = currentPrice * qty;
+        return totalPrice;
+    }
     public open(shopHTML: HTMLDivElement | null) {
         if (shopHTML) {
             shopHTML.innerHTML = ""
@@ -127,10 +143,39 @@ export class Shop {
                 const buyButton = document.createElement('button') as HTMLButtonElement;
                 buyButton.className = 'content buy-button';
                 buyButton.innerHTML = 'Buy';
-                buyButton.addEventListener("click", () => {
+                buyButton.onclick = () => {
+                    const currentItem = this.item[i];
                     const totalPriceDiv = document.querySelector(`.total-price-item-${i}`) as HTMLDivElement;
-                    this.buy(totalPriceDiv)
-                })
+                    const itemAmount: HTMLInputElement | null = document.querySelector(`.item-${i}`);
+
+                    if (itemAmount) {
+                        if (totalPriceDiv) {
+                            if (this.player) {
+                                const playerGold = this.player.getGold() as number;
+                                const priceContent = totalPriceDiv.textContent as string;
+                                // const price = parseInt(priceContent.split(' ')[1]);
+                                const price = 10;
+                                if (playerGold >= price) {
+                                    const currentQty: number = parseInt(itemAmount.value) || 0;
+                                    this.player.useGold(price);
+                                    const goldDiv = document.querySelector("#goldAmount") as HTMLDivElement;
+                                    if (goldDiv) {
+                                        goldDiv!.innerHTML = `Gold: ${this.player?.getGold()}`;
+                                    }
+                                    this.inventory?.addItemOwned(i,currentQty);
+                                } else {
+                                    alert('Not enough gold!');
+                                }
+                            }
+                        }
+                    }
+                    // const item: HTMLInputElement | null = document.querySelector(`.item-${i}`);
+                    // if (item) {
+                    //     const currentQty: number = parseInt(item.value) || 0;
+                    //     const totalPrice = this.totalPrice(i, currentQty);
+
+                    // }
+                }
 
                 desc.appendChild(itemName);
                 desc.appendChild(mainDesc);

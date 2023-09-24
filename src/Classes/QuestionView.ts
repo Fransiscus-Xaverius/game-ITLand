@@ -6,46 +6,46 @@ export class QuestionView {
 
     private QuestionArea: HTMLDivElement | null = null;
     private UpdateBtn: HTMLButtonElement | null = null;
-    private api:API | null = null;
-    private curQuestion:Question | null = null;
+    private api: API | null = null;
+    private curQuestion: Question | null = null;
     private AButton: HTMLButtonElement | null = null;
     private BButton: HTMLButtonElement | null = null;
     private CButton: HTMLButtonElement | null = null;
     private DButton: HTMLButtonElement | null = null;
     private energyDiv: HTMLDivElement | null = null;
     private goldDiv: HTMLDivElement | null = null;
-    private player:Player | null = null;
+    private player: Player | null = null;
 
-    constructor(QuestionArea: HTMLDivElement, UpdateButton: HTMLButtonElement, api:API, a:HTMLButtonElement, b:HTMLButtonElement, c:HTMLButtonElement, d:HTMLButtonElement, energyDiv:HTMLDivElement, goldDiv:HTMLDivElement){
+    constructor(QuestionArea: HTMLDivElement, UpdateButton: HTMLButtonElement, api: API, a: HTMLButtonElement, b: HTMLButtonElement, c: HTMLButtonElement, d: HTMLButtonElement, energyDiv: HTMLDivElement, goldDiv: HTMLDivElement) {
         this.setQuestionArea(QuestionArea);
         this.setUpdateBtn(UpdateButton);
         this.setAPI(api);
-        this.setButtons(a,b,c,d);
+        this.setButtons(a, b, c, d);
         this.setEnergyDiv(energyDiv);
         this.setGoldDiv(goldDiv);
     }
 
-    public setGoldDiv(goldDiv:HTMLDivElement){
+    public setGoldDiv(goldDiv: HTMLDivElement) {
         this.goldDiv = goldDiv;
     }
 
-    public setButtons(a:HTMLButtonElement, b:HTMLButtonElement, c:HTMLButtonElement, d:HTMLButtonElement){
+    public setButtons(a: HTMLButtonElement, b: HTMLButtonElement, c: HTMLButtonElement, d: HTMLButtonElement) {
         this.AButton = a;
         this.BButton = b;
         this.CButton = c;
         this.DButton = d;
     }
 
-    public refreshStats(){
-        if(this.energyDiv){
+    public refreshStats() {
+        if (this.energyDiv) {
             this.energyDiv!.innerHTML = `Energy: ${this.player?.getEnergy()}`;
         }
-        if(this.goldDiv){
+        if (this.goldDiv) {
             this.goldDiv!.innerHTML = `Gold: ${this.player?.getGold()}`;
         }
     }
 
-    public async load(){
+    public async load() {
         await this.UpdateQuestion();
     }
 
@@ -53,36 +53,36 @@ export class QuestionView {
         this.QuestionArea = QuestionArea;
     }
 
-    public setUpdateBtn(UpdateBtn:HTMLButtonElement | null): void{
+    public setUpdateBtn(UpdateBtn: HTMLButtonElement | null): void {
         this.UpdateBtn = UpdateBtn;
     }
 
-    public setCurQuestion(question:Question| null): void{
+    public setCurQuestion(question: Question | null): void {
         this.curQuestion = question;
     }
 
-    public setAPI(api:API){
+    public setAPI(api: API) {
         this.api = api;
     }
 
-    public setEnergyDiv(energyDiv:HTMLDivElement | null): void{
+    public setEnergyDiv(energyDiv: HTMLDivElement | null): void {
         this.energyDiv = energyDiv;
     }
 
-    public setPlayer(player:Player): void{
+    public setPlayer(player: Player): void {
         this.player = player;
     }
 
-    public async checkAnswer(self:HTMLButtonElement, val:string): Promise<void>{
-        if(val==""){ self.style.display = 'none' }
-        else{
+    public async checkAnswer(self: HTMLButtonElement, val: string): Promise<void> {
+        if (val == "") { self.style.display = 'none' }
+        else {
             this.player?.addEnergy(10);
             this.refreshStats();
             await this.UpdateQuestion();
         }
     }
 
-    public resetAnswerButtons(a:HTMLButtonElement, b:HTMLButtonElement, c:HTMLButtonElement, d:HTMLButtonElement){
+    public resetAnswerButtons(a: HTMLButtonElement, b: HTMLButtonElement, c: HTMLButtonElement, d: HTMLButtonElement) {
         //Object passed here to make sure it isn't null.
         a.value = "";
         b.value = "";
@@ -94,18 +94,18 @@ export class QuestionView {
         d.style.display = "inline";
     }
 
-    public async UpdateQuestion(){
+    public async UpdateQuestion() {
         const reqAPI = await this.api?.getQuestion();
-        let q:Question = {text:reqAPI?.text!, a:reqAPI?.a!, b:reqAPI?.b!, c:reqAPI?.c!, d:reqAPI?.d!, answer:reqAPI?.answer!};
+        let q: Question = { text: reqAPI?.text!, a: reqAPI?.a!, b: reqAPI?.b!, c: reqAPI?.c!, d: reqAPI?.d!, answer: reqAPI?.answer! };
         this.curQuestion = q;
-        if(this.QuestionArea!=null && this.curQuestion !=null && this.AButton && this.BButton && this.CButton && this.DButton){
+        if (this.QuestionArea != null && this.curQuestion != null && this.AButton && this.BButton && this.CButton && this.DButton) {
             this.QuestionArea!.innerHTML = this.curQuestion!.text;
             this.AButton!.innerHTML = `A. ${q.a}`;
             this.BButton!.innerHTML = `B. ${q.b}`;
             this.CButton!.innerHTML = `C. ${q.c}`;
             this.DButton!.innerHTML = `D. ${q.d}`;
             this.resetAnswerButtons(this.AButton, this.BButton, this.CButton, this.DButton);
-            switch(q.answer){
+            switch (q.answer) {
                 case 'a':
                     this.AButton.value = "ans";
                     break;
@@ -123,8 +123,8 @@ export class QuestionView {
             }
 
         }
-        else{
-            if(this.QuestionArea == null) alert('QuestionArea is null! please tell a nearby admin');
+        else {
+            if (this.QuestionArea == null) alert('QuestionArea is null! please tell a nearby admin');
         }
     }
 

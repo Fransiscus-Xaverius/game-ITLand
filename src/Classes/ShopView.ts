@@ -1,3 +1,5 @@
+import { Inventory } from "./Items/Inventory";
+import { Player } from "./Player";
 import { Shop } from "./Shop";
 
 export class ShopView {
@@ -10,6 +12,13 @@ export class ShopView {
         this.inventoryShopElement = inventoryShopElement;
         this.shopButton = shopButton;
         this.initShopButton();
+    }
+    public setPlayer(player: Player | null) {
+        this.shop?.setPlayer(player);
+    }
+
+    public setInventory(inventory: any) {
+        this.shop?.setInventory(inventory);
     }
 
     private initShopButton(): void {
