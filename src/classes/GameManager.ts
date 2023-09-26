@@ -156,7 +156,7 @@ export class GameManager {
                                 alert('this is a type of rock');
                                 //if energy is enough
                                 if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
-                                    alert('good enough');
+                                    // alert('good enough');
                                     //if equipment is good enough
                                     if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) {
                                         this.removeGridEntity(coords.x, (coords.y - 1));
@@ -202,18 +202,34 @@ export class GameManager {
                         case 1: //equiping a pickaxe
                             const entityname = temp.getEntityName();
                             if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
-                                alert('this is a type of rock');
-                                //if equipment is good enough
-                                if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) this.removeGridEntity(coords.x, (coords.y + 1));
-                                //if equipment is not good enough
-                                else alert('equipment is not good enough');
+                                if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
+                                    // alert('good enough');
+                                    //if equipment is good enough
+                                    if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) {
+                                        this.removeGridEntity(coords.x, (coords.y + 1));
+                                        this.player.useEnergy(temp.getRequiredEnergy());
+                                        this.questionView?.refreshStats();
+                                    }
+                                    //if equipment is not good enough
+                                    else this.logActivity(`Upgrade your pickaxe to destroy this block!`);
+                                }
+                                else this.logActivity(`You need more energy to do this action!`);
                             }
                             else {
                                 this.logActivity('You cannot use a pickaxe to break this object! (wrong equipment used)')
                             }
                             break;
                         case 2: //equipping a sword
-                            break;
+                        switch (temp.getEntityName()) {
+                            case 'Chest':
+                                alert('this is a chest');
+                                this.removeGridEntity(coords.x, (coords.y + 1));
+                                break;
+                            default: //wrong equipment to destroy entity
+                                alert('this is the wrong tool!');
+                                break;
+                        }
+                        break;
                         default:
                             alert('Invalid action!');
                             break;
@@ -230,17 +246,33 @@ export class GameManager {
                         case 1: //equiping a pickaxe
                             const entityname = temp.getEntityName();
                             if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
-                                alert('this is a type of rock');
-                                //if equipment is good enough
-                                if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) this.removeGridEntity((coords.x - 1), (coords.y));
-                                //if equipment is not good enough
-                                else alert('equipment is not good enough');
+                                if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
+                                    // alert('good enough');
+                                    //if equipment is good enough
+                                    if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) {
+                                        this.removeGridEntity((coords.x-1), (coords.y));
+                                        this.player.useEnergy(temp.getRequiredEnergy());
+                                        this.questionView?.refreshStats();
+                                    }
+                                    //if equipment is not good enough
+                                    else this.logActivity(`Upgrade your pickaxe to destroy this block!`);
+                                }
+                                else this.logActivity(`You need more energy to do this action!`);
                             }
                             else {
                                 alert('this is the wrong tool');
                             }
                             break;
                         case 2: //equipping a sword
+                            switch (temp.getEntityName()) {
+                                case 'Chest':
+                                    alert('this is a chest');
+                                    this.removeGridEntity((coords.x-1), (coords.y));
+                                    break;
+                                default: //wrong equipment to destroy entity
+                                    alert('this is the wrong tool!');
+                                    break;
+                            }
                             break;
                         default:
                             alert('Invalid action!');
@@ -258,17 +290,33 @@ export class GameManager {
                         case 1: //equiping a pickaxe
                             const entityname = temp.getEntityName();
                             if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
-                                alert('this is a type of rock');
-                                //if equipment is good enough
-                                if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) this.removeGridEntity((coords.x + 1), (coords.y));
-                                //if equipment is not good enough
-                                else alert('equipment is not good enough');
+                                if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
+                                    // alert('good enough');
+                                    //if equipment is good enough
+                                    if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) {
+                                        this.removeGridEntity((coords.x+1), (coords.y));
+                                        this.player.useEnergy(temp.getRequiredEnergy());
+                                        this.questionView?.refreshStats();
+                                    }
+                                    //if equipment is not good enough
+                                    else this.logActivity(`Upgrade your pickaxe to destroy this block!`);
+                                }
+                                else this.logActivity(`You need more energy to do this action!`);
                             }
                             else {
                                 alert('this is the wrong tool');
                             }
                             break;
                         case 2: //equipping a sword
+                            switch (temp.getEntityName()) {
+                                case 'Chest':
+                                    alert('this is a chest');
+                                    this.removeGridEntity((coords.x+1), (coords.y));
+                                    break;
+                                default: //wrong equipment to destroy entity
+                                    alert('this is the wrong tool!');
+                                    break;
+                            }
                             break;
                         default:
                             alert('Invalid action!');
