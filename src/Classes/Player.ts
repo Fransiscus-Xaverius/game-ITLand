@@ -1,3 +1,4 @@
+import { GameManager } from "./GameManager";
 import { Animation } from "./GameObjects/Animation";
 import { ChainedAnimation } from "./GameObjects/ChainedAnimation";
 import { PlayerUnit } from "./GameObjects/PlayerUnit";
@@ -23,8 +24,7 @@ export class Player {
     private shovel: Shovel = new Shovel();
     private pickaxe: Pickaxe = new Pickaxe();
     private inventory: Inventory | null = null;
-
-    private EquipType: number = 0;
+    private gameManager: GameManager | null = null;
     private currentEquipped: EquippableItem | null = null;
     //this tells which item the player is holding
     //0 = not holding anything
@@ -97,25 +97,31 @@ export class Player {
     public getCoordinate(): Point {
         return this.units[0].getCoordinate();
     }
-
-    public getEquipment(): number {
-        return this.EquipType;
-    }
-
+    
     public getCurrentEquipment(): EquippableItem | null {
         return this.currentEquipped;
     }
 
-    public setEquipment(x: number): void {
-        this.EquipType = x;
-    }
-
     public equip(item: EquippableItem): void {
         this.currentEquipped = item;
+        if (this.gameManager) {
+            if (item instanceof Pickaxe) {
+                this.gameManager.logActivity("Equipped Pickaxe");
+            } else if (item instanceof Sword) {
+                this.gameManager.logActivity("Equipped Sword");
+            } else if (item instanceof Shovel) {
+                this.gameManager.logActivity("Equipped Shovel");
+            } else {
+                this.gameManager.logActivity("Unequipped Tools");
+            }
+        }
+    }
+
+    public setGameManager(gameManager: GameManager): void {
+        this.gameManager = gameManager;
     }
 
     public getEquipmentLevels(): { sword: number, pickaxe: number, shovel: number } {
-        // return { sword: this.swordLevel, pickaxe: this.pickaxeLevel, shovel: this.shovelLevel };
         const swordLevel: number = this.sword.getLevel();
         const pickaxeLevel: number = this.pickaxe.getLevel();
         const shovelLevel: number = this.shovel.getLevel();
@@ -136,6 +142,7 @@ export class Player {
     public setInventory(inventory: Inventory): void {
         this.inventory = inventory;
         this.inventory.addItemInit(this);
+        this.inventory.setPlayer(this);
     }
 
 }

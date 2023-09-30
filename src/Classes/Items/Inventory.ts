@@ -98,8 +98,10 @@ export class Inventory {
                 itemUseButton.textContent = "Equip";
                 itemUseButton.classList.add('Equip');
                 itemUseButton.addEventListener("click", () => {
-                    const thisItem = item
-                    this.player?.equip(thisItem);
+                    const thisItem = item;
+                    if(this.player){
+                        this.player.equip(thisItem);
+                    }
                 })
             }
 

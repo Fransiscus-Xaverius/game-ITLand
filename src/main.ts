@@ -104,53 +104,6 @@ window.onload = async () => {
             pUnit?.move(Direction.Right);
         }
 
-        //temp key to change equipment
-        //0 = not equipping anything
-        //1 = pickaxe
-        //2 = sword
-        //3 = shovel
-
-        if (key === 'q') {
-        //     const currentEquipped = game.getPlayer().getCurrentEquipment() as EquippableItem;
-        //     switch (true) {
-        //         case currentEquipped instanceof Pickaxe:
-        //             game.logActivity("Equipped Pickaxe");
-        //             break;
-        //         case currentEquipped instanceof Sword:
-        //             game.logActivity("Equipped Sword");
-        //             break;
-        //         case currentEquipped instanceof Shovel:
-        //             game.logActivity("Equipped Shovel");
-        //             break;
-        //         default:
-        //             game.logActivity("Unequipped Tools");
-        //             break;
-        //     }
-
-            const curEquip = game.getPlayer().getEquipment();
-            switch (curEquip) {
-                case 1: //equip pickaxe 
-                    game.getPlayer().setEquipment(2);
-                    game.logActivity("Equipped Sword");
-                    break;
-                case 2: //equip sword
-                    game.getPlayer().setEquipment(3);
-                    game.logActivity("Equipped Shovel");
-                    break;
-                case 3: //equip shovel
-                    game.getPlayer().setEquipment(0);
-                    game.logActivity("Unequipped Tools");
-                    break;
-                case 0: //not equipping anything
-                    game.getPlayer().setEquipment(1);
-                    game.logActivity("Equipped Pickaxe");
-                    break;
-                default:
-                    break;
-            }
-            alert(game.getPlayer().getEquipment());
-
-        }
 
         if (key === '1') {
             game.getPlayer().setEquipmentLevels(1);
@@ -164,19 +117,23 @@ window.onload = async () => {
 
         if (key === 'i') { //destroy top entity
             //for destroying crates, and stone entities.
-            game.Action(Direction.Up, game.getPlayer().getEquipment());
+            const currentEquipped = game.getPlayer().getCurrentEquipment() as EquippableItem;
+            game.Action(Direction.Up, currentEquipped);
         }
         if (key === 'j') { //destroy left entitiy
             //for destroying crates, and stone entities.
-            game.Action(Direction.Left, game.getPlayer().getEquipment());
+            const currentEquipped = game.getPlayer().getCurrentEquipment() as EquippableItem;
+            game.Action(Direction.Left, currentEquipped);
         }
         if (key === 'k') { //destroy bottom entity
             //for destroying crates, and stone entities.
-            game.Action(Direction.Down, game.getPlayer().getEquipment());
+            const currentEquipped = game.getPlayer().getCurrentEquipment() as EquippableItem;
+            game.Action(Direction.Down, currentEquipped);
         }
         if (key === 'l') { //destroy right entity
             //for destroying crates, and stone entities.
-            game.Action(Direction.Right, game.getPlayer().getEquipment());
+            const currentEquipped = game.getPlayer().getCurrentEquipment() as EquippableItem;
+            game.Action(Direction.Right, currentEquipped);
         }
         console.clear()
     })
