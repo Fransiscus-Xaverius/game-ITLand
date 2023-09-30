@@ -1,10 +1,12 @@
-import { Book } from "./Items/Book";
+import { Book } from "./Items/Abstract/Book";
 import { Inventory } from "./Items/Inventory";
 import { Item } from "./Items/Item";
 import { BookOfEnergyTier1 } from "./Items/BookOfEnergyT1";
 import { BookOfEnergyTier2 } from "./Items/BookOfEnergyT2";
 import { BookOfEnergyTier3 } from "./Items/BookOfEnergyT3";
 import { Player } from "./Player";
+import { Sword } from "./Items/Sword";
+import { Pickaxe } from "./Items/Pickaxe";
 
 export class Shop {
     private item: Item[];
@@ -22,6 +24,19 @@ export class Shop {
 
     public setPlayer(player: Player | null) {
         this.player = player;
+        const playerEquipments = this.player?.getAllPlayerEquipment();
+        const pickaxe = playerEquipments?.pickaxe;
+        const sword = playerEquipments?.sword;
+        const shovel = playerEquipments?.shovel;
+        if (pickaxe) {
+            this.item.push(pickaxe);
+        }
+        if (sword) {
+            this.item.push(sword);
+        }
+        if (shovel) {
+            this.item.push(shovel);
+        }
     }
     public setInventory(inventory: Inventory | null) {
         this.inventory = inventory;
@@ -161,19 +176,13 @@ export class Shop {
                                     if (goldDiv) {
                                         goldDiv!.innerHTML = `Gold: ${this.player?.getGold()}`;
                                     }
-                                    this.inventory?.addItemOwned(i,currentQty);
+                                    this.inventory?.addItemOwned(i, currentQty);
                                 } else {
                                     alert('Not enough gold!');
                                 }
                             }
                         }
                     }
-                    // const item: HTMLInputElement | null = document.querySelector(`.item-${i}`);
-                    // if (item) {
-                    //     const currentQty: number = parseInt(item.value) || 0;
-                    //     const totalPrice = this.totalPrice(i, currentQty);
-
-                    // }
                 }
 
                 desc.appendChild(itemName);
@@ -186,7 +195,7 @@ export class Shop {
                 shopHTML.appendChild(shopTemp);
                 shopHTML.style.height = '200px';
                 shopHTML.style.overflow = 'auto';
-            }
-        }
+}
+}
     }
 }
