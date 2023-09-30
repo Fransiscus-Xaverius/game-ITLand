@@ -3516,8 +3516,7 @@ class Shop {
                             if (this.player) {
                                 const playerGold = this.player.getGold();
                                 const priceContent = totalPriceDiv.textContent;
-                                // const price = parseInt(priceContent.split(' ')[1]);
-                                const price = 10;
+                                const price = parseInt(priceContent.split(' ')[1]);
                                 if (playerGold >= price) {
                                     const currentQty = parseInt(itemAmount.value) || 0;
                                     this.player.useGold(price);

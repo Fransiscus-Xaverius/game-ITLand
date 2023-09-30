@@ -153,8 +153,7 @@ export class Shop {
                             if (this.player) {
                                 const playerGold = this.player.getGold() as number;
                                 const priceContent = totalPriceDiv.textContent as string;
-                                // const price = parseInt(priceContent.split(' ')[1]);
-                                const price = 10;
+                                const price = parseInt(priceContent.split(' ')[1]);
                                 if (playerGold >= price) {
                                     const currentQty: number = parseInt(itemAmount.value) || 0;
                                     this.player.useGold(price);
