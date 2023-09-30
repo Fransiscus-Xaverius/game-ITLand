@@ -1,3 +1,3 @@
-export abstract class CanonBall {
+export class CanonBall {
     
 }
