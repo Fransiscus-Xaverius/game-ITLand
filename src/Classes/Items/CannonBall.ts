@@ -1,3 +1,3 @@
-export class CanonBall {
+export class CannonBall {
     
 }
