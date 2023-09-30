@@ -3588,6 +3588,11 @@ class Shop {
                             }
                         }
                     }
+                    // const item: HTMLInputElement | null = document.querySelector(`.item-${i}`);
+                    // if (item) {
+                    //     const currentQty: number = parseInt(item.value) || 0;
+                    //     const totalPrice = this.totalPrice(i, currentQty);
+                    // }
                 };
                 desc.appendChild(itemName);
                 desc.appendChild(mainDesc);
