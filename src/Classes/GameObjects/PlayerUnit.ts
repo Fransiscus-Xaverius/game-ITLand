@@ -1,73 +1,73 @@
 import { SingleCommand } from "../Console/SingleCommand";
 import { Terminal } from "../Console/Terminal";
-import { IEquippable } from "../Items/IEquippable";
+import { IEquippable } from "../Items/Interface/IEquippable";
 import { Inventory } from "../Items/Inventory";
 import { Animation } from "./Animation";
 import { Direction } from "./Direction";
 import { Entity } from "./Entity";
-import { Point } from "./Point";
+import { Point } from "./Type/Point";
 
-export class PlayerUnit extends Entity{
-    private originalCoordinate:Point
-    private isMoving:boolean = false
-    private moveSpeed:number = 1
-    private lerpProgress:number = 0
-    private moveProgress:number = 0
-    private moveIteration:number = 0
-    private direction:Direction = Direction.None;
-    public terminal:Terminal;
-    public inventory:Inventory = new Inventory()
-    public equipped:IEquippable|null = null
+export class PlayerUnit extends Entity {
+    private originalCoordinate: Point
+    private isMoving: boolean = false
+    private moveSpeed: number = 1
+    private lerpProgress: number = 0
+    private moveProgress: number = 0
+    private moveIteration: number = 0
+    private direction: Direction = Direction.None;
+    public terminal: Terminal;
+    public inventory: Inventory = new Inventory()
+    public equipped: IEquippable | null = null
 
-    constructor(coordinate:Point, moveSpeed:number = 1, animations:Animation[]=[]){
+    constructor(coordinate: Point, moveSpeed: number = 1, animations: Animation[] = []) {
         super(coordinate, animations, "Player", 99, 99, 99, 10000)
         this.terminal = new Terminal(this)
-        this.originalCoordinate = {...this.coordinate}
+        this.originalCoordinate = { ...this.coordinate }
         this.setMoveSpeed(moveSpeed)
     }
 
-    public setMoveSpeed(value:number, animationSpeedMult:number = 1):void{
+    public setMoveSpeed(value: number, animationSpeedMult: number = 1): void {
         this.moveSpeed = value;
         const animation = this.getAnimation('walk');
-        if(!animation) return;
+        if (!animation) return;
         animation.animationSpeed = animation.spriteFrameNum * animationSpeedMult * this.moveSpeed
     }
 
     public addAnimation(animation: Animation): void {
         super.addAnimation(animation)
-        if(animation.animationName === 'walk'){
+        if (animation.animationName === 'walk') {
             this.setMoveSpeed(this.moveSpeed)
         }
     }
 
     public createAnimation(animationName: string, spriteSheet: HTMLImageElement, spriteResolution: Point, spriteFrameNum: number, nextAnimation?: string, animationSpeed?: number): void {
         super.createAnimation(animationName, spriteSheet, spriteResolution, spriteFrameNum, nextAnimation, animationSpeed)
-        if(animationName === 'walk'){
+        if (animationName === 'walk') {
             this.setMoveSpeed(this.moveSpeed)
         }
     }
 
-    public getLerpProgress(){
+    public getLerpProgress() {
         return this.lerpProgress
     }
 
-    public setLerpProgress(value:number){
+    public setLerpProgress(value: number) {
         this.lerpProgress = value;
     }
 
     public update(deltaTime: number): void {
         // console.log(this.lerpProgress);
-        if(this.terminal.running) {
-            try{
+        if (this.terminal.running) {
+            try {
                 this.terminal.currentCommand?.Execute()
             }
-            catch(err){
+            catch (err) {
                 console.log('Runtime ' + err)
                 this.terminal.stop()
             }
         }
         var currentCommand = this.terminal.currentCommand
-        
+
         // if(currentCommand instanceof SingleCommand){
         //     const asyncTask = currentCommand.getAsyncTask()
         //     if(asyncTask && this.terminal.running){
@@ -94,42 +94,42 @@ export class PlayerUnit extends Entity{
         //             if(!this.isMoving)this.move(this.direction)
         //         }
         //     }
-            if(this.isMoving)  this.lerpProgress += deltaTime * this.moveSpeed
-            if(this.lerpProgress >= 1){
-                this.moveProgress += 1;
-                this.lerpProgress = 0;
-                this.originalCoordinate = this.coordinate;
-                this.isMoving = false
-                this.playAnimation('idle');
-                // if(this.moveProgress < this.moveIteration) {
-                //     if(!this.terminal.running){
-                //         this.moveProgress  = 0
-                //         this.moveIteration = 0
-                //         this.playAnimation('idle')
-                //         return
-                //     }
-                //     this.move(this.direction)
-                //     return
-                // }
-                // this.moveProgress  = 0
-                // this.moveIteration = 0
-                // currentCommand = currentCommand.jumpNextCommand()
-                // try{
-                //     currentCommand.Execute()
-                // }
-                // catch(err){
-                //     console.log('Runtime ' + err)
-                //     this.terminal.stop()
-                // }
-                // if(!(currentCommand instanceof SingleCommand) || !(currentCommand.getAsyncTask()?.startsWith('move '))){
-                //     this.playAnimation('idle')
-                // }
-            }
+        if (this.isMoving) this.lerpProgress += deltaTime * this.moveSpeed
+        if (this.lerpProgress >= 1) {
+            this.moveProgress += 1;
+            this.lerpProgress = 0;
+            this.originalCoordinate = this.coordinate;
+            this.isMoving = false
+            this.playAnimation('idle');
+            // if(this.moveProgress < this.moveIteration) {
+            //     if(!this.terminal.running){
+            //         this.moveProgress  = 0
+            //         this.moveIteration = 0
+            //         this.playAnimation('idle')
+            //         return
+            //     }
+            //     this.move(this.direction)
+            //     return
+            // }
+            // this.moveProgress  = 0
+            // this.moveIteration = 0
+            // currentCommand = currentCommand.jumpNextCommand()
+            // try{
+            //     currentCommand.Execute()
+            // }
+            // catch(err){
+            //     console.log('Runtime ' + err)
+            //     this.terminal.stop()
+            // }
+            // if(!(currentCommand instanceof SingleCommand) || !(currentCommand.getAsyncTask()?.startsWith('move '))){
+            //     this.playAnimation('idle')
+            // }
+        }
     }
 
     public getSpriteCoordinate(): Point {
-        if(!this.isMoving) return this.coordinate;
-        const coordDiff:Point = {
+        if (!this.isMoving) return this.coordinate;
+        const coordDiff: Point = {
             x: this.originalCoordinate.x - this.coordinate.x,
             y: this.originalCoordinate.y - this.coordinate.y,
         }
@@ -140,42 +140,42 @@ export class PlayerUnit extends Entity{
         }
     }
 
-    public getX(){
+    public getX() {
         return this.coordinate.x;
     }
 
-    public getY(){
+    public getY() {
         return this.coordinate.y;
     }
 
     //In-game actions
 
-    public Dig(){
-        
+    public Dig() {
+
     }
 
-    public Mine(){ //play mining animation
-        if(this.isMoving) return;
+    public Mine() { //play mining animation
+        if (this.isMoving) return;
         this.isMoving = true;
         this.playAnimation('walk');
     }
 
-    public move(direction: Direction):void{
-        if(this.isMoving || direction == Direction.None) return;
+    public move(direction: Direction): void {
+        if (this.isMoving || direction == Direction.None) return;
         this.isMoving = true;
         // this.playAnimation('walk')
         switch (direction) {
             case Direction.Left:
-            this.playAnimation('walk_reverse')
-            break;
+                this.playAnimation('walk_reverse')
+                break;
             case Direction.Right:
-            this.playAnimation('walk')
-            break;
-        default:
-            this.playAnimation('walk')
-            break;
+                this.playAnimation('walk')
+                break;
+            default:
+                this.playAnimation('walk')
+                break;
         }
-        const nextCoord:Point = {...this.coordinate};
+        const nextCoord: Point = { ...this.coordinate };
         switch (direction) {
             case Direction.Up:
                 nextCoord.y -= 1;
@@ -193,9 +193,9 @@ export class PlayerUnit extends Entity{
                 break;
         }
 
-        try{
+        try {
             this.setCoordinate(nextCoord, true)
         }
-        catch(err){}
+        catch (err) { }
     }
 }

@@ -1,4 +1,4 @@
-import { Book } from "./Book";
+import { Book } from "./Abstract/Book";
 const { BookOfEnergyTier3Name, BookOfEnergyTier3Desc, BookOfEnergyTier3Price, BookOfEnergyTier3ImagePath } = require('../../../dist/config/env.json');
 
 export class BookOfEnergyTier3 extends Book {

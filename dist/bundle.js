@@ -11,7 +11,20 @@ module.exports={
     "BookOfEnergyTier3Name": "Book Of Energy Tier 3",
     "BookOfEnergyTier3Desc": "Mastery energy guide, +<number> energy.",
     "BookOfEnergyTier3Price": 300,
-    "BookOfEnergyTier3ImagePath": "dist/Assets/Prototype/buku3.png"
+    "BookOfEnergyTier3ImagePath": "dist/Assets/Prototype/buku3.png",
+
+    "SwordName": "Sword Name",
+    "SwordDesc": "Sword Description",
+    "SwordPrice": 1000,
+    "SwordImagePath": "dist/Assets/Prototype/buku3.png",
+    "ShovelName": "Shovel Name",
+    "ShovelDesc": "Shovel Description",
+    "ShovelPrice": 150,
+    "ShovelImagePath": "dist/Assets/Prototype/buku3.png",
+    "PickaxeName": "Pickaxe Name",
+    "PickaxeDesc": "Pickaxe Description",
+    "PickaxePrice": 200,
+    "PickaxeImagePath": "dist/Assets/Prototype/buku3.png"
 }
 },{}],2:[function(require,module,exports){
 "use strict";
@@ -1907,6 +1920,7 @@ class GameManager {
         var _a, _b;
         const tempInventory = (_a = this.inventoryView) === null || _a === void 0 ? void 0 : _a.getInventory();
         (_b = this.shopView) === null || _b === void 0 ? void 0 : _b.setInventory(tempInventory);
+        this.player.setInventory(tempInventory);
     }
     load() {
         var _a, _b, _c, _d, _e;
@@ -1988,205 +2002,283 @@ class GameManager {
     //2 = break
     //Direction.Under = dig
     Action(direction, actionType) {
-        var _a, _b, _c, _d;
         const coords = this.player.getCoordinate();
-        let temp = null;
-        switch (direction) {
-            case Direction_1.Direction.Up:
-                temp = this.grid.getEntity((coords.x), (coords.y - 1));
-                if (temp) {
-                    switch (actionType) {
-                        case 0: //not equipping anything.
-                            alert('Equip something');
-                            break;
-                        case 1: //equiping a pickaxe
-                            const entityname = temp.getEntityName();
-                            if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
-                                alert('this is a type of rock');
-                                //if energy is enough
-                                if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
-                                    // alert('good enough');
-                                    //if equipment is good enough
-                                    if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel())) {
-                                        this.removeGridEntity(coords.x, (coords.y - 1));
-                                        this.player.useEnergy(temp.getRequiredEnergy());
-                                        (_a = this.questionView) === null || _a === void 0 ? void 0 : _a.refreshStats();
-                                    }
-                                    //if equipment is not good enough
-                                    else
-                                        this.logActivity(`Upgrade your pickaxe to destroy this block!`);
-                                }
-                                else
-                                    this.logActivity(`You need more energy to do this action!`);
-                            }
-                            else {
-                                this.logActivity('You cannot use a pickaxe to break this object! (wrong equipment used)');
-                            }
-                            break;
-                        case 2: //equipping a sword
-                            switch (temp.getEntityName()) {
-                                case 'Chest':
-                                    alert('this is a chest');
-                                    this.removeGridEntity(coords.x, (coords.y - 1));
-                                    break;
-                                default: //wrong equipment to destroy entity
-                                    alert('this is the wrong tool!');
-                                    break;
-                            }
-                            break;
-                        default:
-                            alert('Invalid action!');
-                            break;
-                    }
-                }
-                else {
-                    alert('no entity object');
-                }
+        const temp = this.getGridEntity(coords, direction);
+        if (!temp) {
+            alert('No entity object');
+            return;
+        }
+        switch (actionType) {
+            case 0: //not equipping anything.
+                this.alertEquipSomething();
                 break;
-            case Direction_1.Direction.Down:
-                temp = this.grid.getEntity((coords.x), (coords.y + 1));
-                if (temp) {
-                    switch (actionType) {
-                        case 0: //not equipping anything.
-                            alert('Equip something');
-                            break;
-                        case 1: //equiping a pickaxe
-                            const entityname = temp.getEntityName();
-                            if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
-                                if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
-                                    // alert('good enough');
-                                    //if equipment is good enough
-                                    if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel())) {
-                                        this.removeGridEntity(coords.x, (coords.y + 1));
-                                        this.player.useEnergy(temp.getRequiredEnergy());
-                                        (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.refreshStats();
-                                    }
-                                    //if equipment is not good enough
-                                    else
-                                        this.logActivity(`Upgrade your pickaxe to destroy this block!`);
-                                }
-                                else
-                                    this.logActivity(`You need more energy to do this action!`);
-                            }
-                            else {
-                                this.logActivity('You cannot use a pickaxe to break this object! (wrong equipment used)');
-                            }
-                            break;
-                        case 2: //equipping a sword
-                            switch (temp.getEntityName()) {
-                                case 'Chest':
-                                    alert('this is a chest');
-                                    this.removeGridEntity(coords.x, (coords.y + 1));
-                                    break;
-                                default: //wrong equipment to destroy entity
-                                    alert('this is the wrong tool!');
-                                    break;
-                            }
-                            break;
-                        default:
-                            alert('Invalid action!');
-                            break;
-                    }
-                }
+            case 1: //equipping a pickaxe
+                this.actionWithPickaxe(temp);
                 break;
-            case Direction_1.Direction.Left:
-                temp = this.grid.getEntity((coords.x - 1), (coords.y));
-                if (temp) {
-                    switch (actionType) {
-                        case 0: //not equipping anything.
-                            alert('Equip something');
-                            break;
-                        case 1: //equiping a pickaxe
-                            const entityname = temp.getEntityName();
-                            if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
-                                if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
-                                    // alert('good enough');
-                                    //if equipment is good enough
-                                    if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel())) {
-                                        this.removeGridEntity((coords.x - 1), (coords.y));
-                                        this.player.useEnergy(temp.getRequiredEnergy());
-                                        (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.refreshStats();
-                                    }
-                                    //if equipment is not good enough
-                                    else
-                                        this.logActivity(`Upgrade your pickaxe to destroy this block!`);
-                                }
-                                else
-                                    this.logActivity(`You need more energy to do this action!`);
-                            }
-                            else {
-                                alert('this is the wrong tool');
-                            }
-                            break;
-                        case 2: //equipping a sword
-                            switch (temp.getEntityName()) {
-                                case 'Chest':
-                                    alert('this is a chest');
-                                    this.removeGridEntity((coords.x - 1), (coords.y));
-                                    break;
-                                default: //wrong equipment to destroy entity
-                                    alert('this is the wrong tool!');
-                                    break;
-                            }
-                            break;
-                        default:
-                            alert('Invalid action!');
-                            break;
-                    }
-                }
+            case 2: //equipping a sword
+                this.actionWithSword(temp);
                 break;
-            case Direction_1.Direction.Right:
-                temp = this.grid.getEntity((coords.x + 1), (coords.y));
-                if (temp) {
-                    switch (actionType) {
-                        case 0: //not equipping anything.
-                            alert('Equip something');
-                            break;
-                        case 1: //equiping a pickaxe
-                            const entityname = temp.getEntityName();
-                            if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
-                                if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
-                                    // alert('good enough');
-                                    //if equipment is good enough
-                                    if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel())) {
-                                        this.removeGridEntity((coords.x + 1), (coords.y));
-                                        this.player.useEnergy(temp.getRequiredEnergy());
-                                        (_d = this.questionView) === null || _d === void 0 ? void 0 : _d.refreshStats();
-                                    }
-                                    //if equipment is not good enough
-                                    else
-                                        this.logActivity(`Upgrade your pickaxe to destroy this block!`);
-                                }
-                                else
-                                    this.logActivity(`You need more energy to do this action!`);
-                            }
-                            else {
-                                alert('this is the wrong tool');
-                            }
-                            break;
-                        case 2: //equipping a sword
-                            switch (temp.getEntityName()) {
-                                case 'Chest':
-                                    alert('this is a chest');
-                                    this.removeGridEntity((coords.x + 1), (coords.y));
-                                    break;
-                                default: //wrong equipment to destroy entity
-                                    alert('this is the wrong tool!');
-                                    break;
-                            }
-                            break;
-                        default:
-                            alert('Invalid action!');
-                            break;
-                    }
-                }
-                break;
-            case Direction_1.Direction.Under: //shovel
-                break;
+            case 3:
+                this.actionWithShovel(temp);
             default:
+                alert('Invalid action!');
                 break;
         }
     }
+    getGridEntity(coords, direction) {
+        switch (direction) {
+            case Direction_1.Direction.Up:
+                return this.grid.getEntity(coords.x, coords.y - 1);
+            case Direction_1.Direction.Down:
+                return this.grid.getEntity(coords.x, coords.y + 1);
+            case Direction_1.Direction.Left:
+                return this.grid.getEntity(coords.x - 1, coords.y);
+            case Direction_1.Direction.Right:
+                return this.grid.getEntity(coords.x + 1, coords.y);
+            case Direction_1.Direction.Under:
+                return null; // TODO: implement shovel action
+            default:
+                return null;
+        }
+    }
+    alertEquipSomething() {
+        alert('Equip something');
+    }
+    actionWithPickaxe(entity) {
+        var _a;
+        const entityName = entity.getEntityName();
+        if (entityName == "Rock" || entityName == "Iron_ore" || entityName == "Silver_ore" || entityName == "Gold_ore") {
+            if (this.isGoodEnough(this.player.getEnergy(), entity.getRequiredEnergy())) {
+                if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, entity.getEntityLevel())) {
+                    this.removeGridEntity(entity.getCoordinate().x, entity.getCoordinate().y);
+                    this.player.useEnergy(entity.getRequiredEnergy());
+                    (_a = this.questionView) === null || _a === void 0 ? void 0 : _a.refreshStats();
+                }
+                else {
+                    this.logActivity(`Upgrade your pickaxe to destroy this block!`);
+                }
+            }
+            else {
+                this.logActivity(`You need more energy to do this action!`);
+            }
+        }
+        else {
+            this.logActivity('You cannot use a pickaxe to break this object! (wrong equipment used)');
+        }
+    }
+    actionWithSword(entity) {
+        switch (entity.getEntityName()) {
+            case 'Chest':
+                alert('This is a chest');
+                this.removeGridEntity(entity.getCoordinate().x, entity.getCoordinate().y);
+                break;
+            default:
+                alert('This is the wrong tool!');
+                break;
+        }
+    }
+    actionWithShovel(entity) {
+        // switch (entity.getEntityName()) {
+        //     case 'Chest':
+        //         alert('This is a chest');
+        //         this.removeGridEntity(entity.getCoordinate().x, entity.getCoordinate().y);
+        //         break;
+        //     default:
+        //         alert('This is the wrong tool!');
+        //         break;
+        // }
+    }
+    // public Action(direction: Direction, actionType: number) {
+    //     const coords = this.player.getCoordinate();
+    //     let temp = null;
+    //     switch (direction) {
+    //         case Direction.Up:
+    //             temp = this.grid.getEntity((coords.x), (coords.y - 1));
+    //             if (temp) {
+    //                 switch (actionType) {
+    //                     case 0: //not equipping anything.
+    //                         alert('Equip something');
+    //                         break;
+    //                     case 1: //equiping a pickaxe
+    //                         const entityname = temp.getEntityName();
+    //                         if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
+    //                             alert('this is a type of rock');
+    //                             //if energy is enough
+    //                             if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
+    //                                 // alert('good enough');
+    //                                 //if equipment is good enough
+    //                                 if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) {
+    //                                     this.removeGridEntity(coords.x, (coords.y - 1));
+    //                                     this.player.useEnergy(temp.getRequiredEnergy());
+    //                                     this.questionView?.refreshStats();
+    //                                 }
+    //                                 //if equipment is not good enough
+    //                                 else this.logActivity(`Upgrade your pickaxe to destroy this block!`);
+    //                             }
+    //                             else this.logActivity(`You need more energy to do this action!`);
+    //                         }
+    //                         else {
+    //                             this.logActivity('You cannot use a pickaxe to break this object! (wrong equipment used)')
+    //                         }
+    //                         break;
+    //                     case 2: //equipping a sword
+    //                         switch (temp.getEntityName()) {
+    //                             case 'Chest':
+    //                                 alert('this is a chest');
+    //                                 this.removeGridEntity(coords.x, (coords.y - 1));
+    //                                 break;
+    //                             default: //wrong equipment to destroy entity
+    //                                 alert('this is the wrong tool!');
+    //                                 break;
+    //                         }
+    //                         break;
+    //                     default:
+    //                         alert('Invalid action!');
+    //                         break;
+    //                 }
+    //             }
+    //             else {
+    //                 alert('no entity object');
+    //             }
+    //             break;
+    //         case Direction.Down:
+    //             temp = this.grid.getEntity((coords.x), (coords.y + 1));
+    //             if (temp) {
+    //                 switch (actionType) {
+    //                     case 0: //not equipping anything.
+    //                         alert('Equip something');
+    //                         break;
+    //                     case 1: //equiping a pickaxe
+    //                         const entityname = temp.getEntityName();
+    //                         if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
+    //                             if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
+    //                                 // alert('good enough');
+    //                                 //if equipment is good enough
+    //                                 if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) {
+    //                                     this.removeGridEntity(coords.x, (coords.y + 1));
+    //                                     this.player.useEnergy(temp.getRequiredEnergy());
+    //                                     this.questionView?.refreshStats();
+    //                                 }
+    //                                 //if equipment is not good enough
+    //                                 else this.logActivity(`Upgrade your pickaxe to destroy this block!`);
+    //                             }
+    //                             else this.logActivity(`You need more energy to do this action!`);
+    //                         }
+    //                         else {
+    //                             this.logActivity('You cannot use a pickaxe to break this object! (wrong equipment used)')
+    //                         }
+    //                         break;
+    //                     case 2: //equipping a sword
+    //                         switch (temp.getEntityName()) {
+    //                             case 'Chest':
+    //                                 alert('this is a chest');
+    //                                 this.removeGridEntity(coords.x, (coords.y + 1));
+    //                                 break;
+    //                             default: //wrong equipment to destroy entity
+    //                                 alert('this is the wrong tool!');
+    //                                 break;
+    //                         }
+    //                         break;
+    //                     default:
+    //                         alert('Invalid action!');
+    //                         break;
+    //                 }
+    //             }
+    //             break;
+    //         case Direction.Left:
+    //             temp = this.grid.getEntity((coords.x - 1), (coords.y));
+    //             if (temp) {
+    //                 switch (actionType) {
+    //                     case 0: //not equipping anything.
+    //                         alert('Equip something');
+    //                         break;
+    //                     case 1: //equiping a pickaxe
+    //                         const entityname = temp.getEntityName();
+    //                         if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
+    //                             if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
+    //                                 // alert('good enough');
+    //                                 //if equipment is good enough
+    //                                 if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) {
+    //                                     this.removeGridEntity((coords.x - 1), (coords.y));
+    //                                     this.player.useEnergy(temp.getRequiredEnergy());
+    //                                     this.questionView?.refreshStats();
+    //                                 }
+    //                                 //if equipment is not good enough
+    //                                 else this.logActivity(`Upgrade your pickaxe to destroy this block!`);
+    //                             }
+    //                             else this.logActivity(`You need more energy to do this action!`);
+    //                         }
+    //                         else {
+    //                             alert('this is the wrong tool');
+    //                         }
+    //                         break;
+    //                     case 2: //equipping a sword
+    //                         switch (temp.getEntityName()) {
+    //                             case 'Chest':
+    //                                 alert('this is a chest');
+    //                                 this.removeGridEntity((coords.x - 1), (coords.y));
+    //                                 break;
+    //                             default: //wrong equipment to destroy entity
+    //                                 alert('this is the wrong tool!');
+    //                                 break;
+    //                         }
+    //                         break;
+    //                     default:
+    //                         alert('Invalid action!');
+    //                         break;
+    //                 }
+    //             }
+    //             break;
+    //         case Direction.Right:
+    //             temp = this.grid.getEntity((coords.x + 1), (coords.y));
+    //             if (temp) {
+    //                 switch (actionType) {
+    //                     case 0: //not equipping anything.
+    //                         alert('Equip something');
+    //                         break;
+    //                     case 1: //equiping a pickaxe
+    //                         const entityname = temp.getEntityName();
+    //                         if (entityname == "Rock" || entityname == "Iron_ore" || entityname == "Silver_ore" || entityname == "Gold_ore") {
+    //                             if (this.isGoodEnough(this.player.getEnergy(), temp.getRequiredEnergy())) {
+    //                                 // alert('good enough');
+    //                                 //if equipment is good enough
+    //                                 if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, temp.getEntityLevel()!)) {
+    //                                     this.removeGridEntity((coords.x + 1), (coords.y));
+    //                                     this.player.useEnergy(temp.getRequiredEnergy());
+    //                                     this.questionView?.refreshStats();
+    //                                 }
+    //                                 //if equipment is not good enough
+    //                                 else this.logActivity(`Upgrade your pickaxe to destroy this block!`);
+    //                             }
+    //                             else this.logActivity(`You need more energy to do this action!`);
+    //                         }
+    //                         else {
+    //                             alert('this is the wrong tool');
+    //                         }
+    //                         break;
+    //                     case 2: //equipping a sword
+    //                         switch (temp.getEntityName()) {
+    //                             case 'Chest':
+    //                                 alert('this is a chest');
+    //                                 this.removeGridEntity((coords.x + 1), (coords.y));
+    //                                 break;
+    //                             default: //wrong equipment to destroy entity
+    //                                 alert('this is the wrong tool!');
+    //                                 break;
+    //                         }
+    //                         break;
+    //                     default:
+    //                         alert('Invalid action!');
+    //                         break;
+    //                 }
+    //             }
+    //             break;
+    //         case Direction.Under: //shovel
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    // }
     setActivePlayerUnit(value) {
         var _a, _b;
         (_a = this.terminalView) === null || _a === void 0 ? void 0 : _a.setTerminal((_b = value === null || value === void 0 ? void 0 : value.terminal) !== null && _b !== void 0 ? _b : null);
@@ -2258,7 +2350,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./API":2,"./GameObjects/Direction":23,"./GameObjects/Grid":27,"./Player":43}],19:[function(require,module,exports){
+},{"./API":2,"./GameObjects/Direction":23,"./GameObjects/Grid":27,"./Player":48}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -2921,7 +3013,7 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/Terminal":14,"../Items/Inventory":41,"./Direction":23,"./Entity":24}],30:[function(require,module,exports){
+},{"../Console/Terminal":14,"../Items/Inventory":43,"./Direction":23,"./Entity":24}],30:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rock = void 0;
@@ -3062,20 +3154,58 @@ exports.InventoryView = InventoryView;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Book = void 0;
-const Item_1 = require("./Item");
+const ConsumableItem_1 = require("./ConsumableItem");
 //book is not equipable, rather a consumeable.
-class Book extends Item_1.Item {
+class Book extends ConsumableItem_1.ConsumableItem {
     constructor(imagePath, itemName, itemDesc, itemPrice) {
         super(imagePath, itemName, itemDesc, itemPrice);
     }
 }
 exports.Book = Book;
 
-},{"./Item":42}],38:[function(require,module,exports){
+},{"./ConsumableItem":38}],38:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ConsumableItem = void 0;
+const Item_1 = require("../Item");
+class ConsumableItem extends Item_1.Item {
+    constructor(imagePath, itemName, itemDesc, itemPrice) {
+        super(imagePath, itemName, itemDesc, itemPrice);
+    }
+}
+exports.ConsumableItem = ConsumableItem;
+
+},{"../Item":44}],39:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EquippableItem = void 0;
+const Item_1 = require("../Item");
+class EquippableItem extends Item_1.Item {
+    constructor(imagePath, itemName, itemDesc, itemPrice) {
+        super(imagePath, itemName, itemDesc, itemPrice);
+        this.level = 1;
+        this.speed = 1;
+    }
+    getLevel() {
+        return this.level;
+    }
+    setLevel(level) {
+        this.level = level;
+    }
+    getSpeed() {
+        return this.speed;
+    }
+    setSpeed(speed) {
+        this.speed = speed;
+    }
+}
+exports.EquippableItem = EquippableItem;
+
+},{"../Item":44}],40:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookOfEnergyTier1 = void 0;
-const Book_1 = require("./Book");
+const Book_1 = require("./Abstract/Book");
 const { BookOfEnergyTier1Name, BookOfEnergyTier1Desc, BookOfEnergyTier1Price, BookOfEnergyTier1ImagePath } = require('../../../dist/config/env.json');
 class BookOfEnergyTier1 extends Book_1.Book {
     constructor() {
@@ -3084,11 +3214,11 @@ class BookOfEnergyTier1 extends Book_1.Book {
 }
 exports.BookOfEnergyTier1 = BookOfEnergyTier1;
 
-},{"../../../dist/config/env.json":1,"./Book":37}],39:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/Book":37}],41:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookOfEnergyTier2 = void 0;
-const Book_1 = require("./Book");
+const Book_1 = require("./Abstract/Book");
 const { BookOfEnergyTier2Name, BookOfEnergyTier2Desc, BookOfEnergyTier2Price, BookOfEnergyTier2ImagePath } = require('../../../dist/config/env.json');
 class BookOfEnergyTier2 extends Book_1.Book {
     constructor() {
@@ -3097,11 +3227,11 @@ class BookOfEnergyTier2 extends Book_1.Book {
 }
 exports.BookOfEnergyTier2 = BookOfEnergyTier2;
 
-},{"../../../dist/config/env.json":1,"./Book":37}],40:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/Book":37}],42:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookOfEnergyTier3 = void 0;
-const Book_1 = require("./Book");
+const Book_1 = require("./Abstract/Book");
 const { BookOfEnergyTier3Name, BookOfEnergyTier3Desc, BookOfEnergyTier3Price, BookOfEnergyTier3ImagePath } = require('../../../dist/config/env.json');
 class BookOfEnergyTier3 extends Book_1.Book {
     constructor() {
@@ -3110,30 +3240,49 @@ class BookOfEnergyTier3 extends Book_1.Book {
 }
 exports.BookOfEnergyTier3 = BookOfEnergyTier3;
 
-},{"../../../dist/config/env.json":1,"./Book":37}],41:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/Book":37}],43:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
 const BookOfEnergyT1_1 = require("./BookOfEnergyT1");
 const BookOfEnergyT2_1 = require("./BookOfEnergyT2");
 const BookOfEnergyT3_1 = require("./BookOfEnergyT3");
-const Book_1 = require("./Book");
+const ConsumableItem_1 = require("./Abstract/ConsumableItem");
+const EquippableItem_1 = require("./Abstract/EquippableItem");
 class Inventory {
     constructor() {
-        this.items = [
-            {
-                item: new BookOfEnergyT1_1.BookOfEnergyTier1(),
-                amount: 0
-            },
-            {
-                item: new BookOfEnergyT2_1.BookOfEnergyTier2(),
-                amount: 0
-            },
-            {
-                item: new BookOfEnergyT3_1.BookOfEnergyTier3(),
-                amount: 0
-            }
-        ];
+        this.player = null;
+        this.items = [];
+        this.items.push({
+            item: new BookOfEnergyT1_1.BookOfEnergyTier1(),
+            amount: 0
+        });
+        this.items.push({
+            item: new BookOfEnergyT2_1.BookOfEnergyTier2(),
+            amount: 0
+        });
+        this.items.push({
+            item: new BookOfEnergyT3_1.BookOfEnergyTier3(),
+            amount: 0
+        });
+    }
+    setPlayer(player) {
+        this.player = player;
+    }
+    addItemInit(player) {
+        const playerEquipments = player === null || player === void 0 ? void 0 : player.getAllPlayerEquipment();
+        const pickaxe = playerEquipments === null || playerEquipments === void 0 ? void 0 : playerEquipments.pickaxe;
+        const sword = playerEquipments === null || playerEquipments === void 0 ? void 0 : playerEquipments.sword;
+        const shovel = playerEquipments === null || playerEquipments === void 0 ? void 0 : playerEquipments.shovel;
+        if (pickaxe) {
+            this.items.push({ item: pickaxe, amount: 1 });
+        }
+        if (sword) {
+            this.items.push({ item: shovel, amount: 1 });
+        }
+        if (shovel) {
+            this.items.push({ item: sword, amount: 1 });
+        }
     }
     addItemOwned(index, amount) {
         this.items[index].amount += amount;
@@ -3163,9 +3312,18 @@ class Inventory {
             ownedElement.classList.add('inventory-item-owned', 'card-title');
             ownedElement.innerText = `${amount}`;
             const itemUseButton = document.createElement('button');
-            if (item instanceof Book_1.Book) {
+            if (item instanceof ConsumableItem_1.ConsumableItem) {
                 itemUseButton.textContent = "Consume";
                 itemUseButton.classList.add('Consume');
+            }
+            else if (item instanceof EquippableItem_1.EquippableItem) {
+                itemUseButton.textContent = "Equip";
+                itemUseButton.classList.add('Equip');
+                itemUseButton.addEventListener("click", () => {
+                    var _a;
+                    const thisItem = item;
+                    (_a = this.player) === null || _a === void 0 ? void 0 : _a.equip(thisItem);
+                });
             }
             cardBody.appendChild(nameElement);
             cardBody.appendChild(ownedElement);
@@ -3178,7 +3336,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{"./Book":37,"./BookOfEnergyT1":38,"./BookOfEnergyT2":39,"./BookOfEnergyT3":40}],42:[function(require,module,exports){
+},{"./Abstract/ConsumableItem":38,"./Abstract/EquippableItem":39,"./BookOfEnergyT1":40,"./BookOfEnergyT2":41,"./BookOfEnergyT3":42}],44:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
@@ -3216,13 +3374,55 @@ class Item {
 }
 exports.Item = Item;
 
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Pickaxe = void 0;
+const EquippableItem_1 = require("./Abstract/EquippableItem");
+const { PickaxeName, PickaxeDesc, PickaxePrice, PickaxeImagePath } = require('../../../dist/config/env.json');
+class Pickaxe extends EquippableItem_1.EquippableItem {
+    constructor() {
+        super(PickaxeImagePath, PickaxeName, PickaxeDesc, PickaxePrice);
+    }
+}
+exports.Pickaxe = Pickaxe;
+
+},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":39}],46:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Shovel = void 0;
+const EquippableItem_1 = require("./Abstract/EquippableItem");
+const { ShovelName, ShovelDesc, ShovelPrice, ShovelImagePath } = require('../../../dist/config/env.json');
+class Shovel extends EquippableItem_1.EquippableItem {
+    constructor() {
+        super(ShovelImagePath, ShovelName, ShovelDesc, ShovelPrice);
+    }
+}
+exports.Shovel = Shovel;
+
+},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":39}],47:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Sword = void 0;
+const EquippableItem_1 = require("./Abstract/EquippableItem");
+const { SwordName, SwordDesc, SwordPrice, SwordImagePath } = require('../../../dist/config/env.json');
+class Sword extends EquippableItem_1.EquippableItem {
+    constructor() {
+        super(SwordImagePath, SwordName, SwordDesc, SwordPrice);
+    }
+}
+exports.Sword = Sword;
+
+},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":39}],48:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
 const Animation_1 = require("./GameObjects/Animation");
 const ChainedAnimation_1 = require("./GameObjects/ChainedAnimation");
 const PlayerUnit_1 = require("./GameObjects/PlayerUnit");
+const Pickaxe_1 = require("./Items/Pickaxe");
+const Shovel_1 = require("./Items/Shovel");
+const Sword_1 = require("./Items/Sword");
 class Player {
     //this tells which item the player is holding
     //0 = not holding anything
@@ -3238,10 +3438,12 @@ class Player {
         //each item changes the level depending on the tier
         //Ex: Stone Pick = 1, Iron Pick = 2, Damascus Steel Pick = 3
         //this interacts with entityType and Level.
-        this.swordLevel = 0;
-        this.pickaxeLevel = 0;
-        this.shovelLevel = 0;
+        this.sword = new Sword_1.Sword();
+        this.shovel = new Shovel_1.Shovel();
+        this.pickaxe = new Pickaxe_1.Pickaxe();
+        this.inventory = null;
         this.EquipType = 0;
+        this.currentEquipped = null;
         const p1 = new PlayerUnit_1.PlayerUnit({ x: 1, y: 1 });
         p1.addAnimation(new ChainedAnimation_1.ChainedAnimation(p1, "idle", Animation_1.Animation.assets['player_idle'], { x: 32, y: 32 }, 2, -1, 1));
         p1.createAnimation("walk", Animation_1.Animation.assets['player_walk'], { x: 32, y: 32 }, 4, "", 4);
@@ -3278,22 +3480,39 @@ class Player {
     getEquipment() {
         return this.EquipType;
     }
+    getCurrentEquipment() {
+        return this.currentEquipped;
+    }
     setEquipment(x) {
         this.EquipType = x;
     }
+    equip(item) {
+        this.currentEquipped = item;
+    }
     getEquipmentLevels() {
-        return { sword: this.swordLevel, pickaxe: this.pickaxeLevel, shovel: this.shovelLevel };
+        // return { sword: this.swordLevel, pickaxe: this.pickaxeLevel, shovel: this.shovelLevel };
+        const swordLevel = this.sword.getLevel();
+        const pickaxeLevel = this.pickaxe.getLevel();
+        const shovelLevel = this.shovel.getLevel();
+        return { sword: swordLevel, pickaxe: pickaxeLevel, shovel: shovelLevel };
+    }
+    getAllPlayerEquipment() {
+        return { sword: this.sword, pickaxe: this.pickaxe, shovel: this.shovel };
     }
     //testing
     setEquipmentLevels(x) {
-        this.swordLevel = x;
-        this.shovelLevel = x;
-        this.pickaxeLevel = x;
+        this.sword.setLevel(x);
+        this.shovel.setLevel(x);
+        this.pickaxe.setLevel(x);
+    }
+    setInventory(inventory) {
+        this.inventory = inventory;
+        this.inventory.addItemInit(this);
     }
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":21,"./GameObjects/PlayerUnit":29}],44:[function(require,module,exports){
+},{"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":21,"./GameObjects/PlayerUnit":29,"./Items/Pickaxe":45,"./Items/Shovel":46,"./Items/Sword":47}],49:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3430,7 +3649,7 @@ class QuestionView {
 }
 exports.QuestionView = QuestionView;
 
-},{}],45:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
@@ -3449,7 +3668,21 @@ class Shop {
             ];
     }
     setPlayer(player) {
+        var _a;
         this.player = player;
+        const playerEquipments = (_a = this.player) === null || _a === void 0 ? void 0 : _a.getAllPlayerEquipment();
+        const pickaxe = playerEquipments === null || playerEquipments === void 0 ? void 0 : playerEquipments.pickaxe;
+        const sword = playerEquipments === null || playerEquipments === void 0 ? void 0 : playerEquipments.sword;
+        const shovel = playerEquipments === null || playerEquipments === void 0 ? void 0 : playerEquipments.shovel;
+        if (pickaxe) {
+            this.item.push(pickaxe);
+        }
+        if (sword) {
+            this.item.push(sword);
+        }
+        if (shovel) {
+            this.item.push(shovel);
+        }
     }
     setInventory(inventory) {
         this.inventory = inventory;
@@ -3588,11 +3821,6 @@ class Shop {
                             }
                         }
                     }
-                    // const item: HTMLInputElement | null = document.querySelector(`.item-${i}`);
-                    // if (item) {
-                    //     const currentQty: number = parseInt(item.value) || 0;
-                    //     const totalPrice = this.totalPrice(i, currentQty);
-                    // }
                 };
                 desc.appendChild(itemName);
                 desc.appendChild(mainDesc);
@@ -3609,7 +3837,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"./Items/BookOfEnergyT1":38,"./Items/BookOfEnergyT2":39,"./Items/BookOfEnergyT3":40}],46:[function(require,module,exports){
+},{"./Items/BookOfEnergyT1":40,"./Items/BookOfEnergyT2":41,"./Items/BookOfEnergyT3":42}],51:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -3662,7 +3890,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],47:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -3748,7 +3976,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],48:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -3805,7 +4033,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":28}],49:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":28}],54:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3915,6 +4143,21 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         //2 = sword
         //3 = shovel
         if (key === 'q') {
+            //     const currentEquipped = game.getPlayer().getCurrentEquipment() as EquippableItem;
+            //     switch (true) {
+            //         case currentEquipped instanceof Pickaxe:
+            //             game.logActivity("Equipped Pickaxe");
+            //             break;
+            //         case currentEquipped instanceof Sword:
+            //             game.logActivity("Equipped Sword");
+            //             break;
+            //         case currentEquipped instanceof Shovel:
+            //             game.logActivity("Equipped Shovel");
+            //             break;
+            //         default:
+            //             game.logActivity("Unequipped Tools");
+            //             break;
+            //     }
             const curEquip = game.getPlayer().getEquipment();
             switch (curEquip) {
                 case 1: //equip pickaxe 
@@ -3987,4 +4230,4 @@ function handleResize() {
 }
 window.addEventListener("resize", handleResize);
 
-},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":23,"./Classes/InventoryView":36,"./Classes/Items/Inventory":41,"./Classes/QuestionView":44,"./Classes/Shop":45,"./Classes/ShopView":46,"./Classes/TerminalView":47,"./loadAsset":48}]},{},[49]);
+},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":23,"./Classes/InventoryView":36,"./Classes/Items/Inventory":43,"./Classes/QuestionView":49,"./Classes/Shop":50,"./Classes/ShopView":51,"./Classes/TerminalView":52,"./loadAsset":53}]},{},[54]);

@@ -1,7 +1,7 @@
 import { Animated } from "./Animated";
 import { Animation } from "./Animation";
 import { Entity } from "./Entity";
-import { Point } from "./Point";
+import { Point } from "./Type/Point";
 
 export abstract class Tile extends Animated{
     public static defaultTileResolution:Point = {x:32, y:32}

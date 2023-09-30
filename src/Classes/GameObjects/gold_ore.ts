@@ -1,7 +1,7 @@
 import { Entity } from "./Entity";
-import { IDestructable } from "./IDestructable";
+import { IDestructable } from "./Interface/IDestructable";
 import { LootTable } from "./LootTable";
-import { Point } from "./Point";
+import { Point } from "./Type/Point";
 import { Animation } from "./Animation";
 import { ChainedAnimation } from "./ChainedAnimation";
 

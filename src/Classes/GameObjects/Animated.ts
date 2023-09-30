@@ -1,6 +1,6 @@
 import { Animation } from "./Animation";
-import { Point } from "./Point";
-import { SpriteFrame } from "./SpriteFrame";
+import { Point } from "./Type/Point";
+import { SpriteFrame } from "./Type/SpriteFrame";
 import { ChainedAnimation } from "./ChainedAnimation";
 import { GroupAnimation } from "./GroupAnimation";
 

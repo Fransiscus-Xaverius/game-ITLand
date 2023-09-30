@@ -5,13 +5,17 @@ import { ShopView } from './Classes/ShopView';
 import loadAsset from './loadAsset'
 import { Shop } from './Classes/Shop';
 import { Direction } from './Classes/GameObjects/Direction';
-import { Point } from './Classes/GameObjects/Point';
+import { Point } from './Classes/GameObjects/Type/Point';
 import { InventoryView } from './Classes/InventoryView';
 import { Inventory } from './Classes/Items/Inventory';
 import { Question } from './Classes/Question';
 import { QuestionView } from './Classes/QuestionView';
 import { API } from './Classes/API';
 import { Player } from './Classes/Player';
+import { EquippableItem } from './Classes/Items/Abstract/EquippableItem';
+import { Pickaxe } from './Classes/Items/Pickaxe';
+import { Sword } from './Classes/Items/Sword';
+import { Shovel } from './Classes/Items/Shovel';
 
 window.onload = async () => {
     //Main game
@@ -105,7 +109,24 @@ window.onload = async () => {
         //1 = pickaxe
         //2 = sword
         //3 = shovel
+
         if (key === 'q') {
+        //     const currentEquipped = game.getPlayer().getCurrentEquipment() as EquippableItem;
+        //     switch (true) {
+        //         case currentEquipped instanceof Pickaxe:
+        //             game.logActivity("Equipped Pickaxe");
+        //             break;
+        //         case currentEquipped instanceof Sword:
+        //             game.logActivity("Equipped Sword");
+        //             break;
+        //         case currentEquipped instanceof Shovel:
+        //             game.logActivity("Equipped Shovel");
+        //             break;
+        //         default:
+        //             game.logActivity("Unequipped Tools");
+        //             break;
+        //     }
+
             const curEquip = game.getPlayer().getEquipment();
             switch (curEquip) {
                 case 1: //equip pickaxe 
@@ -128,6 +149,7 @@ window.onload = async () => {
                     break;
             }
             alert(game.getPlayer().getEquipment());
+
         }
 
         if (key === '1') {

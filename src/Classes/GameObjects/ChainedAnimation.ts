@@ -1,6 +1,6 @@
 import { Animated } from "./Animated";
-import { Point } from "./Point";
-import { SpriteFrame } from "./SpriteFrame";
+import { Point } from "./Type/Point";
+import { SpriteFrame } from "./Type/SpriteFrame";
 import { Animation } from "./Animation";
 
 export class ChainedAnimation extends Animation{

@@ -1,9 +1,9 @@
 import { Animation } from "./Animation";
 import { Tile } from "./Tile";
-import { IDestructable } from "./IDestructable";
+import { IDestructable } from "./Interface/IDestructable";
 import { LootTable } from "./LootTable";
 import { Entity } from "./Entity";
-import { Point } from "./Point";
+import { Point } from "./Type/Point";
 import { GroupAnimation } from "./GroupAnimation";
 
 export class Gravel extends Tile implements IDestructable{

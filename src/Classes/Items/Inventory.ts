@@ -1,27 +1,57 @@
-import { ItemStack } from "./ItemStack";
+import { ItemStack } from "./Type/ItemStack";
 import { BookOfEnergyTier1 } from "./BookOfEnergyT1";
 import { BookOfEnergyTier2 } from "./BookOfEnergyT2";
 import { BookOfEnergyTier3 } from "./BookOfEnergyT3";
-import { Book } from "./Book";
+import { Book } from "./Abstract/Book";
+import { Player } from "../Player";
+import { ConsumableItem } from "./Abstract/ConsumableItem";
+import { EquippableItem } from "./Abstract/EquippableItem";
 
 export class Inventory {
-    private readonly items: ItemStack[];
+    private items: ItemStack[];
+    private player: Player | null = null;
 
     constructor() {
-        this.items = [
-            {
-                item: new BookOfEnergyTier1(),
-                amount: 0
-            },
-            {
-                item: new BookOfEnergyTier2(),
-                amount: 0
-            },
-            {
-                item: new BookOfEnergyTier3(),
-                amount: 0
-            }
-        ];
+        this.items = []
+        this.items.push({
+            item: new BookOfEnergyTier1(),
+            amount: 0
+        });
+        this.items.push({
+            item: new BookOfEnergyTier2(),
+            amount: 0
+        });
+        this.items.push({
+            item: new BookOfEnergyTier3(),
+            amount: 0
+        });
+    }
+
+    public setPlayer(player: Player): void {
+        this.player = player;
+    }
+
+    public addItemInit(player: Player): void {
+        const playerEquipments = player?.getAllPlayerEquipment();
+        const pickaxe = playerEquipments?.pickaxe;
+        const sword = playerEquipments?.sword;
+        const shovel = playerEquipments?.shovel;
+
+        if (pickaxe) {
+            this.items.push(
+                { item: pickaxe, amount: 1 }
+            );
+        }
+        if (sword) {
+            this.items.push(
+                { item: shovel, amount: 1 }
+            );
+        }
+        if (shovel) {
+            this.items.push(
+                { item: sword, amount: 1 }
+            );
+        }
     }
 
     public addItemOwned(index: number, amount: number): void {
@@ -58,12 +88,19 @@ export class Inventory {
             const ownedElement = document.createElement('h4');
             ownedElement.classList.add('inventory-item-owned', 'card-title');
             ownedElement.innerText = `${amount}`;
-            
+
             const itemUseButton = document.createElement('button');
 
-            if (item instanceof Book) {
+            if (item instanceof ConsumableItem) {
                 itemUseButton.textContent = "Consume";
                 itemUseButton.classList.add('Consume');
+            } else if (item instanceof EquippableItem) {
+                itemUseButton.textContent = "Equip";
+                itemUseButton.classList.add('Equip');
+                itemUseButton.addEventListener("click", () => {
+                    const thisItem = item
+                    this.player?.equip(thisItem);
+                })
             }
 
             cardBody.appendChild(nameElement);

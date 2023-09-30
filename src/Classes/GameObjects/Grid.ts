@@ -1,6 +1,6 @@
 import { Entity } from "./Entity";
 import { Tile } from "./Tile";
-import { Point } from "./Point";
+import { Point } from "./Type/Point";
 import { Grass } from "./Grass";
 import { Animated } from "./Animated";
 import { GroupAnimation } from "./GroupAnimation";

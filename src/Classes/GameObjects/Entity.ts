@@ -1,7 +1,7 @@
 import { Animated } from "./Animated";
 import { Animation } from "./Animation";
 import { Grid } from "./Grid";
-import { Point } from "./Point";
+import { Point } from "./Type/Point";
 
 export abstract class Entity extends Animated{
     protected coordinate:Point

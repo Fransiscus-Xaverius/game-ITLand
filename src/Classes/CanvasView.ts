@@ -1,7 +1,7 @@
 import { Tile } from "./GameObjects/Tile"
 import { Entity } from "./GameObjects/Entity"
-import { SpriteFrame } from "./GameObjects/SpriteFrame"
-import { Point } from "./GameObjects/Point"
+import { SpriteFrame } from "./GameObjects/Type/SpriteFrame"
+import { Point } from "./GameObjects/Type/Point"
 import { Grid } from "./GameObjects/Grid"
 import { PlayerUnit } from "./GameObjects/PlayerUnit"
 
