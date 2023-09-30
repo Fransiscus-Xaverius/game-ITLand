@@ -2,15 +2,15 @@
 module.exports={
     "BookOfEnergyTier1Name": "Book Of Energy Tier 1",
     "BookOfEnergyTier1Desc": "Basic energy guide, +<number> energy.",
-    "BookOfEnergyTier1Price": 1000,
+    "BookOfEnergyTier1Price": 100,
     "BookOfEnergyTier1ImagePath": "dist/Assets/Prototype/buku1.png",
     "BookOfEnergyTier2Name": "Book Of Energy Tier 2",
     "BookOfEnergyTier2Desc": "Advanced energy guide, +<number> energy.",
-    "BookOfEnergyTier2Price": 2000,
+    "BookOfEnergyTier2Price": 200,
     "BookOfEnergyTier2ImagePath": "dist/Assets/Prototype/buku2.png",
     "BookOfEnergyTier3Name": "Book Of Energy Tier 3",
     "BookOfEnergyTier3Desc": "Mastery energy guide, +<number> energy.",
-    "BookOfEnergyTier3Price": 3000,
+    "BookOfEnergyTier3Price": 300,
     "BookOfEnergyTier3ImagePath": "dist/Assets/Prototype/buku3.png"
 }
 },{}],2:[function(require,module,exports){
@@ -3117,21 +3117,23 @@ exports.Inventory = void 0;
 const BookOfEnergyT1_1 = require("./BookOfEnergyT1");
 const BookOfEnergyT2_1 = require("./BookOfEnergyT2");
 const BookOfEnergyT3_1 = require("./BookOfEnergyT3");
+const Book_1 = require("./Book");
 class Inventory {
     constructor() {
-        this.items = [];
-        this.items.push({
-            item: new BookOfEnergyT1_1.BookOfEnergyTier1(),
-            amount: 0
-        });
-        this.items.push({
-            item: new BookOfEnergyT2_1.BookOfEnergyTier2(),
-            amount: 0
-        });
-        this.items.push({
-            item: new BookOfEnergyT3_1.BookOfEnergyTier3(),
-            amount: 0
-        });
+        this.items = [
+            {
+                item: new BookOfEnergyT1_1.BookOfEnergyTier1(),
+                amount: 0
+            },
+            {
+                item: new BookOfEnergyT2_1.BookOfEnergyTier2(),
+                amount: 0
+            },
+            {
+                item: new BookOfEnergyT3_1.BookOfEnergyTier3(),
+                amount: 0
+            }
+        ];
     }
     addItemOwned(index, amount) {
         this.items[index].amount += amount;
@@ -3160,8 +3162,14 @@ class Inventory {
             const ownedElement = document.createElement('h4');
             ownedElement.classList.add('inventory-item-owned', 'card-title');
             ownedElement.innerText = `${amount}`;
+            const itemUseButton = document.createElement('button');
+            if (item instanceof Book_1.Book) {
+                itemUseButton.textContent = "Consume";
+                itemUseButton.classList.add('Consume');
+            }
             cardBody.appendChild(nameElement);
             cardBody.appendChild(ownedElement);
+            cardBody.appendChild(itemUseButton);
             cardElement.appendChild(imageElement);
             cardElement.appendChild(cardBody);
             cardContainer.appendChild(cardElement);
@@ -3170,7 +3178,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{"./BookOfEnergyT1":38,"./BookOfEnergyT2":39,"./BookOfEnergyT3":40}],42:[function(require,module,exports){
+},{"./Book":37,"./BookOfEnergyT1":38,"./BookOfEnergyT2":39,"./BookOfEnergyT3":40}],42:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
@@ -3580,11 +3588,6 @@ class Shop {
                             }
                         }
                     }
-                    // const item: HTMLInputElement | null = document.querySelector(`.item-${i}`);
-                    // if (item) {
-                    //     const currentQty: number = parseInt(item.value) || 0;
-                    //     const totalPrice = this.totalPrice(i, currentQty);
-                    // }
                 };
                 desc.appendChild(itemName);
                 desc.appendChild(mainDesc);

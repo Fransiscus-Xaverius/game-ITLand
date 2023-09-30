@@ -2,31 +2,33 @@ import { ItemStack } from "./ItemStack";
 import { BookOfEnergyTier1 } from "./BookOfEnergyT1";
 import { BookOfEnergyTier2 } from "./BookOfEnergyT2";
 import { BookOfEnergyTier3 } from "./BookOfEnergyT3";
+import { Book } from "./Book";
 
 export class Inventory {
-    private items: ItemStack[];
+    private readonly items: ItemStack[];
 
     constructor() {
-        this.items = [];
-        this.items.push({
-            item: new BookOfEnergyTier1(),
-            amount: 0
-        });
-        this.items.push({
-            item: new BookOfEnergyTier2(),
-            amount: 0
-        });
-        this.items.push({
-            item: new BookOfEnergyTier3(),
-            amount: 0
-        });
+        this.items = [
+            {
+                item: new BookOfEnergyTier1(),
+                amount: 0
+            },
+            {
+                item: new BookOfEnergyTier2(),
+                amount: 0
+            },
+            {
+                item: new BookOfEnergyTier3(),
+                amount: 0
+            }
+        ];
     }
 
-    public addItemOwned(index: number, amount: number) {
+    public addItemOwned(index: number, amount: number): void {
         this.items[index].amount += amount;
     }
 
-    public open(inventoryShopElement: HTMLDivElement | null) {
+    public open(inventoryShopElement: HTMLDivElement | null): void {
         if (!inventoryShopElement) return;
 
         inventoryShopElement.innerHTML = "";
@@ -56,9 +58,17 @@ export class Inventory {
             const ownedElement = document.createElement('h4');
             ownedElement.classList.add('inventory-item-owned', 'card-title');
             ownedElement.innerText = `${amount}`;
+            
+            const itemUseButton = document.createElement('button');
+
+            if (item instanceof Book) {
+                itemUseButton.textContent = "Consume";
+                itemUseButton.classList.add('Consume');
+            }
 
             cardBody.appendChild(nameElement);
             cardBody.appendChild(ownedElement);
+            cardBody.appendChild(itemUseButton);
 
             cardElement.appendChild(imageElement);
             cardElement.appendChild(cardBody);
