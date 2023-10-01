@@ -106,13 +106,14 @@ export class GameManager {
         }
     }
 
-    public removeGridEntity(x: number, y: number): void {
+    public async removeGridEntity(x: number, y: number){
         const entName = this.grid.entityGrid[y][x]?.getEntityName();
         const drop = this.grid.entityGrid[y][x]?.entityDrop()!;
         this.player.addGold(drop);
         this.logActivity(`Destroyed a ${entName} and got ${drop} gold coins!`);
         this.questionView?.refreshStats();
         this.grid.entityGrid[y][x] = null;
+        await this.api?.removeEntity(y,x);
     }
 
     public alertEntity(): void {

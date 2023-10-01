@@ -142,6 +142,26 @@ class API {
                 return JSON.stringify(jsonData);
             }
             catch (error) {
+                console.error(error);
+            }
+        });
+    }
+    removeEntity(x, y) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const apiUrl = `http://localhost:3000/entity?x=${x}&y=${y}`;
+                const request = new Request(apiUrl, {
+                    method: 'DELETE',
+                });
+                const response = yield fetch(request);
+                if (!response.ok)
+                    throw new Error('Network Response was not ok');
+                const jsonString = yield response.text();
+                const jsonData = JSON.parse(jsonString);
+                // alert(JSON.stringify(jsonData));
+                return JSON.stringify(jsonData);
+            }
+            catch (error) {
                 console.error("hello");
             }
         });
@@ -1974,13 +1994,16 @@ class GameManager {
         }
     }
     removeGridEntity(x, y) {
-        var _a, _b, _c;
-        const entName = (_a = this.grid.entityGrid[y][x]) === null || _a === void 0 ? void 0 : _a.getEntityName();
-        const drop = (_b = this.grid.entityGrid[y][x]) === null || _b === void 0 ? void 0 : _b.entityDrop();
-        this.player.addGold(drop);
-        this.logActivity(`Destroyed a ${entName} and got ${drop} gold coins!`);
-        (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.refreshStats();
-        this.grid.entityGrid[y][x] = null;
+        var _a, _b, _c, _d;
+        return __awaiter(this, void 0, void 0, function* () {
+            const entName = (_a = this.grid.entityGrid[y][x]) === null || _a === void 0 ? void 0 : _a.getEntityName();
+            const drop = (_b = this.grid.entityGrid[y][x]) === null || _b === void 0 ? void 0 : _b.entityDrop();
+            this.player.addGold(drop);
+            this.logActivity(`Destroyed a ${entName} and got ${drop} gold coins!`);
+            (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.refreshStats();
+            this.grid.entityGrid[y][x] = null;
+            yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.removeEntity(y, x));
+        });
     }
     alertEntity() {
         console.log(this.grid.entities);

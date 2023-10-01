@@ -95,8 +95,32 @@ export class API{
       // alert(JSON.stringify(jsonData));
       return JSON.stringify(jsonData);
     } catch (error) {
+      console.error(error)
+    }
+  }
+
+  public async removeEntity(x:number, y:number){
+    try {
+      const apiUrl = `http://localhost:3000/entity?x=${x}&y=${y}`;
+      const request: RequestInfo = new Request(apiUrl, {
+        method: 'DELETE',
+      })
+      const response = await fetch(request);
+      if(!response.ok) throw new Error('Network Response was not ok');
+      const jsonString = await response.text();
+      const jsonData = JSON.parse(jsonString);
+      // alert(JSON.stringify(jsonData));
+      return JSON.stringify(jsonData);
+    } catch (error) {
       console.error("hello")
     }
   }
+
+  // public async getGold(){
+  //   try{
+  //     const apiUrl = 'http://localhost:3000/map';
+  //   }
+  // }
+
 }
   

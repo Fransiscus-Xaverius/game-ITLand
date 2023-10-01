@@ -53,6 +53,9 @@ window.onload = async () => {
     game.start();
     await game.load();
     const pUnit = game.getActivePlayerUnit();
+
+    
+
     // const map = await game.testAPI();
     // alert(map);
     // soalButton.addEventListener('click', async () => {
