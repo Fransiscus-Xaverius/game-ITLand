@@ -97,7 +97,43 @@ class API {
             }
         });
     }
-    gameStart(x, y, energy) {
+    getPlayerData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let player = {
+                x: Number,
+                y: Number,
+                energy: Number
+            };
+            try {
+                const apiUrl = 'http://localhost:3000/player';
+                const request = new Request(apiUrl, {
+                    method: 'GET',
+                });
+                const response = yield fetch(request);
+                if (!response.ok)
+                    throw new Error('Network Response was not ok');
+                else {
+                    const jsonString = yield response.text();
+                    const jsonData = JSON.parse(jsonString);
+                    player.x = jsonData.x;
+                    player.y = jsonData.y;
+                    player.energy = jsonData.energy;
+                    return player;
+                }
+            }
+            catch (error) {
+                alert(error);
+            }
+        });
+    }
+    initializePlayer(x, y, energy) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let firstTick = yield this.startTick(x, y, energy); //initializes player if player is not defined
+            let playerdata = yield this.getPlayerData();
+            return playerdata;
+        });
+    }
+    gameStart() {
         return __awaiter(this, void 0, void 0, function* () {
             const apiUrl = 'http://localhost:3000/map';
             const apiUrl2 = 'http://localhost:3000/entity';
@@ -126,7 +162,6 @@ class API {
             catch (error) {
                 alert('error getting entity data');
             }
-            let firstTick = yield this.startTick(x, y, energy);
             return map;
         });
     }
@@ -1954,7 +1989,7 @@ class GameManager {
         this.deltaTime = 0;
         this.isRunning = false;
         this.animationFrameId = -1;
-        this.player = new Player_1.Player();
+        this.player = new Player_1.Player(1, 1, 0, 0);
         this.terminalView = null;
         this.grid = new Grid_1.Grid({ x: 100, y: 100 });
         this.canvasView = null;
@@ -1980,21 +2015,23 @@ class GameManager {
         this.player.setGameManager(this);
     }
     load() {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function* () {
             (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
             alert('await load');
             let map = { tile: [], entity: [] };
-            map = yield ((_b = this.api) === null || _b === void 0 ? void 0 : _b.gameStart(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getGold())); //use non-null assertion operator.
+            map = yield ((_b = this.api) === null || _b === void 0 ? void 0 : _b.gameStart()); //use non-null assertion operator.
             alert(map.tile.length);
+            let playerdata = yield ((_c = this.api) === null || _c === void 0 ? void 0 : _c.initializePlayer(1, 1, 0));
+            this.player = new Player_1.Player(Number(playerdata.x), Number(playerdata.y), 0, Number(playerdata.energy));
             //redoing load grid because the constructor cannot be an async function.
             this.grid = new Grid_1.Grid({ x: 100, y: 100 });
             this.grid.redo(map.tile, map.entity);
             this.grid.addEntity(this.player.units[0]);
             this.setActivePlayerUnit(this.player.units[0]);
-            (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.setPlayer(this.player);
-            yield ((_d = this.questionView) === null || _d === void 0 ? void 0 : _d.load());
-            (_e = this.questionView) === null || _e === void 0 ? void 0 : _e.refreshStats();
+            (_d = this.questionView) === null || _d === void 0 ? void 0 : _d.setPlayer(this.player);
+            yield ((_e = this.questionView) === null || _e === void 0 ? void 0 : _e.load());
+            (_f = this.questionView) === null || _f === void 0 ? void 0 : _f.refreshStats();
             this.setInventory();
         });
     }
@@ -3293,7 +3330,7 @@ class Player {
     //1 = sword
     //2 = pickaxe
     //3 = shovel
-    constructor() {
+    constructor(x, y, gold, energy) {
         this.gold = 500;
         this.energy = 0;
         this.units = [];
@@ -3308,7 +3345,7 @@ class Player {
         this.inventory = null;
         this.gameManager = null;
         this.currentEquipped = null;
-        const p1 = new PlayerUnit_1.PlayerUnit({ x: 1, y: 1 });
+        const p1 = new PlayerUnit_1.PlayerUnit({ x: x, y: y });
         p1.addAnimation(new ChainedAnimation_1.ChainedAnimation(p1, "idle", Animation_1.Animation.assets['player_idle'], { x: 32, y: 32 }, 2, -1, 1));
         p1.createAnimation("walk", Animation_1.Animation.assets['player_walk'], { x: 32, y: 32 }, 4, "", 4);
         p1.createAnimation("walk_reverse", Animation_1.Animation.assets['player_walk_reverse'], { x: 32, y: 32 }, 4, "", 4);

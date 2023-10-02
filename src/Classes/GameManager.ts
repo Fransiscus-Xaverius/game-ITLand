@@ -27,7 +27,7 @@ export class GameManager {
     private deltaTime: number = 0;
     private isRunning: Boolean = false;
     private animationFrameId: number = -1;
-    private player: Player = new Player();
+    private player: Player = new Player(1,1,0,0);
     private terminalView: TerminalView | null = null;
     private grid: Grid = new Grid({ x: 100, y: 100 });
     private canvasView: CanvasView | null = null;
@@ -60,8 +60,10 @@ export class GameManager {
         this.shopView?.setPlayer(this.player);
         alert('await load');
         let map: Map = { tile: [], entity: [] }
-        map = await this.api?.gameStart(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getGold())!; //use non-null assertion operator.
+        map = await this.api?.gameStart()!; //use non-null assertion operator.
         alert(map.tile.length);
+        let playerdata = await this.api?.initializePlayer(1,1,0);
+        this.player = new Player(Number(playerdata!.x), Number(playerdata!.y), 0,Number(playerdata!.energy));
         //redoing load grid because the constructor cannot be an async function.
         this.grid = new Grid({ x: 100, y: 100 });
         this.grid.redo(map.tile, map.entity)
@@ -72,8 +74,6 @@ export class GameManager {
         this.questionView?.refreshStats();
         this.setInventory();
     }
-
-    
 
     public async tick(){
         await this.api?.subtick(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getGold())

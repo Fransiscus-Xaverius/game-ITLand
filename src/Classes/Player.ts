@@ -32,8 +32,8 @@ export class Player {
     //2 = pickaxe
     //3 = shovel
 
-    constructor() {
-        const p1 = new PlayerUnit({ x: 1, y: 1 })
+    constructor(x:number, y:number, gold:number, energy:number) {
+        const p1 = new PlayerUnit({ x: x, y: y })
         p1.addAnimation(new ChainedAnimation(
             p1,
             "idle",

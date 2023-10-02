@@ -57,7 +57,39 @@ export class API{
     }   
   }
 
-  public async gameStart(x:number, y:number, energy:number){
+  public async getPlayerData(){
+    let player = {
+      x:Number, 
+      y:Number, 
+      energy:Number
+    }
+    try{
+      const apiUrl = 'http://localhost:3000/player';
+      const request: RequestInfo = new Request(apiUrl, {
+        method: 'GET',
+      })
+      const response = await fetch(request);
+      if(!response.ok) throw new Error('Network Response was not ok');
+      else{
+        const jsonString = await response.text();
+        const jsonData = JSON.parse(jsonString);
+        player.x = jsonData.x;
+        player.y = jsonData.y;
+        player.energy = jsonData.energy;
+        return player;
+      }
+    }catch(error){
+      alert(error);
+    }
+  }
+
+  public async initializePlayer(x:number, y:number, energy:number){
+    let firstTick = await this.startTick(x,y,energy); //initializes player if player is not defined
+    let playerdata = await this.getPlayerData();
+    return playerdata;
+  }
+
+  public async gameStart(){
     const apiUrl = 'http://localhost:3000/map';
     const apiUrl2 = 'http://localhost:3000/entity';
     alert("gamestart api");
@@ -81,7 +113,6 @@ export class API{
     } catch (error) {
       alert('error getting entity data');
     }
-    let firstTick = await this.startTick(x,y,energy);
     return map;
   }
 
