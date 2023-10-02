@@ -97,7 +97,7 @@ class API {
             }
         });
     }
-    gameStart() {
+    gameStart(x, y, energy) {
         return __awaiter(this, void 0, void 0, function* () {
             const apiUrl = 'http://localhost:3000/map';
             const apiUrl2 = 'http://localhost:3000/entity';
@@ -126,7 +126,40 @@ class API {
             catch (error) {
                 alert('error getting entity data');
             }
+            let firstTick = yield this.startTick(x, y, energy);
             return map;
+        });
+    }
+    startTick(x, y, energy) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const apiUrl = `http://localhost:3000/player?x=${x}&y=${y}&energy=${energy}`;
+                const request = new Request(apiUrl, {
+                    method: 'POST',
+                });
+                const response = yield fetch(request);
+                if (!response.ok)
+                    throw new Error('Network Response was not ok');
+            }
+            catch (error) {
+                console.error("hello");
+            }
+        });
+    }
+    subtick(x, y, energy) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const apiUrl = `http://localhost:3000/player?x=${x}&y=${y}&energy=${energy}`;
+                const request = new Request(apiUrl, {
+                    method: 'PUT',
+                });
+                const response = yield fetch(request);
+                if (!response.ok)
+                    throw new Error('Network Response was not ok');
+            }
+            catch (error) {
+                console.error("hello");
+            }
         });
     }
     getEntity() {
@@ -1952,7 +1985,7 @@ class GameManager {
             (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
             alert('await load');
             let map = { tile: [], entity: [] };
-            map = yield ((_b = this.api) === null || _b === void 0 ? void 0 : _b.gameStart()); //use non-null assertion operator.
+            map = yield ((_b = this.api) === null || _b === void 0 ? void 0 : _b.gameStart(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getGold())); //use non-null assertion operator.
             alert(map.tile.length);
             //redoing load grid because the constructor cannot be an async function.
             this.grid = new Grid_1.Grid({ x: 100, y: 100 });
@@ -1965,6 +1998,12 @@ class GameManager {
             this.setInventory();
         });
     }
+    tick() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.subtick(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getGold()));
+        });
+    }
     getQuestionView() {
         return this.questionView;
     }
@@ -1974,11 +2013,6 @@ class GameManager {
     getInventoryView() {
         return this.inventoryView;
     }
-    //API testing
-    // public async testAPI(){
-    //     const string1 = await this.api?.gameStart();
-    //     return string1;
-    // }
     testAPIsoal() {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
@@ -3929,6 +3963,17 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     game.start();
     yield game.load();
     const pUnit = game.getActivePlayerUnit();
+    function subtick() {
+        // Use await inside the regular function to call the async function
+        game.tick()
+            .then(() => {
+            // You can add any post-execution code here
+        })
+            .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+    setInterval(subtick, 1000);
     // const map = await game.testAPI();
     // alert(map);
     // soalButton.addEventListener('click', async () => {

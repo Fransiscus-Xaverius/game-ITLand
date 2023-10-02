@@ -57,7 +57,7 @@ export class API{
     }   
   }
 
-  public async gameStart(){
+  public async gameStart(x:number, y:number, energy:number){
     const apiUrl = 'http://localhost:3000/map';
     const apiUrl2 = 'http://localhost:3000/entity';
     alert("gamestart api");
@@ -81,8 +81,34 @@ export class API{
     } catch (error) {
       alert('error getting entity data');
     }
-    
+    let firstTick = await this.startTick(x,y,energy);
     return map;
+  }
+
+  public async startTick(x:number, y:number, energy:number){
+    try {
+      const apiUrl = `http://localhost:3000/player?x=${x}&y=${y}&energy=${energy}`;
+      const request: RequestInfo = new Request(apiUrl, {
+        method: 'POST',
+      })
+      const response = await fetch(request);
+      if(!response.ok) throw new Error('Network Response was not ok');
+    } catch (error) {
+      console.error("hello")
+    }
+  }
+
+  public async subtick(x:number, y:number, energy:number){
+    try {
+      const apiUrl = `http://localhost:3000/player?x=${x}&y=${y}&energy=${energy}`;
+      const request: RequestInfo = new Request(apiUrl, {
+        method: 'PUT',
+      })
+      const response = await fetch(request);
+      if(!response.ok) throw new Error('Network Response was not ok');
+    } catch (error) {
+      console.error("hello")
+    }
   }
 
   public async getEntity(){
@@ -115,12 +141,5 @@ export class API{
       console.error("hello")
     }
   }
-
-  // public async getGold(){
-  //   try{
-  //     const apiUrl = 'http://localhost:3000/map';
-  //   }
-  // }
-
 }
   

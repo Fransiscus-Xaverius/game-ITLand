@@ -53,8 +53,18 @@ window.onload = async () => {
     game.start();
     await game.load();
     const pUnit = game.getActivePlayerUnit();
+    function subtick() {
+        // Use await inside the regular function to call the async function
+        game.tick()
+          .then(() => {
+            // You can add any post-execution code here
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+    }
 
-    
+    setInterval(subtick, 1000);
 
     // const map = await game.testAPI();
     // alert(map);
@@ -162,5 +172,7 @@ function handleResize() {
         resizeTimeout = null;
     });
 }
+
+
 
 window.addEventListener("resize", handleResize);

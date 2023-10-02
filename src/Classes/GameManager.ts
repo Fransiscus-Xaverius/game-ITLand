@@ -56,12 +56,11 @@ export class GameManager {
         this.player.setGameManager(this);
     }
 
-
     public async load() {
         this.shopView?.setPlayer(this.player);
         alert('await load');
         let map: Map = { tile: [], entity: [] }
-        map = await this.api?.gameStart()!; //use non-null assertion operator.
+        map = await this.api?.gameStart(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getGold())!; //use non-null assertion operator.
         alert(map.tile.length);
         //redoing load grid because the constructor cannot be an async function.
         this.grid = new Grid({ x: 100, y: 100 });
@@ -74,7 +73,11 @@ export class GameManager {
         this.setInventory();
     }
 
+    
 
+    public async tick(){
+        await this.api?.subtick(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getGold())
+    }
 
     public getQuestionView(): QuestionView | null {
         return this.questionView;
@@ -87,12 +90,6 @@ export class GameManager {
     public getInventoryView(): InventoryView | null {
         return this.inventoryView;
     }
-
-    //API testing
-    // public async testAPI(){
-    //     const string1 = await this.api?.gameStart();
-    //     return string1;
-    // }
 
     public async testAPIsoal() {
         const string1 = await this.api?.getQuestion();
@@ -227,7 +224,6 @@ export class GameManager {
                 break;
         }
     }
-    
 
     public setActivePlayerUnit(value: PlayerUnit | null): void {
         this.terminalView?.setTerminal(value?.terminal ?? null)
