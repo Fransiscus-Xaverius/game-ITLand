@@ -64,7 +64,6 @@ class API {
                     throw new Error('Network Response was not ok');
                 const jsonString = yield response.text();
                 const jsonData = JSON.parse(jsonString);
-                // alert(JSON.stringify(jsonData));
                 return JSON.stringify(jsonData);
             }
             catch (error) {
@@ -211,6 +210,30 @@ class API {
             }
             catch (error) {
                 console.error(error);
+            }
+        });
+    }
+    getGold(token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+            }
+            catch (error) {
+            }
+        });
+    }
+    updateGold(token, amount) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const url = `http://localhost:3000/transaction?gold=${amount}`;
+                const requestHeaders = new Headers();
+                requestHeaders.set('Content-Type', 'application/json');
+                requestHeaders.set('token', token);
+                const responseLogin = yield fetch(url, {
+                    method: 'POST',
+                    headers: requestHeaders,
+                });
+            }
+            catch (error) {
             }
         });
     }
@@ -1997,6 +2020,7 @@ class GameManager {
         this.shopView = null;
         this.inventoryView = null;
         this.questionView = null;
+        this.token = "";
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
         this.setShopView(shopView);
@@ -2014,9 +2038,10 @@ class GameManager {
         this.player.setInventory(tempInventory);
         this.player.setGameManager(this);
     }
-    load() {
+    load(token) {
         var _a, _b, _c, _d, _e, _f;
         return __awaiter(this, void 0, void 0, function* () {
+            this.token = token;
             (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
             alert('await load');
             let map = { tile: [], entity: [] };
@@ -2065,15 +2090,16 @@ class GameManager {
         }
     }
     removeGridEntity(x, y) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function* () {
             const entName = (_a = this.grid.entityGrid[y][x]) === null || _a === void 0 ? void 0 : _a.getEntityName();
             const drop = (_b = this.grid.entityGrid[y][x]) === null || _b === void 0 ? void 0 : _b.entityDrop();
+            const transaction = (_c = this.api) === null || _c === void 0 ? void 0 : _c.updateGold(this.token, drop);
             this.player.addGold(drop);
             this.logActivity(`Destroyed a ${entName} and got ${drop} gold coins!`);
-            (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.refreshStats();
+            (_d = this.questionView) === null || _d === void 0 ? void 0 : _d.refreshStats();
             this.grid.entityGrid[y][x] = null;
-            yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.removeEntity(y, x));
+            yield ((_e = this.api) === null || _e === void 0 ? void 0 : _e.removeEntity(y, x));
         });
     }
     alertEntity() {
@@ -4004,7 +4030,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv, goldDiv));
     game.start();
-    yield game.load();
+    yield game.load(userToken);
     const pUnit = game.getActivePlayerUnit();
     function subtick() {
         // Use await inside the regular function to call the async function

@@ -28,7 +28,6 @@ export class API{
       if(!response.ok) throw new Error('Network Response was not ok');
       const jsonString = await response.text();
       const jsonData = JSON.parse(jsonString);
-      // alert(JSON.stringify(jsonData));
       return JSON.stringify(jsonData);
     } catch (error) {
       console.error("hello")
@@ -153,6 +152,30 @@ export class API{
       return JSON.stringify(jsonData);
     } catch (error) {
       console.error(error)
+    }
+  }
+
+  public async getGold(token:string){
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
+
+  public async updateGold(token:string, amount:number){
+    try{
+      const url = `http://localhost:3000/transaction?gold=${amount}`
+      const requestHeaders: HeadersInit = new Headers();
+      requestHeaders.set('Content-Type', 'application/json');
+      requestHeaders.set('token',token);
+      const responseLogin = await fetch(url, {
+        method: 'POST',
+        headers: requestHeaders,
+      });
+
+    } catch(error){
+
     }
   }
 

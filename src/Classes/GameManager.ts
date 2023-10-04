@@ -35,6 +35,7 @@ export class GameManager {
     private shopView: ShopView | null = null;
     private inventoryView: InventoryView | null = null;
     private questionView: QuestionView | null = null;
+    private token: string = "";
 
     constructor(canvasView: CanvasView | null = null, terminalView: TerminalView | null = null, shopView: ShopView | null, inventoryView: InventoryView | null = null, questionView: QuestionView | null = null) {
         this.setCanvasView(canvasView);
@@ -56,7 +57,8 @@ export class GameManager {
         this.player.setGameManager(this);
     }
 
-    public async load() {
+    public async load(token:string) {
+        this.token = token;
         this.shopView?.setPlayer(this.player);
         alert('await load');
         let map: Map = { tile: [], entity: [] }
@@ -106,6 +108,7 @@ export class GameManager {
     public async removeGridEntity(x: number, y: number){
         const entName = this.grid.entityGrid[y][x]?.getEntityName();
         const drop = this.grid.entityGrid[y][x]?.entityDrop()!;
+        const transaction = this.api?.updateGold(this.token, drop);
         this.player.addGold(drop);
         this.logActivity(`Destroyed a ${entName} and got ${drop} gold coins!`);
         this.questionView?.refreshStats();

@@ -59,7 +59,7 @@ window.onload = async () => {
     )
 
     game.start();
-    await game.load();
+    await game.load(userToken!);
     const pUnit = game.getActivePlayerUnit();
     function subtick() {
         // Use await inside the regular function to call the async function
