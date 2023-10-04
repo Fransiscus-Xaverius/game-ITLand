@@ -3995,7 +3995,13 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     const DButton = document.querySelector("#d");
     const energyDiv = document.querySelector("#energyAmount");
     const goldDiv = document.querySelector("#goldAmount");
-    (0, loadAsset_1.default)();
+    (0, loadAsset_1.default)(); //load game asset
+    const userToken = sessionStorage.getItem("game_itland");
+    if (!userToken) {
+        //not logged in
+        alert("Not logged in!");
+        window.location.replace("login.html");
+    }
     const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv, goldDiv));
     game.start();
     yield game.load();

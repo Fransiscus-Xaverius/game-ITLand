@@ -41,7 +41,15 @@ window.onload = async () => {
     const energyDiv = document.querySelector("#energyAmount") as HTMLDivElement;
     const goldDiv = document.querySelector("#goldAmount") as HTMLDivElement;
 
-    loadAsset()
+    loadAsset() //load game asset
+
+    const userToken = sessionStorage.getItem("game_itland");
+    if(!userToken){
+        //not logged in
+        alert("Not logged in!");   
+        window.location.replace("login.html");
+    }
+
     const game = new GameManager(
         new CanvasView(canvas),
         new TerminalView(terminal, executeButton, stopButton),
