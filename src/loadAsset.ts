@@ -8,17 +8,22 @@ export default function loadAsset():void{
     const flowergrass = new Image()
     flowergrass.src = "./dist/Assets/Prototype/itland_ptype_flowergrasstile.png"
     const player_idle = new Image()
-    player_idle.src = "./dist/Assets/Prototype/itland_ptype_player_idle.png"
+    player_idle.src = "./dist/Assets/final/hooman_down_idle.png"
     const player_walk = new Image()
-    player_walk.src = "./dist/Assets/Prototype/itland_ptype_player_walk.png"
+    player_walk.src = "./dist/Assets/final/hooman_down_walk.png"
     const player_dig  = new Image()
-    //player.dig.src
+    player_dig.src = "./dist/Assets/final/hooman_down_dig.png"
     const sand_tile = new Image()
     sand_tile.src = "./dist/Assets/Prototype/sand.png"
     const gravel_tile = new Image()
     gravel_tile.src = "./dist/Assets/Prototype/gravel.png"
+    const granite_tile = new Image()
+    granite_tile.src = "./dist/Assets/final/granite.png"
+    const cave_tile = new Image()
+    cave_tile.src = "./dist/Assets/final/ground(cave).png"
     const player_walk_reverse = new Image();
-    player_walk_reverse.src = "./dist/Assets/Prototype/itland_ptype_player_walk_mirrored.png"
+    // player_walk_reverse.src = "./dist/Assets/Prototype/itland_ptype_player_walk_mirrored.png"
+    player_walk_reverse.src = "./dist/Assets/final/hooman_down_walk.png"
 
     //Other Entities
     const rock = new Image();
@@ -74,6 +79,20 @@ export default function loadAsset():void{
         new GroupAnimation(
             "gravel_tile",
             gravel_tile,
+            {x:32, y:32},
+            1,
+            0
+        ),
+        new GroupAnimation(
+            "granite_tile",
+            granite_tile,
+            {x:32, y:32},
+            1,
+            0
+        ),
+        new GroupAnimation(
+            "cave_tile",
+            cave_tile,
             {x:32, y:32},
             1,
             0

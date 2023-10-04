@@ -15,6 +15,8 @@ import { API } from "../API";
 import { Gold_ore } from "./gold_ore";
 import { Silver_ore } from "./silver_ore";
 import { Iron_ore } from "./iron_ore";
+import { Granite } from "./Granite";
+import { Ground } from "./Ground";
 
 export class Grid {
     public readonly size: Point
@@ -36,43 +38,26 @@ export class Grid {
             this.tiles.push([])
             for (let j = 0; j < this.size.x; j++) {
                 this.entityGrid[i].push(null)
-                if(map[j][i] == "grass"){
-                    this.tiles[i].push(new Grass({x:j,y:i}));
-                }
-                else {
-                    if(map[j][i] == "sand"){
+                switch(map[j][i]){
+                    case 'grass':
+                        this.tiles[i].push(new Grass({x:j,y:i}));
+                        break;
+                    case 'sand':
                         this.tiles[i].push(new Sand({x:j,y:i}));
-                    }
-                    else{
+                        break;
+                    case 'gravel':
                         this.tiles[i].push(new Gravel({x:j, y:i}));
-                    }
+                        break;
+                    case 'granite':
+                        this.tiles[i].push(new Granite({x:j, y:i}));
+                        break;
+                    case 'cave':
+                        this.tiles[i].push(new Ground({x:j, y:i}));
+                        break;
+                    default:
+                        this.tiles[i].push(new Grass({x:j, y:i}));
+                        break;
                 }
-                // if(entity[j][i]=="rock"){
-                //     const rock = new Rock({ x: j, y: i });
-                //     rock.addAnimation(new ChainedAnimation(
-                //         rock,
-                //         'rock',
-                //         Animation.assets['rock'],
-                //         { x: 32, y: 32 },
-                //         1,
-                //         -1,
-                //         1
-                //     ))
-                //     this.addEntity(rock);
-                // }
-                // else if(entity[j][i]=="chest"){
-                //     const chest = new Chest({x:j, y:i});
-                //     chest.addAnimation(new ChainedAnimation(
-                //         chest,
-                //         'chest',
-                //         Animation.assets['chest_normal'],
-                //         {x:32, y:32},
-                //         1,
-                //         -1,
-                //         1
-                //     ))
-                //     this.addEntity(chest);
-                // }
 
                 switch(entity[j][i]){
                     case 'rock':

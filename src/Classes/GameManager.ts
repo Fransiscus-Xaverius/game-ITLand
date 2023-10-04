@@ -60,10 +60,10 @@ export class GameManager {
     public async load(token:string) {
         this.token = token;
         this.shopView?.setPlayer(this.player);
-        alert('await load');
+        // alert('await load');
         let map: Map = { tile: [], entity: [] }
         map = await this.api?.gameStart()!; //use non-null assertion operator.
-        alert(map.tile.length);
+        // alert(map.tile.length);
         let playerdata = await this.api?.initializePlayer(1,1,0);
         this.player = new Player(Number(playerdata!.x), Number(playerdata!.y), 0,Number(playerdata!.energy));
         //redoing load grid because the constructor cannot be an async function.
