@@ -12,6 +12,10 @@ export class Leaderboard {
     this.player = player;
   }
 
+  public async DynamiteAttack(username:string){
+    API.Dynamite
+  }
+
   public async open(leaderboardElement: HTMLDivElement | null) {
     const allUserString: UserStack[] = JSON.parse(await API.getAllUser());
     this.listUser = allUserString;

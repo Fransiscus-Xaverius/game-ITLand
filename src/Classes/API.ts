@@ -1,6 +1,7 @@
 import { json } from 'stream/consumers';
 import {Map} from './Map';
 import { Question } from './Question';
+import { get } from 'http';
 
 export class API{
 
@@ -201,6 +202,18 @@ export class API{
     } catch (error) {
       console.error("hello")
     }
+  }
+
+  public static async Dynamite(username:string){
+    const apiUrl = `http://localhost:3000/attack?username=${username}&gold=-500`;
+    const request: RequestInfo = new Request(apiUrl, {
+      method: 'PUT'
+    })
+    const response = await fetch(request);
+    if(!response.ok) throw new Error('Network Response was not ok');
+    const jsonString = await response.text();
+    const jsonData = JSON.parse(jsonString);
+    return JSON.stringify(jsonData);
   }
 
   public static async getAllUser(){

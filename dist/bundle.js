@@ -3430,10 +3430,18 @@ class Leaderboard {
             let showUser = "";
             for (let i = 0; i < this.listUser.length; i++) {
                 let currentUser = this.listUser[i];
-                showUser += `<div>${currentUser.username} ${currentUser.total_gold}<button class='dyn-attack-${i}'>Dynamite Attack</button><button class='cnn-attack-${i}'>CannonBall Attack</button></div>`;
+                showUser += `<div>${currentUser.username} ${currentUser.total_gold}<button class='dyn-atk dyn-attack-${i}'>Dynamite Attack</button><button class='cnn-atk cnn-attack-${i}'>CannonBall Attack</button></div>`;
             }
             if (leaderboardElement) {
                 leaderboardElement.innerHTML = showUser;
+            }
+            const allDynButton = document.querySelectorAll(".dyn-atk");
+            const allCnnButton = document.querySelectorAll(".cnn-atk");
+            for (let i = 0; i < allCnnButton.length; i++) {
+                allCnnButton[i].addEventListener('click', () => {
+                });
+                allDynButton[i].addEventListener('click', () => {
+                });
             }
         });
     }
