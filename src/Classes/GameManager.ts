@@ -20,6 +20,7 @@ import { EquippableItem } from './Items/Abstract/EquippableItem';
 import { Pickaxe } from './Items/Pickaxe';
 import { Sword } from './Items/Sword';
 import { Shovel } from './Items/Shovel';
+import { json } from 'stream/consumers';
 
 export class GameManager {
     public api: API | null = null;
@@ -78,7 +79,12 @@ export class GameManager {
     }
 
     public async tick(){
-        await this.api?.subtick(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getGold())
+        await this.api?.subtick(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getEnergy())
+        const curGold = await this.api?.getGold(this.token);
+        const jsonString = await curGold!.text();
+        const jsonData = JSON.parse(jsonString);
+        this.player.setGold(parseInt(jsonData.gold));
+        this.questionView?.refreshStats();
     }
 
     public getQuestionView(): QuestionView | null {
@@ -151,7 +157,6 @@ export class GameManager {
     public Action(direction: Direction, tools: EquippableItem) {
         const coords = this.player.getCoordinate();
         const temp = this.getGridEntity(coords, direction);
-
         if (!temp) {
             alert('No entity object');
             return;
@@ -257,7 +262,6 @@ export class GameManager {
 
     public start(): void {
         if (this.isRunning) return
-
         const run = (timestamp: number): void => {
             this.deltaTime = (timestamp - this.lastTimeStamp) / 1000
             this.update()

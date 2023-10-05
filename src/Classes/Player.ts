@@ -117,6 +117,10 @@ export class Player {
         }
     }
 
+    public setGold(gold: number): void{
+        this.gold = gold;
+    }
+
     public setGameManager(gameManager: GameManager): void {
         this.gameManager = gameManager;
     }

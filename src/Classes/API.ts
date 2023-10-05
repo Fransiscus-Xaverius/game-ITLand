@@ -157,9 +157,17 @@ export class API{
 
   public async getGold(token:string){
     try {
-      
+      const url = `http://localhost:3000/gold`;
+      const requestHeaders: HeadersInit = new Headers();
+      requestHeaders.set('Content-Type', 'application/json');
+      requestHeaders.set('token',token);
+      const responseGold = await fetch(url, {
+        method: 'GET',
+        headers: requestHeaders,
+      });
+      return responseGold;
     } catch (error) {
-      
+      alert('error getting gold from API. Please contact a nearby admin');
     }
   }
 
@@ -169,13 +177,12 @@ export class API{
       const requestHeaders: HeadersInit = new Headers();
       requestHeaders.set('Content-Type', 'application/json');
       requestHeaders.set('token',token);
-      const responseLogin = await fetch(url, {
+      const responseGold = await fetch(url, {
         method: 'POST',
         headers: requestHeaders,
       });
-
     } catch(error){
-
+      alert('error updating gold from API. Please contact a nearby admin');
     }
   }
 

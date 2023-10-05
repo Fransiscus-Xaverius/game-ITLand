@@ -216,8 +216,18 @@ class API {
     getGold(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const url = `http://localhost:3000/gold`;
+                const requestHeaders = new Headers();
+                requestHeaders.set('Content-Type', 'application/json');
+                requestHeaders.set('token', token);
+                const responseGold = yield fetch(url, {
+                    method: 'GET',
+                    headers: requestHeaders,
+                });
+                return responseGold;
             }
             catch (error) {
+                alert('error getting gold from API. Please contact a nearby admin');
             }
         });
     }
@@ -228,12 +238,13 @@ class API {
                 const requestHeaders = new Headers();
                 requestHeaders.set('Content-Type', 'application/json');
                 requestHeaders.set('token', token);
-                const responseLogin = yield fetch(url, {
+                const responseGold = yield fetch(url, {
                     method: 'POST',
                     headers: requestHeaders,
                 });
             }
             catch (error) {
+                alert('error updating gold from API. Please contact a nearby admin');
             }
         });
     }
@@ -2061,9 +2072,14 @@ class GameManager {
         });
     }
     tick() {
-        var _a;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
-            yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.subtick(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getGold()));
+            yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.subtick(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getEnergy()));
+            const curGold = yield ((_b = this.api) === null || _b === void 0 ? void 0 : _b.getGold(this.token));
+            const jsonString = yield curGold.text();
+            const jsonData = JSON.parse(jsonString);
+            this.player.setGold(parseInt(jsonData.gold));
+            (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.refreshStats();
         });
     }
     getQuestionView() {
@@ -3442,6 +3458,9 @@ class Player {
                 this.gameManager.logActivity("Unequipped Tools");
             }
         }
+    }
+    setGold(gold) {
+        this.gold = gold;
     }
     setGameManager(gameManager) {
         this.gameManager = gameManager;
