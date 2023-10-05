@@ -268,6 +268,20 @@ class API {
             }
         });
     }
+    static getAllUser() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const apiUrl = `http://localhost:8000/get-all-users`;
+            const request = new Request(apiUrl, {
+                method: 'GET',
+            });
+            const response = yield fetch(request);
+            if (!response.ok)
+                throw new Error('Network Response was not ok');
+            const jsonString = yield response.text();
+            const jsonData = JSON.parse(jsonString);
+            return JSON.stringify(jsonData);
+        });
+    }
 }
 exports.API = API;
 
@@ -2017,7 +2031,7 @@ const Pickaxe_1 = require("./Items/Pickaxe");
 const Sword_1 = require("./Items/Sword");
 const Shovel_1 = require("./Items/Shovel");
 class GameManager {
-    constructor(canvasView = null, terminalView = null, shopView, inventoryView = null, questionView = null) {
+    constructor(canvasView = null, terminalView = null, shopView, inventoryView = null, questionView = null, leaderboardView = null) {
         this.api = null;
         this.lastTimeStamp = 0;
         this.deltaTime = 0;
@@ -2030,6 +2044,7 @@ class GameManager {
         this.activePlayerUnit = null;
         this.shopView = null;
         this.inventoryView = null;
+        this.leaderboardView = null;
         this.questionView = null;
         this.token = "";
         this.setCanvasView(canvasView);
@@ -2038,10 +2053,17 @@ class GameManager {
         this.setInventoryView(inventoryView);
         this.api = new API_1.API();
         this.setQuestionView(questionView);
+        this.setLeaderboardView(leaderboardView);
     }
     // public addToInventory(index: number, amount: number) {
     //     this.inventoryView?.getInventory()?.addItemOwned(index, amount);
     // }
+    setLeaderboardView(leaderboardView) {
+        if (leaderboardView) {
+            this.leaderboardView = leaderboardView;
+            this.leaderboardView.setPlayer(this.player);
+        }
+    }
     setInventory() {
         var _a, _b;
         const tempInventory = (_a = this.inventoryView) === null || _a === void 0 ? void 0 : _a.getInventory();
@@ -2131,8 +2153,7 @@ class GameManager {
         return this.deltaTime;
     }
     //change current equipment
-    changeEquipment() {
-    }
+    changeEquipment() { }
     isGoodEnough(level, target) {
         return level >= target;
     }
@@ -2145,7 +2166,7 @@ class GameManager {
         const coords = this.player.getCoordinate();
         const temp = this.getGridEntity(coords, direction);
         if (!temp) {
-            alert('No entity object');
+            alert("No entity object");
             return;
         }
         if (tools instanceof Pickaxe_1.Pickaxe) {
@@ -2178,12 +2199,15 @@ class GameManager {
         }
     }
     alertEquipSomething() {
-        alert('Equip something');
+        alert("Equip something");
     }
     actionWithPickaxe(entity) {
         var _a;
         const entityName = entity.getEntityName();
-        if (entityName == "Rock" || entityName == "Iron_ore" || entityName == "Silver_ore" || entityName == "Gold_ore") {
+        if (entityName == "Rock" ||
+            entityName == "Iron_ore" ||
+            entityName == "Silver_ore" ||
+            entityName == "Gold_ore") {
             if (this.isGoodEnough(this.player.getEnergy(), entity.getRequiredEnergy())) {
                 if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, entity.getEntityLevel())) {
                     this.removeGridEntity(entity.getCoordinate().x, entity.getCoordinate().y);
@@ -2199,25 +2223,25 @@ class GameManager {
             }
         }
         else {
-            this.logActivity('You cannot use a pickaxe to break this object! (wrong equipment used)');
+            this.logActivity("You cannot use a pickaxe to break this object! (wrong equipment used)");
         }
     }
     actionWithSword(entity) {
         switch (entity.getEntityName()) {
-            case 'Chest':
-                alert('This is a chest');
+            case "Chest":
+                alert("This is a chest");
                 this.removeGridEntity(entity.getCoordinate().x, entity.getCoordinate().y);
                 break;
             default:
-                alert('This is the wrong tool!');
+                alert("This is the wrong tool!");
                 break;
         }
     }
     actionWithShovel(entity) {
         switch (entity.getEntityName()) {
-            case '':
+            case "":
             default:
-                alert('This is the wrong tool!');
+                alert("This is the wrong tool!");
                 break;
         }
     }
@@ -2278,7 +2302,7 @@ class GameManager {
             size: {
                 x: Math.ceil(scaledRenderRadius * 2),
                 y: Math.ceil(scaledRenderRadius * 2),
-            }
+            },
         }, this.player.units);
     }
     render() {
@@ -2292,7 +2316,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./API":2,"./GameObjects/Direction":23,"./GameObjects/Grid":28,"./Items/Pickaxe":47,"./Items/Shovel":48,"./Items/Sword":49,"./Player":50}],19:[function(require,module,exports){
+},{"./API":2,"./GameObjects/Direction":23,"./GameObjects/Grid":28,"./Items/Pickaxe":47,"./Items/Shovel":48,"./Items/Sword":49,"./Player":52}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -3379,6 +3403,82 @@ exports.Sword = Sword;
 
 },{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":41}],50:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Leaderboard = void 0;
+const API_1 = require("./API");
+class Leaderboard {
+    constructor() {
+        this.listUser = [];
+        this.player = null;
+    }
+    setPlayer(player) {
+        this.player = player;
+    }
+    open(leaderboardElement) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const allUserString = JSON.parse(yield API_1.API.getAllUser());
+            this.listUser = allUserString;
+            let showUser = "";
+            for (let i = 0; i < this.listUser.length; i++) {
+                let currentUser = this.listUser[i];
+                showUser += `<div>${currentUser.username} ${currentUser.total_gold}<button class='dyn-attack-${i}'>Dynamite Attack</button><button class='cnn-attack-${i}'>CannonBall Attack</button></div>`;
+            }
+            if (leaderboardElement) {
+                leaderboardElement.innerHTML = showUser;
+            }
+        });
+    }
+}
+exports.Leaderboard = Leaderboard;
+
+},{"./API":2}],51:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LeaderboardView = void 0;
+class LeaderboardView {
+    constructor(leaderboardButton, leaderboard, leaderboardElement) {
+        this.leaderboard = leaderboard;
+        this.leaderboardElement = leaderboardElement;
+        this.leaderboardButton = leaderboardButton;
+        this.initLeaderboard();
+    }
+    setPlayer(player) {
+        if (this.leaderboard) {
+            this.leaderboard.setPlayer(player);
+        }
+    }
+    initLeaderboard() {
+        if (this.leaderboardButton) {
+            this.leaderboardButton.addEventListener("click", () => {
+                this.openLeaderboard();
+            });
+        }
+    }
+    openLeaderboard() {
+        if (this.leaderboard) {
+            this.leaderboard.open(this.leaderboardElement);
+        }
+    }
+    setLeaderboardElement(leaderboardElement) {
+        this.leaderboardElement = leaderboardElement;
+    }
+    getLeaderboardElement() {
+        return this.leaderboardElement;
+    }
+}
+exports.LeaderboardView = LeaderboardView;
+
+},{}],52:[function(require,module,exports){
+"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
 const Animation_1 = require("./GameObjects/Animation");
@@ -3488,7 +3588,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":21,"./GameObjects/PlayerUnit":31,"./Items/Pickaxe":47,"./Items/Shovel":48,"./Items/Sword":49}],51:[function(require,module,exports){
+},{"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":21,"./GameObjects/PlayerUnit":31,"./Items/Pickaxe":47,"./Items/Shovel":48,"./Items/Sword":49}],53:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3625,7 +3725,7 @@ class QuestionView {
 }
 exports.QuestionView = QuestionView;
 
-},{}],52:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
@@ -3813,7 +3913,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"./Items/BookOfEnergyT1":42,"./Items/BookOfEnergyT2":43,"./Items/BookOfEnergyT3":44}],53:[function(require,module,exports){
+},{"./Items/BookOfEnergyT1":42,"./Items/BookOfEnergyT2":43,"./Items/BookOfEnergyT3":44}],55:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -3866,7 +3966,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],54:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -3952,7 +4052,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],55:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -4014,7 +4114,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":30}],56:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":30}],58:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -4040,6 +4140,8 @@ const InventoryView_1 = require("./Classes/InventoryView");
 const Inventory_1 = require("./Classes/Items/Inventory");
 const QuestionView_1 = require("./Classes/QuestionView");
 const API_1 = require("./Classes/API");
+const Leaderboard_1 = require("./Classes/Leaderboard");
+const LeaderboardView_1 = require("./Classes/LeaderboardView");
 window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     //Main game
@@ -4049,9 +4151,12 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     const stopButton = document.querySelector("#stopButton");
     const shopButton = document.querySelector(".button-shop");
     const inventoryButton = document.querySelector(".button-inventory");
+    const leaderboardButton = document.querySelector(".button-leaderboard");
     const inventoryShopElement = document.querySelector(".shop-inventory");
+    const leaderboardElement = document.querySelector(".modal-body");
     const QuestionArea = document.querySelector("#question");
     const shop = new Shop_1.Shop();
+    const leaderboard = new Leaderboard_1.Leaderboard();
     const inventory = new Inventory_1.Inventory();
     if (canvas == null)
         throw new Error("Canvas not found");
@@ -4073,18 +4178,19 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         alert("Not logged in!");
         window.location.replace("login.html");
     }
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv, goldDiv));
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv, goldDiv), new LeaderboardView_1.LeaderboardView(leaderboardButton, leaderboard, leaderboardElement));
     game.start();
     yield game.load(userToken);
     const pUnit = game.getActivePlayerUnit();
     function subtick() {
         // Use await inside the regular function to call the async function
-        game.tick()
+        game
+            .tick()
             .then(() => {
             // You can add any post-execution code here
         })
             .catch((error) => {
-            console.error('Error:', error);
+            console.error("Error:", error);
         });
     }
     setInterval(subtick, 1000);
@@ -4100,68 +4206,80 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     // const curPlayer = game.getPlayer();
     // const energyAmount = document.querySelector("#energyAmount") as HTMLDivElement
     // energyAmount.value = `Energy: ${curPlayer.getEnergy()}`
-    soalButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+    soalButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _e;
         yield ((_e = game.getQuestionView()) === null || _e === void 0 ? void 0 : _e.UpdateQuestion());
     }));
-    AButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+    AButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _f;
         yield ((_f = game.getQuestionView()) === null || _f === void 0 ? void 0 : _f.checkAnswer(AButton, AButton.value));
     }));
-    BButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+    BButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _g;
         yield ((_g = game.getQuestionView()) === null || _g === void 0 ? void 0 : _g.checkAnswer(BButton, BButton.value));
     }));
-    CButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+    CButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _h;
         yield ((_h = game.getQuestionView()) === null || _h === void 0 ? void 0 : _h.checkAnswer(CButton, CButton.value));
     }));
-    DButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+    DButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _j;
         yield ((_j = game.getQuestionView()) === null || _j === void 0 ? void 0 : _j.checkAnswer(DButton, DButton.value));
     }));
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener("keydown", (e) => {
         const key = e.key;
         let price = 5; //energy price for action.
-        if (key === 'w') {
+        if (key === "w") {
             pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Up);
         }
-        if (key === 'a') {
+        if (key === "a") {
             pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Left);
         }
-        if (key === 's') {
+        if (key === "s") {
             pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Down);
         }
-        if (key === 'd') {
+        if (key === "d") {
             pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Right);
         }
-        if (key === '1') {
+        if (key === "1") {
             game.getPlayer().setEquipmentLevels(1);
         }
-        if (key === '2') {
+        if (key === "2") {
             game.getPlayer().setEquipmentLevels(2);
         }
-        if (key === '3') {
+        if (key === "3") {
             game.getPlayer().setEquipmentLevels(3);
         }
-        if (key === 'i') { //destroy top entity
+        if (key === "i") {
+            //destroy top entity
             //for destroying crates, and stone entities.
-            const currentEquipped = game.getPlayer().getCurrentEquipment();
+            const currentEquipped = game
+                .getPlayer()
+                .getCurrentEquipment();
             game.Action(Direction_1.Direction.Up, currentEquipped);
         }
-        if (key === 'j') { //destroy left entitiy
+        if (key === "j") {
+            //destroy left entitiy
             //for destroying crates, and stone entities.
-            const currentEquipped = game.getPlayer().getCurrentEquipment();
+            const currentEquipped = game
+                .getPlayer()
+                .getCurrentEquipment();
             game.Action(Direction_1.Direction.Left, currentEquipped);
         }
-        if (key === 'k') { //destroy bottom entity
+        if (key === "k") {
+            //destroy bottom entity
             //for destroying crates, and stone entities.
-            const currentEquipped = game.getPlayer().getCurrentEquipment();
+            const currentEquipped = game
+                .getPlayer()
+                .getCurrentEquipment();
             game.Action(Direction_1.Direction.Down, currentEquipped);
         }
-        if (key === 'l') { //destroy right entity
+        if (key === "l") {
+            //destroy right entity
             //for destroying crates, and stone entities.
-            const currentEquipped = game.getPlayer().getCurrentEquipment();
+            const currentEquipped = game
+                .getPlayer()
+                .getCurrentEquipment();
             game.Action(Direction_1.Direction.Right, currentEquipped);
         }
         console.clear();
@@ -4188,4 +4306,4 @@ function handleResize() {
 }
 window.addEventListener("resize", handleResize);
 
-},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":23,"./Classes/InventoryView":38,"./Classes/Items/Inventory":45,"./Classes/QuestionView":51,"./Classes/Shop":52,"./Classes/ShopView":53,"./Classes/TerminalView":54,"./loadAsset":55}]},{},[56]);
+},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":23,"./Classes/InventoryView":38,"./Classes/Items/Inventory":45,"./Classes/Leaderboard":50,"./Classes/LeaderboardView":51,"./Classes/QuestionView":53,"./Classes/Shop":54,"./Classes/ShopView":55,"./Classes/TerminalView":56,"./loadAsset":57}]},{},[58]);

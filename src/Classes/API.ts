@@ -202,5 +202,18 @@ export class API{
       console.error("hello")
     }
   }
+
+  public static async getAllUser(){
+    const apiUrl = `http://localhost:8000/get-all-users`;
+    const request: RequestInfo = new Request(apiUrl, {
+      method: 'GET',
+    });
+    const response = await fetch(request);
+    if(!response.ok) throw new Error('Network Response was not ok');
+    const jsonString = await response.text();
+    const jsonData = JSON.parse(jsonString);
+    return JSON.stringify(jsonData);
+
+  }
 }
   
