@@ -24,7 +24,10 @@ module.exports={
     "PickaxeName": "Pickaxe Name",
     "PickaxeDesc": "Pickaxe Description",
     "PickaxePrice": 200,
-    "PickaxeImagePath": "dist/Assets/Prototype/buku3.png"
+    "PickaxeImagePath": "dist/Assets/Prototype/buku3.png",
+
+    "LOCAL_API_URL":"http://localhost:3000",
+    "MASTER_API_URL":"https://2ca4-182-253-116-208.ngrok-free.app"
 }
 },{}],2:[function(require,module,exports){
 "use strict";
@@ -39,29 +42,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.API = void 0;
+const { LOCAL_API_URL, MASTER_API_URL } = require("../../dist/config/env.json");
 class API {
     sendSaveData() {
-        const apiUrl = 'https://5591-203-78-117-152.ngrok-free.app/';
+        const apiUrl = "https://5591-203-78-117-152.ngrok-free.app/";
         const headers = new Headers();
-        headers.set('Content-Type', 'application/json');
-        headers.set('Accept', 'application/json');
+        headers.set("Content-Type", "application/json");
+        headers.set("Accept", "application/json");
         const request = new Request(apiUrl, {
-            method: 'POST',
+            method: "POST",
             headers: headers,
             // body: JSON.stringify(user)
         });
-        return fetch(request)
-            .then(res => {
+        return fetch(request).then((res) => {
             console.log("got response:", res);
         });
     }
     getMap() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const apiUrl = 'http://localhost:3000/map';
+                const apiUrl = LOCAL_API_URL + "/map";
                 const response = yield fetch(apiUrl);
                 if (!response.ok)
-                    throw new Error('Network Response was not ok');
+                    throw new Error("Network Response was not ok");
                 const jsonString = yield response.text();
                 const jsonData = JSON.parse(jsonString);
                 return JSON.stringify(jsonData);
@@ -74,12 +77,19 @@ class API {
     getQuestion() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const apiUrl = 'http://localhost:3000/question';
+                const apiUrl = LOCAL_API_URL + "/question";
                 const response = yield fetch(apiUrl);
                 // alert(JSON.stringify(response));
-                let question = { text: "", a: "", b: "", c: "", d: "", answer: "" };
+                let question = {
+                    text: "",
+                    a: "",
+                    b: "",
+                    c: "",
+                    d: "",
+                    answer: "",
+                };
                 if (!response.ok)
-                    throw new Error('Network Response was not ok');
+                    throw new Error("Network Response was not ok");
                 const jsonString = yield response.text();
                 const jsonData = JSON.parse(jsonString);
                 question.text = jsonData.text;
@@ -101,16 +111,16 @@ class API {
             let player = {
                 x: Number,
                 y: Number,
-                energy: Number
+                energy: Number,
             };
             try {
-                const apiUrl = 'http://localhost:3000/player';
+                const apiUrl = LOCAL_API_URL + "/player";
                 const request = new Request(apiUrl, {
-                    method: 'GET',
+                    method: "GET",
                 });
                 const response = yield fetch(request);
                 if (!response.ok)
-                    throw new Error('Network Response was not ok');
+                    throw new Error("Network Response was not ok");
                 else {
                     const jsonString = yield response.text();
                     const jsonData = JSON.parse(jsonString);
@@ -134,32 +144,32 @@ class API {
     }
     gameStart() {
         return __awaiter(this, void 0, void 0, function* () {
-            const apiUrl = 'http://localhost:3000/map';
-            const apiUrl2 = 'http://localhost:3000/entity';
+            const apiUrl = LOCAL_API_URL + "/map";
+            const apiUrl2 = LOCAL_API_URL + "/entity";
             alert("gamestart api");
             let map = { tile: [], entity: [] };
             try {
                 const response = yield fetch(apiUrl);
                 if (!response.ok)
-                    alert('error connecting to backend-api');
+                    alert("error connecting to backend-api");
                 const jsonString = yield response.text();
                 const jsonData = JSON.parse(jsonString);
                 map.tile = jsonData;
             }
             catch (error) {
-                alert('error getting tile data');
+                alert("error getting tile data");
                 console.error("hello");
             }
             try {
                 const response = yield fetch(apiUrl2);
                 if (!response.ok)
-                    throw new Error('Network Response was not ok');
+                    throw new Error("Network Response was not ok");
                 const jsonString = yield response.text();
                 const jsonData = JSON.parse(jsonString);
                 map.entity = jsonData;
             }
             catch (error) {
-                alert('error getting entity data');
+                alert("error getting entity data");
             }
             return map;
         });
@@ -167,13 +177,13 @@ class API {
     startTick(x, y, energy) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const apiUrl = `http://localhost:3000/player?x=${x}&y=${y}&energy=${energy}`;
+                const apiUrl = `${LOCAL_API_URL}/player?x=${x}&y=${y}&energy=${energy}`;
                 const request = new Request(apiUrl, {
-                    method: 'POST',
+                    method: "POST",
                 });
                 const response = yield fetch(request);
                 if (!response.ok)
-                    throw new Error('Network Response was not ok');
+                    throw new Error("Network Response was not ok");
             }
             catch (error) {
                 console.error("hello");
@@ -183,13 +193,13 @@ class API {
     subtick(x, y, energy) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const apiUrl = `http://localhost:3000/player?x=${x}&y=${y}&energy=${energy}`;
+                const apiUrl = `${LOCAL_API_URL}/player?x=${x}&y=${y}&energy=${energy}`;
                 const request = new Request(apiUrl, {
-                    method: 'PUT',
+                    method: "PUT",
                 });
                 const response = yield fetch(request);
                 if (!response.ok)
-                    throw new Error('Network Response was not ok');
+                    throw new Error("Network Response was not ok");
             }
             catch (error) {
                 console.error("hello");
@@ -199,10 +209,10 @@ class API {
     getEntity() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const apiUrl = 'http://localhost:3000/map';
+                const apiUrl = LOCAL_API_URL + "/map";
                 const response = yield fetch(apiUrl);
                 if (!response.ok)
-                    throw new Error('Network Response was not ok');
+                    throw new Error("Network Response was not ok");
                 const jsonString = yield response.text();
                 const jsonData = JSON.parse(jsonString);
                 // alert(JSON.stringify(jsonData));
@@ -216,48 +226,48 @@ class API {
     getGold(token) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const url = `http://localhost:3000/gold`;
+                const url = `${LOCAL_API_URL}/gold`;
                 const requestHeaders = new Headers();
-                requestHeaders.set('Content-Type', 'application/json');
-                requestHeaders.set('token', token);
+                requestHeaders.set("Content-Type", "application/json");
+                requestHeaders.set("token", token);
                 const responseGold = yield fetch(url, {
-                    method: 'GET',
+                    method: "GET",
                     headers: requestHeaders,
                 });
                 return responseGold;
             }
             catch (error) {
-                alert('error getting gold from API. Please contact a nearby admin');
+                alert("error getting gold from API. Please contact a nearby admin");
             }
         });
     }
     updateGold(token, amount) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const url = `http://localhost:3000/transaction?gold=${amount}`;
+                const url = LOCAL_API_URL + `/transaction?gold=${amount}`;
                 const requestHeaders = new Headers();
-                requestHeaders.set('Content-Type', 'application/json');
-                requestHeaders.set('token', token);
+                requestHeaders.set("Content-Type", "application/json");
+                requestHeaders.set("token", token);
                 const responseGold = yield fetch(url, {
-                    method: 'POST',
+                    method: "POST",
                     headers: requestHeaders,
                 });
             }
             catch (error) {
-                alert('error updating gold from API. Please contact a nearby admin');
+                alert("error updating gold from API. Please contact a nearby admin");
             }
         });
     }
     removeEntity(x, y) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const apiUrl = `http://localhost:3000/entity?x=${x}&y=${y}`;
+                const apiUrl = `${LOCAL_API_URL}/entity?x=${x}&y=${y}`;
                 const request = new Request(apiUrl, {
-                    method: 'DELETE',
+                    method: "DELETE",
                 });
                 const response = yield fetch(request);
                 if (!response.ok)
-                    throw new Error('Network Response was not ok');
+                    throw new Error("Network Response was not ok");
                 const jsonString = yield response.text();
                 const jsonData = JSON.parse(jsonString);
                 // alert(JSON.stringify(jsonData));
@@ -270,13 +280,13 @@ class API {
     }
     static Dynamite(username) {
         return __awaiter(this, void 0, void 0, function* () {
-            const apiUrl = `http://localhost:3000/attack?username=${username}&gold=-500`;
+            const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-500`;
             const request = new Request(apiUrl, {
-                method: 'PUT'
+                method: "PUT",
             });
             const response = yield fetch(request);
             if (!response.ok)
-                throw new Error('Network Response was not ok');
+                throw new Error("Network Response was not ok");
             const jsonString = yield response.text();
             const jsonData = JSON.parse(jsonString);
             return JSON.stringify(jsonData);
@@ -284,13 +294,13 @@ class API {
     }
     static getAllUser() {
         return __awaiter(this, void 0, void 0, function* () {
-            const apiUrl = `http://localhost:8000/get-all-users`;
+            const apiUrl = `${MASTER_API_URL}/get-all-users`;
             const request = new Request(apiUrl, {
-                method: 'GET',
+                method: "GET",
             });
             const response = yield fetch(request);
             if (!response.ok)
-                throw new Error('Network Response was not ok');
+                throw new Error("Network Response was not ok");
             const jsonString = yield response.text();
             const jsonData = JSON.parse(jsonString);
             return JSON.stringify(jsonData);
@@ -299,7 +309,7 @@ class API {
 }
 exports.API = API;
 
-},{}],3:[function(require,module,exports){
+},{"../../dist/config/env.json":1}],3:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CanvasView = void 0;
@@ -3445,7 +3455,11 @@ class Leaderboard {
     open(leaderboardElement) {
         return __awaiter(this, void 0, void 0, function* () {
             const allUserString = JSON.parse(yield API_1.API.getAllUser());
-            this.listUser = allUserString;
+            this.listUser = [];
+            for (let i = 0; i < allUserString.length; i++) {
+                const currentUser = allUserString[i];
+                this.listUser.push(currentUser);
+            }
             let showUser = "";
             for (let i = 0; i < this.listUser.length; i++) {
                 let currentUser = this.listUser[i];
