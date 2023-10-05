@@ -268,6 +268,20 @@ class API {
             }
         });
     }
+    static Dynamite(username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const apiUrl = `http://localhost:3000/attack?username=${username}&gold=-500`;
+            const request = new Request(apiUrl, {
+                method: 'PUT'
+            });
+            const response = yield fetch(request);
+            if (!response.ok)
+                throw new Error('Network Response was not ok');
+            const jsonString = yield response.text();
+            const jsonData = JSON.parse(jsonString);
+            return JSON.stringify(jsonData);
+        });
+    }
     static getAllUser() {
         return __awaiter(this, void 0, void 0, function* () {
             const apiUrl = `http://localhost:8000/get-all-users`;
@@ -3423,6 +3437,11 @@ class Leaderboard {
     setPlayer(player) {
         this.player = player;
     }
+    DynamiteAttack(username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            API_1.API.Dynamite;
+        });
+    }
     open(leaderboardElement) {
         return __awaiter(this, void 0, void 0, function* () {
             const allUserString = JSON.parse(yield API_1.API.getAllUser());
@@ -3441,6 +3460,12 @@ class Leaderboard {
                 allCnnButton[i].addEventListener('click', () => {
                 });
                 allDynButton[i].addEventListener('click', () => {
+                    API_1.API.Dynamite(this.listUser[i].username);
+                    let closeButton = document.querySelector(".close-leaderboard-button");
+                    if (closeButton) {
+                        // alert("close button click")
+                        closeButton.click();
+                    }
                 });
             }
         });

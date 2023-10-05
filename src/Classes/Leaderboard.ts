@@ -18,7 +18,11 @@ export class Leaderboard {
 
   public async open(leaderboardElement: HTMLDivElement | null) {
     const allUserString: UserStack[] = JSON.parse(await API.getAllUser());
-    this.listUser = allUserString;
+    this.listUser = [];
+    for (let i = 0; i < allUserString.length; i++) {
+      const currentUser = allUserString[i];
+      this.listUser.push(currentUser);
+    }
     let showUser:string = "";
     for (let i = 0; i < this.listUser.length; i++) {
         let currentUser:UserStack = this.listUser[i];
@@ -34,7 +38,12 @@ export class Leaderboard {
             
         })
         allDynButton[i].addEventListener('click',()=>{
-            
+            API.Dynamite(this.listUser[i].username);
+            let closeButton:HTMLButtonElement|null = document.querySelector(".close-leaderboard-button");
+            if(closeButton){
+                // alert("close button click")
+                closeButton.click();
+            }
         })
     }
   }
