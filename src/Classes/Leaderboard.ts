@@ -26,6 +26,7 @@ export class Leaderboard {
     let showUser:string = "";
     for (let i = 0; i < this.listUser.length; i++) {
         let currentUser:UserStack = this.listUser[i];
+        // if(currentUser.username != )
         showUser += `<div>${currentUser.username} ${currentUser.total_gold}<button class='dyn-atk dyn-attack-${i}'>Dynamite Attack</button><button class='cnn-atk cnn-attack-${i}'>CannonBall Attack</button></div>`
     }
     if (leaderboardElement) {

@@ -3307,9 +3307,14 @@ class Inventory {
     addItemOwned(index, amount) {
         this.items[index].amount += amount;
     }
-    decreaseItemOwned(index, amount) {
-        this.items[index].amount -= amount;
-    }
+    // public decreaseItemOwned(index: number, amount: number): void {
+    //   this.items[index].amount -= amount;
+    //   const currentQty = document.querySelector(`.item-owned-qty-${index}`);
+    //   if (currentQty) {
+    //     currentQty.innerHTML = `${this.items[index].amount}`;
+    //   }
+    // }
+    // public refreshInventory
     open(inventoryShopElement) {
         if (!inventoryShopElement)
             return;
@@ -3333,7 +3338,7 @@ class Inventory {
             nameElement.classList.add("inventory-item-name", "card-text");
             nameElement.innerText = item.getItemName();
             const ownedElement = document.createElement("h4");
-            ownedElement.classList.add("inventory-item-owned", "card-title");
+            ownedElement.classList.add("inventory-item-owned", "card-title", `item-owned-qty-${index}`);
             ownedElement.innerText = `${amount}`;
             const itemUseButton = document.createElement("button");
             if (item instanceof ConsumableItem_1.ConsumableItem) {
@@ -3341,17 +3346,26 @@ class Inventory {
                 itemUseButton.classList.add("Consume");
                 itemUseButton.addEventListener("click", () => {
                     const thisItem = item;
+                    const currentIndex = index;
                     if (amount > 0) {
                         if (this.player) {
                             if (thisItem instanceof Book_1.Book) {
-                                ;
-                                alert(JSON.stringify(this.items));
                                 const energyRestored = thisItem.useItem();
+                                // alert("1"+JSON.stringify(this.items[index].amount));
+                                alert("1");
                                 this.player.addEnergy(energyRestored);
-                                ;
-                                alert(JSON.stringify(this.items));
+                                alert("2");
+                                // alert("2"+JSON.stringify(this.items[index].amount));
+                                this.items[currentIndex].amount -= 1;
+                                alert("3");
+                                // alert("3"+JSON.stringify(this.items[index].amount));
+                                const currentQty = document.querySelector(`.item-owned-qty-${currentIndex}`);
+                                alert("4");
+                                if (currentQty) {
+                                    currentQty.innerHTML = `${this.items[currentIndex].amount}`;
+                                    alert("5");
+                                }
                             }
-                            this.decreaseItemOwned(index, 1);
                         }
                     }
                 });
@@ -3493,6 +3507,7 @@ class Leaderboard {
             let showUser = "";
             for (let i = 0; i < this.listUser.length; i++) {
                 let currentUser = this.listUser[i];
+                // if(currentUser.username != )
                 showUser += `<div>${currentUser.username} ${currentUser.total_gold}<button class='dyn-atk dyn-attack-${i}'>Dynamite Attack</button><button class='cnn-atk cnn-attack-${i}'>CannonBall Attack</button></div>`;
             }
             if (leaderboardElement) {

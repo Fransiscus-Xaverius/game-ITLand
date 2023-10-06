@@ -51,9 +51,16 @@ export class Inventory {
   public addItemOwned(index: number, amount: number): void {
     this.items[index].amount += amount;
   }
-  public decreaseItemOwned(index: number, amount: number): void {
-    this.items[index].amount -= amount
-  }
+  // public decreaseItemOwned(index: number, amount: number): void {
+  //   this.items[index].amount -= amount;
+  //   const currentQty = document.querySelector(`.item-owned-qty-${index}`);
+  //   if (currentQty) {
+  //     currentQty.innerHTML = `${this.items[index].amount}`;
+  //   }
+  // }
+
+  // public refreshInventory
+
   public open(inventoryShopElement: HTMLDivElement | null): void {
     if (!inventoryShopElement) return;
 
@@ -84,7 +91,11 @@ export class Inventory {
       nameElement.innerText = item.getItemName();
 
       const ownedElement = document.createElement("h4");
-      ownedElement.classList.add("inventory-item-owned", "card-title");
+      ownedElement.classList.add(
+        "inventory-item-owned",
+        "card-title",
+        `item-owned-qty-${index}`
+      );
       ownedElement.innerText = `${amount}`;
 
       const itemUseButton = document.createElement("button");
@@ -94,15 +105,30 @@ export class Inventory {
         itemUseButton.classList.add("Consume");
         itemUseButton.addEventListener("click", () => {
           const thisItem = item;
+          const currentIndex:number = index;
           if (amount > 0) {
             if (this.player) {
-              if (thisItem instanceof Book) {;
-                alert(JSON.stringify(this.items));
+              if (thisItem instanceof Book) {
                 const energyRestored = thisItem.useItem();
-                this.player.addEnergy(energyRestored);;
-                alert(JSON.stringify(this.items));
+                // alert("1"+JSON.stringify(this.items[index].amount));
+                alert("1")
+                this.player.addEnergy(energyRestored);
+                alert("2")
+                // alert("2"+JSON.stringify(this.items[index].amount));
+                alert(currentIndex);
+
+                this.items[currentIndex].amount -= 1;
+                alert("3")
+                // alert("3"+JSON.stringify(this.items[index].amount));
+                const currentQty = document.querySelector(
+                  `.item-owned-qty-${currentIndex}`
+                );
+                alert("4")
+                if (currentQty) {
+                  currentQty.innerHTML = `${this.items[currentIndex].amount}`;
+                  alert("5")
+                }
               }
-              this.decreaseItemOwned(index, 1);
             }
           }
         });
