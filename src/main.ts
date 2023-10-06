@@ -18,6 +18,7 @@ import { Sword } from "./Classes/Items/Sword";
 import { Shovel } from "./Classes/Items/Shovel";
 import { Leaderboard } from "./Classes/Leaderboard";
 import { LeaderboardView } from "./Classes/LeaderboardView";
+import { getAuthToken } from "./utils/authentication";
 
 window.onload = async () => {
   //Main game
@@ -60,7 +61,7 @@ window.onload = async () => {
 
   loadAsset(); //load game asset
 
-  const userToken = sessionStorage.getItem("game_itland");
+  const userToken = getAuthToken();
   if (!userToken) {
     //not logged in
     alert("Not logged in!");
