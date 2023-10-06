@@ -1,3 +1,1 @@
-export interface IConsumable {
-
-}
+export interface IConsumable {}

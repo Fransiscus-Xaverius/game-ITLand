@@ -180,7 +180,7 @@ export class API {
 
   public async updateGold(token: string, amount: number) {
     try {
-      const url = LOCAL_API_URL + "/transaction?gold=${amount}";
+      const url = LOCAL_API_URL + `/transaction?gold=${amount}`;
       const requestHeaders: HeadersInit = new Headers();
       requestHeaders.set("Content-Type", "application/json");
       requestHeaders.set("token", token);

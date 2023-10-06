@@ -1,6 +1,6 @@
-import { Item } from "../Item"
+import { Item } from "../Item";
 
 export type ItemStack = {
-    item:Item;
-    amount:number;
-}
+  item: Item;
+  amount: number;
+};
