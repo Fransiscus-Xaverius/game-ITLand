@@ -8,111 +8,124 @@ import { ConsumableItem } from "./Abstract/ConsumableItem";
 import { EquippableItem } from "./Abstract/EquippableItem";
 
 export class Inventory {
-    private items: ItemStack[];
-    private player: Player | null = null;
+  private items: ItemStack[];
+  private player: Player | null = null;
 
-    constructor() {
-        this.items = []
-        this.items.push({
-            item: new BookOfEnergyTier1(),
-            amount: 0
-        });
-        this.items.push({
-            item: new BookOfEnergyTier2(),
-            amount: 0
-        });
-        this.items.push({
-            item: new BookOfEnergyTier3(),
-            amount: 0
-        });
+  constructor() {
+    this.items = [];
+    this.items.push({
+      item: new BookOfEnergyTier1(),
+      amount: 0,
+    });
+    this.items.push({
+      item: new BookOfEnergyTier2(),
+      amount: 0,
+    });
+    this.items.push({
+      item: new BookOfEnergyTier3(),
+      amount: 0,
+    });
+  }
+
+  public setPlayer(player: Player): void {
+    this.player = player;
+  }
+
+  public addItemInit(player: Player): void {
+    const playerEquipments = player?.getAllPlayerEquipment();
+    const pickaxe = playerEquipments?.pickaxe;
+    const sword = playerEquipments?.sword;
+    const shovel = playerEquipments?.shovel;
+
+    if (pickaxe) {
+      this.items.push({ item: pickaxe, amount: 1 });
     }
-
-    public setPlayer(player: Player): void {
-        this.player = player;
+    if (sword) {
+      this.items.push({ item: shovel, amount: 1 });
     }
-
-    public addItemInit(player: Player): void {
-        const playerEquipments = player?.getAllPlayerEquipment();
-        const pickaxe = playerEquipments?.pickaxe;
-        const sword = playerEquipments?.sword;
-        const shovel = playerEquipments?.shovel;
-
-        if (pickaxe) {
-            this.items.push(
-                { item: pickaxe, amount: 1 }
-            );
-        }
-        if (sword) {
-            this.items.push(
-                { item: shovel, amount: 1 }
-            );
-        }
-        if (shovel) {
-            this.items.push(
-                { item: sword, amount: 1 }
-            );
-        }
+    if (shovel) {
+      this.items.push({ item: sword, amount: 1 });
     }
+  }
 
-    public addItemOwned(index: number, amount: number): void {
-        this.items[index].amount += amount;
-    }
+  public addItemOwned(index: number, amount: number): void {
+    this.items[index].amount += amount;
+  }
+  public decreaseItemOwned(index: number, amount: number): void {
+    this.items[index].amount -= amount
+  }
+  public open(inventoryShopElement: HTMLDivElement | null): void {
+    if (!inventoryShopElement) return;
 
-    public open(inventoryShopElement: HTMLDivElement | null): void {
-        if (!inventoryShopElement) return;
+    inventoryShopElement.innerHTML = "";
 
-        inventoryShopElement.innerHTML = "";
+    const cardContainer = document.querySelector(
+      ".shop-inventory"
+    ) as HTMLDivElement;
+    cardContainer.style.display = "grid";
+    cardContainer.style.gridTemplateColumns = "1fr 1fr";
+    cardContainer.style.height = "200px";
+    cardContainer.style.overflow = "auto";
+    let index = 0;
+    for (const { item, amount } of this.items) {
+      const cardElement = document.createElement("div");
+      cardElement.classList.add("card");
 
-        const cardContainer = document.querySelector('.shop-inventory') as HTMLDivElement;
-        cardContainer.style.display = "grid";
-        cardContainer.style.gridTemplateColumns = "1fr 1fr";
-        cardContainer.style.height = "200px";
-        cardContainer.style.overflow = "auto";
+      const imageElement = document.createElement("img");
+      imageElement.classList.add("inventory-item-image", "card-img-top");
+      imageElement.src = item.getImagePath();
+      imageElement.alt = ``;
 
-        for (const { item, amount } of this.items) {
-            const cardElement = document.createElement('div');
-            cardElement.classList.add('card');
+      const cardBody = document.createElement("div");
+      cardBody.classList.add("card-body");
 
-            const imageElement = document.createElement('img');
-            imageElement.classList.add('inventory-item-image', 'card-img-top');
-            imageElement.src = item.getImagePath();
-            imageElement.alt = ``
+      const nameElement = document.createElement("p");
+      nameElement.classList.add("inventory-item-name", "card-text");
+      nameElement.innerText = item.getItemName();
 
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
+      const ownedElement = document.createElement("h4");
+      ownedElement.classList.add("inventory-item-owned", "card-title");
+      ownedElement.innerText = `${amount}`;
 
-            const nameElement = document.createElement('p');
-            nameElement.classList.add('inventory-item-name', 'card-text');
-            nameElement.innerText = item.getItemName();
+      const itemUseButton = document.createElement("button");
 
-            const ownedElement = document.createElement('h4');
-            ownedElement.classList.add('inventory-item-owned', 'card-title');
-            ownedElement.innerText = `${amount}`;
-
-            const itemUseButton = document.createElement('button');
-
-            if (item instanceof ConsumableItem) {
-                itemUseButton.textContent = "Consume";
-                itemUseButton.classList.add('Consume');
-            } else if (item instanceof EquippableItem) {
-                itemUseButton.textContent = "Equip";
-                itemUseButton.classList.add('Equip');
-                itemUseButton.addEventListener("click", () => {
-                    const thisItem = item;
-                    if(this.player){
-                        this.player.equip(thisItem);
-                    }
-                })
+      if (item instanceof ConsumableItem) {
+        itemUseButton.textContent = "Consume";
+        itemUseButton.classList.add("Consume");
+        itemUseButton.addEventListener("click", () => {
+          const thisItem = item;
+          if (amount > 0) {
+            if (this.player) {
+              if (thisItem instanceof Book) {;
+                alert(JSON.stringify(this.items));
+                const energyRestored = thisItem.useItem();
+                this.player.addEnergy(energyRestored);;
+                alert(JSON.stringify(this.items));
+              }
+              this.decreaseItemOwned(index, 1);
             }
+          }
+        });
+      } else if (item instanceof EquippableItem) {
+        itemUseButton.textContent = "Equip";
+        itemUseButton.classList.add("Equip");
+        itemUseButton.addEventListener("click", () => {
+          const thisItem = item;
+          if (this.player) {
+            this.player.equip(thisItem);
+          }
+        });
+      }
 
-            cardBody.appendChild(nameElement);
-            cardBody.appendChild(ownedElement);
-            cardBody.appendChild(itemUseButton);
+      cardBody.appendChild(nameElement);
+      cardBody.appendChild(ownedElement);
+      cardBody.appendChild(itemUseButton);
 
-            cardElement.appendChild(imageElement);
-            cardElement.appendChild(cardBody);
+      cardElement.appendChild(imageElement);
+      cardElement.appendChild(cardBody);
 
-            cardContainer.appendChild(cardElement);
-        }
+      cardContainer.appendChild(cardElement);
+      index++;
     }
+  }
 }

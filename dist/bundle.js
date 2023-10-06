@@ -4,14 +4,17 @@ module.exports={
     "BookOfEnergyTier1Desc": "Basic energy guide, +<number> energy.",
     "BookOfEnergyTier1Price": 100,
     "BookOfEnergyTier1ImagePath": "dist/Assets/Prototype/buku1.png",
+    "BookOfEnergyTier1EnergyRestored": 10,
     "BookOfEnergyTier2Name": "Book Of Energy Tier 2",
     "BookOfEnergyTier2Desc": "Advanced energy guide, +<number> energy.",
     "BookOfEnergyTier2Price": 200,
     "BookOfEnergyTier2ImagePath": "dist/Assets/Prototype/buku2.png",
+    "BookOfEnergyTier2EnergyRestored": 20,
     "BookOfEnergyTier3Name": "Book Of Energy Tier 3",
     "BookOfEnergyTier3Desc": "Mastery energy guide, +<number> energy.",
     "BookOfEnergyTier3Price": 300,
     "BookOfEnergyTier3ImagePath": "dist/Assets/Prototype/buku3.png",
+    "BookOfEnergyTier3EnergyRestored": 30,
 
     "SwordName": "Sword Name",
     "SwordDesc": "Sword Description",
@@ -25,9 +28,9 @@ module.exports={
     "PickaxeDesc": "Pickaxe Description",
     "PickaxePrice": 200,
     "PickaxeImagePath": "dist/Assets/Prototype/buku3.png",
-
-    "LOCAL_API_URL":"http://localhost:3000",
-    "MASTER_API_URL":"https://2ca4-182-253-116-208.ngrok-free.app"
+    
+    "LOCAL_API_URL": "http://localhost:3000",
+    "MASTER_API_URL": "http://localhost:8000"
 }
 },{}],2:[function(require,module,exports){
 "use strict";
@@ -241,7 +244,7 @@ class API {
             }
         });
     }
-    updateGold(token, amount) {
+    static updateGold(token, amount) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const url = LOCAL_API_URL + `/transaction?gold=${amount}`;
@@ -2152,16 +2155,17 @@ class GameManager {
         }
     }
     removeGridEntity(x, y) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             const entName = (_a = this.grid.entityGrid[y][x]) === null || _a === void 0 ? void 0 : _a.getEntityName();
             const drop = (_b = this.grid.entityGrid[y][x]) === null || _b === void 0 ? void 0 : _b.entityDrop();
-            const transaction = (_c = this.api) === null || _c === void 0 ? void 0 : _c.updateGold(this.token, drop);
+            // const transaction = this.api?.updateGold(this.token, drop);
+            const transaction = API_1.API.updateGold(this.token, drop);
             this.player.addGold(drop);
             this.logActivity(`Destroyed a ${entName} and got ${drop} gold coins!`);
-            (_d = this.questionView) === null || _d === void 0 ? void 0 : _d.refreshStats();
+            (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.refreshStats();
             this.grid.entityGrid[y][x] = null;
-            yield ((_e = this.api) === null || _e === void 0 ? void 0 : _e.removeEntity(y, x));
+            yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.removeEntity(y, x));
         });
     }
     alertEntity() {
@@ -3168,8 +3172,12 @@ exports.Book = void 0;
 const ConsumableItem_1 = require("./ConsumableItem");
 //book is not equipable, rather a consumeable.
 class Book extends ConsumableItem_1.ConsumableItem {
-    constructor(imagePath, itemName, itemDesc, itemPrice) {
+    constructor(imagePath, itemName, itemDesc, itemPrice, energyRestored) {
         super(imagePath, itemName, itemDesc, itemPrice);
+        this.energyRestored = energyRestored;
+    }
+    useItem() {
+        return this.energyRestored;
     }
 }
 exports.Book = Book;
@@ -3217,10 +3225,10 @@ exports.EquippableItem = EquippableItem;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookOfEnergyTier1 = void 0;
 const Book_1 = require("./Abstract/Book");
-const { BookOfEnergyTier1Name, BookOfEnergyTier1Desc, BookOfEnergyTier1Price, BookOfEnergyTier1ImagePath } = require('../../../dist/config/env.json');
+const { BookOfEnergyTier1Name, BookOfEnergyTier1Desc, BookOfEnergyTier1Price, BookOfEnergyTier1ImagePath, BookOfEnergyTier1EnergyRestored, } = require("../../../dist/config/env.json");
 class BookOfEnergyTier1 extends Book_1.Book {
     constructor() {
-        super(BookOfEnergyTier1ImagePath, BookOfEnergyTier1Name, BookOfEnergyTier1Desc, BookOfEnergyTier1Price);
+        super(BookOfEnergyTier1ImagePath, BookOfEnergyTier1Name, BookOfEnergyTier1Desc, BookOfEnergyTier1Price, BookOfEnergyTier1EnergyRestored);
     }
 }
 exports.BookOfEnergyTier1 = BookOfEnergyTier1;
@@ -3230,10 +3238,10 @@ exports.BookOfEnergyTier1 = BookOfEnergyTier1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookOfEnergyTier2 = void 0;
 const Book_1 = require("./Abstract/Book");
-const { BookOfEnergyTier2Name, BookOfEnergyTier2Desc, BookOfEnergyTier2Price, BookOfEnergyTier2ImagePath } = require('../../../dist/config/env.json');
+const { BookOfEnergyTier2Name, BookOfEnergyTier2Desc, BookOfEnergyTier2Price, BookOfEnergyTier2ImagePath, BookOfEnergyTier2EnergyRestored, } = require("../../../dist/config/env.json");
 class BookOfEnergyTier2 extends Book_1.Book {
     constructor() {
-        super(BookOfEnergyTier2ImagePath, BookOfEnergyTier2Name, BookOfEnergyTier2Desc, BookOfEnergyTier2Price);
+        super(BookOfEnergyTier2ImagePath, BookOfEnergyTier2Name, BookOfEnergyTier2Desc, BookOfEnergyTier2Price, BookOfEnergyTier2EnergyRestored);
     }
 }
 exports.BookOfEnergyTier2 = BookOfEnergyTier2;
@@ -3243,10 +3251,10 @@ exports.BookOfEnergyTier2 = BookOfEnergyTier2;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookOfEnergyTier3 = void 0;
 const Book_1 = require("./Abstract/Book");
-const { BookOfEnergyTier3Name, BookOfEnergyTier3Desc, BookOfEnergyTier3Price, BookOfEnergyTier3ImagePath } = require('../../../dist/config/env.json');
+const { BookOfEnergyTier3Name, BookOfEnergyTier3Desc, BookOfEnergyTier3Price, BookOfEnergyTier3ImagePath, BookOfEnergyTier3EnergyRestored, } = require("../../../dist/config/env.json");
 class BookOfEnergyTier3 extends Book_1.Book {
     constructor() {
-        super(BookOfEnergyTier3ImagePath, BookOfEnergyTier3Name, BookOfEnergyTier3Desc, BookOfEnergyTier3Price);
+        super(BookOfEnergyTier3ImagePath, BookOfEnergyTier3Name, BookOfEnergyTier3Desc, BookOfEnergyTier3Price, BookOfEnergyTier3EnergyRestored);
     }
 }
 exports.BookOfEnergyTier3 = BookOfEnergyTier3;
@@ -3258,6 +3266,7 @@ exports.Inventory = void 0;
 const BookOfEnergyT1_1 = require("./BookOfEnergyT1");
 const BookOfEnergyT2_1 = require("./BookOfEnergyT2");
 const BookOfEnergyT3_1 = require("./BookOfEnergyT3");
+const Book_1 = require("./Abstract/Book");
 const ConsumableItem_1 = require("./Abstract/ConsumableItem");
 const EquippableItem_1 = require("./Abstract/EquippableItem");
 class Inventory {
@@ -3266,15 +3275,15 @@ class Inventory {
         this.items = [];
         this.items.push({
             item: new BookOfEnergyT1_1.BookOfEnergyTier1(),
-            amount: 0
+            amount: 0,
         });
         this.items.push({
             item: new BookOfEnergyT2_1.BookOfEnergyTier2(),
-            amount: 0
+            amount: 0,
         });
         this.items.push({
             item: new BookOfEnergyT3_1.BookOfEnergyTier3(),
-            amount: 0
+            amount: 0,
         });
     }
     setPlayer(player) {
@@ -3298,38 +3307,58 @@ class Inventory {
     addItemOwned(index, amount) {
         this.items[index].amount += amount;
     }
+    decreaseItemOwned(index, amount) {
+        this.items[index].amount -= amount;
+    }
     open(inventoryShopElement) {
         if (!inventoryShopElement)
             return;
         inventoryShopElement.innerHTML = "";
-        const cardContainer = document.querySelector('.shop-inventory');
+        const cardContainer = document.querySelector(".shop-inventory");
         cardContainer.style.display = "grid";
         cardContainer.style.gridTemplateColumns = "1fr 1fr";
         cardContainer.style.height = "200px";
         cardContainer.style.overflow = "auto";
+        let index = 0;
         for (const { item, amount } of this.items) {
-            const cardElement = document.createElement('div');
-            cardElement.classList.add('card');
-            const imageElement = document.createElement('img');
-            imageElement.classList.add('inventory-item-image', 'card-img-top');
+            const cardElement = document.createElement("div");
+            cardElement.classList.add("card");
+            const imageElement = document.createElement("img");
+            imageElement.classList.add("inventory-item-image", "card-img-top");
             imageElement.src = item.getImagePath();
             imageElement.alt = ``;
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
-            const nameElement = document.createElement('p');
-            nameElement.classList.add('inventory-item-name', 'card-text');
+            const cardBody = document.createElement("div");
+            cardBody.classList.add("card-body");
+            const nameElement = document.createElement("p");
+            nameElement.classList.add("inventory-item-name", "card-text");
             nameElement.innerText = item.getItemName();
-            const ownedElement = document.createElement('h4');
-            ownedElement.classList.add('inventory-item-owned', 'card-title');
+            const ownedElement = document.createElement("h4");
+            ownedElement.classList.add("inventory-item-owned", "card-title");
             ownedElement.innerText = `${amount}`;
-            const itemUseButton = document.createElement('button');
+            const itemUseButton = document.createElement("button");
             if (item instanceof ConsumableItem_1.ConsumableItem) {
                 itemUseButton.textContent = "Consume";
-                itemUseButton.classList.add('Consume');
+                itemUseButton.classList.add("Consume");
+                itemUseButton.addEventListener("click", () => {
+                    const thisItem = item;
+                    if (amount > 0) {
+                        if (this.player) {
+                            if (thisItem instanceof Book_1.Book) {
+                                ;
+                                alert(JSON.stringify(this.items));
+                                const energyRestored = thisItem.useItem();
+                                this.player.addEnergy(energyRestored);
+                                ;
+                                alert(JSON.stringify(this.items));
+                            }
+                            this.decreaseItemOwned(index, 1);
+                        }
+                    }
+                });
             }
             else if (item instanceof EquippableItem_1.EquippableItem) {
                 itemUseButton.textContent = "Equip";
-                itemUseButton.classList.add('Equip');
+                itemUseButton.classList.add("Equip");
                 itemUseButton.addEventListener("click", () => {
                     const thisItem = item;
                     if (this.player) {
@@ -3343,12 +3372,13 @@ class Inventory {
             cardElement.appendChild(imageElement);
             cardElement.appendChild(cardBody);
             cardContainer.appendChild(cardElement);
+            index++;
         }
     }
 }
 exports.Inventory = Inventory;
 
-},{"./Abstract/ConsumableItem":40,"./Abstract/EquippableItem":41,"./BookOfEnergyT1":42,"./BookOfEnergyT2":43,"./BookOfEnergyT3":44}],46:[function(require,module,exports){
+},{"./Abstract/Book":39,"./Abstract/ConsumableItem":40,"./Abstract/EquippableItem":41,"./BookOfEnergyT1":42,"./BookOfEnergyT2":43,"./BookOfEnergyT3":44}],46:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
@@ -3556,9 +3586,9 @@ class Player {
         this.gameManager = null;
         this.currentEquipped = null;
         const p1 = new PlayerUnit_1.PlayerUnit({ x: x, y: y });
-        p1.addAnimation(new ChainedAnimation_1.ChainedAnimation(p1, "idle", Animation_1.Animation.assets['player_idle'], { x: 32, y: 32 }, 2, -1, 1));
-        p1.createAnimation("walk", Animation_1.Animation.assets['player_walk'], { x: 32, y: 32 }, 4, "", 4);
-        p1.createAnimation("walk_reverse", Animation_1.Animation.assets['player_walk_reverse'], { x: 32, y: 32 }, 4, "", 4);
+        p1.addAnimation(new ChainedAnimation_1.ChainedAnimation(p1, "idle", Animation_1.Animation.assets["player_idle"], { x: 32, y: 32 }, 2, -1, 1));
+        p1.createAnimation("walk", Animation_1.Animation.assets["player_walk"], { x: 32, y: 32 }, 4, "", 4);
+        p1.createAnimation("walk_reverse", Animation_1.Animation.assets["player_walk_reverse"], { x: 32, y: 32 }, 4, "", 4);
         p1.setMoveSpeed(2);
         this.units.push(p1);
     }
@@ -3779,16 +3809,17 @@ exports.Shop = void 0;
 const BookOfEnergyT1_1 = require("./Items/BookOfEnergyT1");
 const BookOfEnergyT2_1 = require("./Items/BookOfEnergyT2");
 const BookOfEnergyT3_1 = require("./Items/BookOfEnergyT3");
+const API_1 = require("./API");
+const authentication_1 = require("../utils/authentication");
 class Shop {
     constructor() {
         this.player = null;
         this.inventory = null;
-        this.item =
-            [
-                new BookOfEnergyT1_1.BookOfEnergyTier1(),
-                new BookOfEnergyT2_1.BookOfEnergyTier2(),
-                new BookOfEnergyT3_1.BookOfEnergyTier3(),
-            ];
+        this.item = [
+            new BookOfEnergyT1_1.BookOfEnergyTier1(),
+            new BookOfEnergyT2_1.BookOfEnergyTier2(),
+            new BookOfEnergyT3_1.BookOfEnergyTier3(),
+        ];
     }
     setPlayer(player) {
         var _a;
@@ -3824,29 +3855,29 @@ class Shop {
             shopHTML.style.gridTemplateColumns = "1fr";
             for (let i = 0; i < this.item.length; i++) {
                 // Card shop
-                const shopTemp = document.createElement('div');
-                shopTemp.className = 'card-shop';
+                const shopTemp = document.createElement("div");
+                shopTemp.className = "card-shop";
                 // Image shop
-                const shopImage = document.createElement('img');
-                shopImage.className = 'shop-img';
+                const shopImage = document.createElement("img");
+                shopImage.className = "shop-img";
                 shopImage.src = this.item[i].getImagePath();
                 // Description shop
-                const desc = document.createElement('div');
-                desc.className = 'desc';
-                const itemName = document.createElement('div');
-                itemName.className = 'content item-name';
+                const desc = document.createElement("div");
+                desc.className = "desc";
+                const itemName = document.createElement("div");
+                itemName.className = "content item-name";
                 itemName.innerHTML = this.item[i].getItemName();
-                const mainDesc = document.createElement('div');
-                mainDesc.className = 'special-content main-desc';
+                const mainDesc = document.createElement("div");
+                mainDesc.className = "special-content main-desc";
                 mainDesc.innerHTML = this.item[i].getItemDesc();
-                const addBox = document.createElement('div');
-                addBox.classList.add('row');
-                const colDiv1 = document.createElement('div');
-                colDiv1.classList.add('col-sm-2');
-                const plusBtn = document.createElement('div');
-                plusBtn.classList.add('btn', 'btn-success');
-                plusBtn.textContent = '+';
-                plusBtn.addEventListener('click', () => {
+                const addBox = document.createElement("div");
+                addBox.classList.add("row");
+                const colDiv1 = document.createElement("div");
+                colDiv1.classList.add("col-sm-2");
+                const plusBtn = document.createElement("div");
+                plusBtn.classList.add("btn", "btn-success");
+                plusBtn.textContent = "+";
+                plusBtn.addEventListener("click", () => {
                     const item = document.querySelector(`.item-${i}`);
                     const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
                     const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
@@ -3861,15 +3892,15 @@ class Shop {
                     }
                 });
                 colDiv1.appendChild(plusBtn);
-                const colDiv2 = document.createElement('div');
-                colDiv2.classList.add('col-sm-2');
-                const itemQtyDiv = document.createElement('input');
-                itemQtyDiv.style.width = '30px';
-                itemQtyDiv.type = 'number';
-                itemQtyDiv.classList.add('item-qty', `item-${i}`);
-                itemQtyDiv.value = '1';
-                itemQtyDiv.min = '1';
-                itemQtyDiv.addEventListener('change', () => {
+                const colDiv2 = document.createElement("div");
+                colDiv2.classList.add("col-sm-2");
+                const itemQtyDiv = document.createElement("input");
+                itemQtyDiv.style.width = "30px";
+                itemQtyDiv.type = "number";
+                itemQtyDiv.classList.add("item-qty", `item-${i}`);
+                itemQtyDiv.value = "1";
+                itemQtyDiv.min = "1";
+                itemQtyDiv.addEventListener("change", () => {
                     const item = document.querySelector(`.item-${i}`);
                     const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
                     const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
@@ -3883,12 +3914,12 @@ class Shop {
                     }
                 });
                 colDiv2.appendChild(itemQtyDiv);
-                const colDiv3 = document.createElement('div');
-                colDiv3.classList.add('col-sm-2');
-                const minusBtn = document.createElement('div');
-                minusBtn.classList.add('btn', 'btn-danger');
-                minusBtn.textContent = '-';
-                minusBtn.addEventListener('click', () => {
+                const colDiv3 = document.createElement("div");
+                colDiv3.classList.add("col-sm-2");
+                const minusBtn = document.createElement("div");
+                minusBtn.classList.add("btn", "btn-danger");
+                minusBtn.textContent = "-";
+                minusBtn.addEventListener("click", () => {
                     const item = document.querySelector(`.item-${i}`);
                     const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
                     const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
@@ -3905,41 +3936,46 @@ class Shop {
                     }
                 });
                 colDiv3.appendChild(minusBtn);
-                const colDiv4 = document.createElement('div');
-                colDiv4.classList.add('col-sm-6', `total-price-container-item-${i}`);
-                const totalPriceDiv = document.createElement('div');
-                totalPriceDiv.classList.add('total-price', `total-price-item-${i}`);
+                const colDiv4 = document.createElement("div");
+                colDiv4.classList.add("col-sm-6", `total-price-container-item-${i}`);
+                const totalPriceDiv = document.createElement("div");
+                totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
                 totalPriceDiv.textContent = `Gold ${parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()}`;
                 colDiv4.appendChild(totalPriceDiv);
                 addBox.appendChild(colDiv1);
                 addBox.appendChild(colDiv2);
                 addBox.appendChild(colDiv3);
                 addBox.appendChild(colDiv4);
-                const buyButton = document.createElement('button');
-                buyButton.className = 'content buy-button';
-                buyButton.innerHTML = 'Buy';
+                const buyButton = document.createElement("button");
+                buyButton.className = "content buy-button";
+                buyButton.innerHTML = "Buy";
                 buyButton.onclick = () => {
-                    var _a, _b;
+                    var _a;
                     const currentItem = this.item[i];
                     const totalPriceDiv = document.querySelector(`.total-price-item-${i}`);
                     const itemAmount = document.querySelector(`.item-${i}`);
                     if (itemAmount) {
                         if (totalPriceDiv) {
                             if (this.player) {
-                                const playerGold = this.player.getGold();
+                                const goldDiv = document.querySelector("#goldAmount");
+                                let playerGold = 0;
+                                if (goldDiv) {
+                                    playerGold = parseInt(goldDiv.textContent.split(" ")[1]);
+                                }
                                 const priceContent = totalPriceDiv.textContent;
-                                const price = parseInt(priceContent.split(' ')[1]);
+                                const price = parseInt(priceContent.split(" ")[1]);
                                 if (playerGold >= price) {
                                     const currentQty = parseInt(itemAmount.value) || 0;
-                                    this.player.useGold(price);
-                                    const goldDiv = document.querySelector("#goldAmount");
-                                    if (goldDiv) {
-                                        goldDiv.innerHTML = `Gold: ${(_a = this.player) === null || _a === void 0 ? void 0 : _a.getGold()}`;
+                                    //   this.player.useGold(price);
+                                    const token = (0, authentication_1.getAuthToken)();
+                                    if (token) {
+                                        API_1.API.updateGold(token, -price);
                                     }
-                                    (_b = this.inventory) === null || _b === void 0 ? void 0 : _b.addItemOwned(i, currentQty);
+                                    alert(playerGold + " " + price);
+                                    (_a = this.inventory) === null || _a === void 0 ? void 0 : _a.addItemOwned(i, currentQty);
                                 }
                                 else {
-                                    alert('Not enough gold!');
+                                    alert("Not enough gold!");
                                 }
                             }
                         }
@@ -3952,15 +3988,15 @@ class Shop {
                 shopTemp.appendChild(shopImage);
                 shopTemp.appendChild(desc);
                 shopHTML.appendChild(shopTemp);
-                shopHTML.style.height = '200px';
-                shopHTML.style.overflow = 'auto';
+                shopHTML.style.height = "200px";
+                shopHTML.style.overflow = "auto";
             }
         }
     }
 }
 exports.Shop = Shop;
 
-},{"./Items/BookOfEnergyT1":42,"./Items/BookOfEnergyT2":43,"./Items/BookOfEnergyT3":44}],55:[function(require,module,exports){
+},{"../utils/authentication":59,"./API":2,"./Items/BookOfEnergyT1":42,"./Items/BookOfEnergyT2":43,"./Items/BookOfEnergyT3":44}],55:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -4189,6 +4225,7 @@ const QuestionView_1 = require("./Classes/QuestionView");
 const API_1 = require("./Classes/API");
 const Leaderboard_1 = require("./Classes/Leaderboard");
 const LeaderboardView_1 = require("./Classes/LeaderboardView");
+const authentication_1 = require("./utils/authentication");
 window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     //Main game
@@ -4219,7 +4256,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     const energyDiv = document.querySelector("#energyAmount");
     const goldDiv = document.querySelector("#goldAmount");
     (0, loadAsset_1.default)(); //load game asset
-    const userToken = sessionStorage.getItem("game_itland");
+    const userToken = (0, authentication_1.getAuthToken)();
     if (!userToken) {
         //not logged in
         alert("Not logged in!");
@@ -4353,4 +4390,13 @@ function handleResize() {
 }
 window.addEventListener("resize", handleResize);
 
-},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":23,"./Classes/InventoryView":38,"./Classes/Items/Inventory":45,"./Classes/Leaderboard":50,"./Classes/LeaderboardView":51,"./Classes/QuestionView":53,"./Classes/Shop":54,"./Classes/ShopView":55,"./Classes/TerminalView":56,"./loadAsset":57}]},{},[58]);
+},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":23,"./Classes/InventoryView":38,"./Classes/Items/Inventory":45,"./Classes/Leaderboard":50,"./Classes/LeaderboardView":51,"./Classes/QuestionView":53,"./Classes/Shop":54,"./Classes/ShopView":55,"./Classes/TerminalView":56,"./loadAsset":57,"./utils/authentication":59}],59:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAuthToken = void 0;
+const getAuthToken = () => {
+    return sessionStorage.getItem("game_itland");
+};
+exports.getAuthToken = getAuthToken;
+
+},{}]},{},[58]);
