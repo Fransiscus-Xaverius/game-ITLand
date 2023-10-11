@@ -48,8 +48,8 @@ export class Player {
     );
 
     p1.createAnimation(
-      "walk",
-      Animation.assets["player_walk"],
+      "walk_up",
+      Animation.assets["player_walk_up"],
       { x: 32, y: 32 },
       4,
       "",
@@ -57,8 +57,26 @@ export class Player {
     );
 
     p1.createAnimation(
-      "walk_reverse",
-      Animation.assets["player_walk_reverse"],
+      "walk_down",
+      Animation.assets["player_walk_down"],
+      { x: 32, y: 32 },
+      4,
+      "",
+      4
+    );
+
+    p1.createAnimation(
+      "walk_left",
+      Animation.assets["player_walk_left"],
+      { x: 32, y: 32 },
+      4,
+      "",
+      4
+    );
+
+    p1.createAnimation(
+      "walk_right",
+      Animation.assets["player_walk_right"],
       { x: 32, y: 32 },
       4,
       "",

@@ -2994,13 +2994,19 @@ class PlayerUnit extends Entity_1.Entity {
         // this.playAnimation('walk')
         switch (direction) {
             case Direction_1.Direction.Left:
-                this.playAnimation('walk_reverse');
+                this.playAnimation('walk_left');
                 break;
             case Direction_1.Direction.Right:
-                this.playAnimation('walk');
+                this.playAnimation('walk_right');
+                break;
+            case Direction_1.Direction.Up:
+                this.playAnimation('walk_up');
+                break;
+            case Direction_1.Direction.Down:
+                this.playAnimation('walk_down');
                 break;
             default:
-                this.playAnimation('walk');
+                this.playAnimation('walk_up');
                 break;
         }
         const nextCoord = Object.assign({}, this.coordinate);
@@ -3602,8 +3608,10 @@ class Player {
         this.currentEquipped = null;
         const p1 = new PlayerUnit_1.PlayerUnit({ x: x, y: y });
         p1.addAnimation(new ChainedAnimation_1.ChainedAnimation(p1, "idle", Animation_1.Animation.assets["player_idle"], { x: 32, y: 32 }, 2, -1, 1));
-        p1.createAnimation("walk", Animation_1.Animation.assets["player_walk"], { x: 32, y: 32 }, 4, "", 4);
-        p1.createAnimation("walk_reverse", Animation_1.Animation.assets["player_walk_reverse"], { x: 32, y: 32 }, 4, "", 4);
+        p1.createAnimation("walk_up", Animation_1.Animation.assets["player_walk_up"], { x: 32, y: 32 }, 4, "", 4);
+        p1.createAnimation("walk_down", Animation_1.Animation.assets["player_walk_down"], { x: 32, y: 32 }, 4, "", 4);
+        p1.createAnimation("walk_left", Animation_1.Animation.assets["player_walk_left"], { x: 32, y: 32 }, 4, "", 4);
+        p1.createAnimation("walk_right", Animation_1.Animation.assets["player_walk_right"], { x: 32, y: 32 }, 4, "", 4);
         p1.setMoveSpeed(2);
         this.units.push(p1);
     }
@@ -4162,8 +4170,6 @@ function loadAsset() {
     flowergrass.src = "./dist/Assets/Prototype/itland_ptype_flowergrasstile.png";
     const player_idle = new Image();
     player_idle.src = "./dist/Assets/final/hooman_down_idle.png";
-    const player_walk = new Image();
-    player_walk.src = "./dist/Assets/final/hooman_down_walk.png";
     const player_dig = new Image();
     player_dig.src = "./dist/Assets/final/hooman_down_dig.png";
     const sand_tile = new Image();
@@ -4174,9 +4180,28 @@ function loadAsset() {
     granite_tile.src = "./dist/Assets/final/granite.png";
     const cave_tile = new Image();
     cave_tile.src = "./dist/Assets/final/ground(cave).png";
-    const player_walk_reverse = new Image();
-    // player_walk_reverse.src = "./dist/Assets/Prototype/itland_ptype_player_walk_mirrored.png"
-    player_walk_reverse.src = "./dist/Assets/final/hooman_down_walk.png";
+    //Player Movement Assets
+    const player_walk_down = new Image();
+    player_walk_down.src = "./dist/Assets/final/hooman_down_walk.png";
+    Animation_1.Animation.assets['player_walk_down'] = player_walk_down;
+    const player_walk_up = new Image();
+    player_walk_up.src = "./dist/Assets/final/hooman_up_walk.png";
+    Animation_1.Animation.assets['player_walk_up'] = player_walk_up;
+    const player_walk_left = new Image();
+    player_walk_left.src = "./dist/Assets/final/hooman_left_walk.png";
+    Animation_1.Animation.assets['player_walk_left'] = player_walk_left;
+    const player_walk_right = new Image();
+    player_walk_right.src = "./dist/Assets/final/hooman_right_walk.png";
+    Animation_1.Animation.assets['player_walk_right'] = player_walk_right;
+    //player Mining Animation Assets
+    const player_mine_up = new Image();
+    player_mine_up.src = './Assets/final/hooman_up_mine.png';
+    const player_mine_down = new Image();
+    player_mine_down.src = './Assets/final/hooman_down_mine.png';
+    const player_mine_left = new Image();
+    player_mine_left.src = './Assets/final/hooman_left_mine';
+    const player_mine_right = new Image();
+    player_mine_right.src = './Assets/final/hooman_right_mine';
     //Other Entities
     const rock = new Image();
     rock.src = './dist/Assets/Prototype/rock.png';
@@ -4193,8 +4218,6 @@ function loadAsset() {
     Animation_1.Animation.assets['grass_tile'] = grass;
     Animation_1.Animation.assets['flowery_grass_tile'] = flowergrass;
     Animation_1.Animation.assets['player_idle'] = player_idle;
-    Animation_1.Animation.assets['player_walk'] = player_walk;
-    Animation_1.Animation.assets['player_walk_reverse'] = player_walk_reverse;
     Animation_1.Animation.assets['sand'] = sand_tile;
     Animation_1.Animation.assets['rock'] = rock;
     Animation_1.Animation.assets['iron_ore'] = iron_ore;

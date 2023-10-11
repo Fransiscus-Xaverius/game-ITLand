@@ -9,8 +9,6 @@ export default function loadAsset():void{
     flowergrass.src = "./dist/Assets/Prototype/itland_ptype_flowergrasstile.png"
     const player_idle = new Image()
     player_idle.src = "./dist/Assets/final/hooman_down_idle.png"
-    const player_walk = new Image()
-    player_walk.src = "./dist/Assets/final/hooman_down_walk.png"
     const player_dig  = new Image()
     player_dig.src = "./dist/Assets/final/hooman_down_dig.png"
     const sand_tile = new Image()
@@ -21,9 +19,31 @@ export default function loadAsset():void{
     granite_tile.src = "./dist/Assets/final/granite.png"
     const cave_tile = new Image()
     cave_tile.src = "./dist/Assets/final/ground(cave).png"
-    const player_walk_reverse = new Image();
-    // player_walk_reverse.src = "./dist/Assets/Prototype/itland_ptype_player_walk_mirrored.png"
-    player_walk_reverse.src = "./dist/Assets/final/hooman_down_walk.png"
+   
+
+    //Player Movement Assets
+    const player_walk_down = new Image()
+    player_walk_down.src = "./dist/Assets/final/hooman_down_walk.png"
+    Animation.assets['player_walk_down'] = player_walk_down
+    const player_walk_up = new Image();
+    player_walk_up.src = "./dist/Assets/final/hooman_up_walk.png"
+    Animation.assets['player_walk_up'] = player_walk_up
+    const player_walk_left = new Image();
+    player_walk_left.src = "./dist/Assets/final/hooman_left_walk.png"
+    Animation.assets['player_walk_left'] = player_walk_left
+    const player_walk_right = new Image();
+    player_walk_right.src = "./dist/Assets/final/hooman_right_walk.png"
+    Animation.assets['player_walk_right'] = player_walk_right
+
+    //player Mining Animation Assets
+    const player_mine_up = new Image();
+    player_mine_up.src = './Assets/final/hooman_up_mine.png'
+    const player_mine_down = new Image();
+    player_mine_down.src = './Assets/final/hooman_down_mine.png'
+    const player_mine_left = new Image();
+    player_mine_left.src = './Assets/final/hooman_left_mine'
+    const player_mine_right = new Image();
+    player_mine_right.src = './Assets/final/hooman_right_mine'
 
     //Other Entities
     const rock = new Image();
@@ -43,8 +63,6 @@ export default function loadAsset():void{
     Animation.assets['grass_tile'] = grass
     Animation.assets['flowery_grass_tile'] = flowergrass
     Animation.assets['player_idle'] = player_idle
-    Animation.assets['player_walk'] = player_walk
-    Animation.assets['player_walk_reverse'] = player_walk_reverse
     Animation.assets['sand'] = sand_tile
     Animation.assets['rock'] = rock
     Animation.assets['iron_ore'] = iron_ore;

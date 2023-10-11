@@ -166,13 +166,19 @@ export class PlayerUnit extends Entity {
         // this.playAnimation('walk')
         switch (direction) {
             case Direction.Left:
-                this.playAnimation('walk_reverse')
+                this.playAnimation('walk_left')
                 break;
             case Direction.Right:
-                this.playAnimation('walk')
+                this.playAnimation('walk_right')
+                break;
+            case Direction.Up:
+                this.playAnimation('walk_up')
+                break;
+            case Direction.Down:
+                this.playAnimation('walk_down')
                 break;
             default:
-                this.playAnimation('walk')
+                this.playAnimation('walk_up')
                 break;
         }
         const nextCoord: Point = { ...this.coordinate };
