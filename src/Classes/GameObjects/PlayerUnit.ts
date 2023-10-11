@@ -154,11 +154,31 @@ export class PlayerUnit extends Entity {
 
     }
 
-    public Mine() { //play mining animation
+    public Mine(direction:Direction) { //play mining animation
         if (this.isMoving) return;
         this.isMoving = true;
-        this.playAnimation('walk');
+        switch(direction){
+            case Direction.Down:
+              this.playAnimation('mine_down');
+              break;
+            case Direction.Up:
+              this.playAnimation('mine_up');
+              break;
+            case Direction.Left:
+              this.playAnimation('mine_left');
+              break;
+            case Direction.Right:
+              this.playAnimation('mine_right');
+              break;
+            default:
+              break;
+        }
     }
+    
+    private MiningAnimation(direction: Direction){
+        // this.activePlayerUnit?.playAnimation('')
+        
+      }
 
     public move(direction: Direction): void {
         if (this.isMoving || direction == Direction.None) return;

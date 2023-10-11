@@ -37,13 +37,17 @@ export default function loadAsset():void{
 
     //player Mining Animation Assets
     const player_mine_up = new Image();
-    player_mine_up.src = './Assets/final/hooman_up_mine.png'
+    player_mine_up.src = './dist/Assets/final/hooman_up_mine.png'
+    Animation.assets["mine_up"] = player_mine_up;
     const player_mine_down = new Image();
-    player_mine_down.src = './Assets/final/hooman_down_mine.png'
+    player_mine_down.src = './dist/Assets/final/hooman_down_mine.png'
+    Animation.assets["mine_down"] = player_mine_down;
     const player_mine_left = new Image();
-    player_mine_left.src = './Assets/final/hooman_left_mine'
+    player_mine_left.src = './dist/Assets/final/hooman_left_mine.png'
+    Animation.assets["mine_left"] = player_mine_left;
     const player_mine_right = new Image();
-    player_mine_right.src = './Assets/final/hooman_right_mine'
+    player_mine_right.src = './dist/Assets/final/hooman_right_mine.png'
+    Animation.assets["mine_right"] = player_mine_right
 
     //Other Entities
     const rock = new Image();

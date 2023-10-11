@@ -187,7 +187,7 @@ export class GameManager {
       return;
     }
     if (tools instanceof Pickaxe) {
-      this.actionWithPickaxe(temp);
+      this.actionWithPickaxe(temp, direction);
     } else if (tools instanceof Sword) {
       this.actionWithSword(temp);
     } else if (tools instanceof Shovel) {
@@ -218,7 +218,9 @@ export class GameManager {
     alert("Equip something");
   }
 
-  private actionWithPickaxe(entity: Entity) {
+  
+
+  private actionWithPickaxe(entity: Entity, direction:Direction) {
     const entityName = entity.getEntityName();
     if (
       entityName == "Rock" ||
@@ -239,6 +241,7 @@ export class GameManager {
             entity.getCoordinate().x,
             entity.getCoordinate().y
           );
+          this.activePlayerUnit?.Mine(direction);
           this.player.useEnergy(entity.getRequiredEnergy());
           this.questionView?.refreshStats();
         } else {

@@ -2198,7 +2198,7 @@ class GameManager {
             return;
         }
         if (tools instanceof Pickaxe_1.Pickaxe) {
-            this.actionWithPickaxe(temp);
+            this.actionWithPickaxe(temp, direction);
         }
         else if (tools instanceof Sword_1.Sword) {
             this.actionWithSword(temp);
@@ -2229,8 +2229,8 @@ class GameManager {
     alertEquipSomething() {
         alert("Equip something");
     }
-    actionWithPickaxe(entity) {
-        var _a;
+    actionWithPickaxe(entity, direction) {
+        var _a, _b;
         const entityName = entity.getEntityName();
         if (entityName == "Rock" ||
             entityName == "Iron_ore" ||
@@ -2239,8 +2239,9 @@ class GameManager {
             if (this.isGoodEnough(this.player.getEnergy(), entity.getRequiredEnergy())) {
                 if (this.isGoodEnough(this.player.getEquipmentLevels().pickaxe, entity.getEntityLevel())) {
                     this.removeGridEntity(entity.getCoordinate().x, entity.getCoordinate().y);
+                    (_a = this.activePlayerUnit) === null || _a === void 0 ? void 0 : _a.Mine(direction);
                     this.player.useEnergy(entity.getRequiredEnergy());
-                    (_a = this.questionView) === null || _a === void 0 ? void 0 : _a.refreshStats();
+                    (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.refreshStats();
                 }
                 else {
                     this.logActivity(`Upgrade your pickaxe to destroy this block!`);
@@ -2981,11 +2982,29 @@ class PlayerUnit extends Entity_1.Entity {
     //In-game actions
     Dig() {
     }
-    Mine() {
+    Mine(direction) {
         if (this.isMoving)
             return;
         this.isMoving = true;
-        this.playAnimation('walk');
+        switch (direction) {
+            case Direction_1.Direction.Down:
+                this.playAnimation('mine_down');
+                break;
+            case Direction_1.Direction.Up:
+                this.playAnimation('mine_up');
+                break;
+            case Direction_1.Direction.Left:
+                this.playAnimation('mine_left');
+                break;
+            case Direction_1.Direction.Right:
+                this.playAnimation('mine_right');
+                break;
+            default:
+                break;
+        }
+    }
+    MiningAnimation(direction) {
+        // this.activePlayerUnit?.playAnimation('')
     }
     move(direction) {
         if (this.isMoving || direction == Direction_1.Direction.None)
@@ -3362,6 +3381,7 @@ class Inventory {
                                 this.player.addEnergy(energyRestored);
                                 alert("2");
                                 // alert("2"+JSON.stringify(this.items[index].amount));
+                                alert(currentIndex);
                                 this.items[currentIndex].amount -= 1;
                                 alert("3");
                                 // alert("3"+JSON.stringify(this.items[index].amount));
@@ -3612,6 +3632,10 @@ class Player {
         p1.createAnimation("walk_down", Animation_1.Animation.assets["player_walk_down"], { x: 32, y: 32 }, 4, "", 4);
         p1.createAnimation("walk_left", Animation_1.Animation.assets["player_walk_left"], { x: 32, y: 32 }, 4, "", 4);
         p1.createAnimation("walk_right", Animation_1.Animation.assets["player_walk_right"], { x: 32, y: 32 }, 4, "", 4);
+        p1.createAnimation("mine_up", Animation_1.Animation.assets["mine_up"], { x: 32, y: 32 }, 5, "", 10);
+        p1.createAnimation("mine_down", Animation_1.Animation.assets["mine_down"], { x: 32, y: 32 }, 5, "", 10);
+        p1.createAnimation("mine_left", Animation_1.Animation.assets["mine_left"], { x: 32, y: 32 }, 5, "", 10);
+        p1.createAnimation("mine_right", Animation_1.Animation.assets["mine_right"], { x: 32, y: 32 }, 5, "", 10);
         p1.setMoveSpeed(2);
         this.units.push(p1);
     }
@@ -4195,13 +4219,17 @@ function loadAsset() {
     Animation_1.Animation.assets['player_walk_right'] = player_walk_right;
     //player Mining Animation Assets
     const player_mine_up = new Image();
-    player_mine_up.src = './Assets/final/hooman_up_mine.png';
+    player_mine_up.src = './dist/Assets/final/hooman_up_mine.png';
+    Animation_1.Animation.assets["mine_up"] = player_mine_up;
     const player_mine_down = new Image();
-    player_mine_down.src = './Assets/final/hooman_down_mine.png';
+    player_mine_down.src = './dist/Assets/final/hooman_down_mine.png';
+    Animation_1.Animation.assets["mine_down"] = player_mine_down;
     const player_mine_left = new Image();
-    player_mine_left.src = './Assets/final/hooman_left_mine';
+    player_mine_left.src = './dist/Assets/final/hooman_left_mine.png';
+    Animation_1.Animation.assets["mine_left"] = player_mine_left;
     const player_mine_right = new Image();
-    player_mine_right.src = './Assets/final/hooman_right_mine';
+    player_mine_right.src = './dist/Assets/final/hooman_right_mine.png';
+    Animation_1.Animation.assets["mine_right"] = player_mine_right;
     //Other Entities
     const rock = new Image();
     rock.src = './dist/Assets/Prototype/rock.png';
