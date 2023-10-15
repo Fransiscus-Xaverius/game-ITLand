@@ -150,6 +150,16 @@ export class GameManager {
     await this.api?.removeEntity(y, x);
   }
 
+  public async digTile(x:number, y:number){
+    const name = this.grid.tiles[y][x]?.getTileName();
+    const drop = this.grid.tiles[y][y]?.tileDrop();
+    const transaction = API.updateGold(this.token, drop!);
+    this.player.addGold(drop!);
+    this.logActivity(`Excavated a ${name} area and got ${drop} gold coins!`);
+    this.questionView?.refreshStats();
+     
+  }
+
   public alertEntity(): void {
     console.log(this.grid.entities);
   }
@@ -184,17 +194,26 @@ export class GameManager {
     const coords = this.player.getCoordinate();
     const temp = this.getGridEntity(coords, direction);
     const tile = this.getTile(coords);
-    if (!temp) {
-      alert("No entity object");
+    if (!temp && direction!=Direction.Down) {
+      this.logActivity("No Entity Object!")
+      return;
+    }
+    else if(Direction.Down && !tile){
+      //should not be possible but its here just in case :D
+      this.logActivity("Invalid Dig Command")
+      return;
+    }
+    else if(direction!=Direction.Down&&temp?.getEntityName()=='Obsidian'){
+      this.logActivity("This is an obsidian block. It is a world border object and thus cannot be destroyed!");
       return;
     }
     if (tools instanceof Pickaxe) {
-      this.actionWithPickaxe(temp, direction);
+      this.actionWithPickaxe(temp!, direction);
     } else if (tools instanceof Sword) {
-      this.actionWithSword(temp);
+      this.actionWithSword(temp!);
     } else if (tools instanceof Shovel) {
       if(!tile) return;
-      this.actionWithShovel(tile);
+      this.actionWithShovel(tile!);
     } else {
       this.alertEquipSomething();
     }
@@ -280,9 +299,24 @@ export class GameManager {
   }
 
   private actionWithShovel(tile:Tile) {
-    const isDiggable = "";
-    switch (tile) {
-      
+    const isDiggable = tile.name.includes("digged");
+    switch (isDiggable) {
+      case false:
+       if(this.isGoodEnough(this.player.getEnergy(), tile.getRequiredEnergy())){
+        if(this.isGoodEnough(this.player.getEquipmentLevels().shovel, tile.level)){
+          
+        }
+        else{
+          this.logActivity("Upgrade your shovel to excavate this area!")
+        }
+       }  
+       else{
+        this.logActivity(`You need more energy to do this action!`)
+       }
+        break;
+      case true:
+        this.logActivity("This area has already been excavated! ")
+        break;
       default:
         alert("This is the wrong tool!");
         break;

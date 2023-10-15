@@ -68,6 +68,7 @@ export class PlayerUnit extends Entity {
         }
         var currentCommand = this.terminal.currentCommand
 
+        //MOVEMENT WITH SYNTAX! DO NOT ERASE THIS! IMPORTANT DOCUMENTATION
         // if(currentCommand instanceof SingleCommand){
         //     const asyncTask = currentCommand.getAsyncTask()
         //     if(asyncTask && this.terminal.running){
@@ -94,6 +95,8 @@ export class PlayerUnit extends Entity {
         //             if(!this.isMoving)this.move(this.direction)
         //         }
         //     }
+
+
         if (this.isMoving) this.lerpProgress += deltaTime * this.moveSpeed
         if (this.lerpProgress >= 1) {
             this.moveProgress += 1;
@@ -101,6 +104,8 @@ export class PlayerUnit extends Entity {
             this.originalCoordinate = this.coordinate;
             this.isMoving = false
             this.playAnimation('idle');
+
+            //SYNTAX COMMAND EXECUTION. DO NOT REMOVE THIS BEFORE DOCUMENTATION IS COMPLETE.  
             // if(this.moveProgress < this.moveIteration) {
             //     if(!this.terminal.running){
             //         this.moveProgress  = 0

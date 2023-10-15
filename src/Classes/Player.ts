@@ -125,7 +125,7 @@ export class Player {
       {x:32, y:32},
       8,
       "",
-      10
+      15
     )
 
     p1.setMoveSpeed(2);

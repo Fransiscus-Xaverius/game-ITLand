@@ -17,6 +17,8 @@ import { Silver_ore } from "./silver_ore";
 import { Iron_ore } from "./iron_ore";
 import { Granite } from "./Granite";
 import { Ground } from "./Ground";
+import { Obsidian } from "./Obsidian";
+
 
 export class Grid {
     public readonly size: Point
@@ -54,12 +56,40 @@ export class Grid {
                     case 'cave':
                         this.tiles[i].push(new Ground({x:j, y:i}));
                         break;
+                    case 'digged_grass':
+                        this.tiles[i].push(new Grass({x:j,y:i}));
+                        break;
+                    case 'digged_sand':
+                        this.tiles[i].push(new Sand({x:j,y:i}));
+                        break;
+                    case 'digged_gravel':
+                        this.tiles[i].push(new Gravel({x:j, y:i}));
+                        break;
+                    case 'digged_granite':
+                        this.tiles[i].push(new Granite({x:j, y:i}));
+                        break;
+                    case 'digged_cave':
+                        this.tiles[i].push(new Ground({x:j, y:i}));
+                        break;
                     default:
                         this.tiles[i].push(new Grass({x:j, y:i}));
                         break;
                 }
 
                 switch(entity[j][i]){
+                    case 'obsidian':
+                        const obsidian = new Obsidian({x:j, y:i});
+                        obsidian.addAnimation(new ChainedAnimation(
+                            obsidian,
+                            'obsidian',
+                            Animation.assets['obsidian'],
+                            {x:32, y:32},
+                            1,
+                            -1,
+                            1
+                        ))
+                        this.addEntity(obsidian);
+                        break;
                     case 'rock':
                         const rock = new Rock({ x: j, y: i });
                         rock.addAnimation(new ChainedAnimation(

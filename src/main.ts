@@ -104,21 +104,6 @@ window.onload = async () => {
 
   setInterval(subtick, 1000);
 
-  // const map = await game.testAPI();
-  // alert(map);
-  // soalButton.addEventListener('click', async () => {
-  //     const tAPI = await game.testAPIsoal();
-  //     let q:Question = {text:tAPI?.text!, a:tAPI?.a!, b:tAPI?.b!, c:tAPI?.c!, d:tAPI?.d!, answer:tAPI?.answer!};
-  //     QuestionArea.innerHTML = q.text;
-  // })
-
-  //Shop
-
-  //Quiz Section
-  // const curPlayer = game.getPlayer();
-  // const energyAmount = document.querySelector("#energyAmount") as HTMLDivElement
-  // energyAmount.value = `Energy: ${curPlayer.getEnergy()}`
-
   soalButton.addEventListener("click", async () => {
     await game.getQuestionView()?.UpdateQuestion();
   });
@@ -235,7 +220,7 @@ window.onload = async () => {
       game.Action(Direction.Right, currentEquipped);
     }
 
-    if(key==="Space"){
+    if(key===" "){
       const currentEquipped = game
         .getPlayer()
         .getCurrentEquipment() as EquippableItem;

@@ -6,14 +6,15 @@ import { Entity } from "./Entity";
 import { Point } from "./Type/Point";
 import { GroupAnimation } from "./GroupAnimation";
 
-export class Granite extends Tile implements IDestructable{
+export class DiggedGravel extends Tile implements IDestructable {
     constructor(coordinate:Point){
-        super(coordinate,[],"granite", 15, 3, 50, 300)
-        this.addAnimation(GroupAnimation.animations[3])
+        super(coordinate,[],"digged_gravel", 5, 1, 5, 40)
+        this.addAnimation(GroupAnimation.animations[4])
     }
 
     public step(stepper: Entity): void {
         return;
         throw new Error("Method not implemented.");
     }
+
 }

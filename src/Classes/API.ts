@@ -98,7 +98,6 @@ export class API {
   public async gameStart() {
     const apiUrl = LOCAL_API_URL + "/map";
     const apiUrl2 = LOCAL_API_URL + "/entity";
-    alert("gamestart api");
     let map: Map = { tile: [], entity: [] };
     try {
       const response = await fetch(apiUrl);
@@ -108,7 +107,6 @@ export class API {
       map.tile = jsonData;
     } catch (error) {
       alert("error getting tile data");
-      console.error("hello");
     }
     try {
       const response = await fetch(apiUrl2);
@@ -208,6 +206,10 @@ export class API {
     } catch (error) {
       console.error("hello");
     }
+  }
+
+  public async digTile(x:number, y:number){
+
   }
 
   public static async Dynamite(username: string) {

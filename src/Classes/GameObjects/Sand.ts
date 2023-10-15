@@ -9,7 +9,7 @@ import { GroupAnimation } from "./GroupAnimation";
 export class Sand extends Tile implements IDestructable{
 
     constructor(coordinate:Point){
-        super(coordinate)
+        super(coordinate, [], "sand", 5, 1, 10, 50)
         this.addAnimation(GroupAnimation.animations[2])
         
     }
