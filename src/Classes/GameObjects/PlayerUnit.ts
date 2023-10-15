@@ -9,7 +9,7 @@ import { Point } from "./Type/Point";
 
 export class PlayerUnit extends Entity {
     private originalCoordinate: Point
-    private isMoving: boolean = false
+    public isMoving: boolean = false
     private moveSpeed: number = 1
     private lerpProgress: number = 0
     private moveProgress: number = 0
@@ -151,7 +151,9 @@ export class PlayerUnit extends Entity {
     //In-game actions
 
     public Dig() {
-
+        if(this.isMoving) return;
+        this.isMoving = true;
+        this.playAnimation("dig");
     }
 
     public Mine(direction:Direction) { //play mining animation

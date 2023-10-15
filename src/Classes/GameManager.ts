@@ -22,6 +22,7 @@ import { Sword } from "./Items/Sword";
 import { Shovel } from "./Items/Shovel";
 import { json } from "stream/consumers";
 import { LeaderboardView } from "./LeaderboardView";
+import { Tile } from "./GameObjects/Tile";
 
 export class GameManager {
   public api: API | null = null;
@@ -182,6 +183,7 @@ export class GameManager {
   public Action(direction: Direction, tools: EquippableItem) {
     const coords = this.player.getCoordinate();
     const temp = this.getGridEntity(coords, direction);
+    const tile = this.getTile(coords);
     if (!temp) {
       alert("No entity object");
       return;
@@ -191,10 +193,15 @@ export class GameManager {
     } else if (tools instanceof Sword) {
       this.actionWithSword(temp);
     } else if (tools instanceof Shovel) {
-      this.actionWithShovel(temp);
+      if(!tile) return;
+      this.actionWithShovel(tile);
     } else {
       this.alertEquipSomething();
     }
+  }
+
+  private getTile(coords:Point){
+    return this.grid.getTile(coords.x, coords.y);
   }
 
   private getGridEntity(coords: Point, direction: Direction): Entity | null {
@@ -272,9 +279,10 @@ export class GameManager {
     }
   }
 
-  private actionWithShovel(entity: Entity) {
-    switch (entity.getEntityName()) {
-      case "":
+  private actionWithShovel(tile:Tile) {
+    const isDiggable = "";
+    switch (tile) {
+      
       default:
         alert("This is the wrong tool!");
         break;

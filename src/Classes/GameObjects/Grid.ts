@@ -192,6 +192,10 @@ export class Grid {
         if (entity.getGrid() != this) entity.setGrid(this)
     }
 
+    public getTile(x:number, y:number){
+        return this.tiles[y][x];
+    }
+
     public getEntity(x:number, y:number){
         return this.entityGrid[y][x];
     }

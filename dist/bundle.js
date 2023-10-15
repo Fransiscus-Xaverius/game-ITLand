@@ -2193,6 +2193,7 @@ class GameManager {
     Action(direction, tools) {
         const coords = this.player.getCoordinate();
         const temp = this.getGridEntity(coords, direction);
+        const tile = this.getTile(coords);
         if (!temp) {
             alert("No entity object");
             return;
@@ -2204,11 +2205,16 @@ class GameManager {
             this.actionWithSword(temp);
         }
         else if (tools instanceof Shovel_1.Shovel) {
-            this.actionWithShovel(temp);
+            if (!tile)
+                return;
+            this.actionWithShovel(tile);
         }
         else {
             this.alertEquipSomething();
         }
+    }
+    getTile(coords) {
+        return this.grid.getTile(coords.x, coords.y);
     }
     getGridEntity(coords, direction) {
         switch (direction) {
@@ -2266,9 +2272,9 @@ class GameManager {
                 break;
         }
     }
-    actionWithShovel(entity) {
-        switch (entity.getEntityName()) {
-            case "":
+    actionWithShovel(tile) {
+        const isDiggable = "";
+        switch (tile) {
             default:
                 alert("This is the wrong tool!");
                 break;
@@ -2793,6 +2799,9 @@ class Grid {
         if (entity.getGrid() != this)
             entity.setGrid(this);
     }
+    getTile(x, y) {
+        return this.tiles[y][x];
+    }
     getEntity(x, y) {
         return this.entityGrid[y][x];
     }
@@ -2981,6 +2990,10 @@ class PlayerUnit extends Entity_1.Entity {
     }
     //In-game actions
     Dig() {
+        if (this.isMoving)
+            return;
+        this.isMoving = true;
+        this.playAnimation("dig");
     }
     Mine(direction) {
         if (this.isMoving)
@@ -3636,6 +3649,7 @@ class Player {
         p1.createAnimation("mine_down", Animation_1.Animation.assets["mine_down"], { x: 32, y: 32 }, 5, "", 10);
         p1.createAnimation("mine_left", Animation_1.Animation.assets["mine_left"], { x: 32, y: 32 }, 5, "", 10);
         p1.createAnimation("mine_right", Animation_1.Animation.assets["mine_right"], { x: 32, y: 32 }, 5, "", 10);
+        p1.createAnimation("dig", Animation_1.Animation.assets["dig"], { x: 32, y: 32 }, 8, "", 10);
         p1.setMoveSpeed(2);
         this.units.push(p1);
     }
@@ -4194,8 +4208,6 @@ function loadAsset() {
     flowergrass.src = "./dist/Assets/Prototype/itland_ptype_flowergrasstile.png";
     const player_idle = new Image();
     player_idle.src = "./dist/Assets/final/hooman_down_idle.png";
-    const player_dig = new Image();
-    player_dig.src = "./dist/Assets/final/hooman_down_dig.png";
     const sand_tile = new Image();
     sand_tile.src = "./dist/Assets/Prototype/sand.png";
     const gravel_tile = new Image();
@@ -4230,6 +4242,10 @@ function loadAsset() {
     const player_mine_right = new Image();
     player_mine_right.src = './dist/Assets/final/hooman_right_mine.png';
     Animation_1.Animation.assets["mine_right"] = player_mine_right;
+    //player dig animation assets
+    const player_dig = new Image();
+    player_dig.src = "./dist/Assets/final/hooman_down_dig.png";
+    Animation_1.Animation.assets["dig"] = player_dig;
     //Other Entities
     const rock = new Image();
     rock.src = './dist/Assets/Prototype/rock.png';
@@ -4377,19 +4393,56 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         yield ((_j = game.getQuestionView()) === null || _j === void 0 ? void 0 : _j.checkAnswer(DButton, DButton.value));
     }));
     document.addEventListener("keydown", (e) => {
-        const key = e.key;
+        let key = e.key;
+        key = key.toLowerCase();
         let price = 5; //energy price for action.
         if (key === "w") {
-            pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Up);
+            switch (pUnit === null || pUnit === void 0 ? void 0 : pUnit.isMoving) {
+                case true:
+                    return;
+                    break;
+                case false:
+                    pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Up);
+                    break;
+                default:
+                    break;
+            }
         }
         if (key === "a") {
-            pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Left);
+            switch (pUnit === null || pUnit === void 0 ? void 0 : pUnit.isMoving) {
+                case true:
+                    return;
+                    break;
+                case false:
+                    pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Left);
+                    break;
+                default:
+                    break;
+            }
         }
         if (key === "s") {
-            pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Down);
+            switch (pUnit === null || pUnit === void 0 ? void 0 : pUnit.isMoving) {
+                case true:
+                    return;
+                    break;
+                case false:
+                    pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Down);
+                    break;
+                default:
+                    break;
+            }
         }
         if (key === "d") {
-            pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Right);
+            switch (pUnit === null || pUnit === void 0 ? void 0 : pUnit.isMoving) {
+                case true:
+                    return;
+                    break;
+                case false:
+                    pUnit === null || pUnit === void 0 ? void 0 : pUnit.move(Direction_1.Direction.Right);
+                    break;
+                default:
+                    break;
+            }
         }
         if (key === "1") {
             game.getPlayer().setEquipmentLevels(1);
@@ -4431,6 +4484,12 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
                 .getPlayer()
                 .getCurrentEquipment();
             game.Action(Direction_1.Direction.Right, currentEquipped);
+        }
+        if (key === "Space") {
+            const currentEquipped = game
+                .getPlayer()
+                .getCurrentEquipment();
+            game.Action(Direction_1.Direction.Down, currentEquipped);
         }
         console.clear();
     });

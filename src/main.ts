@@ -140,19 +140,56 @@ window.onload = async () => {
   });
 
   document.addEventListener("keydown", (e) => {
-    const key = e.key;
+    let key = e.key;
+    key = key.toLowerCase();
     let price = 5; //energy price for action.
     if (key === "w") {
-      pUnit?.move(Direction.Up);
+      switch(pUnit?.isMoving){
+        case true:
+          return;
+          break;
+        case false:
+          pUnit?.move(Direction.Up);
+          break;
+        default:
+          break;
+      }
     }
     if (key === "a") {
-      pUnit?.move(Direction.Left);
+      switch(pUnit?.isMoving){
+        case true:
+          return;
+          break;
+        case false:
+          pUnit?.move(Direction.Left);
+          break;
+        default:
+          break;
+      }
     }
     if (key === "s") {
-      pUnit?.move(Direction.Down);
+      switch(pUnit?.isMoving){
+        case true:
+          return;
+          break;
+        case false:
+          pUnit?.move(Direction.Down);
+          break;
+        default:
+          break;
+      }
     }
     if (key === "d") {
-      pUnit?.move(Direction.Right);
+      switch(pUnit?.isMoving){
+        case true:
+          return;
+          break;
+        case false:
+          pUnit?.move(Direction.Right);
+          break;
+        default:
+          break;
+      }
     }
 
     if (key === "1") {
@@ -197,6 +234,14 @@ window.onload = async () => {
         .getCurrentEquipment() as EquippableItem;
       game.Action(Direction.Right, currentEquipped);
     }
+
+    if(key==="Space"){
+      const currentEquipped = game
+        .getPlayer()
+        .getCurrentEquipment() as EquippableItem;
+      game.Action(Direction.Down, currentEquipped);
+    }
+
     console.clear();
   });
 };

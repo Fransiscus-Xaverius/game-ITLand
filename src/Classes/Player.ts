@@ -119,6 +119,15 @@ export class Player {
       10
     )
 
+    p1.createAnimation(
+      "dig",
+      Animation.assets["dig"],
+      {x:32, y:32},
+      8,
+      "",
+      10
+    )
+
     p1.setMoveSpeed(2);
     this.units.push(p1);
   }

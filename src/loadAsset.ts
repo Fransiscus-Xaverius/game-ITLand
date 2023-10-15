@@ -9,8 +9,6 @@ export default function loadAsset():void{
     flowergrass.src = "./dist/Assets/Prototype/itland_ptype_flowergrasstile.png"
     const player_idle = new Image()
     player_idle.src = "./dist/Assets/final/hooman_down_idle.png"
-    const player_dig  = new Image()
-    player_dig.src = "./dist/Assets/final/hooman_down_dig.png"
     const sand_tile = new Image()
     sand_tile.src = "./dist/Assets/Prototype/sand.png"
     const gravel_tile = new Image()
@@ -48,6 +46,11 @@ export default function loadAsset():void{
     const player_mine_right = new Image();
     player_mine_right.src = './dist/Assets/final/hooman_right_mine.png'
     Animation.assets["mine_right"] = player_mine_right
+
+    //player dig animation assets
+    const player_dig  = new Image()
+    player_dig.src = "./dist/Assets/final/hooman_down_dig.png"
+    Animation.assets["dig"] = player_dig;
 
     //Other Entities
     const rock = new Image();
