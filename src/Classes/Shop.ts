@@ -110,7 +110,7 @@ export class Shop {
         const colDiv2: HTMLDivElement = document.createElement("div");
         colDiv2.classList.add("col-sm-2");
         const itemQtyDiv: HTMLInputElement = document.createElement("input");
-        itemQtyDiv.style.width = "30px";
+        itemQtyDiv.style.width = "60px";
         itemQtyDiv.type = "number";
         itemQtyDiv.classList.add("item-qty", `item-${i}`);
         itemQtyDiv.value = "1";
@@ -127,6 +127,9 @@ export class Shop {
           ) as HTMLDivElement;
           if (item) {
             const currentQty: number = parseInt(item.value) || 0;
+            if (currentQty < 1) {
+              item.innerHTML = "1";
+            }
             const totalPrice: number = currentQty * this.item[i].getItemPrice();
             totalPriceDiv.textContent = `Gold ${totalPrice}`;
           } else {
@@ -204,13 +207,18 @@ export class Shop {
                 const price = parseInt(priceContent.split(" ")[1]);
                 if (playerGold >= price) {
                   const currentQty: number = parseInt(itemAmount.value) || 0;
-                  //   this.player.useGold(price);
-                  const token: string | null = getAuthToken();
-                  if (token) {
-                    API.updateGold(token, -price);
+                  if (currentQty > 0) {
+                    //   this.player.useGold(price);
+                    const token: string | null = getAuthToken();
+                    if (token) {
+                      API.updateGold(token, -price);
+                    }
+                    alert(playerGold + " " + price);
+                    this.inventory?.addItemOwned(i, currentQty);
+                  } else {
+                    itemAmount.value = "1";
+                    totalPriceDiv.textContent = `Gold ${1 * this.item[i].getItemPrice()}`;
                   }
-                  alert(playerGold + " " + price);
-                  this.inventory?.addItemOwned(i, currentQty);
                 } else {
                   alert("Not enough gold!");
                 }

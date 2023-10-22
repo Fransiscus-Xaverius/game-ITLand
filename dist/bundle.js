@@ -3500,7 +3500,7 @@ class Inventory {
             const imageElement = document.createElement("img");
             imageElement.classList.add("inventory-item-image", "card-img-top");
             imageElement.src = item.getImagePath();
-            imageElement.alt = ``;
+            imageElement.alt = "";
             const cardBody = document.createElement("div");
             cardBody.classList.add("card-body");
             const nameElement = document.createElement("p");
@@ -3512,41 +3512,36 @@ class Inventory {
             const itemUseButton = document.createElement("button");
             if (item instanceof ConsumableItem_1.ConsumableItem) {
                 itemUseButton.textContent = "Consume";
-                itemUseButton.classList.add("Consume");
-                itemUseButton.addEventListener("click", () => {
-                    const thisItem = item;
-                    const currentIndex = index;
+                itemUseButton.classList.add("Consume", `consume-item-${index}`);
+                // Create a function to handle the click event
+                const handleItemClick = () => {
                     if (amount > 0) {
                         if (this.player) {
-                            if (thisItem instanceof Book_1.Book) {
-                                const energyRestored = thisItem.useItem();
-                                // alert("1"+JSON.stringify(this.items[index].amount));
-                                alert("1");
+                            if (item instanceof Book_1.Book) {
+                                const energyRestored = item.useItem();
                                 this.player.addEnergy(energyRestored);
-                                alert("2");
-                                // alert("2"+JSON.stringify(this.items[index].amount));
-                                alert(currentIndex);
-                                this.items[currentIndex].amount -= 1;
-                                alert("3");
-                                // alert("3"+JSON.stringify(this.items[index].amount));
-                                const currentQty = document.querySelector(`.item-owned-qty-${currentIndex}`);
-                                alert("4");
-                                if (currentQty) {
-                                    currentQty.innerHTML = `${this.items[currentIndex].amount}`;
-                                    alert("5");
+                                // Access the button's class using the `itemUseButton` reference
+                                const currIndex = parseInt(itemUseButton.className.split(" ")[1].split("-")[2]);
+                                if (this.items[currIndex].amount > 0) {
+                                    this.items[currIndex].amount -= 1;
+                                    // Update the quantity displayed
+                                    const currentQty = document.querySelector(`.item-owned-qty-${currIndex}`);
+                                    if (currentQty) {
+                                        currentQty.innerHTML = `${this.items[currIndex].amount}`;
+                                    }
                                 }
                             }
                         }
                     }
-                });
+                };
+                itemUseButton.addEventListener("click", handleItemClick);
             }
             else if (item instanceof EquippableItem_1.EquippableItem) {
                 itemUseButton.textContent = "Equip";
                 itemUseButton.classList.add("Equip");
                 itemUseButton.addEventListener("click", () => {
-                    const thisItem = item;
                     if (this.player) {
-                        this.player.equip(thisItem);
+                        this.player.equip(item);
                     }
                 });
             }
@@ -4087,7 +4082,7 @@ class Shop {
                 const colDiv2 = document.createElement("div");
                 colDiv2.classList.add("col-sm-2");
                 const itemQtyDiv = document.createElement("input");
-                itemQtyDiv.style.width = "30px";
+                itemQtyDiv.style.width = "60px";
                 itemQtyDiv.type = "number";
                 itemQtyDiv.classList.add("item-qty", `item-${i}`);
                 itemQtyDiv.value = "1";
@@ -4098,6 +4093,9 @@ class Shop {
                     const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
                     if (item) {
                         const currentQty = parseInt(item.value) || 0;
+                        if (currentQty < 1) {
+                            item.innerHTML = "1";
+                        }
                         const totalPrice = currentQty * this.item[i].getItemPrice();
                         totalPriceDiv.textContent = `Gold ${totalPrice}`;
                     }
@@ -4158,13 +4156,19 @@ class Shop {
                                 const price = parseInt(priceContent.split(" ")[1]);
                                 if (playerGold >= price) {
                                     const currentQty = parseInt(itemAmount.value) || 0;
-                                    //   this.player.useGold(price);
-                                    const token = (0, authentication_1.getAuthToken)();
-                                    if (token) {
-                                        API_1.API.updateGold(token, -price);
+                                    if (currentQty > 0) {
+                                        //   this.player.useGold(price);
+                                        const token = (0, authentication_1.getAuthToken)();
+                                        if (token) {
+                                            API_1.API.updateGold(token, -price);
+                                        }
+                                        alert(playerGold + " " + price);
+                                        (_a = this.inventory) === null || _a === void 0 ? void 0 : _a.addItemOwned(i, currentQty);
                                     }
-                                    alert(playerGold + " " + price);
-                                    (_a = this.inventory) === null || _a === void 0 ? void 0 : _a.addItemOwned(i, currentQty);
+                                    else {
+                                        itemAmount.value = "1";
+                                        totalPriceDiv.textContent = `Gold ${this.item[i].getItemPrice()}`;
+                                    }
                                 }
                                 else {
                                     alert("Not enough gold!");
