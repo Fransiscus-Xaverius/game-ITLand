@@ -18,6 +18,8 @@ import { Iron_ore } from "./iron_ore";
 import { Granite } from "./Granite";
 import { Ground } from "./Ground";
 import { Obsidian } from "./Obsidian";
+import { MediumChest } from "./Medium_Chest";
+import { BigChest } from "./Big_Chest";
 
 
 export class Grid {
@@ -151,13 +153,37 @@ export class Grid {
                             {x:32, y:32},
                             1,
                             -1,
-                            1
+                            1   
                         ))
                         this.addEntity(chest);
                         break;
                     case 'medium_chest':
+                        // alert('medium')
+                        const m_chest = new MediumChest({x:j, y:i})
+                        m_chest.addAnimation(new ChainedAnimation(
+                            m_chest,
+                            'medium_chest',
+                            Animation.assets['chest_medium'],
+                            {x:32, y:32},
+                            1,
+                            -1,
+                            1
+                        ))
+                        this.addEntity(m_chest);
                         break;
                     case 'big_chest':
+                        // alert('big')
+                        const b_chest = new BigChest({x:j, y:i})
+                        b_chest.addAnimation(new ChainedAnimation(
+                            b_chest,
+                            'big_chest',
+                            Animation.assets['chest_large'],
+                            {x:32, y:32},
+                            1,
+                            -1,
+                            1
+                        ))
+                        this.addEntity(b_chest);
                         break;
                     default:
                         break;

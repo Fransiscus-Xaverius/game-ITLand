@@ -472,7 +472,7 @@ class CanvasView {
 }
 exports.CanvasView = CanvasView;
 
-},{"./GameObjects/PlayerUnit":32,"./GameObjects/Tile":35}],4:[function(require,module,exports){
+},{"./GameObjects/PlayerUnit":34,"./GameObjects/Tile":37}],4:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BoolWrapper = void 0;
@@ -2388,7 +2388,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./API":2,"./GameObjects/Direction":23,"./GameObjects/Grid":28,"./Items/Pickaxe":49,"./Items/Shovel":50,"./Items/Sword":51,"./Player":54}],19:[function(require,module,exports){
+},{"./API":2,"./GameObjects/Direction":24,"./GameObjects/Grid":29,"./Items/Pickaxe":51,"./Items/Shovel":52,"./Items/Sword":53,"./Player":56}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -2433,7 +2433,7 @@ class Animated {
 }
 exports.Animated = Animated;
 
-},{"./ChainedAnimation":21,"./GroupAnimation":30}],20:[function(require,module,exports){
+},{"./ChainedAnimation":22,"./GroupAnimation":31}],20:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animation = void 0;
@@ -2469,6 +2469,24 @@ Animation.assets = {};
 },{}],21:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BigChest = void 0;
+const Entity_1 = require("./Entity");
+const Animation_1 = require("./Animation");
+const ChainedAnimation_1 = require("./ChainedAnimation");
+class BigChest extends Entity_1.Entity {
+    constructor(coordinate, animations = []) {
+        super(coordinate, animations, "Big_Chest", 3, 10, 50, 5);
+        this.getLoot = function (min, max) {
+            return Math.random() * (max - min) + min;
+        };
+        const animation = new ChainedAnimation_1.ChainedAnimation(this, 'big_chest', Animation_1.Animation.assets['chest_large'], { x: 32, y: 32 }, 1, -1, 1);
+    }
+}
+exports.BigChest = BigChest;
+
+},{"./Animation":20,"./ChainedAnimation":22,"./Entity":25}],22:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChainedAnimation = void 0;
 const Animation_1 = require("./Animation");
 class ChainedAnimation extends Animation_1.Animation {
@@ -2500,7 +2518,7 @@ class ChainedAnimation extends Animation_1.Animation {
 }
 exports.ChainedAnimation = ChainedAnimation;
 
-},{"./Animation":20}],22:[function(require,module,exports){
+},{"./Animation":20}],23:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chest = void 0;
@@ -2518,7 +2536,7 @@ class Chest extends Entity_1.Entity {
 }
 exports.Chest = Chest;
 
-},{"./Animation":20,"./ChainedAnimation":21,"./Entity":24}],23:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":22,"./Entity":25}],24:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Direction = void 0;
@@ -2532,7 +2550,7 @@ var Direction;
     Direction[Direction["None"] = 5] = "None";
 })(Direction || (exports.Direction = Direction = {}));
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Entity = void 0;
@@ -2629,7 +2647,7 @@ class Entity extends Animated_1.Animated {
 }
 exports.Entity = Entity;
 
-},{"./Animated":19}],25:[function(require,module,exports){
+},{"./Animated":19}],26:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Granite = void 0;
@@ -2647,7 +2665,7 @@ class Granite extends Tile_1.Tile {
 }
 exports.Granite = Granite;
 
-},{"./GroupAnimation":30,"./Tile":35}],26:[function(require,module,exports){
+},{"./GroupAnimation":31,"./Tile":37}],27:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Grass = void 0;
@@ -2667,7 +2685,7 @@ class Grass extends Tile_1.Tile {
 }
 exports.Grass = Grass;
 
-},{"./GroupAnimation":30,"./Tile":35}],27:[function(require,module,exports){
+},{"./GroupAnimation":31,"./Tile":37}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Gravel = void 0;
@@ -2686,7 +2704,7 @@ class Gravel extends Tile_1.Tile {
 }
 exports.Gravel = Gravel;
 
-},{"./GroupAnimation":30,"./Tile":35}],28:[function(require,module,exports){
+},{"./GroupAnimation":31,"./Tile":37}],29:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -2714,6 +2732,8 @@ const iron_ore_1 = require("./iron_ore");
 const Granite_1 = require("./Granite");
 const Ground_1 = require("./Ground");
 const Obsidian_1 = require("./Obsidian");
+const Medium_Chest_1 = require("./Medium_Chest");
+const Big_Chest_1 = require("./Big_Chest");
 class Grid {
     constructor(size) {
         this.size = size;
@@ -2795,8 +2815,16 @@ class Grid {
                             this.addEntity(chest);
                             break;
                         case 'medium_chest':
+                            // alert('medium')
+                            const m_chest = new Medium_Chest_1.MediumChest({ x: j, y: i });
+                            m_chest.addAnimation(new ChainedAnimation_1.ChainedAnimation(m_chest, 'medium_chest', Animation_1.Animation.assets['chest_medium'], { x: 32, y: 32 }, 1, -1, 1));
+                            this.addEntity(m_chest);
                             break;
                         case 'big_chest':
+                            // alert('big')
+                            const b_chest = new Big_Chest_1.BigChest({ x: j, y: i });
+                            b_chest.addAnimation(new ChainedAnimation_1.ChainedAnimation(b_chest, 'big_chest', Animation_1.Animation.assets['chest_large'], { x: 32, y: 32 }, 1, -1, 1));
+                            this.addEntity(b_chest);
                             break;
                         default:
                             break;
@@ -2876,7 +2904,7 @@ class Grid {
 }
 exports.Grid = Grid;
 
-},{"./Animation":20,"./ChainedAnimation":21,"./Chest":22,"./Granite":25,"./Grass":26,"./Gravel":27,"./Ground":29,"./GroupAnimation":30,"./Obsidian":31,"./PlayerUnit":32,"./Rock":33,"./Sand":34,"./gold_ore":37,"./iron_ore":38,"./silver_ore":39}],29:[function(require,module,exports){
+},{"./Animation":20,"./Big_Chest":21,"./ChainedAnimation":22,"./Chest":23,"./Granite":26,"./Grass":27,"./Gravel":28,"./Ground":30,"./GroupAnimation":31,"./Medium_Chest":32,"./Obsidian":33,"./PlayerUnit":34,"./Rock":35,"./Sand":36,"./gold_ore":39,"./iron_ore":40,"./silver_ore":41}],30:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ground = void 0;
@@ -2896,7 +2924,7 @@ class Ground extends Tile_1.Tile {
 }
 exports.Ground = Ground;
 
-},{"./GroupAnimation":30,"./Tile":35,"./digged_ground":36}],30:[function(require,module,exports){
+},{"./GroupAnimation":31,"./Tile":37,"./digged_ground":38}],31:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupAnimation = void 0;
@@ -2910,7 +2938,25 @@ class GroupAnimation extends Animation_1.Animation {
 exports.GroupAnimation = GroupAnimation;
 GroupAnimation.animations = [];
 
-},{"./Animation":20}],31:[function(require,module,exports){
+},{"./Animation":20}],32:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MediumChest = void 0;
+const Entity_1 = require("./Entity");
+const Animation_1 = require("./Animation");
+const ChainedAnimation_1 = require("./ChainedAnimation");
+class MediumChest extends Entity_1.Entity {
+    constructor(coordinate, animations = []) {
+        super(coordinate, animations, "Medium_Chest", 2, 10, 50, 5);
+        this.getLoot = function (min, max) {
+            return Math.random() * (max - min) + min;
+        };
+        const animation = new ChainedAnimation_1.ChainedAnimation(this, 'medium_chest', Animation_1.Animation.assets['chest_medium'], { x: 32, y: 32 }, 1, -1, 1);
+    }
+}
+exports.MediumChest = MediumChest;
+
+},{"./Animation":20,"./ChainedAnimation":22,"./Entity":25}],33:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Obsidian = void 0;
@@ -2925,7 +2971,7 @@ class Obsidian extends Entity_1.Entity {
 }
 exports.Obsidian = Obsidian;
 
-},{"./Animation":20,"./ChainedAnimation":21,"./Entity":24}],32:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":22,"./Entity":25}],34:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PlayerUnit = void 0;
@@ -3143,7 +3189,7 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/Terminal":14,"../Items/Inventory":47,"./Direction":23,"./Entity":24}],33:[function(require,module,exports){
+},{"../Console/Terminal":14,"../Items/Inventory":49,"./Direction":24,"./Entity":25}],35:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rock = void 0;
@@ -3158,7 +3204,7 @@ class Rock extends Entity_1.Entity {
 }
 exports.Rock = Rock;
 
-},{"./Animation":20,"./ChainedAnimation":21,"./Entity":24}],34:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":22,"./Entity":25}],36:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sand = void 0;
@@ -3176,7 +3222,7 @@ class Sand extends Tile_1.Tile {
 }
 exports.Sand = Sand;
 
-},{"./GroupAnimation":30,"./Tile":35}],35:[function(require,module,exports){
+},{"./GroupAnimation":31,"./Tile":37}],37:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tile = void 0;
@@ -3226,7 +3272,7 @@ class Tile extends Animated_1.Animated {
 exports.Tile = Tile;
 Tile.defaultTileResolution = { x: 32, y: 32 };
 
-},{"./Animated":19}],36:[function(require,module,exports){
+},{"./Animated":19}],38:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DiggedGround = void 0;
@@ -3244,7 +3290,7 @@ class DiggedGround extends Tile_1.Tile {
 }
 exports.DiggedGround = DiggedGround;
 
-},{"./GroupAnimation":30,"./Tile":35}],37:[function(require,module,exports){
+},{"./GroupAnimation":31,"./Tile":37}],39:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Gold_ore = void 0;
@@ -3259,7 +3305,7 @@ class Gold_ore extends Entity_1.Entity {
 }
 exports.Gold_ore = Gold_ore;
 
-},{"./Animation":20,"./ChainedAnimation":21,"./Entity":24}],38:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":22,"./Entity":25}],40:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Iron_ore = void 0;
@@ -3274,7 +3320,7 @@ class Iron_ore extends Entity_1.Entity {
 }
 exports.Iron_ore = Iron_ore;
 
-},{"./Animation":20,"./ChainedAnimation":21,"./Entity":24}],39:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":22,"./Entity":25}],41:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Silver_ore = void 0;
@@ -3289,7 +3335,7 @@ class Silver_ore extends Entity_1.Entity {
 }
 exports.Silver_ore = Silver_ore;
 
-},{"./Animation":20,"./ChainedAnimation":21,"./Entity":24}],40:[function(require,module,exports){
+},{"./Animation":20,"./ChainedAnimation":22,"./Entity":25}],42:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InventoryView = void 0;
@@ -3334,7 +3380,7 @@ class InventoryView {
 }
 exports.InventoryView = InventoryView;
 
-},{}],41:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Book = void 0;
@@ -3351,7 +3397,7 @@ class Book extends ConsumableItem_1.ConsumableItem {
 }
 exports.Book = Book;
 
-},{"./ConsumableItem":42}],42:[function(require,module,exports){
+},{"./ConsumableItem":44}],44:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsumableItem = void 0;
@@ -3363,7 +3409,7 @@ class ConsumableItem extends Item_1.Item {
 }
 exports.ConsumableItem = ConsumableItem;
 
-},{"../Item":48}],43:[function(require,module,exports){
+},{"../Item":50}],45:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EquippableItem = void 0;
@@ -3389,7 +3435,7 @@ class EquippableItem extends Item_1.Item {
 }
 exports.EquippableItem = EquippableItem;
 
-},{"../Item":48}],44:[function(require,module,exports){
+},{"../Item":50}],46:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookOfEnergyTier1 = void 0;
@@ -3402,7 +3448,7 @@ class BookOfEnergyTier1 extends Book_1.Book {
 }
 exports.BookOfEnergyTier1 = BookOfEnergyTier1;
 
-},{"../../../dist/config/env.json":1,"./Abstract/Book":41}],45:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/Book":43}],47:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookOfEnergyTier2 = void 0;
@@ -3415,7 +3461,7 @@ class BookOfEnergyTier2 extends Book_1.Book {
 }
 exports.BookOfEnergyTier2 = BookOfEnergyTier2;
 
-},{"../../../dist/config/env.json":1,"./Abstract/Book":41}],46:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/Book":43}],48:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookOfEnergyTier3 = void 0;
@@ -3428,7 +3474,7 @@ class BookOfEnergyTier3 extends Book_1.Book {
 }
 exports.BookOfEnergyTier3 = BookOfEnergyTier3;
 
-},{"../../../dist/config/env.json":1,"./Abstract/Book":41}],47:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/Book":43}],49:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
@@ -3557,7 +3603,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{"./Abstract/Book":41,"./Abstract/ConsumableItem":42,"./Abstract/EquippableItem":43,"./BookOfEnergyT1":44,"./BookOfEnergyT2":45,"./BookOfEnergyT3":46}],48:[function(require,module,exports){
+},{"./Abstract/Book":43,"./Abstract/ConsumableItem":44,"./Abstract/EquippableItem":45,"./BookOfEnergyT1":46,"./BookOfEnergyT2":47,"./BookOfEnergyT3":48}],50:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
@@ -3595,7 +3641,7 @@ class Item {
 }
 exports.Item = Item;
 
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pickaxe = void 0;
@@ -3608,7 +3654,7 @@ class Pickaxe extends EquippableItem_1.EquippableItem {
 }
 exports.Pickaxe = Pickaxe;
 
-},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":43}],50:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":45}],52:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shovel = void 0;
@@ -3621,7 +3667,7 @@ class Shovel extends EquippableItem_1.EquippableItem {
 }
 exports.Shovel = Shovel;
 
-},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":43}],51:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":45}],53:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sword = void 0;
@@ -3634,7 +3680,7 @@ class Sword extends EquippableItem_1.EquippableItem {
 }
 exports.Sword = Sword;
 
-},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":43}],52:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":45}],54:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3697,7 +3743,7 @@ class Leaderboard {
 }
 exports.Leaderboard = Leaderboard;
 
-},{"./API":2}],53:[function(require,module,exports){
+},{"./API":2}],55:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LeaderboardView = void 0;
@@ -3734,7 +3780,7 @@ class LeaderboardView {
 }
 exports.LeaderboardView = LeaderboardView;
 
-},{}],54:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -3852,7 +3898,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":21,"./GameObjects/PlayerUnit":32,"./Items/Pickaxe":49,"./Items/Shovel":50,"./Items/Sword":51}],55:[function(require,module,exports){
+},{"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":22,"./GameObjects/PlayerUnit":34,"./Items/Pickaxe":51,"./Items/Shovel":52,"./Items/Sword":53}],57:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -3989,7 +4035,7 @@ class QuestionView {
 }
 exports.QuestionView = QuestionView;
 
-},{}],56:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
@@ -4167,7 +4213,7 @@ class Shop {
                                     }
                                     else {
                                         itemAmount.value = "1";
-                                        totalPriceDiv.textContent = `Gold ${this.item[i].getItemPrice()}`;
+                                        totalPriceDiv.textContent = `Gold ${1 * this.item[i].getItemPrice()}`;
                                     }
                                 }
                                 else {
@@ -4192,7 +4238,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"../utils/authentication":61,"./API":2,"./Items/BookOfEnergyT1":44,"./Items/BookOfEnergyT2":45,"./Items/BookOfEnergyT3":46}],57:[function(require,module,exports){
+},{"../utils/authentication":63,"./API":2,"./Items/BookOfEnergyT1":46,"./Items/BookOfEnergyT2":47,"./Items/BookOfEnergyT3":48}],59:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -4245,7 +4291,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],58:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -4331,7 +4377,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],59:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -4399,7 +4445,7 @@ function loadAsset() {
     const chest_medium = new Image();
     chest_medium.src = "./dist/Assets/final/chest1.png";
     const chest_large = new Image();
-    chest_large.src = "./dist/Assets/final/chest0.png";
+    chest_large.src = "./dist/Assets/final/chest2.png";
     Animation_1.Animation.assets['grass_tile'] = grass;
     Animation_1.Animation.assets['flowery_grass_tile'] = flowergrass;
     Animation_1.Animation.assets['player_idle'] = player_idle;
@@ -4433,7 +4479,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":30}],60:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":31}],62:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -4657,7 +4703,7 @@ function handleResize() {
 }
 window.addEventListener("resize", handleResize);
 
-},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":23,"./Classes/InventoryView":40,"./Classes/Items/Inventory":47,"./Classes/Leaderboard":52,"./Classes/LeaderboardView":53,"./Classes/QuestionView":55,"./Classes/Shop":56,"./Classes/ShopView":57,"./Classes/TerminalView":58,"./loadAsset":59,"./utils/authentication":61}],61:[function(require,module,exports){
+},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":24,"./Classes/InventoryView":42,"./Classes/Items/Inventory":49,"./Classes/Leaderboard":54,"./Classes/LeaderboardView":55,"./Classes/QuestionView":57,"./Classes/Shop":58,"./Classes/ShopView":59,"./Classes/TerminalView":60,"./loadAsset":61,"./utils/authentication":63}],63:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAuthToken = void 0;
@@ -4666,4 +4712,4 @@ const getAuthToken = () => {
 };
 exports.getAuthToken = getAuthToken;
 
-},{}]},{},[60]);
+},{}]},{},[62]);

@@ -71,7 +71,7 @@ export default function loadAsset():void{
     const chest_medium = new Image();
     chest_medium.src = "./dist/Assets/final/chest1.png";
     const chest_large = new Image();
-    chest_large.src = "./dist/Assets/final/chest0.png";
+    chest_large.src = "./dist/Assets/final/chest2.png";
 
     Animation.assets['grass_tile'] = grass
     Animation.assets['flowery_grass_tile'] = flowergrass
