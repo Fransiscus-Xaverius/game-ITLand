@@ -71,8 +71,6 @@ export class Inventory {
     ) as HTMLDivElement;
     cardContainer.style.display = "grid";
     cardContainer.style.gridTemplateColumns = "1fr 1fr";
-    cardContainer.style.height = "200px";
-    cardContainer.style.overflow = "auto";
     let index = 0;
 
     for (const { item, amount } of this.items) {

@@ -58,30 +58,32 @@ export class Shop {
       for (let i = 0; i < this.item.length; i++) {
         // Card shop
         const shopTemp = document.createElement("div") as HTMLDivElement;
-        shopTemp.className = "card-shop";
+        shopTemp.className = "card-shop rounded rounded-3 mb-3 w-full p-3 flex justify-content-between";
 
         // Image shop
         const shopImage = document.createElement("img") as HTMLImageElement;
-        shopImage.className = "shop-img";
+        shopImage.className = "shop-img rounded rounded-3 w-25 h-75";
         shopImage.src = this.item[i].getImagePath();
 
         // Description shop
         const desc = document.createElement("div") as HTMLDivElement;
-        desc.className = "desc";
+        desc.className = "desc h-100";
+        desc.style.width = "70%";
 
         const itemName = document.createElement("div") as HTMLDivElement;
-        itemName.className = "content item-name";
+        itemName.className = "content item-name w-100";
         itemName.innerHTML = this.item[i].getItemName();
 
         const mainDesc = document.createElement("div") as HTMLDivElement;
-        mainDesc.className = "special-content main-desc";
+        mainDesc.className = "special-content main-desc w-100";
         mainDesc.innerHTML = this.item[i].getItemDesc();
 
         const addBox: HTMLDivElement = document.createElement("div");
-        addBox.classList.add("row");
+        addBox.className = "d-flex w-100";
 
         const colDiv1: HTMLDivElement = document.createElement("div");
         colDiv1.classList.add("col-sm-2");
+        
         const plusBtn: HTMLDivElement = document.createElement("div");
         plusBtn.classList.add("btn", "btn-success");
         plusBtn.textContent = "+";
@@ -182,7 +184,7 @@ export class Shop {
         addBox.appendChild(colDiv4);
 
         const buyButton = document.createElement("button") as HTMLButtonElement;
-        buyButton.className = "content buy-button";
+        buyButton.className = "content buy-button btn w-100 border border-black mt-2";
         buyButton.innerHTML = "Buy";
         buyButton.onclick = () => {
           const currentItem = this.item[i];
@@ -235,8 +237,6 @@ export class Shop {
         shopTemp.appendChild(shopImage);
         shopTemp.appendChild(desc);
         shopHTML.appendChild(shopTemp);
-        shopHTML.style.height = "200px";
-        shopHTML.style.overflow = "auto";
       }
     }
   }

@@ -24,12 +24,15 @@
     </div>
     <div class="right-side">
         <!-- Content for the right side -->
-        <div class="UI">
-            <button class="button-shop">Shop</button>
-            <button class="button-inventory">Inventory</button>
-            <button type="button" class="button-leaderboard" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <div class="UI p-4">
+          <div class="d-flex mb-4">
+            <button class="button-shop btn border border-black me-3" style="background-color:springgreen;">Shop</button>
+            <button class="button-inventory btn border border-black me-3" style="background-color:springgreen;">Inventory</button>
+            <button class="button-leaderboard btn border border-black me-3" style="background-color:springgreen;">
                 Leaderboard
-              </button>
+            </button>
+
+          </div>
               
               <!-- Leaderboard Modal -->
               <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -48,22 +51,24 @@
                   </div>
                 </div>
               </div>
-            <div class="shop-inventory">
+
+            <div class="shop-inventory overflow-auto p-3 rounded rounded-3 h-75" style="background-color:blanchedalmond;">
             </div>
         </div>
-        <div class="UI">
-            <div class="amountStatus">
-                <div class="energyAmount" id="energyAmount">Energy : </div>
-                <div class="goldAmount" id="goldAmount">Gold : </div>
+
+        <div class="UI p-4 border-top border-black overflow-auto">
+            <div class="amountStatus d-flex border border-1 border-black p-2 rounded rounded-3" style="background-color:sandybrown ;">
+                <div class="energyAmount w-50" id="energyAmount">Energy : </div>
+                <div class="goldAmount w-50" id="goldAmount">Gold : </div>
             </div>
-            <div class="question" id="question"></div>
-            <div class="btns">
-                <button class="ansBtn" id="a"></button>
-                <button class="ansBtn" id="b"></button>
-                <button class="ansBtn" id="c"></button>
-                <button class="ansBtn" id="d"></button>
+            <div class="question mt-4 border border-1 border-black p-2 rounded rounded-3" id="question" style="background-color:blanchedalmond ;"></div>
+            <div class="btns mt-2">
+                <button class="ansBtn btn border border-1 border-black" id="a" style="background-color:springgreen;"></button>
+                <button class="ansBtn btn border border-1 border-black" id="b" style="background-color:springgreen;"></button>
+                <button class="ansBtn btn border border-1 border-black" id="c" style="background-color:springgreen;"></button>
+                <button class="ansBtn btn border border-1 border-black" id="d" style="background-color:springgreen;"></button>
             </div>
-            <button id="get-soal">ambil soal</button>
+            <button id="get-soal" class="btn border border-1 border-black mt-4" style="background-color:sandybrown ;">Random soal</button>
         </div>
         <script src="./dist/scripts/code.jquery.com_jquery-3.7.1.min.js" defer></script>
 
