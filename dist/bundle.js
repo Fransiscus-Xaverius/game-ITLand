@@ -2284,22 +2284,37 @@ class GameManager {
         }
     }
     actionWithSword(entity) {
-        switch (entity.getEntityName()) {
-            case "Chest":
-                alert("This is a chest");
-                this.removeGridEntity(entity.getCoordinate().x, entity.getCoordinate().y);
-                break;
-            default:
-                alert("This is the wrong tool!");
-                break;
+        var _a;
+        const entityName = entity.getEntityName();
+        alert(entityName);
+        if (entityName == "Chest" ||
+            entityName == "Medium_Chest" ||
+            entityName == "Big_Chest") {
+            if (this.isGoodEnough(this.player.getEnergy(), entity.getRequiredEnergy())) {
+                if (this.isGoodEnough(this.player.getEquipmentLevels().sword, entity.getEntityLevel())) {
+                    this.removeGridEntity(entity.getCoordinate().x, entity.getCoordinate().y);
+                    this.player.useEnergy(entity.getRequiredEnergy());
+                    (_a = this.questionView) === null || _a === void 0 ? void 0 : _a.refreshStats();
+                }
+                else {
+                    this.logActivity(`Upgrade your sword to destroy this block!`);
+                }
+            }
+            else {
+                this.logActivity(`You need more energy to do this action!`);
+            }
+        }
+        else {
+            this.logActivity("You cannot use a sword to break this object!");
         }
     }
     actionWithShovel(tile) {
-        const isDiggable = tile.name.includes("digged");
+        const isDiggable = !tile.name.includes("digged");
         switch (isDiggable) {
-            case false:
+            case true:
                 if (this.isGoodEnough(this.player.getEnergy(), tile.getRequiredEnergy())) {
                     if (this.isGoodEnough(this.player.getEquipmentLevels().shovel, tile.level)) {
+                        this.logActivity("Digged this tile, function not implemented");
                     }
                     else {
                         this.logActivity("Upgrade your shovel to excavate this area!");
@@ -2309,7 +2324,7 @@ class GameManager {
                     this.logActivity(`You need more energy to do this action!`);
                 }
                 break;
-            case true:
+            case false:
                 this.logActivity("This area has already been excavated! ");
                 break;
             default:

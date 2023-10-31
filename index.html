@@ -11,6 +11,8 @@
 </head>
 
 <body>
+    <script src="./dist/scripts/code.jquery.com_jquery-3.7.1.min.js" defer></script>
+    <script src="./dist/scripts/bootstrap.min.js" defer></script>
     <img class="asset" id="itland_ptype_flowergrasstile"
         src="./dist/Assets/Prototype/itland_ptype_flowergrasstile.png" />
     <img class="asset" id="itland_ptype_grasstile" src="./dist/Assets/Prototype/itland_ptype_grasstile.png" />
@@ -28,7 +30,7 @@
           <div class="d-flex mb-4">
             <button class="button-shop btn border border-black me-3" style="background-color:springgreen;">Shop</button>
             <button class="button-inventory btn border border-black me-3" style="background-color:springgreen;">Inventory</button>
-            <button class="button-leaderboard btn border border-black me-3" style="background-color:springgreen;">
+            <button class="button-leaderboard btn border border-black me-3" style="background-color:springgreen;" data-bs-toggle="modal">
                 Leaderboard
             </button>
 
@@ -70,9 +72,35 @@
             </div>
             <button id="get-soal" class="btn border border-1 border-black mt-4" style="background-color:sandybrown ;">Random soal</button>
         </div>
-        <script src="./dist/scripts/code.jquery.com_jquery-3.7.1.min.js" defer></script>
+        
 
-        <script src="./dist/scripts/bootstrap.min.js" defer></script>
+        <script>
+          document.addEventListener('contextmenu', function(e) {
+              e.preventDefault();
+            });
+            document.onkeydown = function (e) {
+  
+            // disable F12 key
+            if(e.keyCode == 123) {
+                return false;
+            }
+
+            // disable I key
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 73){
+                return false;
+            }
+
+            // disable J key
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 74) {
+                return false;
+            }
+
+            // disable U key
+            if(e.ctrlKey && e.keyCode == 85) {
+                return false;
+            }
+          }
+        </script>
 </body>
 
 </html>
