@@ -4411,6 +4411,16 @@ function loadAsset() {
     const cave_tile = new Image();
     cave_tile.src = "./dist/Assets/final/ground(cave).png";
     //Tile Assets (Digged Variation)
+    const digged_grass = new Image();
+    digged_grass.src = "./dist/Assets/Prototype/digged_ground.png";
+    const digged_flowergrass = new Image();
+    digged_flowergrass.src = "./dist/Assets/Prototype/digged_ground.png";
+    const digged_sand = new Image();
+    digged_sand.src = "./dist/Assets/Prototype/digged_sand.png";
+    const digged_gravel = new Image();
+    digged_gravel.src = "./dist/Assets/Prototype/digged_gravel.png";
+    const digged_granite = new Image();
+    digged_granite.src = "./dist/Assets/Prototype/digged_granite.png";
     //Player Movement Assets
     const player_walk_down = new Image();
     player_walk_down.src = "./dist/Assets/final/hooman_down_walk.png";
@@ -4458,10 +4468,12 @@ function loadAsset() {
     chest_medium.src = "./dist/Assets/final/chest1.png";
     const chest_large = new Image();
     chest_large.src = "./dist/Assets/final/chest2.png";
+    //Tile
     Animation_1.Animation.assets['grass_tile'] = grass;
     Animation_1.Animation.assets['flowery_grass_tile'] = flowergrass;
     Animation_1.Animation.assets['player_idle'] = player_idle;
     Animation_1.Animation.assets['sand'] = sand_tile;
+    //Overworld Blocks
     Animation_1.Animation.assets['rock'] = rock;
     Animation_1.Animation.assets['iron_ore'] = iron_ore;
     Animation_1.Animation.assets['gold_ore'] = gold_ore;
@@ -4470,6 +4482,12 @@ function loadAsset() {
     Animation_1.Animation.assets['chest_medium'] = chest_medium;
     Animation_1.Animation.assets['chest_large'] = chest_large;
     Animation_1.Animation.assets['obsidian'] = obsidian;
+    //Digged Tiles
+    Animation_1.Animation.assets['digged_grass'] = digged_grass;
+    Animation_1.Animation.assets['digged_flowergrass'] = digged_flowergrass;
+    Animation_1.Animation.assets['digged_sand'] = digged_sand;
+    Animation_1.Animation.assets['digged_gravel'] = digged_gravel;
+    Animation_1.Animation.assets['digged_granite'] = digged_granite;
     GroupAnimation_1.GroupAnimation.animations.push(
     //0
     new GroupAnimation_1.GroupAnimation("grass_tile", grass, { x: 32, y: 32 }, 1, //number of frames
@@ -4487,7 +4505,17 @@ function loadAsset() {
     //4
     new GroupAnimation_1.GroupAnimation("granite_tile", granite_tile, { x: 32, y: 32 }, 1, 0), 
     //5
-    new GroupAnimation_1.GroupAnimation("cave_tile", cave_tile, { x: 32, y: 32 }, 1, 0));
+    new GroupAnimation_1.GroupAnimation("cave_tile", cave_tile, { x: 32, y: 32 }, 1, 0), 
+    //6
+    new GroupAnimation_1.GroupAnimation('digged_grass_tile', digged_grass, { x: 32, y: 32 }, 1, 0), 
+    //7
+    new GroupAnimation_1.GroupAnimation('digged_flowery_grass_tile', digged_flowergrass, { x: 32, y: 32 }, 1, 0), 
+    //8
+    new GroupAnimation_1.GroupAnimation('digged_sand_tile', digged_sand, { x: 32, y: 32 }, 1, 0), 
+    //9
+    new GroupAnimation_1.GroupAnimation('digged_gravel_tile', digged_gravel, { x: 32, y: 32 }, 1, 0), 
+    //10
+    new GroupAnimation_1.GroupAnimation('digged_granite', digged_granite, { x: 32, y: 32 }, 1, 0));
 }
 exports.default = loadAsset;
 

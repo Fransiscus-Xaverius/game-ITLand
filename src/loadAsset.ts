@@ -20,7 +20,16 @@ export default function loadAsset():void{
     cave_tile.src = "./dist/Assets/final/ground(cave).png"
    
     //Tile Assets (Digged Variation)
-
+    const digged_grass = new Image()
+    digged_grass.src = "./dist/Assets/Prototype/digged_ground.png"
+    const digged_flowergrass = new Image()
+    digged_flowergrass.src = "./dist/Assets/Prototype/digged_ground.png"
+    const digged_sand = new Image()
+    digged_sand.src = "./dist/Assets/Prototype/digged_sand.png"
+    const digged_gravel = new Image()
+    digged_gravel.src = "./dist/Assets/Prototype/digged_gravel.png"
+    const digged_granite = new Image()
+    digged_granite.src = "./dist/Assets/Prototype/digged_granite.png"
 
     //Player Movement Assets
     const player_walk_down = new Image()
@@ -73,10 +82,13 @@ export default function loadAsset():void{
     const chest_large = new Image();
     chest_large.src = "./dist/Assets/final/chest2.png";
 
+    //Tile
     Animation.assets['grass_tile'] = grass
     Animation.assets['flowery_grass_tile'] = flowergrass
     Animation.assets['player_idle'] = player_idle
     Animation.assets['sand'] = sand_tile
+
+    //Overworld Blocks
     Animation.assets['rock'] = rock
     Animation.assets['iron_ore'] = iron_ore;
     Animation.assets['gold_ore'] = gold_ore;
@@ -85,6 +97,13 @@ export default function loadAsset():void{
     Animation.assets['chest_medium'] = chest_medium;
     Animation.assets['chest_large'] = chest_large;
     Animation.assets['obsidian'] = obsidian;
+
+    //Digged Tiles
+    Animation.assets['digged_grass'] = digged_grass;
+    Animation.assets['digged_flowergrass'] = digged_flowergrass;
+    Animation.assets['digged_sand'] = digged_sand;
+    Animation.assets['digged_gravel'] = digged_gravel;
+    Animation.assets['digged_granite'] = digged_granite;
 
     GroupAnimation.animations.push(
         //0
@@ -136,9 +155,45 @@ export default function loadAsset():void{
             0
         ),
         //6
-        // new GroupAnimation(
-        //     "digged_grass",
+        new GroupAnimation(
+            'digged_grass_tile',
+            digged_grass,
+            {x:32, y:32},
+            1,
+            0
+        ),
+        //7
+        new GroupAnimation(
+            'digged_flowery_grass_tile',
+            digged_flowergrass,
+            {x:32, y:32},
+            1,
+            0
+        ),
+        //8
+        new GroupAnimation(
+            'digged_sand_tile',
+            digged_sand,
+            {x:32, y:32},
+            1,
+            0
+        ),
+        //9
+        new GroupAnimation(
+            'digged_gravel_tile',
+            digged_gravel,
+            {x:32, y:32},
+            1,
+            0
+        ),
+        //10
+        new GroupAnimation(
+            'digged_granite',
+            digged_granite,
+            {x:32, y:32},
+            1,
+            0
+        ),
 
-        // )
     )     
 }
