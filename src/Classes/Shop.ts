@@ -82,68 +82,12 @@ export class Shop {
         addBox.className = "d-flex w-100";
 
         const colDiv1: HTMLDivElement = document.createElement("div");
-        colDiv1.classList.add("col-sm-2");
+        colDiv1.classList.add("col-sm-6", "d-flex", "align-items-center");
         
-        const plusBtn: HTMLDivElement = document.createElement("div");
-        plusBtn.classList.add("btn", "btn-success");
-        plusBtn.textContent = "+";
-        plusBtn.addEventListener("click", () => {
-          const item: HTMLInputElement | null = document.querySelector(
-            `.item-${i}`
-          );
-          const totalPriceContainer = document.querySelector(
-            `.total-price-container-item-${i}`
-          ) as HTMLDivElement;
-          const totalPriceDiv = totalPriceContainer.querySelector(
-            `.total-price-item-${i}`
-          ) as HTMLDivElement;
-          if (item) {
-            const currentQty: number = parseInt(item.value) || 0;
-            item.value = `${currentQty + 1}`;
-            const totalPrice: number =
-              parseInt(item.value) * this.item[i].getItemPrice();
-            totalPriceDiv.textContent = `Gold ${totalPrice}`;
-          } else {
-            console.error(`Element with class .item-${i} not found.`);
-          }
-        });
-        colDiv1.appendChild(plusBtn);
-
-        const colDiv2: HTMLDivElement = document.createElement("div");
-        colDiv2.classList.add("col-sm-2");
-        const itemQtyDiv: HTMLInputElement = document.createElement("input");
-        itemQtyDiv.style.width = "60px";
-        itemQtyDiv.type = "number";
-        itemQtyDiv.classList.add("item-qty", `item-${i}`);
-        itemQtyDiv.value = "1";
-        itemQtyDiv.min = "1";
-        itemQtyDiv.addEventListener("change", () => {
-          const item: HTMLInputElement | null = document.querySelector(
-            `.item-${i}`
-          );
-          const totalPriceContainer = document.querySelector(
-            `.total-price-container-item-${i}`
-          ) as HTMLDivElement;
-          const totalPriceDiv = totalPriceContainer.querySelector(
-            `.total-price-item-${i}`
-          ) as HTMLDivElement;
-          if (item) {
-            const currentQty: number = parseInt(item.value) || 0;
-            if (currentQty < 1) {
-              item.innerHTML = "1";
-            }
-            const totalPrice: number = currentQty * this.item[i].getItemPrice();
-            totalPriceDiv.textContent = `Gold ${totalPrice}`;
-          } else {
-            console.error(`Element with class .item-${i} not found.`);
-          }
-        });
-        colDiv2.appendChild(itemQtyDiv);
-
-        const colDiv3: HTMLDivElement = document.createElement("div");
-        colDiv3.classList.add("col-sm-2");
         const minusBtn: HTMLDivElement = document.createElement("div");
-        minusBtn.classList.add("btn", "btn-danger");
+        minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0", "rounded-start");
+        minusBtn.style.width = "45px";
+        minusBtn.style.height = "30px";
         minusBtn.textContent = "-";
         minusBtn.addEventListener("click", () => {
           const item: HTMLInputElement | null = document.querySelector(
@@ -167,21 +111,78 @@ export class Shop {
             console.error(`Element with class .item-${i} not found.`);
           }
         });
-        colDiv3.appendChild(minusBtn);
 
-        const colDiv4: HTMLDivElement = document.createElement("div");
-        colDiv4.classList.add("col-sm-6", `total-price-container-item-${i}`);
+        const itemQtyDiv: HTMLInputElement = document.createElement("input");
+        itemQtyDiv.style.width = "50px";
+        itemQtyDiv.style.height = "30px";
+        itemQtyDiv.type = "number";
+        itemQtyDiv.classList.add("item-qty", `item-${i}`, "ps-3");
+        itemQtyDiv.value = "1";
+        itemQtyDiv.min = "1";
+        itemQtyDiv.disabled = true;
+        itemQtyDiv.addEventListener("change", () => {
+          const item: HTMLInputElement | null = document.querySelector(
+            `.item-${i}`
+          );
+          const totalPriceContainer = document.querySelector(
+            `.total-price-container-item-${i}`
+          ) as HTMLDivElement;
+          const totalPriceDiv = totalPriceContainer.querySelector(
+            `.total-price-item-${i}`
+          ) as HTMLDivElement;
+          if (item) {
+            const currentQty: number = parseInt(item.value) || 0;
+            if (currentQty < 1) {
+              item.innerHTML = "1";
+            }
+            const totalPrice: number = currentQty * this.item[i].getItemPrice();
+            totalPriceDiv.textContent = `Gold ${totalPrice}`;
+          } else {
+            console.error(`Element with class .item-${i} not found.`);
+          }
+        });
+
+        const plusBtn: HTMLDivElement = document.createElement("div");
+        plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0", "rounded-end");
+        plusBtn.style.width = "45px";
+        plusBtn.style.height = "30px";
+        plusBtn.textContent = "+";
+        plusBtn.addEventListener("click", () => {
+          const item: HTMLInputElement | null = document.querySelector(
+            `.item-${i}`
+          );
+          const totalPriceContainer = document.querySelector(
+            `.total-price-container-item-${i}`
+          ) as HTMLDivElement;
+          const totalPriceDiv = totalPriceContainer.querySelector(
+            `.total-price-item-${i}`
+          ) as HTMLDivElement;
+          if (item) {
+            const currentQty: number = parseInt(item.value) || 0;
+            item.value = `${currentQty + 1}`;
+            const totalPrice: number =
+              parseInt(item.value) * this.item[i].getItemPrice();
+            totalPriceDiv.textContent = `Gold ${totalPrice}`;
+          } else {
+            console.error(`Element with class .item-${i} not found.`);
+          }
+        });
+
+        colDiv1.appendChild(minusBtn);
+        colDiv1.appendChild(itemQtyDiv)
+        colDiv1.appendChild(plusBtn);
+
+        const colDiv2: HTMLDivElement = document.createElement("div");
+        colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`);
         const totalPriceDiv: HTMLDivElement = document.createElement("div");
         totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
         totalPriceDiv.textContent = `Gold ${
           parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()
         }`;
-        colDiv4.appendChild(totalPriceDiv);
+        colDiv2.appendChild(totalPriceDiv);
 
         addBox.appendChild(colDiv1);
         addBox.appendChild(colDiv2);
-        addBox.appendChild(colDiv3);
-        addBox.appendChild(colDiv4);
 
         const buyButton = document.createElement("button") as HTMLButtonElement;
         buyButton.className = "content buy-button btn w-100 border border-black mt-2";

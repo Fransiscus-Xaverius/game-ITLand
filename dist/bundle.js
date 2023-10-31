@@ -3537,8 +3537,6 @@ class Inventory {
         const cardContainer = document.querySelector(".shop-inventory");
         cardContainer.style.display = "grid";
         cardContainer.style.gridTemplateColumns = "1fr 1fr";
-        cardContainer.style.height = "200px";
-        cardContainer.style.overflow = "auto";
         let index = 0;
         for (const { item, amount } of this.items) {
             const cardElement = document.createElement("div");
@@ -4089,71 +4087,29 @@ class Shop {
             for (let i = 0; i < this.item.length; i++) {
                 // Card shop
                 const shopTemp = document.createElement("div");
-                shopTemp.className = "card-shop";
+                shopTemp.className = "card-shop rounded rounded-3 mb-3 w-full p-3 flex justify-content-between";
                 // Image shop
                 const shopImage = document.createElement("img");
-                shopImage.className = "shop-img";
+                shopImage.className = "shop-img rounded rounded-3 w-25 h-75";
                 shopImage.src = this.item[i].getImagePath();
                 // Description shop
                 const desc = document.createElement("div");
-                desc.className = "desc";
+                desc.className = "desc h-100";
+                desc.style.width = "70%";
                 const itemName = document.createElement("div");
-                itemName.className = "content item-name";
+                itemName.className = "content item-name w-100";
                 itemName.innerHTML = this.item[i].getItemName();
                 const mainDesc = document.createElement("div");
-                mainDesc.className = "special-content main-desc";
+                mainDesc.className = "special-content main-desc w-100";
                 mainDesc.innerHTML = this.item[i].getItemDesc();
                 const addBox = document.createElement("div");
-                addBox.classList.add("row");
+                addBox.className = "d-flex w-100";
                 const colDiv1 = document.createElement("div");
-                colDiv1.classList.add("col-sm-2");
-                const plusBtn = document.createElement("div");
-                plusBtn.classList.add("btn", "btn-success");
-                plusBtn.textContent = "+";
-                plusBtn.addEventListener("click", () => {
-                    const item = document.querySelector(`.item-${i}`);
-                    const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
-                    const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
-                    if (item) {
-                        const currentQty = parseInt(item.value) || 0;
-                        item.value = `${currentQty + 1}`;
-                        const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
-                        totalPriceDiv.textContent = `Gold ${totalPrice}`;
-                    }
-                    else {
-                        console.error(`Element with class .item-${i} not found.`);
-                    }
-                });
-                colDiv1.appendChild(plusBtn);
-                const colDiv2 = document.createElement("div");
-                colDiv2.classList.add("col-sm-2");
-                const itemQtyDiv = document.createElement("input");
-                itemQtyDiv.style.width = "60px";
-                itemQtyDiv.type = "number";
-                itemQtyDiv.classList.add("item-qty", `item-${i}`);
-                itemQtyDiv.value = "1";
-                itemQtyDiv.min = "1";
-                itemQtyDiv.addEventListener("change", () => {
-                    const item = document.querySelector(`.item-${i}`);
-                    const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
-                    const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
-                    if (item) {
-                        const currentQty = parseInt(item.value) || 0;
-                        if (currentQty < 1) {
-                            item.innerHTML = "1";
-                        }
-                        const totalPrice = currentQty * this.item[i].getItemPrice();
-                        totalPriceDiv.textContent = `Gold ${totalPrice}`;
-                    }
-                    else {
-                        console.error(`Element with class .item-${i} not found.`);
-                    }
-                });
-                colDiv2.appendChild(itemQtyDiv);
-                const colDiv3 = document.createElement("div");
-                colDiv3.classList.add("col-sm-2");
+                colDiv1.classList.add("col-sm-6", "d-flex", "align-items-center");
                 const minusBtn = document.createElement("div");
-                minusBtn.classList.add("btn", "btn-danger");
+                minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0", "rounded-start");
+                minusBtn.style.width = "45px";
+                minusBtn.style.height = "30px";
                 minusBtn.textContent = "-";
                 minusBtn.addEventListener("click", () => {
                     const item = document.querySelector(`.item-${i}`);
@@ -4171,19 +4127,62 @@ class Shop {
                         console.error(`Element with class .item-${i} not found.`);
                     }
                 });
-                colDiv3.appendChild(minusBtn);
-                const colDiv4 = document.createElement("div");
-                colDiv4.classList.add("col-sm-6", `total-price-container-item-${i}`);
+                const itemQtyDiv = document.createElement("input");
+                itemQtyDiv.style.width = "50px";
+                itemQtyDiv.style.height = "30px";
+                itemQtyDiv.type = "number";
+                itemQtyDiv.classList.add("item-qty", `item-${i}`, "ps-3");
+                itemQtyDiv.value = "1";
+                itemQtyDiv.min = "1";
+                itemQtyDiv.disabled = true;
+                itemQtyDiv.addEventListener("change", () => {
+                    const item = document.querySelector(`.item-${i}`);
+                    const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
+                    const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
+                    if (item) {
+                        const currentQty = parseInt(item.value) || 0;
+                        if (currentQty < 1) {
+                            item.innerHTML = "1";
+                        }
+                        const totalPrice = currentQty * this.item[i].getItemPrice();
+                        totalPriceDiv.textContent = `Gold ${totalPrice}`;
+                    }
+                    else {
+                        console.error(`Element with class .item-${i} not found.`);
+                    }
+                });
+                const plusBtn = document.createElement("div");
+                plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0", "rounded-end");
+                plusBtn.style.width = "45px";
+                plusBtn.style.height = "30px";
+                plusBtn.textContent = "+";
+                plusBtn.addEventListener("click", () => {
+                    const item = document.querySelector(`.item-${i}`);
+                    const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
+                    const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
+                    if (item) {
+                        const currentQty = parseInt(item.value) || 0;
+                        item.value = `${currentQty + 1}`;
+                        const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
+                        totalPriceDiv.textContent = `Gold ${totalPrice}`;
+                    }
+                    else {
+                        console.error(`Element with class .item-${i} not found.`);
+                    }
+                });
+                colDiv1.appendChild(minusBtn);
+                colDiv1.appendChild(itemQtyDiv);
+                colDiv1.appendChild(plusBtn);
+                const colDiv2 = document.createElement("div");
+                colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`);
                 const totalPriceDiv = document.createElement("div");
                 totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
                 totalPriceDiv.textContent = `Gold ${parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()}`;
-                colDiv4.appendChild(totalPriceDiv);
+                colDiv2.appendChild(totalPriceDiv);
                 addBox.appendChild(colDiv1);
                 addBox.appendChild(colDiv2);
-                addBox.appendChild(colDiv3);
-                addBox.appendChild(colDiv4);
                 const buyButton = document.createElement("button");
-                buyButton.className = "content buy-button";
+                buyButton.className = "content buy-button btn w-100 border border-black mt-2";
                 buyButton.innerHTML = "Buy";
                 buyButton.onclick = () => {
                     var _a;
@@ -4230,8 +4229,6 @@ class Shop {
                 shopTemp.appendChild(shopImage);
                 shopTemp.appendChild(desc);
                 shopHTML.appendChild(shopTemp);
-                shopHTML.style.height = "200px";
-                shopHTML.style.overflow = "auto";
             }
         }
     }
