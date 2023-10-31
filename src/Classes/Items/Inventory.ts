@@ -69,39 +69,45 @@ export class Inventory {
     const cardContainer = document.querySelector(
       ".shop-inventory"
     ) as HTMLDivElement;
-    cardContainer.style.display = "grid";
-    cardContainer.style.gridTemplateColumns = "1fr 1fr";
+    cardContainer.classList.add("p-3") 
     let index = 0;
 
     for (const { item, amount } of this.items) {
       const cardElement = document.createElement("div");
-      cardElement.classList.add("card");
+      cardElement.classList.add("card", "float-start", "me-3", "mb-3", "p-3", "border", "border-1", "rounded", "rounded-3");
+      cardElement.style.width = "46%"
+
+      const imgDiv = document.createElement("div");
+      imgDiv.classList.add("w-100", "d-flex", "justify-content-center");
 
       const imageElement = document.createElement("img");
-      imageElement.classList.add("inventory-item-image", "card-img-top");
+      imageElement.classList.add("inventory-item-image", "h-100");
       imageElement.src = item.getImagePath();
       imageElement.alt = "";
+
+      imgDiv.appendChild(imageElement);
 
       const cardBody = document.createElement("div");
       cardBody.classList.add("card-body");
 
-      const nameElement = document.createElement("p");
-      nameElement.classList.add("inventory-item-name", "card-text");
+      const nameElement = document.createElement("h5");
+      nameElement.classList.add("inventory-item-name", "card-text", "text-center");
       nameElement.innerText = item.getItemName();
 
-      const ownedElement = document.createElement("h4");
+      const ownedElement = document.createElement("h6");
       ownedElement.classList.add(
         "inventory-item-owned",
         "card-title",
-        `item-owned-qty-${index}`
+        `item-owned-qty-${index}`,
+        "text-center"
       );
-      ownedElement.innerText = `${amount}`;
+      ownedElement.innerText = `Owned: ${amount}`;
 
       const itemUseButton = document.createElement("button");
 
       if (item instanceof ConsumableItem) {
         itemUseButton.textContent = "Consume";
-        itemUseButton.classList.add("Consume", `consume-item-${index}`);
+        itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-100");
 
         // Create a function to handle the click event
         const handleItemClick = () => {
@@ -135,7 +141,7 @@ export class Inventory {
         itemUseButton.addEventListener("click", handleItemClick);
       } else if (item instanceof EquippableItem) {
         itemUseButton.textContent = "Equip";
-        itemUseButton.classList.add("Equip");
+        itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-100");
         itemUseButton.addEventListener("click", () => {
           if (this.player) {
             this.player.equip(item);
@@ -147,7 +153,7 @@ export class Inventory {
       cardBody.appendChild(ownedElement);
       cardBody.appendChild(itemUseButton);
 
-      cardElement.appendChild(imageElement);
+      cardElement.appendChild(imgDiv);
       cardElement.appendChild(cardBody);
 
       cardContainer.appendChild(cardElement);

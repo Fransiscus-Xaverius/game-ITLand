@@ -53,29 +53,27 @@ export class Shop {
     if (shopHTML) {
       shopHTML.innerHTML = "";
       // console.log(shopHTML)
-      shopHTML.style.display = "grid";
-      shopHTML.style.gridTemplateColumns = "1fr";
       for (let i = 0; i < this.item.length; i++) {
         // Card shop
         const shopTemp = document.createElement("div") as HTMLDivElement;
-        shopTemp.className = "card-shop rounded rounded-3 mb-3 w-full p-3 flex justify-content-between";
+        shopTemp.className = "card-shop rounded rounded-3 mb-3 w-full p-3 flex justify-content-between bg-white border border-1";
 
         // Image shop
         const shopImage = document.createElement("img") as HTMLImageElement;
-        shopImage.className = "shop-img rounded rounded-3 w-25 h-75";
+        shopImage.className = "shop-img rounded rounded-3 h-100";
         shopImage.src = this.item[i].getImagePath();
 
         // Description shop
         const desc = document.createElement("div") as HTMLDivElement;
         desc.className = "desc h-100";
-        desc.style.width = "70%";
+        desc.style.width = "60%";
 
         const itemName = document.createElement("div") as HTMLDivElement;
-        itemName.className = "content item-name w-100";
+        itemName.className = " fs-4 w-100";
         itemName.innerHTML = this.item[i].getItemName();
 
         const mainDesc = document.createElement("div") as HTMLDivElement;
-        mainDesc.className = "special-content main-desc w-100";
+        mainDesc.className = " w-100 mb-3";
         mainDesc.innerHTML = this.item[i].getItemDesc();
 
         const addBox: HTMLDivElement = document.createElement("div");
@@ -185,7 +183,7 @@ export class Shop {
         addBox.appendChild(colDiv2);
 
         const buyButton = document.createElement("button") as HTMLButtonElement;
-        buyButton.className = "content buy-button btn w-100 border border-black mt-2";
+        buyButton.className = "content buy-button btn btn-primary w-100 mt-2";
         buyButton.innerHTML = "Buy";
         buyButton.onclick = () => {
           const currentItem = this.item[i];

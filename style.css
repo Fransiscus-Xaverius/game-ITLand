@@ -107,14 +107,14 @@ td {
 }
 
 .card {
-    border: 1px solid black;
+    /* background-color:sandybrown ; */
+    height: 200px;
 }
 
 .card-shop {
     height: 200px;
     width: auto;
-    background-color:sandybrown ;
-    padding: 8px;
+    /* background-color:sandybrown ; */
 
     font-size: 16px;
 
@@ -122,13 +122,10 @@ td {
     flex-direction: row;
     justify-content: space-between;
 
-    overflow-x: hidden;
+    
 }
 
-.shop-img {
-    height: 65%;
-    width: auto;
-}
+
 
 .desc {
     height: 40px;
@@ -143,12 +140,12 @@ td {
 .content {
     width: 400px;
     height: 40px;
-    border: 1px solid black;
+    
 }
 
 .special-content {
     width: 400px;
     height: 40px;
     font-size: 16px;
-    border: 1px solid black;
+    
 }

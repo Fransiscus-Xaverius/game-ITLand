@@ -3634,28 +3634,31 @@ class Inventory {
             return;
         inventoryShopElement.innerHTML = "";
         const cardContainer = document.querySelector(".shop-inventory");
-        cardContainer.style.display = "grid";
-        cardContainer.style.gridTemplateColumns = "1fr 1fr";
+        cardContainer.classList.add("p-3");
         let index = 0;
         for (const { item, amount } of this.items) {
             const cardElement = document.createElement("div");
-            cardElement.classList.add("card");
+            cardElement.classList.add("card", "float-start", "me-3", "mb-3", "p-3", "border", "border-1", "rounded", "rounded-3");
+            cardElement.style.width = "46%";
+            const imgDiv = document.createElement("div");
+            imgDiv.classList.add("w-100", "d-flex", "justify-content-center");
             const imageElement = document.createElement("img");
-            imageElement.classList.add("inventory-item-image", "card-img-top");
+            imageElement.classList.add("inventory-item-image", "h-100");
             imageElement.src = item.getImagePath();
             imageElement.alt = "";
+            imgDiv.appendChild(imageElement);
             const cardBody = document.createElement("div");
             cardBody.classList.add("card-body");
-            const nameElement = document.createElement("p");
-            nameElement.classList.add("inventory-item-name", "card-text");
+            const nameElement = document.createElement("h5");
+            nameElement.classList.add("inventory-item-name", "card-text", "text-center");
             nameElement.innerText = item.getItemName();
-            const ownedElement = document.createElement("h4");
-            ownedElement.classList.add("inventory-item-owned", "card-title", `item-owned-qty-${index}`);
-            ownedElement.innerText = `${amount}`;
+            const ownedElement = document.createElement("h6");
+            ownedElement.classList.add("inventory-item-owned", "card-title", `item-owned-qty-${index}`, "text-center");
+            ownedElement.innerText = `Owned: ${amount}`;
             const itemUseButton = document.createElement("button");
             if (item instanceof ConsumableItem_1.ConsumableItem) {
                 itemUseButton.textContent = "Consume";
-                itemUseButton.classList.add("Consume", `consume-item-${index}`);
+                itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-100");
                 // Create a function to handle the click event
                 const handleItemClick = () => {
                     if (amount > 0) {
@@ -3681,7 +3684,7 @@ class Inventory {
             }
             else if (item instanceof EquippableItem_1.EquippableItem) {
                 itemUseButton.textContent = "Equip";
-                itemUseButton.classList.add("Equip");
+                itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-100");
                 itemUseButton.addEventListener("click", () => {
                     if (this.player) {
                         this.player.equip(item);
@@ -3691,7 +3694,7 @@ class Inventory {
             cardBody.appendChild(nameElement);
             cardBody.appendChild(ownedElement);
             cardBody.appendChild(itemUseButton);
-            cardElement.appendChild(imageElement);
+            cardElement.appendChild(imgDiv);
             cardElement.appendChild(cardBody);
             cardContainer.appendChild(cardElement);
             index++;
@@ -4181,25 +4184,23 @@ class Shop {
         if (shopHTML) {
             shopHTML.innerHTML = "";
             // console.log(shopHTML)
-            shopHTML.style.display = "grid";
-            shopHTML.style.gridTemplateColumns = "1fr";
             for (let i = 0; i < this.item.length; i++) {
                 // Card shop
                 const shopTemp = document.createElement("div");
-                shopTemp.className = "card-shop rounded rounded-3 mb-3 w-full p-3 flex justify-content-between";
+                shopTemp.className = "card-shop rounded rounded-3 mb-3 w-full p-3 flex justify-content-between bg-white border border-1";
                 // Image shop
                 const shopImage = document.createElement("img");
-                shopImage.className = "shop-img rounded rounded-3 w-25 h-75";
+                shopImage.className = "shop-img rounded rounded-3 h-100";
                 shopImage.src = this.item[i].getImagePath();
                 // Description shop
                 const desc = document.createElement("div");
                 desc.className = "desc h-100";
-                desc.style.width = "70%";
+                desc.style.width = "60%";
                 const itemName = document.createElement("div");
-                itemName.className = "content item-name w-100";
+                itemName.className = " fs-4 w-100";
                 itemName.innerHTML = this.item[i].getItemName();
                 const mainDesc = document.createElement("div");
-                mainDesc.className = "special-content main-desc w-100";
+                mainDesc.className = " w-100 mb-3";
                 mainDesc.innerHTML = this.item[i].getItemDesc();
                 const addBox = document.createElement("div");
                 addBox.className = "d-flex w-100";
@@ -4281,7 +4282,7 @@ class Shop {
                 addBox.appendChild(colDiv1);
                 addBox.appendChild(colDiv2);
                 const buyButton = document.createElement("button");
-                buyButton.className = "content buy-button btn w-100 border border-black mt-2";
+                buyButton.className = "content buy-button btn btn-primary w-100 mt-2";
                 buyButton.innerHTML = "Buy";
                 buyButton.onclick = () => {
                     var _a;
@@ -4808,11 +4809,19 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 function fullscreenHandler() {
     const isFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
+    const atas = document.getElementById("atas");
+    const bawah = document.getElementById("bawah");
     if (!isFullscreen) {
-        document.body.style.backgroundColor = "red";
+        atas.style.backgroundColor = "red";
+        bawah.style.backgroundColor = "red";
+        atas.style.backgroundImage = "";
+        bawah.style.backgroundImage = "";
     }
     else {
-        document.body.style.backgroundColor = "white";
+        atas.style.backgroundColor = "transparent";
+        bawah.style.backgroundColor = "transparent";
+        atas.style.backgroundImage = "url('/src/Assets/background/right-atas.jpeg')";
+        bawah.style.backgroundImage = "url('/src/Assets/background/right-bg2.jpeg')";
     }
 }
 let resizeTimeout = null;

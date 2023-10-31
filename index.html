@@ -26,11 +26,11 @@
     </div>
     <div class="right-side">
         <!-- Content for the right side -->
-        <div class="UI p-4">
+        <div class="UI atas p-4" id="atas">
           <div class="d-flex mb-4">
-            <button class="button-shop btn border border-black me-3" style="background-color:springgreen;">Shop</button>
-            <button class="button-inventory btn border border-black me-3" style="background-color:springgreen;">Inventory</button>
-            <button class="button-leaderboard btn border border-black me-3" style="background-color:springgreen;" data-bs-toggle="modal">
+            <button class="button-shop btn border border-black me-3 shadow" style="background-color:springgreen;">Shop</button>
+            <button class="button-inventory btn border border-black me-3 shadow" style="background-color:springgreen;">Inventory</button>
+            <button class="button-leaderboard btn border border-black me-3 shadow" style="background-color:springgreen;" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Leaderboard
             </button>
 
@@ -54,23 +54,23 @@
                 </div>
               </div>
 
-            <div class="shop-inventory overflow-auto p-3 rounded rounded-3 h-75" style="background-color:blanchedalmond;">
+            <div class="shop-inventory overflow-auto p-3 rounded rounded-3 h-75 shadow" style="background-color:blanchedalmond;">
             </div>
         </div>
 
-        <div class="UI p-4 border-top border-black overflow-auto">
-            <div class="amountStatus d-flex border border-1 border-black p-2 rounded rounded-3" style="background-color:sandybrown ;">
+        <div class="UI bawah p-4 border-top border-black overflow-auto" id="bawah">
+            <div class="amountStatus d-flex border border-1 border-black p-2 rounded rounded-3 shadow" style="background-color:sandybrown ;">
                 <div class="energyAmount w-50" id="energyAmount">Energy : </div>
                 <div class="goldAmount w-50" id="goldAmount">Gold : </div>
             </div>
-            <div class="question mt-4 border border-1 border-black p-2 rounded rounded-3" id="question" style="background-color:blanchedalmond ;"></div>
+            <div class="question mt-4 border border-1 border-black p-2 rounded rounded-3 shadow" id="question" style="background-color:blanchedalmond ;"></div>
             <div class="btns mt-2">
-                <button class="ansBtn btn border border-1 border-black" id="a" style="background-color:springgreen;"></button>
-                <button class="ansBtn btn border border-1 border-black" id="b" style="background-color:springgreen;"></button>
-                <button class="ansBtn btn border border-1 border-black" id="c" style="background-color:springgreen;"></button>
-                <button class="ansBtn btn border border-1 border-black" id="d" style="background-color:springgreen;"></button>
+                <button class="ansBtn btn border border-1 border-black shadow me-1" id="a" style="background-color:springgreen;"></button>
+                <button class="ansBtn btn border border-1 border-black shadow me-1" id="b" style="background-color:springgreen;"></button>
+                <button class="ansBtn btn border border-1 border-black shadow me-1" id="c" style="background-color:springgreen;"></button>
+                <button class="ansBtn btn border border-1 border-black shadow me-1" id="d" style="background-color:springgreen;"></button>
             </div>
-            <button id="get-soal" class="btn border border-1 border-black mt-4" style="background-color:sandybrown ;">Random soal</button>
+            <button id="get-soal" class="btn border border-1 border-black mt-4 shadow" style="background-color:sandybrown ;">Random soal</button>
         </div>
         
 

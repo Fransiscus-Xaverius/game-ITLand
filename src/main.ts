@@ -232,10 +232,21 @@ window.onload = async () => {
 };
 function fullscreenHandler() {
   const isFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
+  const atas = document.getElementById("atas") as HTMLDivElement;
+  const bawah = document.getElementById("bawah") as HTMLDivElement;
+
   if (!isFullscreen) {
-    document.body.style.backgroundColor = "red";
+    atas.style.backgroundColor = "red";
+    bawah.style.backgroundColor = "red";
+
+    atas.style.backgroundImage = "";
+    bawah.style.backgroundImage = "";
   } else {
-    document.body.style.backgroundColor = "white";
+    atas.style.backgroundColor = "transparent";
+    bawah.style.backgroundColor = "transparent";
+
+    atas.style.backgroundImage = "url('/src/Assets/background/right-atas.jpeg')";
+    bawah.style.backgroundImage = "url('/src/Assets/background/right-bg2.jpeg')";
   }
 }
 
