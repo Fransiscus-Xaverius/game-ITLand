@@ -9,7 +9,7 @@ import { GroupAnimation } from "./GroupAnimation";
 export class DiggedGround extends Tile implements IDestructable {
     constructor(coordinate:Point){
         super(coordinate,[],"digged_ground", 5, 1, 5, 40)
-        this.addAnimation(GroupAnimation.animations[4])
+        this.addAnimation(GroupAnimation.animations[6])
     }
 
     public step(stepper: Entity): void {

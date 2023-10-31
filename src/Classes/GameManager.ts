@@ -23,6 +23,10 @@ import { Shovel } from "./Items/Shovel";
 import { json } from "stream/consumers";
 import { LeaderboardView } from "./LeaderboardView";
 import { Tile } from "./GameObjects/Tile";
+import { DiggedSand } from "./GameObjects/digged_sand";
+import { DiggedGravel } from "./GameObjects/digged_gravel";
+import { DiggedGround } from "./GameObjects/digged_ground";
+import { DiggedGranite } from "./GameObjects/digged_granite";
 
 export class GameManager {
   public api: API | null = null;
@@ -152,12 +156,30 @@ export class GameManager {
 
   public async digTile(x:number, y:number){
     const name = this.grid.tiles[y][x]?.getTileName();
-    const drop = this.grid.tiles[y][y]?.tileDrop();
+    const drop = this.grid.tiles[y][x]?.tileDrop();
     const transaction = API.updateGold(this.token, drop!);
     this.player.addGold(drop!);
     this.logActivity(`Excavated a ${name} area and got ${drop} gold coins!`);
     this.questionView?.refreshStats();
-     
+    let newTile;
+    switch(name){
+      case "grass":
+        newTile = new DiggedGround({x:y, y:x});
+        break;
+      case "gravel":
+        newTile = new DiggedGravel({x:y, y:x});
+        break;
+      case "granite":
+        newTile = new DiggedGranite({x:y, y:x});
+        break;
+      case "sand":
+        newTile = new DiggedSand({x:y, y:x});
+        break;
+      default:
+        newTile = new DiggedGround({x:y, y:x});
+        break;
+    }
+    this.grid.tiles[y][x] = newTile;
   }
 
   public alertEntity(): void {
@@ -244,8 +266,6 @@ export class GameManager {
     alert("Equip something");
   }
 
-  
-
   private actionWithPickaxe(entity: Entity, direction:Direction) {
     const entityName = entity.getEntityName();
     if (
@@ -325,7 +345,9 @@ export class GameManager {
       case true:
        if(this.isGoodEnough(this.player.getEnergy(), tile.getRequiredEnergy())){
         if(this.isGoodEnough(this.player.getEquipmentLevels().shovel, tile.level)){
-          this.logActivity("Digged this tile, function not implemented")
+          // this.logActivity("Digged this tile, function not implemented")
+          this.digTile(tile.getCoordinate().x, tile.getCoordinate().y);
+          this.questionView?.refreshStats();
         }
         else{
           this.logActivity("Upgrade your shovel to excavate this area!")

@@ -21,15 +21,15 @@ export default function loadAsset():void{
    
     //Tile Assets (Digged Variation)
     const digged_grass = new Image()
-    digged_grass.src = "./dist/Assets/Prototype/digged_ground.png"
+    digged_grass.src = "./dist/Assets/final/digged_ground.png"
     const digged_flowergrass = new Image()
-    digged_flowergrass.src = "./dist/Assets/Prototype/digged_ground.png"
+    digged_flowergrass.src = "./dist/Assets/final/digged_ground.png"
     const digged_sand = new Image()
-    digged_sand.src = "./dist/Assets/Prototype/digged_sand.png"
+    digged_sand.src = "./dist/Assets/final/digged_sand.png"
     const digged_gravel = new Image()
-    digged_gravel.src = "./dist/Assets/Prototype/digged_gravel.png"
+    digged_gravel.src = "./dist/Assets/final/digged_gravel.png"
     const digged_granite = new Image()
-    digged_granite.src = "./dist/Assets/Prototype/digged_granite.png"
+    digged_granite.src = "./dist/Assets/final/digged_granite.png"
 
     //Player Movement Assets
     const player_walk_down = new Image()
@@ -188,7 +188,7 @@ export default function loadAsset():void{
         ),
         //10
         new GroupAnimation(
-            'digged_granite',
+            'digged_granite_tile',
             digged_granite,
             {x:32, y:32},
             1,

@@ -20,6 +20,10 @@ import { Ground } from "./Ground";
 import { Obsidian } from "./Obsidian";
 import { MediumChest } from "./Medium_Chest";
 import { BigChest } from "./Big_Chest";
+import { DiggedSand } from "./digged_sand";
+import { DiggedGround } from "./digged_ground";
+import { DiggedGravel } from "./digged_gravel";
+import { DiggedGranite } from "./digged_granite";
 
 
 export class Grid {
@@ -59,16 +63,16 @@ export class Grid {
                         this.tiles[i].push(new Ground({x:j, y:i}));
                         break;
                     case 'digged_grass':
-                        this.tiles[i].push(new Grass({x:j,y:i}));
+                        this.tiles[i].push(new DiggedGround({x:j,y:i}));
                         break;
                     case 'digged_sand':
-                        this.tiles[i].push(new Sand({x:j,y:i}));
+                        this.tiles[i].push(new DiggedSand({x:j,y:i}));
                         break;
                     case 'digged_gravel':
-                        this.tiles[i].push(new Gravel({x:j, y:i}));
+                        this.tiles[i].push(new DiggedGravel({x:j, y:i}));
                         break;
                     case 'digged_granite':
-                        this.tiles[i].push(new Granite({x:j, y:i}));
+                        this.tiles[i].push(new DiggedGranite({x:j, y:i}));
                         break;
                     case 'digged_cave':
                         this.tiles[i].push(new Ground({x:j, y:i}));
