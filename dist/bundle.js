@@ -4943,10 +4943,10 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
                 .getCurrentEquipment();
             game.Action(Direction_1.Direction.Down, currentEquipped);
         }
-        if (key == "[") {
-            alert('cheat');
-            game.upgradePickaxe();
-        }
+        // if(key=="["){
+        //   alert('cheat');
+        //   game.upgradePickaxe();
+        // }
         console.clear();
     });
 });
