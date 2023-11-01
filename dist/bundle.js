@@ -138,6 +138,7 @@ class API {
             }
             catch (error) {
                 alert(error);
+                return null;
             }
         });
     }
@@ -2110,7 +2111,7 @@ class GameManager {
         this.player.setGameManager(this);
     }
     load(token) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g;
         return __awaiter(this, void 0, void 0, function* () {
             this.token = token;
             (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
@@ -2118,16 +2119,22 @@ class GameManager {
             let map = { tile: [], entity: [] };
             map = yield ((_b = this.api) === null || _b === void 0 ? void 0 : _b.gameStart()); //use non-null assertion operator.
             // alert(map.tile.length);
-            let playerdata = yield ((_c = this.api) === null || _c === void 0 ? void 0 : _c.initializePlayer(1, 1, 0));
-            this.player = new Player_1.Player(Number(playerdata.x), Number(playerdata.y), 0, Number(playerdata.energy));
+            // let playerdata = await this.api?.initializePlayer(1, 1, 0);
+            let playerdata = yield ((_c = this.api) === null || _c === void 0 ? void 0 : _c.getPlayerData());
+            if (!playerdata) {
+                alert('player data not found');
+                playerdata = yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.initializePlayer(1, 1, 0));
+            }
+            this.player = new Player_1.Player(Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.x), Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.y), 0, Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.energy));
+            this.player.energy = Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.energy); //an example of why typescript is dogshit.
             //redoing load grid because the constructor cannot be an async function.
             this.grid = new Grid_1.Grid({ x: 100, y: 100 });
             this.grid.redo(map.tile, map.entity);
             this.grid.addEntity(this.player.units[0]);
             this.setActivePlayerUnit(this.player.units[0]);
-            (_d = this.questionView) === null || _d === void 0 ? void 0 : _d.setPlayer(this.player);
-            yield ((_e = this.questionView) === null || _e === void 0 ? void 0 : _e.load());
-            (_f = this.questionView) === null || _f === void 0 ? void 0 : _f.refreshStats();
+            (_e = this.questionView) === null || _e === void 0 ? void 0 : _e.setPlayer(this.player);
+            yield ((_f = this.questionView) === null || _f === void 0 ? void 0 : _f.load());
+            (_g = this.questionView) === null || _g === void 0 ? void 0 : _g.refreshStats();
             this.setInventory();
         });
     }
@@ -3960,6 +3967,9 @@ class Player {
     }
     getEnergy() {
         return this.energy;
+    }
+    setEnergy(x) {
+        this.energy = x;
     }
     addEnergy(x) {
         this.energy += x;

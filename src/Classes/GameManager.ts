@@ -88,13 +88,19 @@ export class GameManager {
     let map: Map = { tile: [], entity: [] };
     map = await this.api?.gameStart()!; //use non-null assertion operator.
     // alert(map.tile.length);
-    let playerdata = await this.api?.initializePlayer(1, 1, 0);
+    // let playerdata = await this.api?.initializePlayer(1, 1, 0);
+    let playerdata = await this.api?.getPlayerData();
+    if(!playerdata){
+      alert('player data not found');
+      playerdata = await this.api?.initializePlayer(1,1,0);
+    }
     this.player = new Player(
-      Number(playerdata!.x),
-      Number(playerdata!.y),
+      Number(playerdata?.x),
+      Number(playerdata?.y),
       0,
-      Number(playerdata!.energy)
-    );
+      Number(playerdata?.energy)
+    ); 
+    this.player.energy = Number(playerdata?.energy); //an example of why typescript is dogshit.
     //redoing load grid because the constructor cannot be an async function.
     this.grid = new Grid({ x: 100, y: 100 });
     this.grid.redo(map.tile, map.entity);

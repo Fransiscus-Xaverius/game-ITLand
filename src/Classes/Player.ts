@@ -13,7 +13,7 @@ import { Sword } from "./Items/Sword";
 
 export class Player {
   private gold: number = 500;
-  private energy: number = 0;
+  public energy: number = 0;
   public units: PlayerUnit[] = [];
   public curEquip: number = 0;
 
@@ -147,6 +147,10 @@ export class Player {
 
   public getEnergy() {
     return this.energy;
+  }
+
+  public setEnergy(x:number): void{
+    this.energy = x;
   }
 
   public addEnergy(x: number) {

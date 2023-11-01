@@ -256,7 +256,6 @@ export class Shop {
                           }
                           else if(currentItem instanceof Shovel){
                             this.game?.upgradeShovel();
-                            
                           }
                           this.inventory?.addItemOwned(i, currentQty);
                           currentItem.upgrade();

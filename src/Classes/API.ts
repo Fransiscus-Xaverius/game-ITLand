@@ -89,6 +89,7 @@ export class API {
       }
     } catch (error) {
       alert(error);
+      return null;
     }
   }
 
