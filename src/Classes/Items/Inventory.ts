@@ -41,10 +41,10 @@ export class Inventory {
       this.items.push({ item: pickaxe, amount: 1 });
     }
     if (sword) {
-      this.items.push({ item: shovel, amount: 1 });
+      this.items.push({ item: sword, amount: 1 });
     }
     if (shovel) {
-      this.items.push({ item: sword, amount: 1 });
+      this.items.push({ item: shovel, amount: 1 });
     }
   }
 

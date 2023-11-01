@@ -3635,10 +3635,10 @@ class Inventory {
             this.items.push({ item: pickaxe, amount: 1 });
         }
         if (sword) {
-            this.items.push({ item: shovel, amount: 1 });
+            this.items.push({ item: sword, amount: 1 });
         }
         if (shovel) {
-            this.items.push({ item: sword, amount: 1 });
+            this.items.push({ item: shovel, amount: 1 });
         }
     }
     addItemOwned(index, amount) {
@@ -4400,6 +4400,7 @@ class Shop {
                                                         (_c = this.game) === null || _c === void 0 ? void 0 : _c.upgradeShovel();
                                                     }
                                                     (_d = this.inventory) === null || _d === void 0 ? void 0 : _d.addItemOwned(i, currentQty);
+                                                    currentItem.upgrade();
                                                 }
                                                 else {
                                                     (_e = this.inventory) === null || _e === void 0 ? void 0 : _e.addItemOwned(i, currentQty);
