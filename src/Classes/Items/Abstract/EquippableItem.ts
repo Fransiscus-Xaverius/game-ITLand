@@ -24,4 +24,13 @@ export abstract class EquippableItem extends Item implements IEquippable {
     public setSpeed(speed: number): void {
         this.speed = speed;
     }
+
+    public upgrade():void{
+        if(this.level == 1){
+            this.level = 2;
+        }else if(this.level == 2){
+            this.level = 3;
+        }
+        alert(this.level)
+    }
 }

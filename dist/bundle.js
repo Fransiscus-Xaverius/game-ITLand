@@ -3531,6 +3531,15 @@ class EquippableItem extends Item_1.Item {
     setSpeed(speed) {
         this.speed = speed;
     }
+    upgrade() {
+        if (this.level == 1) {
+            this.level = 2;
+        }
+        else if (this.level == 2) {
+            this.level = 3;
+        }
+        alert(this.level);
+    }
 }
 exports.EquippableItem = EquippableItem;
 
@@ -3654,9 +3663,9 @@ class Inventory {
             nameElement.innerText = item.getItemName();
             const ownedElement = document.createElement("h6");
             ownedElement.classList.add("inventory-item-owned", "card-title", `item-owned-qty-${index}`, "text-center");
-            ownedElement.innerText = `Owned: ${amount}`;
             const itemUseButton = document.createElement("button");
             if (item instanceof ConsumableItem_1.ConsumableItem) {
+                ownedElement.innerText = `Owned: ${amount}`;
                 itemUseButton.textContent = "Consume";
                 itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-100", "rounded-0", "shadow");
                 // Create a function to handle the click event
@@ -3683,6 +3692,7 @@ class Inventory {
                 itemUseButton.addEventListener("click", handleItemClick);
             }
             else if (item instanceof EquippableItem_1.EquippableItem) {
+                ownedElement.innerText = `Level: ${amount}`;
                 itemUseButton.textContent = "Equip";
                 itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-100", "rounded-0", "shadow");
                 itemUseButton.addEventListener("click", () => {
@@ -3746,7 +3756,7 @@ exports.Item = Item;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pickaxe = void 0;
 const EquippableItem_1 = require("./Abstract/EquippableItem");
-const { PickaxeName, PickaxeDesc, PickaxePrice, PickaxeImagePath } = require('../../../dist/config/env.json');
+const { PickaxeName, PickaxeDesc, PickaxePrice, PickaxeImagePath, } = require("../../../dist/config/env.json");
 class Pickaxe extends EquippableItem_1.EquippableItem {
     constructor() {
         super(PickaxeImagePath, PickaxeName, PickaxeDesc, PickaxePrice);
@@ -4144,6 +4154,7 @@ const BookOfEnergyT2_1 = require("./Items/BookOfEnergyT2");
 const BookOfEnergyT3_1 = require("./Items/BookOfEnergyT3");
 const API_1 = require("./API");
 const authentication_1 = require("../utils/authentication");
+const EquippableItem_1 = require("./Items/Abstract/EquippableItem");
 class Shop {
     constructor() {
         this.player = null;
@@ -4187,7 +4198,8 @@ class Shop {
             for (let i = 0; i < this.item.length; i++) {
                 // Card shop
                 const shopTemp = document.createElement("div");
-                shopTemp.className = "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-1 shadow";
+                shopTemp.className =
+                    "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-1 shadow";
                 // Image shop
                 const shopImage = document.createElement("img");
                 shopImage.className = "shop-img h-100";
@@ -4206,122 +4218,191 @@ class Shop {
                 addBox.className = "d-flex w-100";
                 const colDiv1 = document.createElement("div");
                 colDiv1.classList.add("col-sm-6", "d-flex", "align-items-center");
-                const minusBtn = document.createElement("div");
-                minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0");
-                minusBtn.style.width = "45px";
-                minusBtn.style.height = "30px";
-                minusBtn.textContent = "-";
-                minusBtn.addEventListener("click", () => {
-                    const item = document.querySelector(`.item-${i}`);
-                    const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
-                    const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
-                    if (item) {
-                        const currentQty = parseInt(item.value) || 0;
-                        if (currentQty > 1) {
-                            item.value = `${currentQty - 1}`;
+                if (!(this.item[i] instanceof EquippableItem_1.EquippableItem)) {
+                    const minusBtn = document.createElement("div");
+                    minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0");
+                    minusBtn.style.width = "45px";
+                    minusBtn.style.height = "30px";
+                    minusBtn.textContent = "-";
+                    minusBtn.addEventListener("click", () => {
+                        const item = document.querySelector(`.item-${i}`);
+                        const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
+                        const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
+                        if (item) {
+                            const currentQty = parseInt(item.value) || 0;
+                            if (currentQty > 1) {
+                                item.value = `${currentQty - 1}`;
+                            }
+                            const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
+                            totalPriceDiv.textContent = `Gold ${totalPrice}`;
                         }
-                        const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
-                        totalPriceDiv.textContent = `Gold ${totalPrice}`;
-                    }
-                    else {
-                        console.error(`Element with class .item-${i} not found.`);
-                    }
-                });
-                const itemQtyDiv = document.createElement("input");
-                itemQtyDiv.style.width = "70px";
-                itemQtyDiv.style.height = "30px";
-                itemQtyDiv.type = "number";
-                itemQtyDiv.classList.add("item-qty", `item-${i}`, "ps-4");
-                itemQtyDiv.value = "1";
-                itemQtyDiv.min = "1";
-                itemQtyDiv.disabled = true;
-                itemQtyDiv.addEventListener("change", () => {
-                    const item = document.querySelector(`.item-${i}`);
-                    const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
-                    const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
-                    if (item) {
-                        const currentQty = parseInt(item.value) || 0;
-                        if (currentQty < 1) {
-                            item.innerHTML = "1";
+                        else {
+                            console.error(`Element with class .item-${i} not found.`);
                         }
-                        const totalPrice = currentQty * this.item[i].getItemPrice();
-                        totalPriceDiv.textContent = `Gold ${totalPrice}`;
-                    }
-                    else {
-                        console.error(`Element with class .item-${i} not found.`);
-                    }
-                });
-                const plusBtn = document.createElement("div");
-                plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0");
-                plusBtn.style.width = "45px";
-                plusBtn.style.height = "30px";
-                plusBtn.textContent = "+";
-                plusBtn.addEventListener("click", () => {
-                    const item = document.querySelector(`.item-${i}`);
-                    const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
-                    const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
-                    if (item) {
-                        const currentQty = parseInt(item.value) || 0;
-                        item.value = `${currentQty + 1}`;
-                        const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
-                        totalPriceDiv.textContent = `Gold ${totalPrice}`;
-                    }
-                    else {
-                        console.error(`Element with class .item-${i} not found.`);
-                    }
-                });
-                colDiv1.appendChild(minusBtn);
-                colDiv1.appendChild(itemQtyDiv);
-                colDiv1.appendChild(plusBtn);
-                const colDiv2 = document.createElement("div");
-                colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`);
-                const totalPriceDiv = document.createElement("div");
-                totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
-                totalPriceDiv.textContent = `Gold ${parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()}`;
-                colDiv2.appendChild(totalPriceDiv);
-                addBox.appendChild(colDiv1);
-                addBox.appendChild(colDiv2);
+                    });
+                    const itemQtyDiv = document.createElement("input");
+                    itemQtyDiv.style.width = "70px";
+                    itemQtyDiv.style.height = "30px";
+                    itemQtyDiv.type = "number";
+                    itemQtyDiv.classList.add("item-qty", `item-${i}`, "ps-4");
+                    itemQtyDiv.value = "1";
+                    itemQtyDiv.min = "1";
+                    itemQtyDiv.disabled = true;
+                    itemQtyDiv.addEventListener("change", () => {
+                        const item = document.querySelector(`.item-${i}`);
+                        const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
+                        const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
+                        if (item) {
+                            const currentQty = parseInt(item.value) || 0;
+                            if (currentQty < 1) {
+                                item.innerHTML = "1";
+                            }
+                            const totalPrice = currentQty * this.item[i].getItemPrice();
+                            totalPriceDiv.textContent = `Gold ${totalPrice}`;
+                        }
+                        else {
+                            console.error(`Element with class .item-${i} not found.`);
+                        }
+                    });
+                    const plusBtn = document.createElement("div");
+                    plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0");
+                    plusBtn.style.width = "45px";
+                    plusBtn.style.height = "30px";
+                    plusBtn.textContent = "+";
+                    plusBtn.addEventListener("click", () => {
+                        const item = document.querySelector(`.item-${i}`);
+                        const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
+                        const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
+                        if (item) {
+                            const currentQty = parseInt(item.value) || 0;
+                            item.value = `${currentQty + 1}`;
+                            const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
+                            totalPriceDiv.textContent = `Gold ${totalPrice}`;
+                        }
+                        else {
+                            console.error(`Element with class .item-${i} not found.`);
+                        }
+                    });
+                    colDiv1.appendChild(minusBtn);
+                    colDiv1.appendChild(itemQtyDiv);
+                    colDiv1.appendChild(plusBtn);
+                    const colDiv2 = document.createElement("div");
+                    colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`);
+                    const totalPriceDiv = document.createElement("div");
+                    totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
+                    totalPriceDiv.textContent = `Gold ${parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()}`;
+                    colDiv2.appendChild(totalPriceDiv);
+                    addBox.appendChild(colDiv1);
+                    addBox.appendChild(colDiv2);
+                }
+                else {
+                    const colDiv2 = document.createElement("div");
+                    colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`);
+                    const totalPriceDiv = document.createElement("div");
+                    totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
+                    totalPriceDiv.textContent = `Gold ${this.item[i].getItemPrice()}`;
+                    colDiv2.appendChild(totalPriceDiv);
+                    addBox.appendChild(colDiv1);
+                    addBox.appendChild(colDiv2);
+                }
                 const buyButton = document.createElement("button");
-                buyButton.className = "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow";
+                buyButton.className =
+                    "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow";
                 buyButton.innerHTML = "Buy";
-                buyButton.onclick = () => {
-                    var _a;
-                    const currentItem = this.item[i];
-                    const totalPriceDiv = document.querySelector(`.total-price-item-${i}`);
-                    const itemAmount = document.querySelector(`.item-${i}`);
-                    if (itemAmount) {
-                        if (totalPriceDiv) {
-                            if (this.player) {
-                                const goldDiv = document.querySelector("#goldAmount");
-                                let playerGold = 0;
-                                if (goldDiv) {
-                                    playerGold = parseInt(goldDiv.textContent.split(" ")[1]);
-                                }
-                                const priceContent = totalPriceDiv.textContent;
-                                const price = parseInt(priceContent.split(" ")[1]);
-                                if (playerGold >= price) {
-                                    const currentQty = parseInt(itemAmount.value) || 0;
-                                    if (currentQty > 0) {
-                                        //   this.player.useGold(price);
-                                        const token = (0, authentication_1.getAuthToken)();
-                                        if (token) {
-                                            API_1.API.updateGold(token, -price);
+                if (this.item[i] instanceof EquippableItem_1.EquippableItem) {
+                    // alert("EquippableItem");
+                    if (this.item[i].getLevel() < 3) {
+                        // alert("getLevel() < 3");
+                        buyButton.onclick = () => {
+                            var _a, _b;
+                            const currentItem = this.item[i];
+                            const totalPriceDiv = document.querySelector(`.total-price-item-${i}`);
+                            // const itemAmount: HTMLInputElement | null =
+                            //   document.querySelector(`.item-${i}`);
+                            const itemAmount = document.createElement("input");
+                            itemAmount.value = "1";
+                            if (itemAmount) {
+                                if (totalPriceDiv) {
+                                    if (this.player) {
+                                        const goldDiv = document.querySelector("#goldAmount");
+                                        let playerGold = 0;
+                                        if (goldDiv) {
+                                            playerGold = parseInt(goldDiv.textContent.split(" ")[1]);
                                         }
-                                        alert(playerGold + " " + price);
-                                        (_a = this.inventory) === null || _a === void 0 ? void 0 : _a.addItemOwned(i, currentQty);
+                                        const priceContent = totalPriceDiv.textContent;
+                                        const price = parseInt(priceContent.split(" ")[1]);
+                                        if (playerGold >= price) {
+                                            const currentQty = parseInt(itemAmount.value) || 0;
+                                            if (currentQty > 0) {
+                                                //   this.player.useGold(price);
+                                                const token = (0, authentication_1.getAuthToken)();
+                                                if (token) {
+                                                    API_1.API.updateGold(token, -price);
+                                                }
+                                                if (currentItem instanceof EquippableItem_1.EquippableItem) {
+                                                    alert(playerGold + " " + price);
+                                                    currentItem.upgrade();
+                                                    (_a = this.inventory) === null || _a === void 0 ? void 0 : _a.addItemOwned(i, currentQty);
+                                                }
+                                                else {
+                                                    (_b = this.inventory) === null || _b === void 0 ? void 0 : _b.addItemOwned(i, currentQty);
+                                                }
+                                                this.open(shopHTML);
+                                            }
+                                            else {
+                                                itemAmount.value = "1";
+                                                totalPriceDiv.textContent = `Gold ${1 * this.item[i].getItemPrice()}`;
+                                            }
+                                        }
+                                        else {
+                                            alert("Not enough gold!");
+                                        }
+                                    }
+                                }
+                            }
+                        };
+                    }
+                }
+                else {
+                    buyButton.onclick = () => {
+                        var _a;
+                        const currentItem = this.item[i];
+                        const totalPriceDiv = document.querySelector(`.total-price-item-${i}`);
+                        const itemAmount = document.querySelector(`.item-${i}`);
+                        if (itemAmount) {
+                            if (totalPriceDiv) {
+                                if (this.player) {
+                                    const goldDiv = document.querySelector("#goldAmount");
+                                    let playerGold = 0;
+                                    if (goldDiv) {
+                                        playerGold = parseInt(goldDiv.textContent.split(" ")[1]);
+                                    }
+                                    const priceContent = totalPriceDiv.textContent;
+                                    const price = parseInt(priceContent.split(" ")[1]);
+                                    if (playerGold >= price) {
+                                        const currentQty = parseInt(itemAmount.value) || 0;
+                                        if (currentQty > 0) {
+                                            //   this.player.useGold(price);
+                                            const token = (0, authentication_1.getAuthToken)();
+                                            if (token) {
+                                                API_1.API.updateGold(token, -price);
+                                            }
+                                            alert(playerGold + " " + price);
+                                            (_a = this.inventory) === null || _a === void 0 ? void 0 : _a.addItemOwned(i, currentQty);
+                                        }
+                                        else {
+                                            itemAmount.value = "1";
+                                            totalPriceDiv.textContent = `Gold ${1 * this.item[i].getItemPrice()}`;
+                                        }
                                     }
                                     else {
-                                        itemAmount.value = "1";
-                                        totalPriceDiv.textContent = `Gold ${1 * this.item[i].getItemPrice()}`;
+                                        alert("Not enough gold!");
                                     }
-                                }
-                                else {
-                                    alert("Not enough gold!");
                                 }
                             }
                         }
-                    }
-                };
+                    };
+                }
                 desc.appendChild(itemName);
                 desc.appendChild(mainDesc);
                 desc.appendChild(addBox);
@@ -4335,7 +4416,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"../utils/authentication":66,"./API":2,"./Items/BookOfEnergyT1":49,"./Items/BookOfEnergyT2":50,"./Items/BookOfEnergyT3":51}],62:[function(require,module,exports){
+},{"../utils/authentication":66,"./API":2,"./Items/Abstract/EquippableItem":48,"./Items/BookOfEnergyT1":49,"./Items/BookOfEnergyT2":50,"./Items/BookOfEnergyT3":51}],62:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;

@@ -101,11 +101,11 @@ export class Inventory {
         `item-owned-qty-${index}`,
         "text-center"
       );
-      ownedElement.innerText = `Owned: ${amount}`;
 
       const itemUseButton = document.createElement("button");
 
       if (item instanceof ConsumableItem) {
+        ownedElement.innerText = `Owned: ${amount}`;
         itemUseButton.textContent = "Consume";
         itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-100", "rounded-0", "shadow");
 
@@ -140,6 +140,7 @@ export class Inventory {
 
         itemUseButton.addEventListener("click", handleItemClick);
       } else if (item instanceof EquippableItem) {
+        ownedElement.innerText = `Level: ${amount}`;
         itemUseButton.textContent = "Equip";
         itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-100", "rounded-0", "shadow");
         itemUseButton.addEventListener("click", () => {
