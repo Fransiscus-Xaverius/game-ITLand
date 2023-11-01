@@ -1,3 +1,4 @@
+import { API } from "./API";
 import { GameManager } from "./GameManager";
 import { Animation } from "./GameObjects/Animation";
 import { ChainedAnimation } from "./GameObjects/ChainedAnimation";
@@ -20,7 +21,7 @@ export class Player {
   //each item changes the level depending on the tier
   //Ex: Stone Pick = 1, Iron Pick = 2, Damascus Steel Pick = 3
   //this interacts with entityType and Level.
-
+  private playerName: string | null;
   private sword: Sword = new Sword();
   private shovel: Shovel = new Shovel();
   private pickaxe: Pickaxe = new Pickaxe();
@@ -34,6 +35,7 @@ export class Player {
   //3 = shovel
 
   constructor(x: number, y: number, gold: number, energy: number) {
+    this.playerName = API.getPlayerName();
     const p1 = new PlayerUnit({ x: x, y: y });
     p1.addAnimation(
       new ChainedAnimation(
@@ -86,50 +88,57 @@ export class Player {
     p1.createAnimation(
       "mine_up",
       Animation.assets["mine_up"],
-      {x:32, y:32},
+      { x: 32, y: 32 },
       5,
       "",
       10
-    )
+    );
 
     p1.createAnimation(
       "mine_down",
       Animation.assets["mine_down"],
-      {x:32, y:32},
+      { x: 32, y: 32 },
       5,
       "",
       10
-    )
+    );
 
     p1.createAnimation(
       "mine_left",
       Animation.assets["mine_left"],
-      {x:32, y:32},
+      { x: 32, y: 32 },
       5,
       "",
       10
-    )
+    );
 
     p1.createAnimation(
       "mine_right",
       Animation.assets["mine_right"],
-      {x:32, y:32},
+      { x: 32, y: 32 },
       5,
       "",
       10
-    )
+    );
 
     p1.createAnimation(
       "dig",
       Animation.assets["dig"],
-      {x:32, y:32},
+      { x: 32, y: 32 },
       8,
       "",
       15
-    )
+    );
 
     p1.setMoveSpeed(2);
     this.units.push(p1);
+  }
+
+  public setPlayerName(playerName: string): void {
+    this.playerName = playerName;
+  }
+  public getPlayerName(): string | null {
+    return this.playerName;
   }
 
   public getGold() {

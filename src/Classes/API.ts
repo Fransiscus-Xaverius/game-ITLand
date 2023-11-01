@@ -5,6 +5,9 @@ import { get } from "http";
 const { LOCAL_API_URL, MASTER_API_URL } = require("../../dist/config/env.json");
 
 export class API {
+  public static getPlayerName(): string | null {
+    return sessionStorage.getItem("game_itland_player_name");
+  }
   public sendSaveData(): Promise<void> {
     const apiUrl = "https://5591-203-78-117-152.ngrok-free.app/";
     const headers: Headers = new Headers();
@@ -208,9 +211,7 @@ export class API {
     }
   }
 
-  public async digTile(x:number, y:number){
-
-  }
+  public async digTile(x: number, y: number) {}
 
   public static async Dynamite(username: string) {
     const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-500`;

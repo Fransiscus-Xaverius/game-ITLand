@@ -69,7 +69,7 @@ export class GameManager {
   public setLeaderboardView(leaderboardView: LeaderboardView | null) {
     if (leaderboardView) {
       this.leaderboardView = leaderboardView;
-      this.leaderboardView.setPlayer(this.player);
+      this.leaderboardView?.setPlayer(this.player);
     }
   }
 
@@ -154,7 +154,7 @@ export class GameManager {
     await this.api?.removeEntity(y, x);
   }
 
-  public async digTile(x:number, y:number){
+  public async digTile(x: number, y: number) {
     const name = this.grid.tiles[y][x]?.getTileName();
     const drop = this.grid.tiles[y][x]?.tileDrop();
     const transaction = API.updateGold(this.token, drop!);
@@ -162,21 +162,21 @@ export class GameManager {
     this.logActivity(`Excavated a ${name} area and got ${drop} gold coins!`);
     this.questionView?.refreshStats();
     let newTile;
-    switch(name){
+    switch (name) {
       case "grass":
-        newTile = new DiggedGround({x:y, y:x});
+        newTile = new DiggedGround({ x: y, y: x });
         break;
       case "gravel":
-        newTile = new DiggedGravel({x:y, y:x});
+        newTile = new DiggedGravel({ x: y, y: x });
         break;
       case "granite":
-        newTile = new DiggedGranite({x:y, y:x});
+        newTile = new DiggedGranite({ x: y, y: x });
         break;
       case "sand":
-        newTile = new DiggedSand({x:y, y:x});
+        newTile = new DiggedSand({ x: y, y: x });
         break;
       default:
-        newTile = new DiggedGround({x:y, y:x});
+        newTile = new DiggedGround({ x: y, y: x });
         break;
     }
     this.grid.tiles[y][x] = newTile;
@@ -216,17 +216,20 @@ export class GameManager {
     const coords = this.player.getCoordinate();
     const temp = this.getGridEntity(coords, direction);
     const tile = this.getTile(coords);
-    if (!temp && direction!=Direction.Down) {
-      this.logActivity("No Entity Object!")
+    if (!temp && direction != Direction.Down) {
+      this.logActivity("No Entity Object!");
       return;
-    }
-    else if(Direction.Down && !tile){
+    } else if (Direction.Down && !tile) {
       //should not be possible but its here just in case :D
-      this.logActivity("Invalid Dig Command")
+      this.logActivity("Invalid Dig Command");
       return;
-    }
-    else if(direction!=Direction.Down&&temp?.getEntityName()=='Obsidian'){
-      this.logActivity("This is an obsidian block. It is a world border object and thus cannot be destroyed!");
+    } else if (
+      direction != Direction.Down &&
+      temp?.getEntityName() == "Obsidian"
+    ) {
+      this.logActivity(
+        "This is an obsidian block. It is a world border object and thus cannot be destroyed!"
+      );
       return;
     }
     if (tools instanceof Pickaxe) {
@@ -234,14 +237,14 @@ export class GameManager {
     } else if (tools instanceof Sword) {
       this.actionWithSword(temp!);
     } else if (tools instanceof Shovel) {
-      if(!tile) return;
+      if (!tile) return;
       this.actionWithShovel(tile!);
     } else {
       this.alertEquipSomething();
     }
   }
 
-  private getTile(coords:Point){
+  private getTile(coords: Point) {
     return this.grid.getTile(coords.x, coords.y);
   }
 
@@ -266,7 +269,7 @@ export class GameManager {
     alert("Equip something");
   }
 
-  private actionWithPickaxe(entity: Entity, direction:Direction) {
+  private actionWithPickaxe(entity: Entity, direction: Direction) {
     const entityName = entity.getEntityName();
     if (
       entityName == "Rock" ||
@@ -306,11 +309,11 @@ export class GameManager {
   private actionWithSword(entity: Entity) {
     const entityName = entity.getEntityName();
     alert(entityName);
-    if(
+    if (
       entityName == "Chest" ||
       entityName == "Medium_Chest" ||
       entityName == "Big_Chest"
-    ){
+    ) {
       if (
         this.isGoodEnough(this.player.getEnergy(), entity.getRequiredEnergy())
       ) {
@@ -333,32 +336,35 @@ export class GameManager {
         this.logActivity(`You need more energy to do this action!`);
       }
     } else {
-      this.logActivity(
-        "You cannot use a sword to break this object!"
-      );
+      this.logActivity("You cannot use a sword to break this object!");
     }
   }
 
-  private actionWithShovel(tile:Tile) {
+  private actionWithShovel(tile: Tile) {
     const isDiggable = !tile.name.includes("digged");
     switch (isDiggable) {
       case true:
-       if(this.isGoodEnough(this.player.getEnergy(), tile.getRequiredEnergy())){
-        if(this.isGoodEnough(this.player.getEquipmentLevels().shovel, tile.level)){
-          // this.logActivity("Digged this tile, function not implemented")
-          this.digTile(tile.getCoordinate().x, tile.getCoordinate().y);
-          this.questionView?.refreshStats();
+        if (
+          this.isGoodEnough(this.player.getEnergy(), tile.getRequiredEnergy())
+        ) {
+          if (
+            this.isGoodEnough(
+              this.player.getEquipmentLevels().shovel,
+              tile.level
+            )
+          ) {
+            // this.logActivity("Digged this tile, function not implemented")
+            this.digTile(tile.getCoordinate().x, tile.getCoordinate().y);
+            this.questionView?.refreshStats();
+          } else {
+            this.logActivity("Upgrade your shovel to excavate this area!");
+          }
+        } else {
+          this.logActivity(`You need more energy to do this action!`);
         }
-        else{
-          this.logActivity("Upgrade your shovel to excavate this area!")
-        }
-       }  
-       else{
-        this.logActivity(`You need more energy to do this action!`)
-       }
         break;
       case false:
-        this.logActivity("This area has already been excavated! ")
+        this.logActivity("This area has already been excavated! ");
         break;
       default:
         alert("This is the wrong tool!");

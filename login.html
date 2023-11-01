@@ -115,6 +115,7 @@
                     if (data) {
                         if (data.token) {
                             sessionStorage.setItem("game_itland", data.token);
+                            sessionStorage.setItem("game_itland_player_name", username);
                             window.location.href = "./index.html";
                         }
                     }

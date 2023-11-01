@@ -47,6 +47,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.API = void 0;
 const { LOCAL_API_URL, MASTER_API_URL } = require("../../dist/config/env.json");
 class API {
+    static getPlayerName() {
+        return sessionStorage.getItem("game_itland_player_name");
+    }
     sendSaveData() {
         const apiUrl = "https://5591-203-78-117-152.ngrok-free.app/";
         const headers = new Headers();
@@ -280,8 +283,7 @@ class API {
         });
     }
     digTile(x, y) {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
+        return __awaiter(this, void 0, void 0, function* () { });
     }
     static Dynamite(username) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -2092,9 +2094,11 @@ class GameManager {
     //     this.inventoryView?.getInventory()?.addItemOwned(index, amount);
     // }
     setLeaderboardView(leaderboardView) {
+        var _a;
         if (leaderboardView) {
+            // alert(JSON.stringify(this.player));
             this.leaderboardView = leaderboardView;
-            this.leaderboardView.setPlayer(this.player);
+            (_a = this.leaderboardView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
         }
     }
     setInventory() {
@@ -2239,7 +2243,8 @@ class GameManager {
             this.logActivity("Invalid Dig Command");
             return;
         }
-        else if (direction != Direction_1.Direction.Down && (temp === null || temp === void 0 ? void 0 : temp.getEntityName()) == 'Obsidian') {
+        else if (direction != Direction_1.Direction.Down &&
+            (temp === null || temp === void 0 ? void 0 : temp.getEntityName()) == "Obsidian") {
             this.logActivity("This is an obsidian block. It is a world border object and thus cannot be destroyed!");
             return;
         }
@@ -3818,6 +3823,7 @@ class Leaderboard {
         });
     }
     open(leaderboardElement) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const allUserString = JSON.parse(yield API_1.API.getAllUser());
             this.listUser = [];
@@ -3829,7 +3835,9 @@ class Leaderboard {
             for (let i = 0; i < this.listUser.length; i++) {
                 let currentUser = this.listUser[i];
                 // if(currentUser.username != )
-                showUser += `<div>${currentUser.username} ${currentUser.total_gold}<button class='dyn-atk dyn-attack-${i}'>Dynamite Attack</button><button class='cnn-atk cnn-attack-${i}'>CannonBall Attack</button></div>`;
+                if (currentUser.username != ((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName())) {
+                    showUser += `<div>${currentUser.username} ${currentUser.total_gold}<button class='dyn-atk dyn-attack-${i}'>Dynamite Attack</button><button class='cnn-atk cnn-attack-${i}'>CannonBall Attack</button></div>`;
+                }
             }
             if (leaderboardElement) {
                 leaderboardElement.innerHTML = showUser;
@@ -3837,9 +3845,8 @@ class Leaderboard {
             const allDynButton = document.querySelectorAll(".dyn-atk");
             const allCnnButton = document.querySelectorAll(".cnn-atk");
             for (let i = 0; i < allCnnButton.length; i++) {
-                allCnnButton[i].addEventListener('click', () => {
-                });
-                allDynButton[i].addEventListener('click', () => {
+                allCnnButton[i].addEventListener("click", () => { });
+                allDynButton[i].addEventListener("click", () => {
                     API_1.API.Dynamite(this.listUser[i].username);
                     let closeButton = document.querySelector(".close-leaderboard-button");
                     if (closeButton) {
@@ -3894,6 +3901,7 @@ exports.LeaderboardView = LeaderboardView;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
+const API_1 = require("./API");
 const Animation_1 = require("./GameObjects/Animation");
 const ChainedAnimation_1 = require("./GameObjects/ChainedAnimation");
 const PlayerUnit_1 = require("./GameObjects/PlayerUnit");
@@ -3911,16 +3919,13 @@ class Player {
         this.energy = 0;
         this.units = [];
         this.curEquip = 0;
-        //item effects
-        //each item changes the level depending on the tier
-        //Ex: Stone Pick = 1, Iron Pick = 2, Damascus Steel Pick = 3
-        //this interacts with entityType and Level.
         this.sword = new Sword_1.Sword();
         this.shovel = new Shovel_1.Shovel();
         this.pickaxe = new Pickaxe_1.Pickaxe();
         this.inventory = null;
         this.gameManager = null;
         this.currentEquipped = null;
+        this.playerName = API_1.API.getPlayerName();
         const p1 = new PlayerUnit_1.PlayerUnit({ x: x, y: y });
         p1.addAnimation(new ChainedAnimation_1.ChainedAnimation(p1, "idle", Animation_1.Animation.assets["player_idle"], { x: 32, y: 32 }, 2, -1, 1));
         p1.createAnimation("walk_up", Animation_1.Animation.assets["player_walk_up"], { x: 32, y: 32 }, 4, "", 4);
@@ -3934,6 +3939,12 @@ class Player {
         p1.createAnimation("dig", Animation_1.Animation.assets["dig"], { x: 32, y: 32 }, 8, "", 15);
         p1.setMoveSpeed(2);
         this.units.push(p1);
+    }
+    setPlayerName(playerName) {
+        this.playerName = playerName;
+    }
+    getPlayerName() {
+        return this.playerName;
     }
     getGold() {
         return this.gold;
@@ -4008,7 +4019,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":22,"./GameObjects/PlayerUnit":34,"./Items/Pickaxe":54,"./Items/Shovel":55,"./Items/Sword":56}],60:[function(require,module,exports){
+},{"./API":2,"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":22,"./GameObjects/PlayerUnit":34,"./Items/Pickaxe":54,"./Items/Shovel":55,"./Items/Sword":56}],60:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
