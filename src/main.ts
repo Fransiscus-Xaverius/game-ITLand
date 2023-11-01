@@ -245,8 +245,8 @@ function fullscreenHandler() {
     atas.style.backgroundColor = "transparent";
     bawah.style.backgroundColor = "transparent";
 
-    atas.style.backgroundImage = "url('/src/Assets/background/right-atas.jpeg')";
-    bawah.style.backgroundImage = "url('/src/Assets/background/right-bg2.jpeg')";
+    atas.style.backgroundImage = "url('/src/Assets/background/pxl-1.jpeg')";
+    bawah.style.backgroundImage = "url('/src/Assets/background/pxl-2.jpeg')";
   }
 }
 

@@ -74,7 +74,7 @@ export class Inventory {
 
     for (const { item, amount } of this.items) {
       const cardElement = document.createElement("div");
-      cardElement.classList.add("card", "float-start", "me-3", "mb-3", "p-3", "border", "border-1", "rounded", "rounded-3");
+      cardElement.classList.add("card", "float-start", "me-3", "mb-3", "p-3", "border", "border-1", "rounded-0", "shadow");
       cardElement.style.width = "46%"
 
       const imgDiv = document.createElement("div");
@@ -107,7 +107,7 @@ export class Inventory {
 
       if (item instanceof ConsumableItem) {
         itemUseButton.textContent = "Consume";
-        itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-100");
+        itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-100", "rounded-0", "shadow");
 
         // Create a function to handle the click event
         const handleItemClick = () => {
@@ -141,7 +141,7 @@ export class Inventory {
         itemUseButton.addEventListener("click", handleItemClick);
       } else if (item instanceof EquippableItem) {
         itemUseButton.textContent = "Equip";
-        itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-100");
+        itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-100", "rounded-0", "shadow");
         itemUseButton.addEventListener("click", () => {
           if (this.player) {
             this.player.equip(item);

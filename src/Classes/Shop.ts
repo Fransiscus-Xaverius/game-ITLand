@@ -56,11 +56,11 @@ export class Shop {
       for (let i = 0; i < this.item.length; i++) {
         // Card shop
         const shopTemp = document.createElement("div") as HTMLDivElement;
-        shopTemp.className = "card-shop rounded rounded-3 mb-3 w-full p-3 flex justify-content-between bg-white border border-1";
+        shopTemp.className = "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-1 shadow";
 
         // Image shop
         const shopImage = document.createElement("img") as HTMLImageElement;
-        shopImage.className = "shop-img rounded rounded-3 h-100";
+        shopImage.className = "shop-img h-100";
         shopImage.src = this.item[i].getImagePath();
 
         // Description shop
@@ -69,7 +69,7 @@ export class Shop {
         desc.style.width = "60%";
 
         const itemName = document.createElement("div") as HTMLDivElement;
-        itemName.className = " fs-4 w-100";
+        itemName.className = " fs-5 w-100";
         itemName.innerHTML = this.item[i].getItemName();
 
         const mainDesc = document.createElement("div") as HTMLDivElement;
@@ -83,7 +83,7 @@ export class Shop {
         colDiv1.classList.add("col-sm-6", "d-flex", "align-items-center");
         
         const minusBtn: HTMLDivElement = document.createElement("div");
-        minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0", "rounded-start");
+        minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0");
         minusBtn.style.width = "45px";
         minusBtn.style.height = "30px";
         minusBtn.textContent = "-";
@@ -111,10 +111,10 @@ export class Shop {
         });
 
         const itemQtyDiv: HTMLInputElement = document.createElement("input");
-        itemQtyDiv.style.width = "50px";
+        itemQtyDiv.style.width = "70px";
         itemQtyDiv.style.height = "30px";
         itemQtyDiv.type = "number";
-        itemQtyDiv.classList.add("item-qty", `item-${i}`, "ps-3");
+        itemQtyDiv.classList.add("item-qty", `item-${i}`, "ps-4");
         itemQtyDiv.value = "1";
         itemQtyDiv.min = "1";
         itemQtyDiv.disabled = true;
@@ -141,7 +141,7 @@ export class Shop {
         });
 
         const plusBtn: HTMLDivElement = document.createElement("div");
-        plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0", "rounded-end");
+        plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0");
         plusBtn.style.width = "45px";
         plusBtn.style.height = "30px";
         plusBtn.textContent = "+";
@@ -183,7 +183,7 @@ export class Shop {
         addBox.appendChild(colDiv2);
 
         const buyButton = document.createElement("button") as HTMLButtonElement;
-        buyButton.className = "content buy-button btn btn-primary w-100 mt-2";
+        buyButton.className = "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow";
         buyButton.innerHTML = "Buy";
         buyButton.onclick = () => {
           const currentItem = this.item[i];

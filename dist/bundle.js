@@ -3638,7 +3638,7 @@ class Inventory {
         let index = 0;
         for (const { item, amount } of this.items) {
             const cardElement = document.createElement("div");
-            cardElement.classList.add("card", "float-start", "me-3", "mb-3", "p-3", "border", "border-1", "rounded", "rounded-3");
+            cardElement.classList.add("card", "float-start", "me-3", "mb-3", "p-3", "border", "border-1", "rounded-0", "shadow");
             cardElement.style.width = "46%";
             const imgDiv = document.createElement("div");
             imgDiv.classList.add("w-100", "d-flex", "justify-content-center");
@@ -3658,7 +3658,7 @@ class Inventory {
             const itemUseButton = document.createElement("button");
             if (item instanceof ConsumableItem_1.ConsumableItem) {
                 itemUseButton.textContent = "Consume";
-                itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-100");
+                itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-100", "rounded-0", "shadow");
                 // Create a function to handle the click event
                 const handleItemClick = () => {
                     if (amount > 0) {
@@ -3684,7 +3684,7 @@ class Inventory {
             }
             else if (item instanceof EquippableItem_1.EquippableItem) {
                 itemUseButton.textContent = "Equip";
-                itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-100");
+                itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-100", "rounded-0", "shadow");
                 itemUseButton.addEventListener("click", () => {
                     if (this.player) {
                         this.player.equip(item);
@@ -4187,17 +4187,17 @@ class Shop {
             for (let i = 0; i < this.item.length; i++) {
                 // Card shop
                 const shopTemp = document.createElement("div");
-                shopTemp.className = "card-shop rounded rounded-3 mb-3 w-full p-3 flex justify-content-between bg-white border border-1";
+                shopTemp.className = "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-1 shadow";
                 // Image shop
                 const shopImage = document.createElement("img");
-                shopImage.className = "shop-img rounded rounded-3 h-100";
+                shopImage.className = "shop-img h-100";
                 shopImage.src = this.item[i].getImagePath();
                 // Description shop
                 const desc = document.createElement("div");
                 desc.className = "desc h-100";
                 desc.style.width = "60%";
                 const itemName = document.createElement("div");
-                itemName.className = " fs-4 w-100";
+                itemName.className = " fs-5 w-100";
                 itemName.innerHTML = this.item[i].getItemName();
                 const mainDesc = document.createElement("div");
                 mainDesc.className = " w-100 mb-3";
@@ -4207,7 +4207,7 @@ class Shop {
                 const colDiv1 = document.createElement("div");
                 colDiv1.classList.add("col-sm-6", "d-flex", "align-items-center");
                 const minusBtn = document.createElement("div");
-                minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0", "rounded-start");
+                minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0");
                 minusBtn.style.width = "45px";
                 minusBtn.style.height = "30px";
                 minusBtn.textContent = "-";
@@ -4228,10 +4228,10 @@ class Shop {
                     }
                 });
                 const itemQtyDiv = document.createElement("input");
-                itemQtyDiv.style.width = "50px";
+                itemQtyDiv.style.width = "70px";
                 itemQtyDiv.style.height = "30px";
                 itemQtyDiv.type = "number";
-                itemQtyDiv.classList.add("item-qty", `item-${i}`, "ps-3");
+                itemQtyDiv.classList.add("item-qty", `item-${i}`, "ps-4");
                 itemQtyDiv.value = "1";
                 itemQtyDiv.min = "1";
                 itemQtyDiv.disabled = true;
@@ -4252,7 +4252,7 @@ class Shop {
                     }
                 });
                 const plusBtn = document.createElement("div");
-                plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0", "rounded-end");
+                plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0");
                 plusBtn.style.width = "45px";
                 plusBtn.style.height = "30px";
                 plusBtn.textContent = "+";
@@ -4282,7 +4282,7 @@ class Shop {
                 addBox.appendChild(colDiv1);
                 addBox.appendChild(colDiv2);
                 const buyButton = document.createElement("button");
-                buyButton.className = "content buy-button btn btn-primary w-100 mt-2";
+                buyButton.className = "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow";
                 buyButton.innerHTML = "Buy";
                 buyButton.onclick = () => {
                     var _a;
@@ -4820,8 +4820,8 @@ function fullscreenHandler() {
     else {
         atas.style.backgroundColor = "transparent";
         bawah.style.backgroundColor = "transparent";
-        atas.style.backgroundImage = "url('/src/Assets/background/right-atas.jpeg')";
-        bawah.style.backgroundImage = "url('/src/Assets/background/right-bg2.jpeg')";
+        atas.style.backgroundImage = "url('/src/Assets/background/pxl-1.jpeg')";
+        bawah.style.backgroundImage = "url('/src/Assets/background/pxl-2.jpeg')";
     }
 }
 let resizeTimeout = null;
