@@ -6,15 +6,18 @@ import { BookOfEnergyTier2 } from "./Items/BookOfEnergyT2";
 import { BookOfEnergyTier3 } from "./Items/BookOfEnergyT3";
 import { Player } from "./Player";
 import { Sword } from "./Items/Sword";
+import { Shovel } from "./Items/Shovel";
 import { Pickaxe } from "./Items/Pickaxe";
 import { API } from "./API";
 import { getAuthToken } from "../utils/authentication";
 import { EquippableItem } from "./Items/Abstract/EquippableItem";
+import { GameManager } from "./GameManager";
 
 export class Shop {
   private item: Item[];
   private player: Player | null = null;
   private inventory: Inventory | null = null;
+  private game: GameManager | null = null;
 
   constructor() {
     this.item = [
@@ -22,6 +25,10 @@ export class Shop {
       new BookOfEnergyTier2(),
       new BookOfEnergyTier3(),
     ];
+  }
+
+  public setGame(game: GameManager | null) {
+    this.game = game;
   }
 
   public setPlayer(player: Player | null) {
@@ -236,7 +243,20 @@ export class Shop {
                         }
                         if (currentItem instanceof EquippableItem) {
                           alert(playerGold + " " + price);
-                          currentItem.upgrade();
+                          //basically what we need to do is to first check if the item is an equippable
+                          //then we basically do nothing to said object and just go to the gameManager
+                          //and from the gamemanager we do a force upgrade.
+
+                          //TL;DR: this is fucking stupid but my hands and mind have forced me. Forgive me my son -Frans
+                          if(currentItem instanceof Sword){
+                            this.game?.upgradeSword();
+                          }
+                          else if(currentItem instanceof Pickaxe){ 
+                            this.game?.upgradePickaxe();
+                          }
+                          else if(currentItem instanceof Shovel){
+                            this.game?.upgradeShovel();
+                          }
                           this.inventory?.addItemOwned(i, currentQty);
                         } else {
                           this.inventory?.addItemOwned(i, currentQty);

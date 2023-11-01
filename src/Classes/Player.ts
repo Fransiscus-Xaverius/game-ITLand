@@ -226,6 +226,30 @@ export class Player {
     this.pickaxe.setLevel(x);
   }
 
+  public setSword(sword:Sword): void {
+    this.sword = sword;
+  } 
+
+  public setPickaxe(pickaxe:Pickaxe): void { 
+    this.pickaxe = pickaxe;
+  }
+
+  public setShovel(shovel:Shovel): void {
+    this.shovel = shovel;
+  }
+
+  public upgradeSword(): void {
+    this.sword.upgrade();
+  }
+
+  public upgradePickaxe(): void {
+    this.pickaxe.upgrade();
+  }
+  
+  public upgradeShovel(): void {
+    this.shovel.upgrade();
+  }
+
   public setInventory(inventory: Inventory): void {
     this.inventory = inventory;
     this.inventory.addItemInit(this);

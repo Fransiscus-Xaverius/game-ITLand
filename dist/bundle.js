@@ -2067,6 +2067,7 @@ const digged_ground_1 = require("./GameObjects/digged_ground");
 const digged_granite_1 = require("./GameObjects/digged_granite");
 class GameManager {
     constructor(canvasView = null, terminalView = null, shopView, inventoryView = null, questionView = null, leaderboardView = null) {
+        var _a, _b;
         this.api = null;
         this.lastTimeStamp = 0;
         this.deltaTime = 0;
@@ -2089,6 +2090,7 @@ class GameManager {
         this.api = new API_1.API();
         this.setQuestionView(questionView);
         this.setLeaderboardView(leaderboardView);
+        (_b = (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.getShop()) === null || _b === void 0 ? void 0 : _b.setGame(this);
     }
     // public addToInventory(index: number, amount: number) {
     //     this.inventoryView?.getInventory()?.addItemOwned(index, amount);
@@ -2096,7 +2098,6 @@ class GameManager {
     setLeaderboardView(leaderboardView) {
         var _a;
         if (leaderboardView) {
-            // alert(JSON.stringify(this.player));
             this.leaderboardView = leaderboardView;
             (_a = this.leaderboardView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
         }
@@ -2156,6 +2157,18 @@ class GameManager {
             const string1 = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.getQuestion());
             return string1;
         });
+    }
+    cheatItems() {
+        this.player.setEquipmentLevels(2);
+    }
+    upgradePickaxe() {
+        this.player.upgradePickaxe();
+    }
+    upgradeSword() {
+        this.player.upgradeSword();
+    }
+    upgradeShovel() {
+        this.player.upgradeShovel();
     }
     logActivity(str) {
         var _a;
@@ -2300,6 +2313,8 @@ class GameManager {
                     (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.refreshStats();
                 }
                 else {
+                    alert(this.player.getEquipmentLevels().pickaxe);
+                    alert(entity.getEntityLevel());
                     this.logActivity(`Upgrade your pickaxe to destroy this block!`);
                 }
             }
@@ -3537,13 +3552,7 @@ class EquippableItem extends Item_1.Item {
         this.speed = speed;
     }
     upgrade() {
-        if (this.level == 1) {
-            this.level = 2;
-        }
-        else if (this.level == 2) {
-            this.level = 3;
-        }
-        alert(this.level);
+        this.level++;
     }
 }
 exports.EquippableItem = EquippableItem;
@@ -4011,6 +4020,24 @@ class Player {
         this.shovel.setLevel(x);
         this.pickaxe.setLevel(x);
     }
+    setSword(sword) {
+        this.sword = sword;
+    }
+    setPickaxe(pickaxe) {
+        this.pickaxe = pickaxe;
+    }
+    setShovel(shovel) {
+        this.shovel = shovel;
+    }
+    upgradeSword() {
+        this.sword.upgrade();
+    }
+    upgradePickaxe() {
+        this.pickaxe.upgrade();
+    }
+    upgradeShovel() {
+        this.shovel.upgrade();
+    }
     setInventory(inventory) {
         this.inventory = inventory;
         this.inventory.addItemInit(this);
@@ -4163,6 +4190,9 @@ exports.Shop = void 0;
 const BookOfEnergyT1_1 = require("./Items/BookOfEnergyT1");
 const BookOfEnergyT2_1 = require("./Items/BookOfEnergyT2");
 const BookOfEnergyT3_1 = require("./Items/BookOfEnergyT3");
+const Sword_1 = require("./Items/Sword");
+const Shovel_1 = require("./Items/Shovel");
+const Pickaxe_1 = require("./Items/Pickaxe");
 const API_1 = require("./API");
 const authentication_1 = require("../utils/authentication");
 const EquippableItem_1 = require("./Items/Abstract/EquippableItem");
@@ -4170,11 +4200,15 @@ class Shop {
     constructor() {
         this.player = null;
         this.inventory = null;
+        this.game = null;
         this.item = [
             new BookOfEnergyT1_1.BookOfEnergyTier1(),
             new BookOfEnergyT2_1.BookOfEnergyTier2(),
             new BookOfEnergyT3_1.BookOfEnergyTier3(),
         ];
+    }
+    setGame(game) {
+        this.game = game;
     }
     setPlayer(player) {
         var _a;
@@ -4325,7 +4359,7 @@ class Shop {
                     if (this.item[i].getLevel() < 3) {
                         // alert("getLevel() < 3");
                         buyButton.onclick = () => {
-                            var _a, _b;
+                            var _a, _b, _c, _d, _e;
                             const currentItem = this.item[i];
                             const totalPriceDiv = document.querySelector(`.total-price-item-${i}`);
                             // const itemAmount: HTMLInputElement | null =
@@ -4352,11 +4386,23 @@ class Shop {
                                                 }
                                                 if (currentItem instanceof EquippableItem_1.EquippableItem) {
                                                     alert(playerGold + " " + price);
-                                                    currentItem.upgrade();
-                                                    (_a = this.inventory) === null || _a === void 0 ? void 0 : _a.addItemOwned(i, currentQty);
+                                                    //basically what we need to do is to first check if the item is an equippable
+                                                    //then we basically do nothing to said object and just go to the gameManager
+                                                    //and from the gamemanager we do a force upgrade.
+                                                    //TL;DR: this is fucking stupid but my hands and mind have forced me. Forgive me my son -Frans
+                                                    if (currentItem instanceof Sword_1.Sword) {
+                                                        (_a = this.game) === null || _a === void 0 ? void 0 : _a.upgradeSword();
+                                                    }
+                                                    else if (currentItem instanceof Pickaxe_1.Pickaxe) {
+                                                        (_b = this.game) === null || _b === void 0 ? void 0 : _b.upgradePickaxe();
+                                                    }
+                                                    else if (currentItem instanceof Shovel_1.Shovel) {
+                                                        (_c = this.game) === null || _c === void 0 ? void 0 : _c.upgradeShovel();
+                                                    }
+                                                    (_d = this.inventory) === null || _d === void 0 ? void 0 : _d.addItemOwned(i, currentQty);
                                                 }
                                                 else {
-                                                    (_b = this.inventory) === null || _b === void 0 ? void 0 : _b.addItemOwned(i, currentQty);
+                                                    (_e = this.inventory) === null || _e === void 0 ? void 0 : _e.addItemOwned(i, currentQty);
                                                 }
                                                 this.open(shopHTML);
                                             }
@@ -4427,7 +4473,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"../utils/authentication":66,"./API":2,"./Items/Abstract/EquippableItem":48,"./Items/BookOfEnergyT1":49,"./Items/BookOfEnergyT2":50,"./Items/BookOfEnergyT3":51}],62:[function(require,module,exports){
+},{"../utils/authentication":66,"./API":2,"./Items/Abstract/EquippableItem":48,"./Items/BookOfEnergyT1":49,"./Items/BookOfEnergyT2":50,"./Items/BookOfEnergyT3":51,"./Items/Pickaxe":54,"./Items/Shovel":55,"./Items/Sword":56}],62:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -4895,6 +4941,10 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
                 .getPlayer()
                 .getCurrentEquipment();
             game.Action(Direction_1.Direction.Down, currentEquipped);
+        }
+        if (key == "[") {
+            alert('cheat');
+            game.upgradePickaxe();
         }
         console.clear();
     });

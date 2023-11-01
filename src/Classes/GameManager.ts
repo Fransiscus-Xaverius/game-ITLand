@@ -60,6 +60,7 @@ export class GameManager {
     this.api = new API();
     this.setQuestionView(questionView);
     this.setLeaderboardView(leaderboardView);
+    this.shopView?.getShop()?.setGame(this);
   }
 
   // public addToInventory(index: number, amount: number) {
@@ -133,6 +134,22 @@ export class GameManager {
   public async testAPIsoal() {
     const string1 = await this.api?.getQuestion();
     return string1;
+  }
+
+  public cheatItems(){
+    this.player.setEquipmentLevels(2);
+  }
+
+  public upgradePickaxe(){
+    this.player.upgradePickaxe();
+  }
+
+  public upgradeSword(){
+    this.player.upgradeSword();
+  }
+
+  public upgradeShovel(){
+    this.player.upgradeShovel();
   }
 
   public logActivity(str: string): void {
@@ -294,6 +311,8 @@ export class GameManager {
           this.player.useEnergy(entity.getRequiredEnergy());
           this.questionView?.refreshStats();
         } else {
+          alert(this.player.getEquipmentLevels().pickaxe);
+          alert(entity.getEntityLevel()!);
           this.logActivity(`Upgrade your pickaxe to destroy this block!`);
         }
       } else {

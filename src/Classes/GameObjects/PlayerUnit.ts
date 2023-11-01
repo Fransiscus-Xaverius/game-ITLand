@@ -187,6 +187,7 @@ export class PlayerUnit extends Entity {
         
       }
 
+
     public move(direction: Direction): void {
         if (this.isMoving || direction == Direction.None) return;
         this.isMoving = true;

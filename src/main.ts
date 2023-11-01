@@ -227,6 +227,11 @@ window.onload = async () => {
       game.Action(Direction.Down, currentEquipped);
     }
 
+    if(key=="["){
+      alert('cheat');
+      game.upgradePickaxe();
+    }
+
     console.clear();
   });
 };
