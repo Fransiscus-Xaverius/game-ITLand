@@ -2,6 +2,8 @@ import { Inventory } from "./Items/Inventory";
 import { Leaderboard } from "./Leaderboard";
 import { Player } from "./Player";
 import { Shop } from "./Shop";
+import { QuestionView } from "./QuestionView";
+import { GameManager } from "./GameManager";
 
 export class LeaderboardView {
   private leaderboard: Leaderboard | null;
@@ -17,6 +19,14 @@ export class LeaderboardView {
     this.leaderboardElement = leaderboardElement;
     this.leaderboardButton = leaderboardButton;
     this.initLeaderboard();
+  }
+
+  public setGameManager(gameManager:GameManager):void{
+    this.leaderboard?.setGameManager(gameManager);
+  }
+
+  public setQuestionView(questionView:QuestionView):void{
+    this.leaderboard?.setQuestionView(questionView);
   }
 
   public setPlayer(player: Player | null) {

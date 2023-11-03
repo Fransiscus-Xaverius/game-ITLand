@@ -103,12 +103,15 @@ export class GameManager {
     this.player.energy = Number(playerdata?.energy); //an example of why typescript is dogshit.
     //redoing load grid because the constructor cannot be an async function.
     this.grid = new Grid({ x: 100, y: 100 });
+    this.leaderboardView?.setPlayer(this.player);
     this.grid.redo(map.tile, map.entity);
     this.grid.addEntity(this.player.units[0]);
     this.setActivePlayerUnit(this.player.units[0]);
     this.questionView?.setPlayer(this.player);
     await this.questionView?.load();
     this.questionView?.refreshStats();
+    this.leaderboardView?.setQuestionView(this.questionView!);
+    this.leaderboardView?.setGameManager(this);
     this.setInventory();
   }
 

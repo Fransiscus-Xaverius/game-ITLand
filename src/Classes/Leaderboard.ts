@@ -1,15 +1,28 @@
 import { Player } from "./Player";
 import { UserStack } from "./Items/Type/UserStack";
 import { API } from "./API";
+import { QuestionView } from "./QuestionView";
+import { getAuthToken } from "../utils/authentication";
+import { GameManager } from "./GameManager";
 
 export class Leaderboard {
   public listUser: UserStack[] = [];
   private player: Player | null = null;
+  public questionView: QuestionView | null = null;
+  public gameManager:GameManager | null = null;
 
   constructor() {}
 
   public setPlayer(player: Player | null) {
     this.player = player;
+  }
+
+  public setGameManager(gameManager:GameManager | null){  
+    this.gameManager = gameManager;
+  }
+
+  public setQuestionView(questionView: QuestionView | null) {
+    this.questionView = questionView;
   }
 
   public async DynamiteAttack(username: string) {
@@ -30,7 +43,7 @@ export class Leaderboard {
     for (let i = 0; i < this.listUser.length; i++) {
       let currentUser: UserStack = this.listUser[i];
       // if(currentUser.username != )
-      if (currentUser.username != this.player?.getPlayerName()) {
+      if (currentUser.username != this.player?.getPlayerName() && currentUser.total_gold>0 ) {
         showUser += 
         `<div class='d-flex align-items-center'>
           <p class='mb-0 me-3' style='font-size: small;'>${leadNumber}. ${currentUser.username}</p>
@@ -57,15 +70,47 @@ export class Leaderboard {
     const allDynButton = document.querySelectorAll(".dyn-atk");
     const allCnnButton = document.querySelectorAll(".cnn-atk");
     for (let i = 0; i < allCnnButton.length; i++) {
-      allCnnButton[i].addEventListener("click", () => {});
-      allDynButton[i].addEventListener("click", () => {
-        API.Dynamite(this.listUser[i].username);
+      allCnnButton[i].addEventListener("click", () => {
         let closeButton: HTMLButtonElement | null = document.querySelector(
           ".close-leaderboard-button"
         );
-        if (closeButton) {
-          // alert("close button click")
-          closeButton.click();
+        if(this.player!.getGold()>150){
+          this.player!.useGold(150);
+          API.CannonBall(this.listUser[i].username);
+          const token = getAuthToken();
+          if (token) {
+            API.updateGold(token, -150)
+          }
+          
+          if (closeButton) {
+            // alert("close button click")
+            closeButton.click();
+          }
+        }
+        else{
+          closeButton!.click();
+          this.gameManager?.logActivity("You don't have enough gold to attack this player! (Gold needed: 150)");
+        }
+      });
+      allDynButton[i].addEventListener("click", () => {
+        let closeButton: HTMLButtonElement | null = document.querySelector(
+          ".close-leaderboard-button"
+        );
+        if(this.player!.getGold()>75){
+          this.player!.useGold(75);
+          API.Dynamite(this.listUser[i].username);
+          const token = getAuthToken();
+          if (token) {
+            API.updateGold(token, -150)
+          }
+          if (closeButton) {
+            // alert("close button click")
+            closeButton.click();
+          }
+        }
+        else{
+          closeButton!.click();
+          this.gameManager?.logActivity("You don't have enough gold to attack this player! (Gold needed: 75)");
         }
       });
     }

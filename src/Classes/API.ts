@@ -226,6 +226,18 @@ export class API {
   }
 
   public static async Dynamite(username: string) {
+    const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-250`;
+    const request: RequestInfo = new Request(apiUrl, {
+      method: "PUT",
+    });
+    const response = await fetch(request);
+    if (!response.ok) throw new Error("Network Response was not ok");
+    const jsonString = await response.text();
+    const jsonData = JSON.parse(jsonString);
+    return JSON.stringify(jsonData);
+  }
+
+  public static async CannonBall(username:string){
     const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-500`;
     const request: RequestInfo = new Request(apiUrl, {
       method: "PUT",

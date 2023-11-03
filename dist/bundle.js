@@ -346,6 +346,20 @@ class API {
     }
     static Dynamite(username) {
         return __awaiter(this, void 0, void 0, function* () {
+            const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-250`;
+            const request = new Request(apiUrl, {
+                method: "PUT",
+            });
+            const response = yield fetch(request);
+            if (!response.ok)
+                throw new Error("Network Response was not ok");
+            const jsonString = yield response.text();
+            const jsonData = JSON.parse(jsonString);
+            return JSON.stringify(jsonData);
+        });
+    }
+    static CannonBall(username) {
+        return __awaiter(this, void 0, void 0, function* () {
             const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-500`;
             const request = new Request(apiUrl, {
                 method: "PUT",
@@ -2169,7 +2183,7 @@ class GameManager {
         this.player.setGameManager(this);
     }
     load(token) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         return __awaiter(this, void 0, void 0, function* () {
             this.token = token;
             (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
@@ -2187,12 +2201,15 @@ class GameManager {
             this.player.energy = Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.energy); //an example of why typescript is dogshit.
             //redoing load grid because the constructor cannot be an async function.
             this.grid = new Grid_1.Grid({ x: 100, y: 100 });
+            (_e = this.leaderboardView) === null || _e === void 0 ? void 0 : _e.setPlayer(this.player);
             this.grid.redo(map.tile, map.entity);
             this.grid.addEntity(this.player.units[0]);
             this.setActivePlayerUnit(this.player.units[0]);
-            (_e = this.questionView) === null || _e === void 0 ? void 0 : _e.setPlayer(this.player);
-            yield ((_f = this.questionView) === null || _f === void 0 ? void 0 : _f.load());
-            (_g = this.questionView) === null || _g === void 0 ? void 0 : _g.refreshStats();
+            (_f = this.questionView) === null || _f === void 0 ? void 0 : _f.setPlayer(this.player);
+            yield ((_g = this.questionView) === null || _g === void 0 ? void 0 : _g.load());
+            (_h = this.questionView) === null || _h === void 0 ? void 0 : _h.refreshStats();
+            (_j = this.leaderboardView) === null || _j === void 0 ? void 0 : _j.setQuestionView(this.questionView);
+            (_k = this.leaderboardView) === null || _k === void 0 ? void 0 : _k.setGameManager(this);
             this.setInventory();
         });
     }
@@ -3906,13 +3923,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Leaderboard = void 0;
 const API_1 = require("./API");
+const authentication_1 = require("../utils/authentication");
 class Leaderboard {
     constructor() {
         this.listUser = [];
         this.player = null;
+        this.questionView = null;
+        this.gameManager = null;
     }
     setPlayer(player) {
         this.player = player;
+    }
+    setGameManager(gameManager) {
+        this.gameManager = gameManager;
+    }
+    setQuestionView(questionView) {
+        this.questionView = questionView;
     }
     DynamiteAttack(username) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -3934,7 +3960,7 @@ class Leaderboard {
             for (let i = 0; i < this.listUser.length; i++) {
                 let currentUser = this.listUser[i];
                 // if(currentUser.username != )
-                if (currentUser.username != ((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName())) {
+                if (currentUser.username != ((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName()) && currentUser.total_gold > 0) {
                     showUser +=
                         `<div class='d-flex align-items-center'>
           <p class='mb-0 me-3' style='font-size: small;'>${leadNumber}. ${currentUser.username}</p>
@@ -3961,13 +3987,44 @@ class Leaderboard {
             const allDynButton = document.querySelectorAll(".dyn-atk");
             const allCnnButton = document.querySelectorAll(".cnn-atk");
             for (let i = 0; i < allCnnButton.length; i++) {
-                allCnnButton[i].addEventListener("click", () => { });
-                allDynButton[i].addEventListener("click", () => {
-                    API_1.API.Dynamite(this.listUser[i].username);
+                allCnnButton[i].addEventListener("click", () => {
+                    var _a;
                     let closeButton = document.querySelector(".close-leaderboard-button");
-                    if (closeButton) {
-                        // alert("close button click")
+                    if (this.player.getGold() > 150) {
+                        this.player.useGold(150);
+                        API_1.API.CannonBall(this.listUser[i].username);
+                        const token = (0, authentication_1.getAuthToken)();
+                        if (token) {
+                            API_1.API.updateGold(token, -150);
+                        }
+                        if (closeButton) {
+                            // alert("close button click")
+                            closeButton.click();
+                        }
+                    }
+                    else {
                         closeButton.click();
+                        (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You don't have enough gold to attack this player! (Gold needed: 150)");
+                    }
+                });
+                allDynButton[i].addEventListener("click", () => {
+                    var _a;
+                    let closeButton = document.querySelector(".close-leaderboard-button");
+                    if (this.player.getGold() > 75) {
+                        this.player.useGold(75);
+                        API_1.API.Dynamite(this.listUser[i].username);
+                        const token = (0, authentication_1.getAuthToken)();
+                        if (token) {
+                            API_1.API.updateGold(token, -150);
+                        }
+                        if (closeButton) {
+                            // alert("close button click")
+                            closeButton.click();
+                        }
+                    }
+                    else {
+                        closeButton.click();
+                        (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You don't have enough gold to attack this player! (Gold needed: 75)");
                     }
                 });
             }
@@ -3976,7 +4033,7 @@ class Leaderboard {
 }
 exports.Leaderboard = Leaderboard;
 
-},{"../config/env.json":64,"./API":2}],58:[function(require,module,exports){
+},{"../config/env.json":64,"../utils/authentication":67,"./API":2}],58:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LeaderboardView = void 0;
@@ -3986,6 +4043,14 @@ class LeaderboardView {
         this.leaderboardElement = leaderboardElement;
         this.leaderboardButton = leaderboardButton;
         this.initLeaderboard();
+    }
+    setGameManager(gameManager) {
+        var _a;
+        (_a = this.leaderboard) === null || _a === void 0 ? void 0 : _a.setGameManager(gameManager);
+    }
+    setQuestionView(questionView) {
+        var _a;
+        (_a = this.leaderboard) === null || _a === void 0 ? void 0 : _a.setQuestionView(questionView);
     }
     setPlayer(player) {
         if (this.leaderboard) {
