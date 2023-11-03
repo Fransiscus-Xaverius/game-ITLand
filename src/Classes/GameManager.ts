@@ -259,7 +259,7 @@ export class GameManager {
     if (tools instanceof Pickaxe) {
       this.actionWithPickaxe(temp!, direction);
     } else if (tools instanceof Sword) {
-      this.actionWithSword(temp!);
+      this.actionWithSword(temp!, direction);
     } else if (tools instanceof Shovel) {
       if (!tile) return;
       this.actionWithShovel(tile!);
@@ -332,9 +332,8 @@ export class GameManager {
     }
   }
 
-  private actionWithSword(entity: Entity) {
+  private actionWithSword(entity: Entity, direction: Direction) {
     const entityName = entity.getEntityName();
-    alert(entityName);
     if (
       entityName == "Chest" ||
       entityName == "Medium_Chest" ||
@@ -353,7 +352,7 @@ export class GameManager {
             entity.getCoordinate().x,
             entity.getCoordinate().y
           );
-          
+          this.activePlayerUnit?.Break(direction);
           this.player.useEnergy(entity.getRequiredEnergy());
           this.questionView?.refreshStats();
         } else {

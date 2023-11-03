@@ -2286,7 +2286,7 @@ class GameManager {
             this.actionWithPickaxe(temp, direction);
         }
         else if (tools instanceof Sword_1.Sword) {
-            this.actionWithSword(temp);
+            this.actionWithSword(temp, direction);
         }
         else if (tools instanceof Shovel_1.Shovel) {
             if (!tile)
@@ -2347,18 +2347,18 @@ class GameManager {
             this.logActivity("You cannot use a pickaxe to break this object! (wrong equipment used)");
         }
     }
-    actionWithSword(entity) {
-        var _a;
+    actionWithSword(entity, direction) {
+        var _a, _b;
         const entityName = entity.getEntityName();
-        alert(entityName);
         if (entityName == "Chest" ||
             entityName == "Medium_Chest" ||
             entityName == "Big_Chest") {
             if (this.isGoodEnough(this.player.getEnergy(), entity.getRequiredEnergy())) {
                 if (this.isGoodEnough(this.player.getEquipmentLevels().sword, entity.getEntityLevel())) {
                     this.removeGridEntity(entity.getCoordinate().x, entity.getCoordinate().y);
+                    (_a = this.activePlayerUnit) === null || _a === void 0 ? void 0 : _a.Break(direction);
                     this.player.useEnergy(entity.getRequiredEnergy());
-                    (_a = this.questionView) === null || _a === void 0 ? void 0 : _a.refreshStats();
+                    (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.refreshStats();
                 }
                 else {
                     this.logActivity(`Upgrade your sword to destroy this block!`);
@@ -3206,6 +3206,27 @@ class PlayerUnit extends Entity_1.Entity {
         this.isMoving = true;
         this.playAnimation("dig");
     }
+    Break(direction) {
+        if (this.isMoving)
+            return;
+        this.isMoving = true;
+        switch (direction) {
+            case Direction_1.Direction.Down:
+                this.playAnimation('break_down');
+                break;
+            case Direction_1.Direction.Up:
+                this.playAnimation('break_up');
+                break;
+            case Direction_1.Direction.Left:
+                this.playAnimation('break_left');
+                break;
+            case Direction_1.Direction.Right:
+                this.playAnimation('break_right');
+                break;
+            default:
+                break;
+        }
+    }
     Mine(direction) {
         if (this.isMoving)
             return;
@@ -3986,6 +4007,10 @@ class Player {
         p1.createAnimation("mine_left", Animation_1.Animation.assets["mine_left"], { x: 32, y: 32 }, 5, "", 10);
         p1.createAnimation("mine_right", Animation_1.Animation.assets["mine_right"], { x: 32, y: 32 }, 5, "", 10);
         p1.createAnimation("dig", Animation_1.Animation.assets["dig"], { x: 32, y: 32 }, 8, "", 15);
+        p1.createAnimation("break_up", Animation_1.Animation.assets["break_up"], { x: 32, y: 32 }, 5, "", 10);
+        p1.createAnimation("break_down", Animation_1.Animation.assets["break_down"], { x: 32, y: 32 }, 5, "", 10);
+        p1.createAnimation("break_left", Animation_1.Animation.assets["break_left"], { x: 32, y: 32 }, 5, "", 10);
+        p1.createAnimation("break_right", Animation_1.Animation.assets["break_right"], { x: 32, y: 32 }, 5, "", 10);
         p1.setMoveSpeed(2);
         this.units.push(p1);
     }
@@ -4723,6 +4748,19 @@ function loadAsset() {
     const player_dig = new Image();
     player_dig.src = "./dist/Assets/final/hooman_down_dig.png";
     Animation_1.Animation.assets["dig"] = player_dig;
+    //player sword swing animation assets
+    const break_down = new Image();
+    break_down.src = "./dist/Assets/final/hooman_down_sword.png";
+    Animation_1.Animation.assets["break_down"] = break_down;
+    const break_up = new Image();
+    break_up.src = "./dist/Assets/final/hooman_up_sword.png";
+    Animation_1.Animation.assets["break_up"] = break_up;
+    const break_left = new Image();
+    break_left.src = "./dist/Assets/final/hooman_left_sword.png";
+    Animation_1.Animation.assets["break_left"] = break_left;
+    const break_right = new Image();
+    break_right.src = "./dist/Assets/final/hooman_right_sword.png";
+    Animation_1.Animation.assets["break_right"] = break_right;
     //Other Entities
     const obsidian = new Image();
     obsidian.src = './dist/Assets/final/obsidian.png';

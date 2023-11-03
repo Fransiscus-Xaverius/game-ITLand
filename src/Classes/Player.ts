@@ -130,6 +130,42 @@ export class Player {
       15
     );
 
+    p1.createAnimation(
+      "break_up",
+      Animation.assets["break_up"],
+      { x: 32, y: 32 },
+      5,
+      "",
+      10
+    )
+
+    p1.createAnimation(
+      "break_down",
+      Animation.assets["break_down"],
+      { x: 32, y: 32 },
+      5,
+      "",
+      10
+    )
+
+    p1.createAnimation(
+      "break_left",
+      Animation.assets["break_left"],
+      { x: 32, y: 32 },
+      5,
+      "",
+      10
+    )
+
+    p1.createAnimation(
+      "break_right",
+      Animation.assets["break_right"],
+      { x: 32, y: 32 },
+      5,
+      "",
+      10
+    )
+
     p1.setMoveSpeed(2);
     this.units.push(p1);
   }
