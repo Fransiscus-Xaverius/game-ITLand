@@ -212,7 +212,18 @@ export class API {
     }
   }
 
-  public async digTile(x: number, y: number) {}
+  public async digTile(x: number, y: number, tile: string) {
+    try{
+      const apiURL = `${LOCAL_API_URL}/dig?x=${x}&y=${y}&tile=${tile}`;
+      const request: RequestInfo = new Request(apiURL, {
+        method: "PUT",
+      });
+      const response = await fetch(request);
+      if (!response.ok) throw new Error("Network Response was not ok");
+    } catch (error) {
+      console.error("hello");
+    }
+  }
 
   public static async Dynamite(username: string) {
     const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-500`;

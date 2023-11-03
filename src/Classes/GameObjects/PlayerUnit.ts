@@ -181,12 +181,6 @@ export class PlayerUnit extends Entity {
               break;
         }
     }
-    
-    private MiningAnimation(direction: Direction){
-        // this.activePlayerUnit?.playAnimation('')
-        
-      }
-
 
     public move(direction: Direction): void {
         if (this.isMoving || direction == Direction.None) return;

@@ -283,8 +283,21 @@ class API {
             }
         });
     }
-    digTile(x, y) {
-        return __awaiter(this, void 0, void 0, function* () { });
+    digTile(x, y, tile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const apiURL = `${LOCAL_API_URL}/dig?x=${x}&y=${y}&tile=${tile}`;
+                const request = new Request(apiURL, {
+                    method: "PUT",
+                });
+                const response = yield fetch(request);
+                if (!response.ok)
+                    throw new Error("Network Response was not ok");
+            }
+            catch (error) {
+                console.error("hello");
+            }
+        });
     }
     static Dynamite(username) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -2199,7 +2212,7 @@ class GameManager {
         });
     }
     digTile(x, y) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             const name = (_a = this.grid.tiles[y][x]) === null || _a === void 0 ? void 0 : _a.getTileName();
             const drop = (_b = this.grid.tiles[y][x]) === null || _b === void 0 ? void 0 : _b.tileDrop();
@@ -2226,6 +2239,7 @@ class GameManager {
                     break;
             }
             this.grid.tiles[y][x] = newTile;
+            yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.digTile(y, x, newTile.name.toLowerCase()));
         });
     }
     alertEntity() {
@@ -2359,7 +2373,7 @@ class GameManager {
         }
     }
     actionWithShovel(tile) {
-        var _a;
+        var _a, _b;
         const isDiggable = !tile.name.includes("digged");
         switch (isDiggable) {
             case true:
@@ -2367,7 +2381,9 @@ class GameManager {
                     if (this.isGoodEnough(this.player.getEquipmentLevels().shovel, tile.level)) {
                         // this.logActivity("Digged this tile, function not implemented")
                         this.digTile(tile.getCoordinate().x, tile.getCoordinate().y);
-                        (_a = this.questionView) === null || _a === void 0 ? void 0 : _a.refreshStats();
+                        (_a = this.activePlayerUnit) === null || _a === void 0 ? void 0 : _a.Dig();
+                        this.player.useEnergy(tile.getRequiredEnergy());
+                        (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.refreshStats();
                     }
                     else {
                         this.logActivity("Upgrade your shovel to excavate this area!");
@@ -2836,7 +2852,7 @@ class Grid {
                         case 'cave':
                             this.tiles[i].push(new Ground_1.Ground({ x: j, y: i }));
                             break;
-                        case 'digged_grass':
+                        case 'digged_ground':
                             this.tiles[i].push(new digged_ground_1.DiggedGround({ x: j, y: i }));
                             break;
                         case 'digged_sand':
@@ -3210,9 +3226,6 @@ class PlayerUnit extends Entity_1.Entity {
             default:
                 break;
         }
-    }
-    MiningAnimation(direction) {
-        // this.activePlayerUnit?.playAnimation('')
     }
     move(direction) {
         if (this.isMoving || direction == Direction_1.Direction.None)

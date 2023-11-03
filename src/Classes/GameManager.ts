@@ -203,6 +203,7 @@ export class GameManager {
         break;
     }
     this.grid.tiles[y][x] = newTile;
+    await this.api?.digTile(y, x, newTile.name.toLowerCase());
   }
 
   public alertEntity(): void {
@@ -352,6 +353,7 @@ export class GameManager {
             entity.getCoordinate().x,
             entity.getCoordinate().y
           );
+          
           this.player.useEnergy(entity.getRequiredEnergy());
           this.questionView?.refreshStats();
         } else {
@@ -365,7 +367,7 @@ export class GameManager {
     }
   }
 
-  private actionWithShovel(tile: Tile) {
+  private  actionWithShovel(tile: Tile) {
     const isDiggable = !tile.name.includes("digged");
     switch (isDiggable) {
       case true:
@@ -380,6 +382,8 @@ export class GameManager {
           ) {
             // this.logActivity("Digged this tile, function not implemented")
             this.digTile(tile.getCoordinate().x, tile.getCoordinate().y);
+            this.activePlayerUnit?.Dig();
+            this.player.useEnergy(tile.getRequiredEnergy());
             this.questionView?.refreshStats();
           } else {
             this.logActivity("Upgrade your shovel to excavate this area!");

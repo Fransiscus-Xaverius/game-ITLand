@@ -62,7 +62,7 @@ export class Grid {
                     case 'cave':
                         this.tiles[i].push(new Ground({x:j, y:i}));
                         break;
-                    case 'digged_grass':
+                    case 'digged_ground':
                         this.tiles[i].push(new DiggedGround({x:j,y:i}));
                         break;
                     case 'digged_sand':
