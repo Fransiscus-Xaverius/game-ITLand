@@ -65,7 +65,7 @@ export class Shop {
         // Card shop
         const shopTemp = document.createElement("div") as HTMLDivElement;
         shopTemp.className =
-          "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-1 shadow";
+          "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-black border-3 shadow";
 
         // Image shop
         const shopImage = document.createElement("img") as HTMLImageElement;
@@ -74,7 +74,7 @@ export class Shop {
 
         // Description shop
         const desc = document.createElement("div") as HTMLDivElement;
-        desc.className = "desc h-100";
+        desc.className = "desc h-100 position-relative";
         desc.style.width = "60%";
 
         const itemName = document.createElement("div") as HTMLDivElement;
@@ -93,7 +93,7 @@ export class Shop {
 
         if (!(this.item[i] instanceof EquippableItem)) {
           const minusBtn: HTMLDivElement = document.createElement("div");
-          minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0");
+          minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0", "border", "border-3", "border-black");
           minusBtn.style.width = "45px";
           minusBtn.style.height = "30px";
           minusBtn.textContent = "-";
@@ -121,13 +121,13 @@ export class Shop {
           });
 
           const itemQtyDiv: HTMLInputElement = document.createElement("input");
-          itemQtyDiv.style.width = "70px";
+          itemQtyDiv.style.width = "90px";
           itemQtyDiv.style.height = "30px";
           itemQtyDiv.type = "number";
-          itemQtyDiv.classList.add("item-qty", `item-${i}`, "ps-4");
+          itemQtyDiv.classList.add("item-qty", `item-${i}`, "border", "border-3", "border-start-0", "border-end-0",  "border-black");
+          itemQtyDiv.style.textAlign = "center";
           itemQtyDiv.value = "1";
           itemQtyDiv.min = "1";
-          itemQtyDiv.disabled = true;
           itemQtyDiv.addEventListener("change", () => {
             const item: HTMLInputElement | null = document.querySelector(
               `.item-${i}`
@@ -152,7 +152,7 @@ export class Shop {
           });
 
           const plusBtn: HTMLDivElement = document.createElement("div");
-          plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0");
+          plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0", "border", "border-3", "border-black");
           plusBtn.style.width = "45px";
           plusBtn.style.height = "30px";
           plusBtn.textContent = "+";
@@ -180,20 +180,29 @@ export class Shop {
           colDiv1.appendChild(minusBtn);
           colDiv1.appendChild(itemQtyDiv);
           colDiv1.appendChild(plusBtn);
+          
           const colDiv2: HTMLDivElement = document.createElement("div");
-          colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`);
+          colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "d-flex", "align-items-center", "position-relative");
+
+          const goldIcon: HTMLImageElement = document.createElement("img");
+          goldIcon.src = "/src/Assets/misc/gold2.png";
+          goldIcon.className = "ms-2 me-2"
+          goldIcon.style.width = "30px";
+
           const totalPriceDiv: HTMLDivElement = document.createElement("div");
           totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
           totalPriceDiv.textContent = `Gold ${
             parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()
           }`;
+
+          colDiv2.appendChild(goldIcon);
           colDiv2.appendChild(totalPriceDiv);
 
           addBox.appendChild(colDiv1);
           addBox.appendChild(colDiv2);
         } else {
           const colDiv2: HTMLDivElement = document.createElement("div");
-          colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`);
+          colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "position-relative");
           const totalPriceDiv: HTMLDivElement = document.createElement("div");
           totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
           totalPriceDiv.textContent = `Gold ${this.item[i].getItemPrice()}`;
@@ -204,7 +213,7 @@ export class Shop {
         }
         const buyButton = document.createElement("button") as HTMLButtonElement;
         buyButton.className =
-          "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow";
+          "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
         buyButton.innerHTML = "Buy";
         if (this.item[i] instanceof EquippableItem) {
           // alert("EquippableItem");
