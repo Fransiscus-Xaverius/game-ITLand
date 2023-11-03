@@ -236,6 +236,8 @@ window.onload = async () => {
   });
 };
 function fullscreenHandler() {
+  const { TopImagePath, BottomImagePath } = require("./config/env.json");
+
   const isFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
   const atas = document.getElementById("atas") as HTMLDivElement;
   const bawah = document.getElementById("bawah") as HTMLDivElement;
@@ -250,8 +252,8 @@ function fullscreenHandler() {
     atas.style.backgroundColor = "transparent";
     bawah.style.backgroundColor = "transparent";
 
-    atas.style.backgroundImage = "url('/src/Assets/background/pxl-1.jpeg')";
-    bawah.style.backgroundImage = "url('/src/Assets/background/pxl-2.jpeg')";
+    atas.style.backgroundImage = `url('${TopImagePath}')`;
+    bawah.style.backgroundImage = `url('${BottomImagePath}')`;
   }
 }
 

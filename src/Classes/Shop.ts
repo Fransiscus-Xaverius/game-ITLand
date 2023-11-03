@@ -16,6 +16,7 @@ import { GameManager } from "./GameManager";
 const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../config/env.json');
 const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../config/env.json');
 const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../config/env.json');
+const { GoldImagePath } = require('../config/env.json');
 
 export class Shop {
   private item: Item[];
@@ -231,7 +232,7 @@ export class Shop {
           colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "d-flex", "align-items-center", "position-relative");
 
           const goldIcon: HTMLImageElement = document.createElement("img");
-          goldIcon.src = "/src/Assets/misc/gold2.png";
+          goldIcon.src = GoldImagePath;
           goldIcon.className = "ms-2 me-2"
           goldIcon.style.width = "30px";
 

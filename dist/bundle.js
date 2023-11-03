@@ -3922,6 +3922,7 @@ class Leaderboard {
     open(leaderboardElement) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            const { GoldImagePath, EnergyImagePath, DynamiteImagePath, CannonBallImagePath } = require('../config/env.json');
             const allUserString = JSON.parse(yield API_1.API.getAllUser());
             this.listUser = [];
             for (let i = 0; i < allUserString.length; i++) {
@@ -3938,15 +3939,15 @@ class Leaderboard {
                         `<div class='d-flex align-items-center'>
           <p class='mb-0 me-3' style='font-size: small;'>${leadNumber}. ${currentUser.username}</p>
           <div class='d-flex align-items-center me-3' >
-            <img src='/src/Assets/misc/gold2.png' class='me-1' style='height: 30px'>
+            <img src='${GoldImagePath}' class='me-1' style='height: 30px'>
             <p class='mb-0' style='font-size: small;'>${currentUser.total_gold}</p>
           </div>
           <div class='dyn-atk dyn-attack-${i} btn btn-danger d-flex align-items-center me-3 rounded-0 border border-black border-3'>
-            <img src='/src/Assets/misc/dynamite.png' class='me-1' style='height: 30px'>
+            <img src='${DynamiteImagePath}' class='me-1' style='height: 30px'>
             <p class='m-0' style='font-size: small;'>Dynamite Attack</p>
           </div>
           <div class='cnn-atk cnn-attack-${i} btn btn-secondary d-flex align-items-center rounded-0 border border-black border-3'>
-            <img src='/src/Assets/misc/cannonball bomb.png' class='me-1' style='height: 30px'>
+            <img src='${CannonBallImagePath}' class='me-1' style='height: 30px'>
             <p class='m-0' style='font-size: small;'>Cannon Bomb Attack</p>
           </div>
         </div>`;
@@ -3975,7 +3976,7 @@ class Leaderboard {
 }
 exports.Leaderboard = Leaderboard;
 
-},{"./API":2}],58:[function(require,module,exports){
+},{"../config/env.json":64,"./API":2}],58:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LeaderboardView = void 0;
@@ -4312,6 +4313,7 @@ const EquippableItem_1 = require("./Items/Abstract/EquippableItem");
 const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../config/env.json');
 const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../config/env.json');
 const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../config/env.json');
+const { GoldImagePath } = require('../config/env.json');
 class Shop {
     constructor() {
         this.player = null;
@@ -4489,7 +4491,7 @@ class Shop {
                     const colDiv2 = document.createElement("div");
                     colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "d-flex", "align-items-center", "position-relative");
                     const goldIcon = document.createElement("img");
-                    goldIcon.src = "/src/Assets/misc/gold2.png";
+                    goldIcon.src = GoldImagePath;
                     goldIcon.className = "ms-2 me-2";
                     goldIcon.style.width = "30px";
                     const totalPriceDiv = document.createElement("div");
@@ -4777,8 +4779,93 @@ class TerminalView {
 exports.TerminalView = TerminalView;
 
 },{}],64:[function(require,module,exports){
-arguments[4][1][0].apply(exports,arguments)
-},{"dup":1}],65:[function(require,module,exports){
+module.exports={
+    "BookOfEnergyTier1Name": "Book Of Energy Tier 1",
+    "BookOfEnergyTier1Desc": "Basic energy guide, +<number> energy.",
+    "BookOfEnergyTier1Price": 100,
+    "BookOfEnergyTier1ImagePath": "dist/Assets/Prototype/buku1.png",
+    "BookOfEnergyTier1EnergyRestored": 10,
+    "BookOfEnergyTier2Name": "Book Of Energy Tier 2",
+    "BookOfEnergyTier2Desc": "Advanced energy guide, +<number> energy.",
+    "BookOfEnergyTier2Price": 200,
+    "BookOfEnergyTier2ImagePath": "dist/Assets/Prototype/buku2.png",
+    "BookOfEnergyTier2EnergyRestored": 20,
+    "BookOfEnergyTier3Name": "Book Of Energy Tier 3",
+    "BookOfEnergyTier3Desc": "Mastery energy guide, +<number> energy.",
+    "BookOfEnergyTier3Price": 300,
+    "BookOfEnergyTier3ImagePath": "dist/Assets/Prototype/buku3.png",
+    "BookOfEnergyTier3EnergyRestored": 30,
+
+    "IronSwordName": "Iron Sword",
+    "IronSwordDesc": "A Sword made of Iron, used to break chests and slay sea monsters.",
+    "IronSwordPrice": 200,
+    "IronSwordImagePath": "dist/assets/final/ironsword.png",
+
+    "IronShovelName": "Iron Shovel",
+    "IronShovelDesc": "A Shovel made of Iron, used to dig.",
+    "IronShovelPrice": 200,
+    "IronShovelImagePath": "dist/assets/final/ironshovel.png",
+
+    "IronPickaxeName": "Iron Pickaxe",
+    "IronPickaxeDesc": "A Pickaxe made of Iron, used to mine.",
+    "IronPickaxePrice": 200,
+    "IronPickaxeImagePath": "dist/assets/final/ironpickaxe.png",
+
+    "GoldSwordName": "Gold Sword",
+    "GoldSwordDesc": "A Legendary Sword made of Gold, used to break chests and slay sea monsters.",
+    "GoldSwordPrice": 500,
+    "GoldSwordImagePath": "dist/assets/final/goldsword.png",
+
+    "GoldShovelName": "Gold Shovel",
+    "GoldShovelDesc": "A Legendary Shovel made of Gold, used to dig.",
+    "GoldShovelPrice": 500,
+    "GoldShovelImagePath": "dist/assets/final/goldshovel.png",
+
+    "GoldPickaxeName": "Gold Pickaxe",
+    "GoldPickaxeDesc": "A Legendary Pickaxe made of Gold, used to mine.",
+    "GoldPickaxePrice": 500,
+    "GoldPickaxeImagePath": "dist/assets/final/goldpickaxe.png",
+
+    "SilverSwordName": "Silver Sword",
+    "SilverSwordDesc": "A Durable Sword made of Silver, used to break chests and slay sea monsters.",
+    "SilverSwordPrice": 350,
+    "SilverSwordImagePath": "dist/assets/final/silversword.png",
+
+    "SilverShovelName": "Silver Shovel",
+    "SilverShovelDesc": "A Durable Shovel made of Silver, used to dig.",
+    "SilverShovelPrice": 350,
+    "SilverShovelImagePath": "dist/assets/final/silvershovel.png",
+
+    "SilverPickaxeName": "Silver Pickaxe",
+    "SilverPickaxeDesc": "A Durable Pickaxe made of Silver, used to mine.",
+    "SilverPickaxePrice": 350,
+    "SilverPickaxeImagePath": "dist/assets/final/silverpickaxe.png",
+
+    "SwordName": "Sword Name",
+    "SwordDesc": "Sword Description",
+    "SwordPrice": 1000,
+    "SwordImagePath": "dist/Assets/Prototype/buku3.png",
+    "ShovelName": "Shovel Name",
+    "ShovelDesc": "Shovel Description",
+    "ShovelPrice": 150,
+    "ShovelImagePath": "dist/Assets/Prototype/buku3.png",
+    "PickaxeName": "Pickaxe Name",
+    "PickaxeDesc": "Pickaxe Description",
+    "PickaxePrice": 200,
+    "PickaxeImagePath": "dist/Assets/Prototype/buku3.png",
+
+    "GoldImagePath": "dist/assets/final/gold2.png",
+    "EnergyImagePath": "dist/assets/final/energy2.png",
+    "DynamiteImagePath": "dist/assets/final/dynamite.png",
+    "CannonBallImagePath": "dist/assets/final/cannonball bomb.png",
+
+    "TopImagePath": "dist/assets/final/pxl-1.jpeg",
+    "BottomImagePath": "dist/assets/final/pxl-2.jpeg",
+    
+    "LOCAL_API_URL": "http://localhost:3000",
+    "MASTER_API_URL": "http://localhost:8000"
+}
+},{}],65:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -5131,6 +5218,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 function fullscreenHandler() {
+    const { TopImagePath, BottomImagePath } = require("./config/env.json");
     const isFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
     const atas = document.getElementById("atas");
     const bawah = document.getElementById("bawah");
@@ -5143,8 +5231,8 @@ function fullscreenHandler() {
     else {
         atas.style.backgroundColor = "transparent";
         bawah.style.backgroundColor = "transparent";
-        atas.style.backgroundImage = "url('/src/Assets/background/pxl-1.jpeg')";
-        bawah.style.backgroundImage = "url('/src/Assets/background/pxl-2.jpeg')";
+        atas.style.backgroundImage = `url('${TopImagePath}')`;
+        bawah.style.backgroundImage = `url('${BottomImagePath}')`;
     }
 }
 let resizeTimeout = null;
@@ -5159,7 +5247,7 @@ function handleResize() {
 }
 window.addEventListener("resize", handleResize);
 
-},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":24,"./Classes/InventoryView":45,"./Classes/Items/Inventory":52,"./Classes/Leaderboard":57,"./Classes/LeaderboardView":58,"./Classes/QuestionView":60,"./Classes/Shop":61,"./Classes/ShopView":62,"./Classes/TerminalView":63,"./loadAsset":65,"./utils/authentication":67}],67:[function(require,module,exports){
+},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":24,"./Classes/InventoryView":45,"./Classes/Items/Inventory":52,"./Classes/Leaderboard":57,"./Classes/LeaderboardView":58,"./Classes/QuestionView":60,"./Classes/Shop":61,"./Classes/ShopView":62,"./Classes/TerminalView":63,"./config/env.json":64,"./loadAsset":65,"./utils/authentication":67}],67:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAuthToken = void 0;

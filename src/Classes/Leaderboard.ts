@@ -17,6 +17,8 @@ export class Leaderboard {
   }
 
   public async open(leaderboardElement: HTMLDivElement | null) {
+    const { GoldImagePath, EnergyImagePath, DynamiteImagePath, CannonBallImagePath } = require('../config/env.json');
+
     const allUserString: UserStack[] = JSON.parse(await API.getAllUser());
     this.listUser = [];
     for (let i = 0; i < allUserString.length; i++) {
@@ -33,15 +35,15 @@ export class Leaderboard {
         `<div class='d-flex align-items-center'>
           <p class='mb-0 me-3' style='font-size: small;'>${leadNumber}. ${currentUser.username}</p>
           <div class='d-flex align-items-center me-3' >
-            <img src='/src/Assets/misc/gold2.png' class='me-1' style='height: 30px'>
+            <img src='${GoldImagePath}' class='me-1' style='height: 30px'>
             <p class='mb-0' style='font-size: small;'>${currentUser.total_gold}</p>
           </div>
           <div class='dyn-atk dyn-attack-${i} btn btn-danger d-flex align-items-center me-3 rounded-0 border border-black border-3'>
-            <img src='/src/Assets/misc/dynamite.png' class='me-1' style='height: 30px'>
+            <img src='${DynamiteImagePath}' class='me-1' style='height: 30px'>
             <p class='m-0' style='font-size: small;'>Dynamite Attack</p>
           </div>
           <div class='cnn-atk cnn-attack-${i} btn btn-secondary d-flex align-items-center rounded-0 border border-black border-3'>
-            <img src='/src/Assets/misc/cannonball bomb.png' class='me-1' style='height: 30px'>
+            <img src='${CannonBallImagePath}' class='me-1' style='height: 30px'>
             <p class='m-0' style='font-size: small;'>Cannon Bomb Attack</p>
           </div>
         </div>`;
