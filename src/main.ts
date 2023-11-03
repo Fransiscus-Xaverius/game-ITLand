@@ -58,6 +58,7 @@ window.onload = async () => {
   const DButton = document.querySelector("#d") as HTMLButtonElement;
   const energyDiv = document.querySelector("#energyAmount") as HTMLDivElement;
   const goldDiv = document.querySelector("#goldAmount") as HTMLDivElement;
+  const questionIDDiv = document.querySelector("#questionID") as HTMLDivElement;
 
   loadAsset(); //load game asset
 
@@ -82,7 +83,8 @@ window.onload = async () => {
       CButton,
       DButton,
       energyDiv,
-      goldDiv
+      goldDiv,
+      questionIDDiv
     ),
     new LeaderboardView(leaderboardButton, leaderboard, leaderboardElement)
   );
@@ -106,22 +108,71 @@ window.onload = async () => {
 
   soalButton.addEventListener("click", async () => {
     await game.getQuestionView()?.UpdateQuestion();
+    game.logActivity("Changing Question! (Cooldown: 5s)");
+    soalButton.disabled = true;
+    setTimeout(function(){
+      soalButton.disabled = false;
+    }, 5000);
   });
 
   AButton.addEventListener("click", async () => {
-    await game.getQuestionView()?.checkAnswer(AButton, AButton.value);
+    const correct = await game.getQuestionView()?.checkAnswer(AButton, AButton.value);
+    if(!correct){
+      game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+      BButton.disabled = true;
+      CButton.disabled = true;
+      DButton.disabled = true;
+      setTimeout(function(){
+        BButton.disabled = false;
+        CButton.disabled = false;
+        DButton.disabled = false;
+      }, 5000);
+    }
   });
 
   BButton.addEventListener("click", async () => {
-    await game.getQuestionView()?.checkAnswer(BButton, BButton.value);
+    const correct = await game.getQuestionView()?.checkAnswer(BButton, BButton.value);
+    if(!correct){
+      game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+      AButton.disabled = true;
+      CButton.disabled = true;
+      DButton.disabled = true;
+      setTimeout(function(){
+        AButton.disabled = false;
+        CButton.disabled = false;
+        DButton.disabled = false;
+      }, 5000);
+    }
   });
 
   CButton.addEventListener("click", async () => {
-    await game.getQuestionView()?.checkAnswer(CButton, CButton.value);
+    const correct = await game.getQuestionView()?.checkAnswer(CButton, CButton.value);
+    if(!correct){
+      game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+      AButton.disabled = true;
+      BButton.disabled = true;
+      DButton.disabled = true;
+      setTimeout(function(){
+        AButton.disabled = false;
+        BButton.disabled = false;
+        DButton.disabled = false;
+      }, 5000);
+    }
   });
 
   DButton.addEventListener("click", async () => {
-    await game.getQuestionView()?.checkAnswer(DButton, DButton.value);
+    const correct = await game.getQuestionView()?.checkAnswer(DButton, DButton.value);
+    if(!correct){
+      game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+      AButton.disabled = true;
+      BButton.disabled = true;
+      CButton.disabled = true;
+      setTimeout(function(){
+        AButton.disabled = false;
+        BButton.disabled = false;
+        CButton.disabled = false;
+      }, 5000);
+    }
   });
 
   document.addEventListener("keydown", (e) => {

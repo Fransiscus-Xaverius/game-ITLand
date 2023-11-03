@@ -43,6 +43,7 @@ export class API {
       const response = await fetch(apiUrl);
       // alert(JSON.stringify(response));
       let question: Question = {
+        id: "",
         text: "",
         a: "",
         b: "",
@@ -53,6 +54,7 @@ export class API {
       if (!response.ok) throw new Error("Network Response was not ok");
       const jsonString = await response.text();
       const jsonData = JSON.parse(jsonString);
+      question.id = jsonData.id;
       question.text = jsonData.text;
       question.a = jsonData.a;
       question.b = jsonData.b;

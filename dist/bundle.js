@@ -132,6 +132,7 @@ class API {
                 const response = yield fetch(apiUrl);
                 // alert(JSON.stringify(response));
                 let question = {
+                    id: "",
                     text: "",
                     a: "",
                     b: "",
@@ -143,6 +144,7 @@ class API {
                     throw new Error("Network Response was not ok");
                 const jsonString = yield response.text();
                 const jsonData = JSON.parse(jsonString);
+                question.id = jsonData.id;
                 question.text = jsonData.text;
                 question.a = jsonData.a;
                 question.b = jsonData.b;
@@ -4239,7 +4241,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestionView = void 0;
 class QuestionView {
-    constructor(QuestionArea, UpdateButton, api, a, b, c, d, energyDiv, goldDiv) {
+    constructor(QuestionArea, UpdateButton, api, a, b, c, d, energyDiv, goldDiv, questionIDDiv) {
         this.QuestionArea = null;
         this.UpdateBtn = null;
         this.api = null;
@@ -4251,12 +4253,17 @@ class QuestionView {
         this.energyDiv = null;
         this.goldDiv = null;
         this.player = null;
+        this.questionIDDiv = null;
         this.setQuestionArea(QuestionArea);
         this.setUpdateBtn(UpdateButton);
         this.setAPI(api);
         this.setButtons(a, b, c, d);
         this.setEnergyDiv(energyDiv);
         this.setGoldDiv(goldDiv);
+        this.setQuestionIDDiv(questionIDDiv);
+    }
+    setQuestionIDDiv(questionIDDiv) {
+        this.questionIDDiv = questionIDDiv;
     }
     setGoldDiv(goldDiv) {
         this.goldDiv = goldDiv;
@@ -4304,11 +4311,13 @@ class QuestionView {
         return __awaiter(this, void 0, void 0, function* () {
             if (val == "") {
                 self.style.display = 'none';
+                return false;
             }
             else {
                 (_a = this.player) === null || _a === void 0 ? void 0 : _a.addEnergy(10);
                 this.refreshStats();
                 yield this.UpdateQuestion();
+                return true;
             }
         });
     }
@@ -4327,9 +4336,11 @@ class QuestionView {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const reqAPI = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.getQuestion());
-            let q = { text: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.text, a: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.a, b: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.b, c: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.c, d: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.d, answer: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.answer };
+            console.error(reqAPI);
+            let q = { id: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.id, text: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.text, a: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.a, b: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.b, c: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.c, d: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.d, answer: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.answer };
             this.curQuestion = q;
             if (this.QuestionArea != null && this.curQuestion != null && this.AButton && this.BButton && this.CButton && this.DButton) {
+                this.questionIDDiv.innerHTML = `Question ID: ${q.id}`;
                 this.QuestionArea.innerHTML = this.curQuestion.text;
                 this.AButton.innerHTML = `A. ${q.a}`;
                 this.BButton.innerHTML = `B. ${q.b}`;
@@ -5133,6 +5144,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     const DButton = document.querySelector("#d");
     const energyDiv = document.querySelector("#energyAmount");
     const goldDiv = document.querySelector("#goldAmount");
+    const questionIDDiv = document.querySelector("#questionID");
     (0, loadAsset_1.default)(); //load game asset
     const userToken = (0, authentication_1.getAuthToken)();
     if (!userToken) {
@@ -5140,7 +5152,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         alert("Not logged in!");
         window.location.replace("login.html");
     }
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv, goldDiv), new LeaderboardView_1.LeaderboardView(leaderboardButton, leaderboard, leaderboardElement));
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv, goldDiv, questionIDDiv), new LeaderboardView_1.LeaderboardView(leaderboardButton, leaderboard, leaderboardElement));
     game.start();
     yield game.load(userToken);
     const pUnit = game.getActivePlayerUnit();
@@ -5159,22 +5171,71 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     soalButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _e;
         yield ((_e = game.getQuestionView()) === null || _e === void 0 ? void 0 : _e.UpdateQuestion());
+        game.logActivity("Changing Question! (Cooldown: 5s)");
+        soalButton.disabled = true;
+        setTimeout(function () {
+            soalButton.disabled = false;
+        }, 5000);
     }));
     AButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _f;
-        yield ((_f = game.getQuestionView()) === null || _f === void 0 ? void 0 : _f.checkAnswer(AButton, AButton.value));
+        const correct = yield ((_f = game.getQuestionView()) === null || _f === void 0 ? void 0 : _f.checkAnswer(AButton, AButton.value));
+        if (!correct) {
+            game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+            BButton.disabled = true;
+            CButton.disabled = true;
+            DButton.disabled = true;
+            setTimeout(function () {
+                BButton.disabled = false;
+                CButton.disabled = false;
+                DButton.disabled = false;
+            }, 5000);
+        }
     }));
     BButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _g;
-        yield ((_g = game.getQuestionView()) === null || _g === void 0 ? void 0 : _g.checkAnswer(BButton, BButton.value));
+        const correct = yield ((_g = game.getQuestionView()) === null || _g === void 0 ? void 0 : _g.checkAnswer(BButton, BButton.value));
+        if (!correct) {
+            game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+            AButton.disabled = true;
+            CButton.disabled = true;
+            DButton.disabled = true;
+            setTimeout(function () {
+                AButton.disabled = false;
+                CButton.disabled = false;
+                DButton.disabled = false;
+            }, 5000);
+        }
     }));
     CButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _h;
-        yield ((_h = game.getQuestionView()) === null || _h === void 0 ? void 0 : _h.checkAnswer(CButton, CButton.value));
+        const correct = yield ((_h = game.getQuestionView()) === null || _h === void 0 ? void 0 : _h.checkAnswer(CButton, CButton.value));
+        if (!correct) {
+            game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+            AButton.disabled = true;
+            BButton.disabled = true;
+            DButton.disabled = true;
+            setTimeout(function () {
+                AButton.disabled = false;
+                BButton.disabled = false;
+                DButton.disabled = false;
+            }, 5000);
+        }
     }));
     DButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _j;
-        yield ((_j = game.getQuestionView()) === null || _j === void 0 ? void 0 : _j.checkAnswer(DButton, DButton.value));
+        const correct = yield ((_j = game.getQuestionView()) === null || _j === void 0 ? void 0 : _j.checkAnswer(DButton, DButton.value));
+        if (!correct) {
+            game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+            AButton.disabled = true;
+            BButton.disabled = true;
+            CButton.disabled = true;
+            setTimeout(function () {
+                AButton.disabled = false;
+                BButton.disabled = false;
+                CButton.disabled = false;
+            }, 5000);
+        }
     }));
     document.addEventListener("keydown", (e) => {
         let key = e.key;
