@@ -13,6 +13,10 @@ import { getAuthToken } from "../utils/authentication";
 import { EquippableItem } from "./Items/Abstract/EquippableItem";
 import { GameManager } from "./GameManager";
 
+const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../config/env.json');
+const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../config/env.json');
+const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../config/env.json');
+
 export class Shop {
   private item: Item[];
   private player: Player | null = null;
@@ -25,6 +29,48 @@ export class Shop {
       new BookOfEnergyTier2(),
       new BookOfEnergyTier3(),
     ];
+  }
+
+  public upgradeSword(currentItem: EquippableItem, x:number): void{
+    switch(x){
+        case 2:
+            currentItem.setImagePath(SilverSwordImagePath);
+            break;
+        case 3:
+            currentItem.setImagePath(GoldSwordImagePath);
+            break;
+        default:
+            currentItem.setImagePath(IronSwordImagePath);
+            break;
+    }
+  }    
+
+  public upgradeShovel(currentItem: EquippableItem, x:number): void{
+    switch(x){
+        case 2:
+            currentItem.setImagePath(SilverShovelImagePath);
+            break;
+        case 3:
+            currentItem.setImagePath(GoldShovelImagePath);
+            break;
+        default:
+            currentItem.setImagePath(IronShovelImagePath);
+            break;
+    }
+  }
+
+  public upgradePickaxe(currentItem: EquippableItem, x:number): void{
+    switch(x){
+        case 2:
+            currentItem.setImagePath(SilverPickaxeImagePath);
+            break;
+        case 3:
+            currentItem.setImagePath(GoldPickaxeImagePath);
+            break;
+        default:
+            currentItem.setImagePath(IronPickaxeImagePath);
+            break;
+    }
   }
 
   public setGame(game: GameManager | null) {
@@ -251,7 +297,7 @@ export class Shop {
                           API.updateGold(token, -price);
                         }
                         if (currentItem instanceof EquippableItem) {
-                          alert(playerGold + " " + price);
+                          // alert(playerGold + " " + price);
                           //basically what we need to do is to first check if the item is an equippable
                           //then we basically do nothing to said object and just go to the gameManager
                           //and from the gamemanager we do a force upgrade.
@@ -259,12 +305,15 @@ export class Shop {
                           //TL;DR: this is fucking stupid but my hands and mind have forced me. Forgive me my son -Frans
                           if(currentItem instanceof Sword){
                             this.game?.upgradeSword();
+                            this.upgradeSword(currentItem, (currentItem.getLevel()+1));
                           }
                           else if(currentItem instanceof Pickaxe){ 
                             this.game?.upgradePickaxe();
+                            this.upgradePickaxe(currentItem, (currentItem.getLevel()+1))
                           }
                           else if(currentItem instanceof Shovel){
                             this.game?.upgradeShovel();
+                            this.upgradeShovel(currentItem, (currentItem.getLevel()+1))
                           }
                           this.inventory?.addItemOwned(i, currentQty);
                           currentItem.upgrade();

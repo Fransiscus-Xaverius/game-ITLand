@@ -16,6 +16,51 @@ module.exports={
     "BookOfEnergyTier3ImagePath": "dist/Assets/Prototype/buku3.png",
     "BookOfEnergyTier3EnergyRestored": 30,
 
+    "IronSwordName": "Iron Sword",
+    "IronSwordDesc": "A Sword made of Iron, used to break chests and slay sea monsters.",
+    "IronSwordPrice": 200,
+    "IronSwordImagePath": "dist/assets/final/ironsword.png",
+
+    "IronShovelName": "Iron Shovel",
+    "IronShovelDesc": "A Shovel made of Iron, used to dig.",
+    "IronShovelPrice": 200,
+    "IronShovelImagePath": "dist/assets/final/ironshovel.png",
+
+    "IronPickaxeName": "Iron Pickaxe",
+    "IronPickaxeDesc": "A Pickaxe made of Iron, used to mine.",
+    "IronPickaxePrice": 200,
+    "IronPickaxeImagePath": "dist/assets/final/ironpickaxe.png",
+
+    "GoldSwordName": "Gold Sword",
+    "GoldSwordDesc": "A Legendary Sword made of Gold, used to break chests and slay sea monsters.",
+    "GoldSwordPrice": 500,
+    "GoldSwordImagePath": "dist/assets/final/goldsword.png",
+
+    "GoldShovelName": "Gold Shovel",
+    "GoldShovelDesc": "A Legendary Shovel made of Gold, used to dig.",
+    "GoldShovelPrice": 500,
+    "GoldShovelImagePath": "dist/assets/final/goldshovel.png",
+
+    "GoldPickaxeName": "Gold Pickaxe",
+    "GoldPickaxeDesc": "A Legendary Pickaxe made of Gold, used to mine.",
+    "GoldPickaxePrice": 500,
+    "GoldPickaxeImagePath": "dist/assets/final/goldpickaxe.png",
+
+    "SilverSwordName": "Silver Sword",
+    "SilverSwordDesc": "A Durable Sword made of Silver, used to break chests and slay sea monsters.",
+    "SilverSwordPrice": 350,
+    "SilverSwordImagePath": "dist/assets/final/silversword.png",
+
+    "SilverShovelName": "Silver Shovel",
+    "SilverShovelDesc": "A Durable Shovel made of Silver, used to dig.",
+    "SilverShovelPrice": 350,
+    "SilverShovelImagePath": "dist/assets/final/silvershovel.png",
+
+    "SilverPickaxeName": "Silver Pickaxe",
+    "SilverPickaxeDesc": "A Durable Pickaxe made of Silver, used to mine.",
+    "SilverPickaxePrice": 350,
+    "SilverPickaxeImagePath": "dist/assets/final/silverpickaxe.png",
+
     "SwordName": "Sword Name",
     "SwordDesc": "Sword Description",
     "SwordPrice": 1000,
@@ -3813,10 +3858,10 @@ exports.Item = Item;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pickaxe = void 0;
 const EquippableItem_1 = require("./Abstract/EquippableItem");
-const { PickaxeName, PickaxeDesc, PickaxePrice, PickaxeImagePath, } = require("../../../dist/config/env.json");
+const { PickaxeName, PickaxeDesc, PickaxePrice, IronPickaxeImagePath, } = require("../../../dist/config/env.json");
 class Pickaxe extends EquippableItem_1.EquippableItem {
     constructor() {
-        super(PickaxeImagePath, PickaxeName, PickaxeDesc, PickaxePrice);
+        super(IronPickaxeImagePath, PickaxeName, PickaxeDesc, PickaxePrice);
     }
 }
 exports.Pickaxe = Pickaxe;
@@ -3826,10 +3871,10 @@ exports.Pickaxe = Pickaxe;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shovel = void 0;
 const EquippableItem_1 = require("./Abstract/EquippableItem");
-const { ShovelName, ShovelDesc, ShovelPrice, ShovelImagePath } = require('../../../dist/config/env.json');
+const { ShovelName, ShovelDesc, ShovelPrice, IronShovelImagePath } = require('../../../dist/config/env.json');
 class Shovel extends EquippableItem_1.EquippableItem {
     constructor() {
-        super(ShovelImagePath, ShovelName, ShovelDesc, ShovelPrice);
+        super(IronShovelImagePath, ShovelName, ShovelDesc, ShovelPrice);
     }
 }
 exports.Shovel = Shovel;
@@ -3839,10 +3884,10 @@ exports.Shovel = Shovel;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sword = void 0;
 const EquippableItem_1 = require("./Abstract/EquippableItem");
-const { SwordName, SwordDesc, SwordPrice, SwordImagePath } = require('../../../dist/config/env.json');
+const { SwordName, SwordDesc, SwordPrice, IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../../../dist/config/env.json');
 class Sword extends EquippableItem_1.EquippableItem {
     constructor() {
-        super(SwordImagePath, SwordName, SwordDesc, SwordPrice);
+        super(IronSwordImagePath, SwordName, SwordDesc, SwordPrice);
     }
 }
 exports.Sword = Sword;
@@ -4264,6 +4309,9 @@ const Pickaxe_1 = require("./Items/Pickaxe");
 const API_1 = require("./API");
 const authentication_1 = require("../utils/authentication");
 const EquippableItem_1 = require("./Items/Abstract/EquippableItem");
+const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../config/env.json');
+const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../config/env.json');
+const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../config/env.json');
 class Shop {
     constructor() {
         this.player = null;
@@ -4274,6 +4322,45 @@ class Shop {
             new BookOfEnergyT2_1.BookOfEnergyTier2(),
             new BookOfEnergyT3_1.BookOfEnergyTier3(),
         ];
+    }
+    upgradeSword(currentItem, x) {
+        switch (x) {
+            case 2:
+                currentItem.setImagePath(SilverSwordImagePath);
+                break;
+            case 3:
+                currentItem.setImagePath(GoldSwordImagePath);
+                break;
+            default:
+                currentItem.setImagePath(IronSwordImagePath);
+                break;
+        }
+    }
+    upgradeShovel(currentItem, x) {
+        switch (x) {
+            case 2:
+                currentItem.setImagePath(SilverShovelImagePath);
+                break;
+            case 3:
+                currentItem.setImagePath(GoldShovelImagePath);
+                break;
+            default:
+                currentItem.setImagePath(IronShovelImagePath);
+                break;
+        }
+    }
+    upgradePickaxe(currentItem, x) {
+        switch (x) {
+            case 2:
+                currentItem.setImagePath(SilverPickaxeImagePath);
+                break;
+            case 3:
+                currentItem.setImagePath(GoldPickaxeImagePath);
+                break;
+            default:
+                currentItem.setImagePath(IronPickaxeImagePath);
+                break;
+        }
     }
     setGame(game) {
         this.game = game;
@@ -4458,19 +4545,22 @@ class Shop {
                                                     API_1.API.updateGold(token, -price);
                                                 }
                                                 if (currentItem instanceof EquippableItem_1.EquippableItem) {
-                                                    alert(playerGold + " " + price);
+                                                    // alert(playerGold + " " + price);
                                                     //basically what we need to do is to first check if the item is an equippable
                                                     //then we basically do nothing to said object and just go to the gameManager
                                                     //and from the gamemanager we do a force upgrade.
                                                     //TL;DR: this is fucking stupid but my hands and mind have forced me. Forgive me my son -Frans
                                                     if (currentItem instanceof Sword_1.Sword) {
                                                         (_a = this.game) === null || _a === void 0 ? void 0 : _a.upgradeSword();
+                                                        this.upgradeSword(currentItem, (currentItem.getLevel() + 1));
                                                     }
                                                     else if (currentItem instanceof Pickaxe_1.Pickaxe) {
                                                         (_b = this.game) === null || _b === void 0 ? void 0 : _b.upgradePickaxe();
+                                                        this.upgradePickaxe(currentItem, (currentItem.getLevel() + 1));
                                                     }
                                                     else if (currentItem instanceof Shovel_1.Shovel) {
                                                         (_c = this.game) === null || _c === void 0 ? void 0 : _c.upgradeShovel();
+                                                        this.upgradeShovel(currentItem, (currentItem.getLevel() + 1));
                                                     }
                                                     (_d = this.inventory) === null || _d === void 0 ? void 0 : _d.addItemOwned(i, currentQty);
                                                     currentItem.upgrade();
@@ -4547,7 +4637,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"../utils/authentication":66,"./API":2,"./Items/Abstract/EquippableItem":48,"./Items/BookOfEnergyT1":49,"./Items/BookOfEnergyT2":50,"./Items/BookOfEnergyT3":51,"./Items/Pickaxe":54,"./Items/Shovel":55,"./Items/Sword":56}],62:[function(require,module,exports){
+},{"../config/env.json":64,"../utils/authentication":67,"./API":2,"./Items/Abstract/EquippableItem":48,"./Items/BookOfEnergyT1":49,"./Items/BookOfEnergyT2":50,"./Items/BookOfEnergyT3":51,"./Items/Pickaxe":54,"./Items/Shovel":55,"./Items/Sword":56}],62:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -4687,6 +4777,8 @@ class TerminalView {
 exports.TerminalView = TerminalView;
 
 },{}],64:[function(require,module,exports){
+arguments[4][1][0].apply(exports,arguments)
+},{"dup":1}],65:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -4778,6 +4870,8 @@ function loadAsset() {
     chest_medium.src = "./dist/Assets/final/chest1.png";
     const chest_large = new Image();
     chest_large.src = "./dist/Assets/final/chest2.png";
+    //Player items assets
+    const stone_pickaxe = new Image();
     //Tile
     Animation_1.Animation.assets['grass_tile'] = grass;
     Animation_1.Animation.assets['flowery_grass_tile'] = flowergrass;
@@ -4829,7 +4923,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":31}],65:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":31}],66:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -5065,7 +5159,7 @@ function handleResize() {
 }
 window.addEventListener("resize", handleResize);
 
-},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":24,"./Classes/InventoryView":45,"./Classes/Items/Inventory":52,"./Classes/Leaderboard":57,"./Classes/LeaderboardView":58,"./Classes/QuestionView":60,"./Classes/Shop":61,"./Classes/ShopView":62,"./Classes/TerminalView":63,"./loadAsset":64,"./utils/authentication":66}],66:[function(require,module,exports){
+},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":24,"./Classes/InventoryView":45,"./Classes/Items/Inventory":52,"./Classes/Leaderboard":57,"./Classes/LeaderboardView":58,"./Classes/QuestionView":60,"./Classes/Shop":61,"./Classes/ShopView":62,"./Classes/TerminalView":63,"./loadAsset":65,"./utils/authentication":67}],67:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAuthToken = void 0;
@@ -5074,4 +5168,4 @@ const getAuthToken = () => {
 };
 exports.getAuthToken = getAuthToken;
 
-},{}]},{},[65]);
+},{}]},{},[66]);

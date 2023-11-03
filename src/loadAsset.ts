@@ -77,7 +77,7 @@ export default function loadAsset():void{
     const break_right = new Image()
     break_right.src = "./dist/Assets/final/hooman_right_sword.png";
     Animation.assets["break_right"] = break_right;
-    
+
 
     //Other Entities
     const obsidian = new Image();
@@ -96,6 +96,10 @@ export default function loadAsset():void{
     chest_medium.src = "./dist/Assets/final/chest1.png";
     const chest_large = new Image();
     chest_large.src = "./dist/Assets/final/chest2.png";
+
+    //Player items assets
+    const stone_pickaxe = new Image();
+    
 
     //Tile
     Animation.assets['grass_tile'] = grass
