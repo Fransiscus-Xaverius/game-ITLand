@@ -3948,21 +3948,23 @@ class Leaderboard {
         });
     }
     open(leaderboardElement) {
-        var _a;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             const { GoldImagePath, EnergyImagePath, DynamiteImagePath, CannonBallImagePath } = require('../config/env.json');
             const allUserString = JSON.parse(yield API_1.API.getAllUser());
             this.listUser = [];
             for (let i = 0; i < allUserString.length; i++) {
-                const currentUser = allUserString[i];
-                this.listUser.push(currentUser);
+                if (((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName()) != allUserString[i].username) {
+                    const currentUser = allUserString[i];
+                    this.listUser.push(currentUser);
+                }
             }
             let showUser = "";
             let leadNumber = 1;
             for (let i = 0; i < this.listUser.length; i++) {
                 let currentUser = this.listUser[i];
                 // if(currentUser.username != )
-                if (currentUser.username != ((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName()) && currentUser.total_gold > 0) {
+                if (currentUser.username != ((_b = this.player) === null || _b === void 0 ? void 0 : _b.getPlayerName()) && currentUser.total_gold > 0) {
                     showUser +=
                         `<div class='d-flex align-items-center'>
           <p class='mb-0 me-3' style='font-size: small;'>${leadNumber}. ${currentUser.username}</p>
@@ -3994,6 +3996,8 @@ class Leaderboard {
                     let closeButton = document.querySelector(".close-leaderboard-button");
                     if (this.player.getGold() > 150) {
                         this.player.useGold(150);
+                        console.error(this.listUser);
+                        alert(this.listUser[i].username);
                         API_1.API.CannonBall(this.listUser[i].username);
                         const token = (0, authentication_1.getAuthToken)();
                         if (token) {

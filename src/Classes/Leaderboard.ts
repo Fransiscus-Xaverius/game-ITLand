@@ -35,8 +35,10 @@ export class Leaderboard {
     const allUserString: UserStack[] = JSON.parse(await API.getAllUser());
     this.listUser = [];
     for (let i = 0; i < allUserString.length; i++) {
+     if(this.player?.getPlayerName()!=allUserString[i].username){
       const currentUser = allUserString[i];
       this.listUser.push(currentUser);
+     }
     }
     let showUser: string = "";
     let leadNumber: number = 1;
@@ -76,6 +78,8 @@ export class Leaderboard {
         );
         if(this.player!.getGold()>150){
           this.player!.useGold(150);
+          console.error(this.listUser);
+          alert(this.listUser[i].username);
           API.CannonBall(this.listUser[i].username);
           const token = getAuthToken();
           if (token) {
