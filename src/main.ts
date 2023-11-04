@@ -108,55 +108,61 @@ window.onload = async () => {
 
   soalButton.addEventListener("click", async () => {
     await game.getQuestionView()?.UpdateQuestion();
-    game.logActivity("Changing Question! (Cooldown: 5s)");
+    game.logActivity("Changing Question! (Cooldown: 20s)");
     soalButton.disabled = true;
     setTimeout(function(){
       soalButton.disabled = false;
-    }, 5000);
+    }, 20000);
   });
 
   AButton.addEventListener("click", async () => {
     const correct = await game.getQuestionView()?.checkAnswer(AButton, AButton.value);
     if(!correct){
-      game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+      game.logActivity("Wrong Answer! (Wait 20s to answer again)");
+      AButton.disabled = true;
       BButton.disabled = true;
       CButton.disabled = true;
       DButton.disabled = true;
       setTimeout(function(){
+        AButton.disabled = false;
         BButton.disabled = false;
         CButton.disabled = false;
         DButton.disabled = false;
-      }, 5000);
+      }, 20000);
     }
   });
 
   BButton.addEventListener("click", async () => {
     const correct = await game.getQuestionView()?.checkAnswer(BButton, BButton.value);
     if(!correct){
-      game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+      game.logActivity("Wrong Answer! (Wait 20s to answer again)");
       AButton.disabled = true;
+      BButton.disabled = true;
       CButton.disabled = true;
       DButton.disabled = true;
       setTimeout(function(){
         AButton.disabled = false;
+        BButton.disabled = false;
         CButton.disabled = false;
         DButton.disabled = false;
-      }, 5000);
+      }, 20000);
     }
   });
 
   CButton.addEventListener("click", async () => {
     const correct = await game.getQuestionView()?.checkAnswer(CButton, CButton.value);
     if(!correct){
-      game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+      game.logActivity("Wrong Answer! (Wait 20s to answer again)");
       AButton.disabled = true;
       BButton.disabled = true;
+      CButton.disabled = true;
       DButton.disabled = true;
       setTimeout(function(){
         AButton.disabled = false;
         BButton.disabled = false;
+        CButton.disabled = false;
         DButton.disabled = false;
-      }, 5000);
+      }, 20000);
     }
   });
 
@@ -167,11 +173,13 @@ window.onload = async () => {
       AButton.disabled = true;
       BButton.disabled = true;
       CButton.disabled = true;
+      DButton.disabled = true;
       setTimeout(function(){
         AButton.disabled = false;
         BButton.disabled = false;
         CButton.disabled = false;
-      }, 5000);
+        DButton.disabled =false;
+      }, 20000);
     }
   });
 
