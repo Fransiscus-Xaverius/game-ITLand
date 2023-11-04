@@ -283,7 +283,7 @@ window.onload = async () => {
       const currentEquipped = game
         .getPlayer()
         .getCurrentEquipment() as EquippableItem;
-      game.Action(Direction.Down, currentEquipped);
+      game.Action(Direction.Under, currentEquipped);
     }
 
     // if(key=="["){

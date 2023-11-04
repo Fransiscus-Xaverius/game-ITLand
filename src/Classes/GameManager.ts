@@ -244,10 +244,10 @@ export class GameManager {
     const coords = this.player.getCoordinate();
     const temp = this.getGridEntity(coords, direction);
     const tile = this.getTile(coords);
-    if (!temp && direction != Direction.Down) {
+    if (!temp && direction != Direction.Under) {
       this.logActivity("No Entity Object!");
       return;
-    } else if (Direction.Down && !tile) {
+    } else if (Direction.Under && !tile) {
       //should not be possible but its here just in case :D
       this.logActivity("Invalid Dig Command");
       return;

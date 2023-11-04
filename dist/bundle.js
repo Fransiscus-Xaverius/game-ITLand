@@ -2335,11 +2335,11 @@ class GameManager {
         const coords = this.player.getCoordinate();
         const temp = this.getGridEntity(coords, direction);
         const tile = this.getTile(coords);
-        if (!temp && direction != Direction_1.Direction.Down) {
+        if (!temp && direction != Direction_1.Direction.Under) {
             this.logActivity("No Entity Object!");
             return;
         }
-        else if (Direction_1.Direction.Down && !tile) {
+        else if (Direction_1.Direction.Under && !tile) {
             //should not be possible but its here just in case :D
             this.logActivity("Invalid Dig Command");
             return;
@@ -5349,7 +5349,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
             const currentEquipped = game
                 .getPlayer()
                 .getCurrentEquipment();
-            game.Action(Direction_1.Direction.Down, currentEquipped);
+            game.Action(Direction_1.Direction.Under, currentEquipped);
         }
         // if(key=="["){
         //   alert('cheat');
