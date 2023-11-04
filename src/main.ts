@@ -236,15 +236,15 @@ window.onload = async () => {
       }
     }
 
-    if (key === "1") {
-      game.getPlayer().setEquipmentLevels(1);
-    }
-    if (key === "2") {
-      game.getPlayer().setEquipmentLevels(2);
-    }
-    if (key === "3") {
-      game.getPlayer().setEquipmentLevels(3);
-    }
+    // if (key === "1") {
+    //   game.getPlayer().setEquipmentLevels(1);
+    // }
+    // if (key === "2") {
+    //   game.getPlayer().setEquipmentLevels(2);
+    // }
+    // if (key === "3") {
+    //   game.getPlayer().setEquipmentLevels(3);
+    // }
 
     if (key === "i") {
       //destroy top entity

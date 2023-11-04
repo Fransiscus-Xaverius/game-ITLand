@@ -2329,6 +2329,9 @@ class GameManager {
     //2 = break
     //Direction.Under = dig
     Action(direction, tools) {
+        var _a;
+        if ((_a = this.activePlayerUnit) === null || _a === void 0 ? void 0 : _a.isMoving)
+            return;
         const coords = this.player.getCoordinate();
         const temp = this.getGridEntity(coords, direction);
         const tile = this.getTile(coords);
@@ -5175,55 +5178,61 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     soalButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _e;
         yield ((_e = game.getQuestionView()) === null || _e === void 0 ? void 0 : _e.UpdateQuestion());
-        game.logActivity("Changing Question! (Cooldown: 5s)");
+        game.logActivity("Changing Question! (Cooldown: 20s)");
         soalButton.disabled = true;
         setTimeout(function () {
             soalButton.disabled = false;
-        }, 5000);
+        }, 20000);
     }));
     AButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _f;
         const correct = yield ((_f = game.getQuestionView()) === null || _f === void 0 ? void 0 : _f.checkAnswer(AButton, AButton.value));
         if (!correct) {
-            game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+            game.logActivity("Wrong Answer! (Wait 20s to answer again)");
+            AButton.disabled = true;
             BButton.disabled = true;
             CButton.disabled = true;
             DButton.disabled = true;
             setTimeout(function () {
+                AButton.disabled = false;
                 BButton.disabled = false;
                 CButton.disabled = false;
                 DButton.disabled = false;
-            }, 5000);
+            }, 20000);
         }
     }));
     BButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _g;
         const correct = yield ((_g = game.getQuestionView()) === null || _g === void 0 ? void 0 : _g.checkAnswer(BButton, BButton.value));
         if (!correct) {
-            game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+            game.logActivity("Wrong Answer! (Wait 20s to answer again)");
             AButton.disabled = true;
+            BButton.disabled = true;
             CButton.disabled = true;
             DButton.disabled = true;
             setTimeout(function () {
                 AButton.disabled = false;
+                BButton.disabled = false;
                 CButton.disabled = false;
                 DButton.disabled = false;
-            }, 5000);
+            }, 20000);
         }
     }));
     CButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _h;
         const correct = yield ((_h = game.getQuestionView()) === null || _h === void 0 ? void 0 : _h.checkAnswer(CButton, CButton.value));
         if (!correct) {
-            game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+            game.logActivity("Wrong Answer! (Wait 20s to answer again)");
             AButton.disabled = true;
             BButton.disabled = true;
+            CButton.disabled = true;
             DButton.disabled = true;
             setTimeout(function () {
                 AButton.disabled = false;
                 BButton.disabled = false;
+                CButton.disabled = false;
                 DButton.disabled = false;
-            }, 5000);
+            }, 20000);
         }
     }));
     DButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
@@ -5234,11 +5243,13 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
             AButton.disabled = true;
             BButton.disabled = true;
             CButton.disabled = true;
+            DButton.disabled = true;
             setTimeout(function () {
                 AButton.disabled = false;
                 BButton.disabled = false;
                 CButton.disabled = false;
-            }, 5000);
+                DButton.disabled = false;
+            }, 20000);
         }
     }));
     document.addEventListener("keydown", (e) => {
@@ -5293,15 +5304,15 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
                     break;
             }
         }
-        if (key === "1") {
-            game.getPlayer().setEquipmentLevels(1);
-        }
-        if (key === "2") {
-            game.getPlayer().setEquipmentLevels(2);
-        }
-        if (key === "3") {
-            game.getPlayer().setEquipmentLevels(3);
-        }
+        // if (key === "1") {
+        //   game.getPlayer().setEquipmentLevels(1);
+        // }
+        // if (key === "2") {
+        //   game.getPlayer().setEquipmentLevels(2);
+        // }
+        // if (key === "3") {
+        //   game.getPlayer().setEquipmentLevels(3);
+        // }
         if (key === "i") {
             //destroy top entity
             //for destroying crates, and stone entities.

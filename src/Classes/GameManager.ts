@@ -240,6 +240,7 @@ export class GameManager {
   //Direction.Under = dig
 
   public Action(direction: Direction, tools: EquippableItem) {
+    if(this.activePlayerUnit?.isMoving) return;
     const coords = this.player.getCoordinate();
     const temp = this.getGridEntity(coords, direction);
     const tile = this.getTile(coords);
