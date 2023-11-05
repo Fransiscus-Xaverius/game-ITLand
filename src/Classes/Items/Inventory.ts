@@ -87,8 +87,8 @@ export class Inventory {
       B2_amount: this.items[1].amount,
       B3_amount: this.items[2].amount,
       pickaxeLevel: this.items[3].amount,
-      shovelLevel: this.items[4].amount,
-      swordLevel: this.items[5].amount,
+      swordLevel: this.items[4].amount,
+      shovelLevel: this.items[5].amount,
     };
 
     API.sendInventory(

@@ -3830,14 +3830,15 @@ class Inventory {
     // public refreshInventory
     saveInventory() {
         var _a;
+        alert("called save inventory");
         const dataToSend = {
             username: (_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName(),
             B1_amount: this.items[0].amount,
             B2_amount: this.items[1].amount,
             B3_amount: this.items[2].amount,
             pickaxeLevel: this.items[3].amount,
-            shovelLevel: this.items[4].amount,
-            swordLevel: this.items[5].amount,
+            swordLevel: this.items[4].amount,
+            shovelLevel: this.items[5].amount,
         };
         API_1.API.sendInventory(dataToSend.username, dataToSend.B1_amount, dataToSend.B2_amount, dataToSend.B3_amount, dataToSend.pickaxeLevel, dataToSend.shovelLevel, dataToSend.swordLevel);
     }
@@ -4689,8 +4690,8 @@ class Shop {
                 const buyButton = document.createElement("button");
                 buyButton.className =
                     "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
-                buyButton.innerHTML = "Buy";
                 if (this.item[i] instanceof EquippableItem_1.EquippableItem) {
+                    buyButton.innerHTML = "Upgrade";
                     // alert("EquippableItem");
                     if (this.item[i].getLevel() < 3) {
                         // alert("getLevel() < 3");
@@ -4738,13 +4739,13 @@ class Shop {
                                                         (_c = this.game) === null || _c === void 0 ? void 0 : _c.upgradeShovel();
                                                         this.upgradeShovel(currentItem, (currentItem.getLevel() + 1));
                                                     }
-                                                    (_d = this.inventory) === null || _d === void 0 ? void 0 : _d.saveInventory();
-                                                    (_e = this.inventory) === null || _e === void 0 ? void 0 : _e.addItemOwned(i, currentQty);
+                                                    (_d = this.inventory) === null || _d === void 0 ? void 0 : _d.addItemOwned(i, currentQty);
+                                                    (_e = this.inventory) === null || _e === void 0 ? void 0 : _e.saveInventory();
                                                     currentItem.upgrade();
                                                 }
                                                 else {
-                                                    (_f = this.inventory) === null || _f === void 0 ? void 0 : _f.saveInventory();
-                                                    (_g = this.inventory) === null || _g === void 0 ? void 0 : _g.addItemOwned(i, currentQty);
+                                                    (_f = this.inventory) === null || _f === void 0 ? void 0 : _f.addItemOwned(i, currentQty);
+                                                    (_g = this.inventory) === null || _g === void 0 ? void 0 : _g.saveInventory();
                                                 }
                                                 this.open(shopHTML);
                                             }
@@ -4763,8 +4764,9 @@ class Shop {
                     }
                 }
                 else {
+                    buyButton.innerHTML = "Buy";
                     buyButton.onclick = () => {
-                        var _a;
+                        var _a, _b, _c;
                         const currentItem = this.item[i];
                         const totalPriceDiv = document.querySelector(`.total-price-item-${i}`);
                         const itemAmount = document.querySelector(`.item-${i}`);
@@ -4788,10 +4790,12 @@ class Shop {
                                             }
                                             alert(playerGold + " " + price);
                                             (_a = this.inventory) === null || _a === void 0 ? void 0 : _a.addItemOwned(i, currentQty);
+                                            (_b = this.inventory) === null || _b === void 0 ? void 0 : _b.saveInventory();
                                         }
                                         else {
                                             itemAmount.value = "1";
                                             totalPriceDiv.textContent = `Gold ${1 * this.item[i].getItemPrice()}`;
+                                            (_c = this.inventory) === null || _c === void 0 ? void 0 : _c.saveInventory();
                                         }
                                     }
                                     else {

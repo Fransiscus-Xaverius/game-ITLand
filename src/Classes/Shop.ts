@@ -261,8 +261,8 @@ export class Shop {
         const buyButton = document.createElement("button") as HTMLButtonElement;
         buyButton.className =
           "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
-        buyButton.innerHTML = "Buy";
         if (this.item[i] instanceof EquippableItem) {
+          buyButton.innerHTML = "Upgrade";
           // alert("EquippableItem");
           if ((this.item[i] as EquippableItem).getLevel() < 3) {
             // alert("getLevel() < 3");
@@ -316,12 +316,12 @@ export class Shop {
                             this.game?.upgradeShovel();
                             this.upgradeShovel(currentItem, (currentItem.getLevel()+1))
                           }
-                          this.inventory?.saveInventory();
                           this.inventory?.addItemOwned(i, currentQty);
+                          this.inventory?.saveInventory();
                           currentItem.upgrade();
                         } else {
-                          this.inventory?.saveInventory();
                           this.inventory?.addItemOwned(i, currentQty);
+                          this.inventory?.saveInventory();
                         }
                         this.open(shopHTML);
                       } else {
@@ -339,6 +339,7 @@ export class Shop {
             };
           }
         } else {
+          buyButton.innerHTML = "Buy";
           buyButton.onclick = () => {
             const currentItem = this.item[i];
             const totalPriceDiv = document.querySelector(
@@ -370,11 +371,13 @@ export class Shop {
                       }
                       alert(playerGold + " " + price);
                       this.inventory?.addItemOwned(i, currentQty);
+                      this.inventory?.saveInventory();
                     } else {
                       itemAmount.value = "1";
                       totalPriceDiv.textContent = `Gold ${
                         1 * this.item[i].getItemPrice()
                       }`;
+                      this.inventory?.saveInventory();
                     }
                   } else {
                     alert("Not enough gold!");
