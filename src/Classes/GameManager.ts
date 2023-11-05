@@ -123,6 +123,11 @@ export class GameManager {
     const jsonData = JSON.parse(jsonString);
     this.player.setGold(parseInt(jsonData.gold));
     this.questionView?.refreshStats();
+    await this.save();
+  }
+
+  public async save(){
+
   }
 
   public getQuestionView(): QuestionView | null {

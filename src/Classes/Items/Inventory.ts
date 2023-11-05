@@ -69,13 +69,23 @@ export class Inventory {
     const cardContainer = document.querySelector(
       ".shop-inventory"
     ) as HTMLDivElement;
-    cardContainer.classList.add("p-3") 
+    cardContainer.classList.add("p-3");
     let index = 0;
 
     for (const { item, amount } of this.items) {
       const cardElement = document.createElement("div");
-      cardElement.classList.add("card", "float-start", "me-3", "mb-3", "p-3", "border", "border-1", "rounded-0", "shadow");
-      cardElement.style.width = "46%"
+      cardElement.classList.add(
+        "card",
+        "float-start",
+        "me-3",
+        "mb-3",
+        "p-3",
+        "border",
+        "border-1",
+        "rounded-0",
+        "shadow"
+      );
+      cardElement.style.width = "46%";
 
       const imgDiv = document.createElement("div");
       imgDiv.classList.add("w-100", "d-flex", "justify-content-center");
@@ -91,7 +101,11 @@ export class Inventory {
       cardBody.classList.add("card-body");
 
       const nameElement = document.createElement("h5");
-      nameElement.classList.add("inventory-item-name", "card-text", "text-center");
+      nameElement.classList.add(
+        "inventory-item-name",
+        "card-text",
+        "text-center"
+      );
       nameElement.innerText = item.getItemName();
 
       const ownedElement = document.createElement("h6");
@@ -107,7 +121,15 @@ export class Inventory {
       if (item instanceof ConsumableItem) {
         ownedElement.innerText = `Owned: ${amount}`;
         itemUseButton.textContent = "Consume";
-        itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-100", "rounded-0", "shadow");
+        itemUseButton.classList.add(
+          "Consume",
+          `consume-item-${index}`,
+          "btn",
+          "btn-success",
+          "w-100",
+          "rounded-0",
+          "shadow"
+        );
 
         // Create a function to handle the click event
         const handleItemClick = () => {
@@ -115,22 +137,20 @@ export class Inventory {
             if (this.player) {
               if (item instanceof Book) {
                 const energyRestored = item.useItem();
-                this.player.addEnergy(energyRestored);
 
                 // Access the button's class using the `itemUseButton` reference
                 const currIndex: number = parseInt(
                   itemUseButton.className.split(" ")[1].split("-")[2]
                 );
                 if (this.items[currIndex].amount > 0) {
+                  this.player.addEnergy(energyRestored);
                   this.items[currIndex].amount -= 1;
-
-                  // Update the quantity displayed
                   const currentQty = document.querySelector(
                     `.item-owned-qty-${currIndex}`
                   ) as HTMLHeadingElement | null;
-
                   if (currentQty) {
-                    currentQty.innerHTML = `${this.items[currIndex].amount}`;
+                    alert(this.items[currIndex].amount);
+                    currentQty.innerHTML = `Owned: ${this.items[currIndex].amount}`;
                   }
                 }
               }
@@ -142,7 +162,14 @@ export class Inventory {
       } else if (item instanceof EquippableItem) {
         ownedElement.innerText = `Level: ${amount}`;
         itemUseButton.textContent = "Equip";
-        itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-100", "rounded-0", "shadow");
+        itemUseButton.classList.add(
+          "Equip",
+          "btn",
+          "btn-primary",
+          "w-100",
+          "rounded-0",
+          "shadow"
+        );
         itemUseButton.addEventListener("click", () => {
           if (this.player) {
             this.player.equip(item);

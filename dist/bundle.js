@@ -2147,6 +2147,11 @@ class GameManager {
             const jsonData = JSON.parse(jsonString);
             this.player.setGold(parseInt(jsonData.gold));
             (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.refreshStats();
+            yield this.save();
+        });
+    }
+    save() {
+        return __awaiter(this, void 0, void 0, function* () {
         });
     }
     getQuestionView() {
@@ -3695,15 +3700,15 @@ class Inventory {
                         if (this.player) {
                             if (item instanceof Book_1.Book) {
                                 const energyRestored = item.useItem();
-                                this.player.addEnergy(energyRestored);
                                 // Access the button's class using the `itemUseButton` reference
                                 const currIndex = parseInt(itemUseButton.className.split(" ")[1].split("-")[2]);
                                 if (this.items[currIndex].amount > 0) {
+                                    this.player.addEnergy(energyRestored);
                                     this.items[currIndex].amount -= 1;
-                                    // Update the quantity displayed
                                     const currentQty = document.querySelector(`.item-owned-qty-${currIndex}`);
                                     if (currentQty) {
-                                        currentQty.innerHTML = `${this.items[currIndex].amount}`;
+                                        alert(this.items[currIndex].amount);
+                                        currentQty.innerHTML = `Owned: ${this.items[currIndex].amount}`;
                                     }
                                 }
                             }
