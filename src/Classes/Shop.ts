@@ -13,6 +13,11 @@ import { getAuthToken } from "../utils/authentication";
 import { EquippableItem } from "./Items/Abstract/EquippableItem";
 import { GameManager } from "./GameManager";
 
+const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../config/env.json');
+const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../config/env.json');
+const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../config/env.json');
+const { GoldImagePath } = require('../config/env.json');
+
 export class Shop {
   private item: Item[];
   private player: Player | null = null;
@@ -25,6 +30,48 @@ export class Shop {
       new BookOfEnergyTier2(),
       new BookOfEnergyTier3(),
     ];
+  }
+
+  public upgradeSword(currentItem: EquippableItem, x:number): void{
+    switch(x){
+        case 2:
+            currentItem.setImagePath(SilverSwordImagePath);
+            break;
+        case 3:
+            currentItem.setImagePath(GoldSwordImagePath);
+            break;
+        default:
+            currentItem.setImagePath(IronSwordImagePath);
+            break;
+    }
+  }    
+
+  public upgradeShovel(currentItem: EquippableItem, x:number): void{
+    switch(x){
+        case 2:
+            currentItem.setImagePath(SilverShovelImagePath);
+            break;
+        case 3:
+            currentItem.setImagePath(GoldShovelImagePath);
+            break;
+        default:
+            currentItem.setImagePath(IronShovelImagePath);
+            break;
+    }
+  }
+
+  public upgradePickaxe(currentItem: EquippableItem, x:number): void{
+    switch(x){
+        case 2:
+            currentItem.setImagePath(SilverPickaxeImagePath);
+            break;
+        case 3:
+            currentItem.setImagePath(GoldPickaxeImagePath);
+            break;
+        default:
+            currentItem.setImagePath(IronPickaxeImagePath);
+            break;
+    }
   }
 
   public setGame(game: GameManager | null) {
@@ -65,7 +112,7 @@ export class Shop {
         // Card shop
         const shopTemp = document.createElement("div") as HTMLDivElement;
         shopTemp.className =
-          "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-1 shadow";
+          "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-black border-3 shadow";
 
         // Image shop
         const shopImage = document.createElement("img") as HTMLImageElement;
@@ -74,7 +121,7 @@ export class Shop {
 
         // Description shop
         const desc = document.createElement("div") as HTMLDivElement;
-        desc.className = "desc h-100";
+        desc.className = "desc h-100 position-relative";
         desc.style.width = "60%";
 
         const itemName = document.createElement("div") as HTMLDivElement;
@@ -93,7 +140,7 @@ export class Shop {
 
         if (!(this.item[i] instanceof EquippableItem)) {
           const minusBtn: HTMLDivElement = document.createElement("div");
-          minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0");
+          minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0", "border", "border-3", "border-black");
           minusBtn.style.width = "45px";
           minusBtn.style.height = "30px";
           minusBtn.textContent = "-";
@@ -121,13 +168,13 @@ export class Shop {
           });
 
           const itemQtyDiv: HTMLInputElement = document.createElement("input");
-          itemQtyDiv.style.width = "70px";
+          itemQtyDiv.style.width = "90px";
           itemQtyDiv.style.height = "30px";
           itemQtyDiv.type = "number";
-          itemQtyDiv.classList.add("item-qty", `item-${i}`, "ps-4");
+          itemQtyDiv.classList.add("item-qty", `item-${i}`, "border", "border-3", "border-start-0", "border-end-0",  "border-black");
+          itemQtyDiv.style.textAlign = "center";
           itemQtyDiv.value = "1";
           itemQtyDiv.min = "1";
-          itemQtyDiv.disabled = true;
           itemQtyDiv.addEventListener("change", () => {
             const item: HTMLInputElement | null = document.querySelector(
               `.item-${i}`
@@ -152,7 +199,7 @@ export class Shop {
           });
 
           const plusBtn: HTMLDivElement = document.createElement("div");
-          plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0");
+          plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0", "border", "border-3", "border-black");
           plusBtn.style.width = "45px";
           plusBtn.style.height = "30px";
           plusBtn.textContent = "+";
@@ -180,20 +227,29 @@ export class Shop {
           colDiv1.appendChild(minusBtn);
           colDiv1.appendChild(itemQtyDiv);
           colDiv1.appendChild(plusBtn);
+          
           const colDiv2: HTMLDivElement = document.createElement("div");
-          colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`);
+          colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "d-flex", "align-items-center", "position-relative");
+
+          const goldIcon: HTMLImageElement = document.createElement("img");
+          goldIcon.src = GoldImagePath;
+          goldIcon.className = "ms-2 me-2"
+          goldIcon.style.width = "30px";
+
           const totalPriceDiv: HTMLDivElement = document.createElement("div");
           totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
           totalPriceDiv.textContent = `Gold ${
             parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()
           }`;
+
+          colDiv2.appendChild(goldIcon);
           colDiv2.appendChild(totalPriceDiv);
 
           addBox.appendChild(colDiv1);
           addBox.appendChild(colDiv2);
         } else {
           const colDiv2: HTMLDivElement = document.createElement("div");
-          colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`);
+          colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "position-relative");
           const totalPriceDiv: HTMLDivElement = document.createElement("div");
           totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
           totalPriceDiv.textContent = `Gold ${this.item[i].getItemPrice()}`;
@@ -204,7 +260,7 @@ export class Shop {
         }
         const buyButton = document.createElement("button") as HTMLButtonElement;
         buyButton.className =
-          "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow";
+          "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
         buyButton.innerHTML = "Buy";
         if (this.item[i] instanceof EquippableItem) {
           // alert("EquippableItem");
@@ -242,7 +298,7 @@ export class Shop {
                           API.updateGold(token, -price);
                         }
                         if (currentItem instanceof EquippableItem) {
-                          alert(playerGold + " " + price);
+                          // alert(playerGold + " " + price);
                           //basically what we need to do is to first check if the item is an equippable
                           //then we basically do nothing to said object and just go to the gameManager
                           //and from the gamemanager we do a force upgrade.
@@ -250,12 +306,15 @@ export class Shop {
                           //TL;DR: this is fucking stupid but my hands and mind have forced me. Forgive me my son -Frans
                           if(currentItem instanceof Sword){
                             this.game?.upgradeSword();
+                            this.upgradeSword(currentItem, (currentItem.getLevel()+1));
                           }
                           else if(currentItem instanceof Pickaxe){ 
                             this.game?.upgradePickaxe();
+                            this.upgradePickaxe(currentItem, (currentItem.getLevel()+1))
                           }
                           else if(currentItem instanceof Shovel){
                             this.game?.upgradeShovel();
+                            this.upgradeShovel(currentItem, (currentItem.getLevel()+1))
                           }
                           this.inventory?.addItemOwned(i, currentQty);
                           currentItem.upgrade();

@@ -43,6 +43,7 @@ export class API {
       const response = await fetch(apiUrl);
       // alert(JSON.stringify(response));
       let question: Question = {
+        id: "",
         text: "",
         a: "",
         b: "",
@@ -53,6 +54,7 @@ export class API {
       if (!response.ok) throw new Error("Network Response was not ok");
       const jsonString = await response.text();
       const jsonData = JSON.parse(jsonString);
+      question.id = jsonData.id;
       question.text = jsonData.text;
       question.a = jsonData.a;
       question.b = jsonData.b;
@@ -212,9 +214,32 @@ export class API {
     }
   }
 
-  public async digTile(x: number, y: number) {}
+  public async digTile(x: number, y: number, tile: string) {
+    try{
+      const apiURL = `${LOCAL_API_URL}/dig?x=${x}&y=${y}&tile=${tile}`;
+      const request: RequestInfo = new Request(apiURL, {
+        method: "PUT",
+      });
+      const response = await fetch(request);
+      if (!response.ok) throw new Error("Network Response was not ok");
+    } catch (error) {
+      console.error("hello");
+    }
+  }
 
   public static async Dynamite(username: string) {
+    const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-250`;
+    const request: RequestInfo = new Request(apiUrl, {
+      method: "PUT",
+    });
+    const response = await fetch(request);
+    if (!response.ok) throw new Error("Network Response was not ok");
+    const jsonString = await response.text();
+    const jsonData = JSON.parse(jsonString);
+    return JSON.stringify(jsonData);
+  }
+
+  public static async CannonBall(username:string){
     const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-500`;
     const request: RequestInfo = new Request(apiUrl, {
       method: "PUT",

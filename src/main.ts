@@ -58,6 +58,7 @@ window.onload = async () => {
   const DButton = document.querySelector("#d") as HTMLButtonElement;
   const energyDiv = document.querySelector("#energyAmount") as HTMLDivElement;
   const goldDiv = document.querySelector("#goldAmount") as HTMLDivElement;
+  const questionIDDiv = document.querySelector("#questionID") as HTMLDivElement;
 
   loadAsset(); //load game asset
 
@@ -82,7 +83,8 @@ window.onload = async () => {
       CButton,
       DButton,
       energyDiv,
-      goldDiv
+      goldDiv,
+      questionIDDiv
     ),
     new LeaderboardView(leaderboardButton, leaderboard, leaderboardElement)
   );
@@ -106,22 +108,79 @@ window.onload = async () => {
 
   soalButton.addEventListener("click", async () => {
     await game.getQuestionView()?.UpdateQuestion();
+    game.logActivity("Changing Question! (Cooldown: 20s)");
+    soalButton.disabled = true;
+    setTimeout(function(){
+      soalButton.disabled = false;
+    }, 20000);
   });
 
   AButton.addEventListener("click", async () => {
-    await game.getQuestionView()?.checkAnswer(AButton, AButton.value);
+    const correct = await game.getQuestionView()?.checkAnswer(AButton, AButton.value);
+    if(!correct){
+      game.logActivity("Wrong Answer! (Wait 20s to answer again)");
+      AButton.disabled = true;
+      BButton.disabled = true;
+      CButton.disabled = true;
+      DButton.disabled = true;
+      setTimeout(function(){
+        AButton.disabled = false;
+        BButton.disabled = false;
+        CButton.disabled = false;
+        DButton.disabled = false;
+      }, 20000);
+    }
   });
 
   BButton.addEventListener("click", async () => {
-    await game.getQuestionView()?.checkAnswer(BButton, BButton.value);
+    const correct = await game.getQuestionView()?.checkAnswer(BButton, BButton.value);
+    if(!correct){
+      game.logActivity("Wrong Answer! (Wait 20s to answer again)");
+      AButton.disabled = true;
+      BButton.disabled = true;
+      CButton.disabled = true;
+      DButton.disabled = true;
+      setTimeout(function(){
+        AButton.disabled = false;
+        BButton.disabled = false;
+        CButton.disabled = false;
+        DButton.disabled = false;
+      }, 20000);
+    }
   });
 
   CButton.addEventListener("click", async () => {
-    await game.getQuestionView()?.checkAnswer(CButton, CButton.value);
+    const correct = await game.getQuestionView()?.checkAnswer(CButton, CButton.value);
+    if(!correct){
+      game.logActivity("Wrong Answer! (Wait 20s to answer again)");
+      AButton.disabled = true;
+      BButton.disabled = true;
+      CButton.disabled = true;
+      DButton.disabled = true;
+      setTimeout(function(){
+        AButton.disabled = false;
+        BButton.disabled = false;
+        CButton.disabled = false;
+        DButton.disabled = false;
+      }, 20000);
+    }
   });
 
   DButton.addEventListener("click", async () => {
-    await game.getQuestionView()?.checkAnswer(DButton, DButton.value);
+    const correct = await game.getQuestionView()?.checkAnswer(DButton, DButton.value);
+    if(!correct){
+      game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+      AButton.disabled = true;
+      BButton.disabled = true;
+      CButton.disabled = true;
+      DButton.disabled = true;
+      setTimeout(function(){
+        AButton.disabled = false;
+        BButton.disabled = false;
+        CButton.disabled = false;
+        DButton.disabled =false;
+      }, 20000);
+    }
   });
 
   document.addEventListener("keydown", (e) => {
@@ -177,15 +236,15 @@ window.onload = async () => {
       }
     }
 
-    if (key === "1") {
-      game.getPlayer().setEquipmentLevels(1);
-    }
-    if (key === "2") {
-      game.getPlayer().setEquipmentLevels(2);
-    }
-    if (key === "3") {
-      game.getPlayer().setEquipmentLevels(3);
-    }
+    // if (key === "1") {
+    //   game.getPlayer().setEquipmentLevels(1);
+    // }
+    // if (key === "2") {
+    //   game.getPlayer().setEquipmentLevels(2);
+    // }
+    // if (key === "3") {
+    //   game.getPlayer().setEquipmentLevels(3);
+    // }
 
     if (key === "i") {
       //destroy top entity
@@ -224,7 +283,7 @@ window.onload = async () => {
       const currentEquipped = game
         .getPlayer()
         .getCurrentEquipment() as EquippableItem;
-      game.Action(Direction.Down, currentEquipped);
+      game.Action(Direction.Under, currentEquipped);
     }
 
     // if(key=="["){
@@ -236,6 +295,8 @@ window.onload = async () => {
   });
 };
 function fullscreenHandler() {
+  const { TopImagePath, BottomImagePath } = require("./config/env.json");
+
   const isFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
   const atas = document.getElementById("atas") as HTMLDivElement;
   const bawah = document.getElementById("bawah") as HTMLDivElement;
@@ -250,8 +311,8 @@ function fullscreenHandler() {
     atas.style.backgroundColor = "transparent";
     bawah.style.backgroundColor = "transparent";
 
-    atas.style.backgroundImage = "url('/src/Assets/background/pxl-1.jpeg')";
-    bawah.style.backgroundImage = "url('/src/Assets/background/pxl-2.jpeg')";
+    atas.style.backgroundImage = `url('${TopImagePath}')`;
+    bawah.style.backgroundImage = `url('${BottomImagePath}')`;
   }
 }
 

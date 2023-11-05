@@ -5,11 +5,11 @@ const {
   PickaxeName,
   PickaxeDesc,
   PickaxePrice,
-  PickaxeImagePath,
+  IronPickaxeImagePath,
 } = require("../../../dist/config/env.json");
 
 export class Pickaxe extends EquippableItem {
   constructor() {
-    super(PickaxeImagePath, PickaxeName, PickaxeDesc, PickaxePrice);
+    super(IronPickaxeImagePath, PickaxeName, PickaxeDesc, PickaxePrice);
   }
 }

@@ -28,9 +28,9 @@
         <!-- Content for the right side -->
         <div class="UI atas p-4" id="atas">
           <div class="d-flex mb-4 mt-3">
-            <button class="button-shop btn border border-black rounded-0 me-3 shadow" style="background-color:springgreen;">Shop</button>
-            <button class="button-inventory btn border border-black rounded-0 me-3 shadow" style="background-color:springgreen;">Inventory</button>
-            <button class="button-leaderboard btn border border-black rounded-0 me-3 shadow" style="background-color:springgreen;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <button class="button-shop btn border border-black border-3 rounded-0 me-3 shadow" style="background-color:springgreen;">Shop</button>
+            <button class="button-inventory btn border border-black border-3 rounded-0 me-3 shadow" style="background-color:springgreen;">Inventory</button>
+            <button class="button-leaderboard btn border border-black border-3 rounded-0 me-3 shadow" style="background-color:springgreen;" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Leaderboard
             </button>
 
@@ -38,17 +38,16 @@
               
               <!-- Leaderboard Modal -->
               <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
+                <div class="modal-dialog modal-dialog-scrollable modal-lg" >
+                  <div class="modal-content rounded-0 border border-3 border-black">
                     <div class="modal-header">
-                      <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                      <h1 class="modal-title fs-5" id="exampleModalLabel">Leaderboard</h1>
                       <button type="button" class="btn-close close-leaderboard-button" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary">Save changes</button>
+                      <button type="button" class="btn btn-primary rounded-0 border border-3 border-black" data-bs-dismiss="modal">Close</button>
                     </div>
                   </div>
                 </div>
@@ -59,18 +58,25 @@
         </div>
 
         <div class="UI bawah p-4 border-top border-black" id="bawah">
-            <div class="amountStatus d-flex border border-1 border-black p-2 shadow" style="background-color:sandybrown ;">
-                <div class="energyAmount w-50" id="energyAmount">Energy : </div>
-                <div class="goldAmount w-50" id="goldAmount">Gold : </div>
+            <div class="amountStatus d-flex border border-3 border-black p-2 shadow" style="background-color:sandybrown ;">
+                <div class="w-50 d-flex">
+                  <img src="dist/Assets/final/gold2.png" alt="" class="me-2" style="height: 25px;">
+                  <div class="goldAmount" id="goldAmount">Gold : </div>
+                </div>
+                <div class="w-50 d-flex">
+                  <img src="dist/Assets/final/energy2.png" alt="" class="me-2" style="height: 25px;">
+                  <div class="energyAmount" id="energyAmount">Energy : </div>
+                </div>
             </div>
-            <div class="question mt-4 border border-1 border-black p-2 shadow overflow-auto" id="question" style="background-color:blanchedalmond ;"></div>
-            <div class="btns mt-2">
-                <button class="ansBtn btn border border-1 rounded-0 border-black shadow me-1" id="a" style="background-color:springgreen;"></button>
-                <button class="ansBtn btn border border-1 rounded-0 border-black shadow me-1" id="b" style="background-color:springgreen;"></button>
-                <button class="ansBtn btn border border-1 rounded-0 border-black shadow me-1" id="c" style="background-color:springgreen;"></button>
-                <button class="ansBtn btn border border-1 rounded-0 border-black shadow me-1" id="d" style="background-color:springgreen;"></button>
+            <div class="question mt-4 border border-3 border-black p-1 shadow overflow-auto" id="questionID" style="background-color: blanchedalmond;"></div>
+            <div class="question mt-4 border border-3 border-black p-2 shadow overflow-auto" id="question" style="background-color:blanchedalmond ;"></div>
+            <div class="btns">
+                <button class="ansBtn btn border border-3 rounded-0 border-black shadow me-1 mt-2" id="a" style="background-color:springgreen;"></button>
+                <button class="ansBtn btn border border-3 rounded-0 border-black shadow me-1 mt-2" id="b" style="background-color:springgreen;"></button>
+                <button class="ansBtn btn border border-3 rounded-0 border-black shadow me-1 mt-2" id="c" style="background-color:springgreen;"></button>
+                <button class="ansBtn btn border border-3 rounded-0 border-black shadow me-1 mt-2" id="d" style="background-color:springgreen;"></button>
             </div>
-            <button id="get-soal" class="btn border border-1 rounded-0 border-black mt-4 shadow" style="background-color:sandybrown ;">Random soal</button>
+            <button id="get-soal" class="btn border border-3 rounded-0 border-black mt-4 shadow" style="background-color:sandybrown ;">Random soal</button>
         </div>
         
 

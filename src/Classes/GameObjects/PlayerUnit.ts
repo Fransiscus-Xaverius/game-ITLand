@@ -161,6 +161,27 @@ export class PlayerUnit extends Entity {
         this.playAnimation("dig");
     }
 
+    public Break(direction:Direction){
+        if(this.isMoving) return;
+        this.isMoving = true;
+        switch(direction){
+            case Direction.Down:
+              this.playAnimation('break_down');
+              break;
+            case Direction.Up:
+              this.playAnimation('break_up');
+              break;
+            case Direction.Left:
+              this.playAnimation('break_left');
+              break;
+            case Direction.Right:
+              this.playAnimation('break_right');
+              break;
+            default:
+              break;
+        }
+    }
+
     public Mine(direction:Direction) { //play mining animation
         if (this.isMoving) return;
         this.isMoving = true;
@@ -181,12 +202,6 @@ export class PlayerUnit extends Entity {
               break;
         }
     }
-    
-    private MiningAnimation(direction: Direction){
-        // this.activePlayerUnit?.playAnimation('')
-        
-      }
-
 
     public move(direction: Direction): void {
         if (this.isMoving || direction == Direction.None) return;

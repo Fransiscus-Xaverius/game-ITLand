@@ -64,6 +64,21 @@ export default function loadAsset():void{
     player_dig.src = "./dist/Assets/final/hooman_down_dig.png"
     Animation.assets["dig"] = player_dig;
 
+    //player sword swing animation assets
+    const break_down = new Image()
+    break_down.src = "./dist/Assets/final/hooman_down_sword.png";
+    Animation.assets["break_down"] = break_down;
+    const break_up = new Image()
+    break_up.src = "./dist/Assets/final/hooman_up_sword.png";
+    Animation.assets["break_up"] = break_up;
+    const break_left = new Image()
+    break_left.src = "./dist/Assets/final/hooman_left_sword.png";
+    Animation.assets["break_left"] = break_left;
+    const break_right = new Image()
+    break_right.src = "./dist/Assets/final/hooman_right_sword.png";
+    Animation.assets["break_right"] = break_right;
+
+
     //Other Entities
     const obsidian = new Image();
     obsidian.src = './dist/Assets/final/obsidian.png'
@@ -81,6 +96,10 @@ export default function loadAsset():void{
     chest_medium.src = "./dist/Assets/final/chest1.png";
     const chest_large = new Image();
     chest_large.src = "./dist/Assets/final/chest2.png";
+
+    //Player items assets
+    const stone_pickaxe = new Image();
+    
 
     //Tile
     Animation.assets['grass_tile'] = grass

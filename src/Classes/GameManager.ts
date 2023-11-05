@@ -103,12 +103,15 @@ export class GameManager {
     this.player.energy = Number(playerdata?.energy); //an example of why typescript is dogshit.
     //redoing load grid because the constructor cannot be an async function.
     this.grid = new Grid({ x: 100, y: 100 });
+    this.leaderboardView?.setPlayer(this.player);
     this.grid.redo(map.tile, map.entity);
     this.grid.addEntity(this.player.units[0]);
     this.setActivePlayerUnit(this.player.units[0]);
     this.questionView?.setPlayer(this.player);
     await this.questionView?.load();
     this.questionView?.refreshStats();
+    this.leaderboardView?.setQuestionView(this.questionView!);
+    this.leaderboardView?.setGameManager(this);
     this.setInventory();
   }
 
@@ -208,6 +211,7 @@ export class GameManager {
         break;
     }
     this.grid.tiles[y][x] = newTile;
+    await this.api?.digTile(y, x, newTile.name.toLowerCase());
   }
 
   public alertEntity(): void {
@@ -241,13 +245,14 @@ export class GameManager {
   //Direction.Under = dig
 
   public Action(direction: Direction, tools: EquippableItem) {
+    if(this.activePlayerUnit?.isMoving) return;
     const coords = this.player.getCoordinate();
     const temp = this.getGridEntity(coords, direction);
     const tile = this.getTile(coords);
-    if (!temp && direction != Direction.Down) {
+    if (!temp && direction != Direction.Under) {
       this.logActivity("No Entity Object!");
       return;
-    } else if (Direction.Down && !tile) {
+    } else if (Direction.Under && !tile) {
       //should not be possible but its here just in case :D
       this.logActivity("Invalid Dig Command");
       return;
@@ -263,7 +268,7 @@ export class GameManager {
     if (tools instanceof Pickaxe) {
       this.actionWithPickaxe(temp!, direction);
     } else if (tools instanceof Sword) {
-      this.actionWithSword(temp!);
+      this.actionWithSword(temp!, direction);
     } else if (tools instanceof Shovel) {
       if (!tile) return;
       this.actionWithShovel(tile!);
@@ -336,9 +341,8 @@ export class GameManager {
     }
   }
 
-  private actionWithSword(entity: Entity) {
+  private actionWithSword(entity: Entity, direction: Direction) {
     const entityName = entity.getEntityName();
-    alert(entityName);
     if (
       entityName == "Chest" ||
       entityName == "Medium_Chest" ||
@@ -357,6 +361,7 @@ export class GameManager {
             entity.getCoordinate().x,
             entity.getCoordinate().y
           );
+          this.activePlayerUnit?.Break(direction);
           this.player.useEnergy(entity.getRequiredEnergy());
           this.questionView?.refreshStats();
         } else {
@@ -370,7 +375,7 @@ export class GameManager {
     }
   }
 
-  private actionWithShovel(tile: Tile) {
+  private  actionWithShovel(tile: Tile) {
     const isDiggable = !tile.name.includes("digged");
     switch (isDiggable) {
       case true:
@@ -385,6 +390,8 @@ export class GameManager {
           ) {
             // this.logActivity("Digged this tile, function not implemented")
             this.digTile(tile.getCoordinate().x, tile.getCoordinate().y);
+            this.activePlayerUnit?.Dig();
+            this.player.useEnergy(tile.getRequiredEnergy());
             this.questionView?.refreshStats();
           } else {
             this.logActivity("Upgrade your shovel to excavate this area!");

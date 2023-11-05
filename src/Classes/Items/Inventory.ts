@@ -74,6 +74,7 @@ export class Inventory {
 
     for (const { item, amount } of this.items) {
       const cardElement = document.createElement("div");
+<<<<<<< HEAD
       cardElement.classList.add(
         "card",
         "float-start",
@@ -86,6 +87,10 @@ export class Inventory {
         "shadow"
       );
       cardElement.style.width = "46%";
+=======
+      cardElement.classList.add("card", "float-start", "me-3", "mb-3", "p-3", "border", "border-3", "border-black", "rounded-0", "shadow", "position-relative");
+      cardElement.style.width = "46%"
+>>>>>>> 128bde6b4e689582e52bd7f012d50fb5d02be314
 
       const imgDiv = document.createElement("div");
       imgDiv.classList.add("w-100", "d-flex", "justify-content-center");
@@ -121,6 +126,7 @@ export class Inventory {
       if (item instanceof ConsumableItem) {
         ownedElement.innerText = `Owned: ${amount}`;
         itemUseButton.textContent = "Consume";
+<<<<<<< HEAD
         itemUseButton.classList.add(
           "Consume",
           `consume-item-${index}`,
@@ -130,6 +136,10 @@ export class Inventory {
           "rounded-0",
           "shadow"
         );
+=======
+        itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-75", "rounded-0", "shadow", "border", "border-3", "border-black", "position-absolute", "start-50", "translate-middle-x");
+        itemUseButton.style.bottom = "15px";
+>>>>>>> 128bde6b4e689582e52bd7f012d50fb5d02be314
 
         // Create a function to handle the click event
         const handleItemClick = () => {
@@ -149,7 +159,6 @@ export class Inventory {
                     `.item-owned-qty-${currIndex}`
                   ) as HTMLHeadingElement | null;
                   if (currentQty) {
-                    alert(this.items[currIndex].amount);
                     currentQty.innerHTML = `Owned: ${this.items[currIndex].amount}`;
                   }
                 }
@@ -162,14 +171,8 @@ export class Inventory {
       } else if (item instanceof EquippableItem) {
         ownedElement.innerText = `Level: ${amount}`;
         itemUseButton.textContent = "Equip";
-        itemUseButton.classList.add(
-          "Equip",
-          "btn",
-          "btn-primary",
-          "w-100",
-          "rounded-0",
-          "shadow"
-        );
+        itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-75", "rounded-0", "shadow", "border", "border-3", "border-black", "position-absolute", "start-50", "translate-middle-x");
+        itemUseButton.style.bottom = "15px";
         itemUseButton.addEventListener("click", () => {
           if (this.player) {
             this.player.equip(item);

@@ -16,6 +16,51 @@ module.exports={
     "BookOfEnergyTier3ImagePath": "dist/Assets/Prototype/buku3.png",
     "BookOfEnergyTier3EnergyRestored": 30,
 
+    "IronSwordName": "Iron Sword",
+    "IronSwordDesc": "A Sword made of Iron, used to break chests and slay sea monsters.",
+    "IronSwordPrice": 200,
+    "IronSwordImagePath": "dist/assets/final/ironsword.png",
+
+    "IronShovelName": "Iron Shovel",
+    "IronShovelDesc": "A Shovel made of Iron, used to dig.",
+    "IronShovelPrice": 200,
+    "IronShovelImagePath": "dist/assets/final/ironshovel.png",
+
+    "IronPickaxeName": "Iron Pickaxe",
+    "IronPickaxeDesc": "A Pickaxe made of Iron, used to mine.",
+    "IronPickaxePrice": 200,
+    "IronPickaxeImagePath": "dist/assets/final/ironpickaxe.png",
+
+    "GoldSwordName": "Gold Sword",
+    "GoldSwordDesc": "A Legendary Sword made of Gold, used to break chests and slay sea monsters.",
+    "GoldSwordPrice": 500,
+    "GoldSwordImagePath": "dist/assets/final/goldsword.png",
+
+    "GoldShovelName": "Gold Shovel",
+    "GoldShovelDesc": "A Legendary Shovel made of Gold, used to dig.",
+    "GoldShovelPrice": 500,
+    "GoldShovelImagePath": "dist/assets/final/goldshovel.png",
+
+    "GoldPickaxeName": "Gold Pickaxe",
+    "GoldPickaxeDesc": "A Legendary Pickaxe made of Gold, used to mine.",
+    "GoldPickaxePrice": 500,
+    "GoldPickaxeImagePath": "dist/assets/final/goldpickaxe.png",
+
+    "SilverSwordName": "Silver Sword",
+    "SilverSwordDesc": "A Durable Sword made of Silver, used to break chests and slay sea monsters.",
+    "SilverSwordPrice": 350,
+    "SilverSwordImagePath": "dist/assets/final/silversword.png",
+
+    "SilverShovelName": "Silver Shovel",
+    "SilverShovelDesc": "A Durable Shovel made of Silver, used to dig.",
+    "SilverShovelPrice": 350,
+    "SilverShovelImagePath": "dist/assets/final/silvershovel.png",
+
+    "SilverPickaxeName": "Silver Pickaxe",
+    "SilverPickaxeDesc": "A Durable Pickaxe made of Silver, used to mine.",
+    "SilverPickaxePrice": 350,
+    "SilverPickaxeImagePath": "dist/assets/final/silverpickaxe.png",
+
     "SwordName": "Sword Name",
     "SwordDesc": "Sword Description",
     "SwordPrice": 1000,
@@ -87,6 +132,7 @@ class API {
                 const response = yield fetch(apiUrl);
                 // alert(JSON.stringify(response));
                 let question = {
+                    id: "",
                     text: "",
                     a: "",
                     b: "",
@@ -98,6 +144,7 @@ class API {
                     throw new Error("Network Response was not ok");
                 const jsonString = yield response.text();
                 const jsonData = JSON.parse(jsonString);
+                question.id = jsonData.id;
                 question.text = jsonData.text;
                 question.a = jsonData.a;
                 question.b = jsonData.b;
@@ -283,10 +330,37 @@ class API {
             }
         });
     }
-    digTile(x, y) {
-        return __awaiter(this, void 0, void 0, function* () { });
+    digTile(x, y, tile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const apiURL = `${LOCAL_API_URL}/dig?x=${x}&y=${y}&tile=${tile}`;
+                const request = new Request(apiURL, {
+                    method: "PUT",
+                });
+                const response = yield fetch(request);
+                if (!response.ok)
+                    throw new Error("Network Response was not ok");
+            }
+            catch (error) {
+                console.error("hello");
+            }
+        });
     }
     static Dynamite(username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-250`;
+            const request = new Request(apiUrl, {
+                method: "PUT",
+            });
+            const response = yield fetch(request);
+            if (!response.ok)
+                throw new Error("Network Response was not ok");
+            const jsonString = yield response.text();
+            const jsonData = JSON.parse(jsonString);
+            return JSON.stringify(jsonData);
+        });
+    }
+    static CannonBall(username) {
         return __awaiter(this, void 0, void 0, function* () {
             const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-500`;
             const request = new Request(apiUrl, {
@@ -2111,7 +2185,7 @@ class GameManager {
         this.player.setGameManager(this);
     }
     load(token) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         return __awaiter(this, void 0, void 0, function* () {
             this.token = token;
             (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
@@ -2129,12 +2203,15 @@ class GameManager {
             this.player.energy = Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.energy); //an example of why typescript is dogshit.
             //redoing load grid because the constructor cannot be an async function.
             this.grid = new Grid_1.Grid({ x: 100, y: 100 });
+            (_e = this.leaderboardView) === null || _e === void 0 ? void 0 : _e.setPlayer(this.player);
             this.grid.redo(map.tile, map.entity);
             this.grid.addEntity(this.player.units[0]);
             this.setActivePlayerUnit(this.player.units[0]);
-            (_e = this.questionView) === null || _e === void 0 ? void 0 : _e.setPlayer(this.player);
-            yield ((_f = this.questionView) === null || _f === void 0 ? void 0 : _f.load());
-            (_g = this.questionView) === null || _g === void 0 ? void 0 : _g.refreshStats();
+            (_f = this.questionView) === null || _f === void 0 ? void 0 : _f.setPlayer(this.player);
+            yield ((_g = this.questionView) === null || _g === void 0 ? void 0 : _g.load());
+            (_h = this.questionView) === null || _h === void 0 ? void 0 : _h.refreshStats();
+            (_j = this.leaderboardView) === null || _j === void 0 ? void 0 : _j.setQuestionView(this.questionView);
+            (_k = this.leaderboardView) === null || _k === void 0 ? void 0 : _k.setGameManager(this);
             this.setInventory();
         });
     }
@@ -2204,7 +2281,7 @@ class GameManager {
         });
     }
     digTile(x, y) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             const name = (_a = this.grid.tiles[y][x]) === null || _a === void 0 ? void 0 : _a.getTileName();
             const drop = (_b = this.grid.tiles[y][x]) === null || _b === void 0 ? void 0 : _b.tileDrop();
@@ -2231,6 +2308,7 @@ class GameManager {
                     break;
             }
             this.grid.tiles[y][x] = newTile;
+            yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.digTile(y, x, newTile.name.toLowerCase()));
         });
     }
     alertEntity() {
@@ -2256,14 +2334,17 @@ class GameManager {
     //2 = break
     //Direction.Under = dig
     Action(direction, tools) {
+        var _a;
+        if ((_a = this.activePlayerUnit) === null || _a === void 0 ? void 0 : _a.isMoving)
+            return;
         const coords = this.player.getCoordinate();
         const temp = this.getGridEntity(coords, direction);
         const tile = this.getTile(coords);
-        if (!temp && direction != Direction_1.Direction.Down) {
+        if (!temp && direction != Direction_1.Direction.Under) {
             this.logActivity("No Entity Object!");
             return;
         }
-        else if (Direction_1.Direction.Down && !tile) {
+        else if (Direction_1.Direction.Under && !tile) {
             //should not be possible but its here just in case :D
             this.logActivity("Invalid Dig Command");
             return;
@@ -2277,7 +2358,7 @@ class GameManager {
             this.actionWithPickaxe(temp, direction);
         }
         else if (tools instanceof Sword_1.Sword) {
-            this.actionWithSword(temp);
+            this.actionWithSword(temp, direction);
         }
         else if (tools instanceof Shovel_1.Shovel) {
             if (!tile)
@@ -2338,18 +2419,18 @@ class GameManager {
             this.logActivity("You cannot use a pickaxe to break this object! (wrong equipment used)");
         }
     }
-    actionWithSword(entity) {
-        var _a;
+    actionWithSword(entity, direction) {
+        var _a, _b;
         const entityName = entity.getEntityName();
-        alert(entityName);
         if (entityName == "Chest" ||
             entityName == "Medium_Chest" ||
             entityName == "Big_Chest") {
             if (this.isGoodEnough(this.player.getEnergy(), entity.getRequiredEnergy())) {
                 if (this.isGoodEnough(this.player.getEquipmentLevels().sword, entity.getEntityLevel())) {
                     this.removeGridEntity(entity.getCoordinate().x, entity.getCoordinate().y);
+                    (_a = this.activePlayerUnit) === null || _a === void 0 ? void 0 : _a.Break(direction);
                     this.player.useEnergy(entity.getRequiredEnergy());
-                    (_a = this.questionView) === null || _a === void 0 ? void 0 : _a.refreshStats();
+                    (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.refreshStats();
                 }
                 else {
                     this.logActivity(`Upgrade your sword to destroy this block!`);
@@ -2364,7 +2445,7 @@ class GameManager {
         }
     }
     actionWithShovel(tile) {
-        var _a;
+        var _a, _b;
         const isDiggable = !tile.name.includes("digged");
         switch (isDiggable) {
             case true:
@@ -2372,7 +2453,9 @@ class GameManager {
                     if (this.isGoodEnough(this.player.getEquipmentLevels().shovel, tile.level)) {
                         // this.logActivity("Digged this tile, function not implemented")
                         this.digTile(tile.getCoordinate().x, tile.getCoordinate().y);
-                        (_a = this.questionView) === null || _a === void 0 ? void 0 : _a.refreshStats();
+                        (_a = this.activePlayerUnit) === null || _a === void 0 ? void 0 : _a.Dig();
+                        this.player.useEnergy(tile.getRequiredEnergy());
+                        (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.refreshStats();
                     }
                     else {
                         this.logActivity("Upgrade your shovel to excavate this area!");
@@ -2841,7 +2924,7 @@ class Grid {
                         case 'cave':
                             this.tiles[i].push(new Ground_1.Ground({ x: j, y: i }));
                             break;
-                        case 'digged_grass':
+                        case 'digged_ground':
                             this.tiles[i].push(new digged_ground_1.DiggedGround({ x: j, y: i }));
                             break;
                         case 'digged_sand':
@@ -3195,6 +3278,27 @@ class PlayerUnit extends Entity_1.Entity {
         this.isMoving = true;
         this.playAnimation("dig");
     }
+    Break(direction) {
+        if (this.isMoving)
+            return;
+        this.isMoving = true;
+        switch (direction) {
+            case Direction_1.Direction.Down:
+                this.playAnimation('break_down');
+                break;
+            case Direction_1.Direction.Up:
+                this.playAnimation('break_up');
+                break;
+            case Direction_1.Direction.Left:
+                this.playAnimation('break_left');
+                break;
+            case Direction_1.Direction.Right:
+                this.playAnimation('break_right');
+                break;
+            default:
+                break;
+        }
+    }
     Mine(direction) {
         if (this.isMoving)
             return;
@@ -3215,9 +3319,6 @@ class PlayerUnit extends Entity_1.Entity {
             default:
                 break;
         }
-    }
-    MiningAnimation(direction) {
-        // this.activePlayerUnit?.playAnimation('')
     }
     move(direction) {
         if (this.isMoving || direction == Direction_1.Direction.None)
@@ -3673,7 +3774,7 @@ class Inventory {
         let index = 0;
         for (const { item, amount } of this.items) {
             const cardElement = document.createElement("div");
-            cardElement.classList.add("card", "float-start", "me-3", "mb-3", "p-3", "border", "border-1", "rounded-0", "shadow");
+            cardElement.classList.add("card", "float-start", "me-3", "mb-3", "p-3", "border", "border-3", "border-black", "rounded-0", "shadow", "position-relative");
             cardElement.style.width = "46%";
             const imgDiv = document.createElement("div");
             imgDiv.classList.add("w-100", "d-flex", "justify-content-center");
@@ -3693,7 +3794,8 @@ class Inventory {
             if (item instanceof ConsumableItem_1.ConsumableItem) {
                 ownedElement.innerText = `Owned: ${amount}`;
                 itemUseButton.textContent = "Consume";
-                itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-100", "rounded-0", "shadow");
+                itemUseButton.classList.add("Consume", `consume-item-${index}`, "btn", "btn-success", "w-75", "rounded-0", "shadow", "border", "border-3", "border-black", "position-absolute", "start-50", "translate-middle-x");
+                itemUseButton.style.bottom = "15px";
                 // Create a function to handle the click event
                 const handleItemClick = () => {
                     if (amount > 0) {
@@ -3707,7 +3809,10 @@ class Inventory {
                                     this.items[currIndex].amount -= 1;
                                     const currentQty = document.querySelector(`.item-owned-qty-${currIndex}`);
                                     if (currentQty) {
+<<<<<<< HEAD
                                         alert(this.items[currIndex].amount);
+=======
+>>>>>>> 128bde6b4e689582e52bd7f012d50fb5d02be314
                                         currentQty.innerHTML = `Owned: ${this.items[currIndex].amount}`;
                                     }
                                 }
@@ -3720,7 +3825,8 @@ class Inventory {
             else if (item instanceof EquippableItem_1.EquippableItem) {
                 ownedElement.innerText = `Level: ${amount}`;
                 itemUseButton.textContent = "Equip";
-                itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-100", "rounded-0", "shadow");
+                itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-75", "rounded-0", "shadow", "border", "border-3", "border-black", "position-absolute", "start-50", "translate-middle-x");
+                itemUseButton.style.bottom = "15px";
                 itemUseButton.addEventListener("click", () => {
                     if (this.player) {
                         this.player.equip(item);
@@ -3782,10 +3888,10 @@ exports.Item = Item;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pickaxe = void 0;
 const EquippableItem_1 = require("./Abstract/EquippableItem");
-const { PickaxeName, PickaxeDesc, PickaxePrice, PickaxeImagePath, } = require("../../../dist/config/env.json");
+const { PickaxeName, PickaxeDesc, PickaxePrice, IronPickaxeImagePath, } = require("../../../dist/config/env.json");
 class Pickaxe extends EquippableItem_1.EquippableItem {
     constructor() {
-        super(PickaxeImagePath, PickaxeName, PickaxeDesc, PickaxePrice);
+        super(IronPickaxeImagePath, PickaxeName, PickaxeDesc, PickaxePrice);
     }
 }
 exports.Pickaxe = Pickaxe;
@@ -3795,10 +3901,10 @@ exports.Pickaxe = Pickaxe;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shovel = void 0;
 const EquippableItem_1 = require("./Abstract/EquippableItem");
-const { ShovelName, ShovelDesc, ShovelPrice, ShovelImagePath } = require('../../../dist/config/env.json');
+const { ShovelName, ShovelDesc, ShovelPrice, IronShovelImagePath } = require('../../../dist/config/env.json');
 class Shovel extends EquippableItem_1.EquippableItem {
     constructor() {
-        super(ShovelImagePath, ShovelName, ShovelDesc, ShovelPrice);
+        super(IronShovelImagePath, ShovelName, ShovelDesc, ShovelPrice);
     }
 }
 exports.Shovel = Shovel;
@@ -3808,10 +3914,10 @@ exports.Shovel = Shovel;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sword = void 0;
 const EquippableItem_1 = require("./Abstract/EquippableItem");
-const { SwordName, SwordDesc, SwordPrice, SwordImagePath } = require('../../../dist/config/env.json');
+const { SwordName, SwordDesc, SwordPrice, IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../../../dist/config/env.json');
 class Sword extends EquippableItem_1.EquippableItem {
     constructor() {
-        super(SwordImagePath, SwordName, SwordDesc, SwordPrice);
+        super(IronSwordImagePath, SwordName, SwordDesc, SwordPrice);
     }
 }
 exports.Sword = Sword;
@@ -3830,13 +3936,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Leaderboard = void 0;
 const API_1 = require("./API");
+const authentication_1 = require("../utils/authentication");
 class Leaderboard {
     constructor() {
         this.listUser = [];
         this.player = null;
+        this.questionView = null;
+        this.gameManager = null;
     }
     setPlayer(player) {
         this.player = player;
+    }
+    setGameManager(gameManager) {
+        this.gameManager = gameManager;
+    }
+    setQuestionView(questionView) {
+        this.questionView = questionView;
     }
     DynamiteAttack(username) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -3844,21 +3959,42 @@ class Leaderboard {
         });
     }
     open(leaderboardElement) {
-        var _a;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            const { GoldImagePath, EnergyImagePath, DynamiteImagePath, CannonBallImagePath } = require('../config/env.json');
             const allUserString = JSON.parse(yield API_1.API.getAllUser());
             this.listUser = [];
             for (let i = 0; i < allUserString.length; i++) {
-                const currentUser = allUserString[i];
-                this.listUser.push(currentUser);
+                if (((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName()) != allUserString[i].username) {
+                    const currentUser = allUserString[i];
+                    this.listUser.push(currentUser);
+                }
             }
             let showUser = "";
+            let leadNumber = 1;
             for (let i = 0; i < this.listUser.length; i++) {
                 let currentUser = this.listUser[i];
                 // if(currentUser.username != )
-                if (currentUser.username != ((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName())) {
-                    showUser += `<div>${currentUser.username} ${currentUser.total_gold}<button class='dyn-atk dyn-attack-${i}'>Dynamite Attack</button><button class='cnn-atk cnn-attack-${i}'>CannonBall Attack</button></div>`;
+                if (currentUser.username != ((_b = this.player) === null || _b === void 0 ? void 0 : _b.getPlayerName()) && currentUser.total_gold > 0) {
+                    showUser +=
+                        `<div class='d-flex align-items-center'>
+          <p class='mb-0 me-3' style='font-size: small;'>${leadNumber}. ${currentUser.username}</p>
+          <div class='d-flex align-items-center me-3' >
+            <img src='${GoldImagePath}' class='me-1' style='height: 30px'>
+            <p class='mb-0' style='font-size: small;'>${currentUser.total_gold}</p>
+          </div>
+          <div class='dyn-atk dyn-attack-${i} btn btn-danger d-flex align-items-center me-3 rounded-0 border border-black border-3'>
+            <img src='${DynamiteImagePath}' class='me-1' style='height: 30px'>
+            <p class='m-0' style='font-size: small;'>Dynamite Attack</p>
+          </div>
+          <div class='cnn-atk cnn-attack-${i} btn btn-secondary d-flex align-items-center rounded-0 border border-black border-3'>
+            <img src='${CannonBallImagePath}' class='me-1' style='height: 30px'>
+            <p class='m-0' style='font-size: small;'>Cannon Bomb Attack</p>
+          </div>
+        </div>`;
+                    leadNumber++;
                 }
+                ;
             }
             if (leaderboardElement) {
                 leaderboardElement.innerHTML = showUser;
@@ -3866,13 +4002,46 @@ class Leaderboard {
             const allDynButton = document.querySelectorAll(".dyn-atk");
             const allCnnButton = document.querySelectorAll(".cnn-atk");
             for (let i = 0; i < allCnnButton.length; i++) {
-                allCnnButton[i].addEventListener("click", () => { });
-                allDynButton[i].addEventListener("click", () => {
-                    API_1.API.Dynamite(this.listUser[i].username);
+                allCnnButton[i].addEventListener("click", () => {
+                    var _a;
                     let closeButton = document.querySelector(".close-leaderboard-button");
-                    if (closeButton) {
-                        // alert("close button click")
+                    if (this.player.getGold() > 150) {
+                        this.player.useGold(150);
+                        console.error(this.listUser);
+                        alert(this.listUser[i].username);
+                        API_1.API.CannonBall(this.listUser[i].username);
+                        const token = (0, authentication_1.getAuthToken)();
+                        if (token) {
+                            API_1.API.updateGold(token, -150);
+                        }
+                        if (closeButton) {
+                            // alert("close button click")
+                            closeButton.click();
+                        }
+                    }
+                    else {
                         closeButton.click();
+                        (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You don't have enough gold to attack this player! (Gold needed: 150)");
+                    }
+                });
+                allDynButton[i].addEventListener("click", () => {
+                    var _a;
+                    let closeButton = document.querySelector(".close-leaderboard-button");
+                    if (this.player.getGold() > 75) {
+                        this.player.useGold(75);
+                        API_1.API.Dynamite(this.listUser[i].username);
+                        const token = (0, authentication_1.getAuthToken)();
+                        if (token) {
+                            API_1.API.updateGold(token, -150);
+                        }
+                        if (closeButton) {
+                            // alert("close button click")
+                            closeButton.click();
+                        }
+                    }
+                    else {
+                        closeButton.click();
+                        (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You don't have enough gold to attack this player! (Gold needed: 75)");
                     }
                 });
             }
@@ -3881,7 +4050,7 @@ class Leaderboard {
 }
 exports.Leaderboard = Leaderboard;
 
-},{"./API":2}],58:[function(require,module,exports){
+},{"../config/env.json":64,"../utils/authentication":67,"./API":2}],58:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LeaderboardView = void 0;
@@ -3891,6 +4060,14 @@ class LeaderboardView {
         this.leaderboardElement = leaderboardElement;
         this.leaderboardButton = leaderboardButton;
         this.initLeaderboard();
+    }
+    setGameManager(gameManager) {
+        var _a;
+        (_a = this.leaderboard) === null || _a === void 0 ? void 0 : _a.setGameManager(gameManager);
+    }
+    setQuestionView(questionView) {
+        var _a;
+        (_a = this.leaderboard) === null || _a === void 0 ? void 0 : _a.setQuestionView(questionView);
     }
     setPlayer(player) {
         if (this.leaderboard) {
@@ -3958,6 +4135,10 @@ class Player {
         p1.createAnimation("mine_left", Animation_1.Animation.assets["mine_left"], { x: 32, y: 32 }, 5, "", 10);
         p1.createAnimation("mine_right", Animation_1.Animation.assets["mine_right"], { x: 32, y: 32 }, 5, "", 10);
         p1.createAnimation("dig", Animation_1.Animation.assets["dig"], { x: 32, y: 32 }, 8, "", 15);
+        p1.createAnimation("break_up", Animation_1.Animation.assets["break_up"], { x: 32, y: 32 }, 5, "", 10);
+        p1.createAnimation("break_down", Animation_1.Animation.assets["break_down"], { x: 32, y: 32 }, 5, "", 10);
+        p1.createAnimation("break_left", Animation_1.Animation.assets["break_left"], { x: 32, y: 32 }, 5, "", 10);
+        p1.createAnimation("break_right", Animation_1.Animation.assets["break_right"], { x: 32, y: 32 }, 5, "", 10);
         p1.setMoveSpeed(2);
         this.units.push(p1);
     }
@@ -4075,7 +4256,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestionView = void 0;
 class QuestionView {
-    constructor(QuestionArea, UpdateButton, api, a, b, c, d, energyDiv, goldDiv) {
+    constructor(QuestionArea, UpdateButton, api, a, b, c, d, energyDiv, goldDiv, questionIDDiv) {
         this.QuestionArea = null;
         this.UpdateBtn = null;
         this.api = null;
@@ -4087,12 +4268,17 @@ class QuestionView {
         this.energyDiv = null;
         this.goldDiv = null;
         this.player = null;
+        this.questionIDDiv = null;
         this.setQuestionArea(QuestionArea);
         this.setUpdateBtn(UpdateButton);
         this.setAPI(api);
         this.setButtons(a, b, c, d);
         this.setEnergyDiv(energyDiv);
         this.setGoldDiv(goldDiv);
+        this.setQuestionIDDiv(questionIDDiv);
+    }
+    setQuestionIDDiv(questionIDDiv) {
+        this.questionIDDiv = questionIDDiv;
     }
     setGoldDiv(goldDiv) {
         this.goldDiv = goldDiv;
@@ -4140,11 +4326,13 @@ class QuestionView {
         return __awaiter(this, void 0, void 0, function* () {
             if (val == "") {
                 self.style.display = 'none';
+                return false;
             }
             else {
                 (_a = this.player) === null || _a === void 0 ? void 0 : _a.addEnergy(10);
                 this.refreshStats();
                 yield this.UpdateQuestion();
+                return true;
             }
         });
     }
@@ -4163,9 +4351,11 @@ class QuestionView {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const reqAPI = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.getQuestion());
-            let q = { text: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.text, a: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.a, b: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.b, c: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.c, d: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.d, answer: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.answer };
+            console.error(reqAPI);
+            let q = { id: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.id, text: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.text, a: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.a, b: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.b, c: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.c, d: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.d, answer: reqAPI === null || reqAPI === void 0 ? void 0 : reqAPI.answer };
             this.curQuestion = q;
             if (this.QuestionArea != null && this.curQuestion != null && this.AButton && this.BButton && this.CButton && this.DButton) {
+                this.questionIDDiv.innerHTML = `Question ID: ${q.id}`;
                 this.QuestionArea.innerHTML = this.curQuestion.text;
                 this.AButton.innerHTML = `A. ${q.a}`;
                 this.BButton.innerHTML = `B. ${q.b}`;
@@ -4211,6 +4401,10 @@ const Pickaxe_1 = require("./Items/Pickaxe");
 const API_1 = require("./API");
 const authentication_1 = require("../utils/authentication");
 const EquippableItem_1 = require("./Items/Abstract/EquippableItem");
+const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../config/env.json');
+const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../config/env.json');
+const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../config/env.json');
+const { GoldImagePath } = require('../config/env.json');
 class Shop {
     constructor() {
         this.player = null;
@@ -4221,6 +4415,45 @@ class Shop {
             new BookOfEnergyT2_1.BookOfEnergyTier2(),
             new BookOfEnergyT3_1.BookOfEnergyTier3(),
         ];
+    }
+    upgradeSword(currentItem, x) {
+        switch (x) {
+            case 2:
+                currentItem.setImagePath(SilverSwordImagePath);
+                break;
+            case 3:
+                currentItem.setImagePath(GoldSwordImagePath);
+                break;
+            default:
+                currentItem.setImagePath(IronSwordImagePath);
+                break;
+        }
+    }
+    upgradeShovel(currentItem, x) {
+        switch (x) {
+            case 2:
+                currentItem.setImagePath(SilverShovelImagePath);
+                break;
+            case 3:
+                currentItem.setImagePath(GoldShovelImagePath);
+                break;
+            default:
+                currentItem.setImagePath(IronShovelImagePath);
+                break;
+        }
+    }
+    upgradePickaxe(currentItem, x) {
+        switch (x) {
+            case 2:
+                currentItem.setImagePath(SilverPickaxeImagePath);
+                break;
+            case 3:
+                currentItem.setImagePath(GoldPickaxeImagePath);
+                break;
+            default:
+                currentItem.setImagePath(IronPickaxeImagePath);
+                break;
+        }
     }
     setGame(game) {
         this.game = game;
@@ -4259,14 +4492,14 @@ class Shop {
                 // Card shop
                 const shopTemp = document.createElement("div");
                 shopTemp.className =
-                    "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-1 shadow";
+                    "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-black border-3 shadow";
                 // Image shop
                 const shopImage = document.createElement("img");
                 shopImage.className = "shop-img h-100";
                 shopImage.src = this.item[i].getImagePath();
                 // Description shop
                 const desc = document.createElement("div");
-                desc.className = "desc h-100";
+                desc.className = "desc h-100 position-relative";
                 desc.style.width = "60%";
                 const itemName = document.createElement("div");
                 itemName.className = " fs-5 w-100";
@@ -4280,7 +4513,7 @@ class Shop {
                 colDiv1.classList.add("col-sm-6", "d-flex", "align-items-center");
                 if (!(this.item[i] instanceof EquippableItem_1.EquippableItem)) {
                     const minusBtn = document.createElement("div");
-                    minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0");
+                    minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0", "border", "border-3", "border-black");
                     minusBtn.style.width = "45px";
                     minusBtn.style.height = "30px";
                     minusBtn.textContent = "-";
@@ -4301,13 +4534,13 @@ class Shop {
                         }
                     });
                     const itemQtyDiv = document.createElement("input");
-                    itemQtyDiv.style.width = "70px";
+                    itemQtyDiv.style.width = "90px";
                     itemQtyDiv.style.height = "30px";
                     itemQtyDiv.type = "number";
-                    itemQtyDiv.classList.add("item-qty", `item-${i}`, "ps-4");
+                    itemQtyDiv.classList.add("item-qty", `item-${i}`, "border", "border-3", "border-start-0", "border-end-0", "border-black");
+                    itemQtyDiv.style.textAlign = "center";
                     itemQtyDiv.value = "1";
                     itemQtyDiv.min = "1";
-                    itemQtyDiv.disabled = true;
                     itemQtyDiv.addEventListener("change", () => {
                         const item = document.querySelector(`.item-${i}`);
                         const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
@@ -4325,7 +4558,7 @@ class Shop {
                         }
                     });
                     const plusBtn = document.createElement("div");
-                    plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0");
+                    plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0", "border", "border-3", "border-black");
                     plusBtn.style.width = "45px";
                     plusBtn.style.height = "30px";
                     plusBtn.textContent = "+";
@@ -4347,17 +4580,22 @@ class Shop {
                     colDiv1.appendChild(itemQtyDiv);
                     colDiv1.appendChild(plusBtn);
                     const colDiv2 = document.createElement("div");
-                    colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`);
+                    colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "d-flex", "align-items-center", "position-relative");
+                    const goldIcon = document.createElement("img");
+                    goldIcon.src = GoldImagePath;
+                    goldIcon.className = "ms-2 me-2";
+                    goldIcon.style.width = "30px";
                     const totalPriceDiv = document.createElement("div");
                     totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
                     totalPriceDiv.textContent = `Gold ${parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()}`;
+                    colDiv2.appendChild(goldIcon);
                     colDiv2.appendChild(totalPriceDiv);
                     addBox.appendChild(colDiv1);
                     addBox.appendChild(colDiv2);
                 }
                 else {
                     const colDiv2 = document.createElement("div");
-                    colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`);
+                    colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "position-relative");
                     const totalPriceDiv = document.createElement("div");
                     totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
                     totalPriceDiv.textContent = `Gold ${this.item[i].getItemPrice()}`;
@@ -4367,7 +4605,7 @@ class Shop {
                 }
                 const buyButton = document.createElement("button");
                 buyButton.className =
-                    "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow";
+                    "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
                 buyButton.innerHTML = "Buy";
                 if (this.item[i] instanceof EquippableItem_1.EquippableItem) {
                     // alert("EquippableItem");
@@ -4400,19 +4638,22 @@ class Shop {
                                                     API_1.API.updateGold(token, -price);
                                                 }
                                                 if (currentItem instanceof EquippableItem_1.EquippableItem) {
-                                                    alert(playerGold + " " + price);
+                                                    // alert(playerGold + " " + price);
                                                     //basically what we need to do is to first check if the item is an equippable
                                                     //then we basically do nothing to said object and just go to the gameManager
                                                     //and from the gamemanager we do a force upgrade.
                                                     //TL;DR: this is fucking stupid but my hands and mind have forced me. Forgive me my son -Frans
                                                     if (currentItem instanceof Sword_1.Sword) {
                                                         (_a = this.game) === null || _a === void 0 ? void 0 : _a.upgradeSword();
+                                                        this.upgradeSword(currentItem, (currentItem.getLevel() + 1));
                                                     }
                                                     else if (currentItem instanceof Pickaxe_1.Pickaxe) {
                                                         (_b = this.game) === null || _b === void 0 ? void 0 : _b.upgradePickaxe();
+                                                        this.upgradePickaxe(currentItem, (currentItem.getLevel() + 1));
                                                     }
                                                     else if (currentItem instanceof Shovel_1.Shovel) {
                                                         (_c = this.game) === null || _c === void 0 ? void 0 : _c.upgradeShovel();
+                                                        this.upgradeShovel(currentItem, (currentItem.getLevel() + 1));
                                                     }
                                                     (_d = this.inventory) === null || _d === void 0 ? void 0 : _d.addItemOwned(i, currentQty);
                                                     currentItem.upgrade();
@@ -4489,7 +4730,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"../utils/authentication":66,"./API":2,"./Items/Abstract/EquippableItem":48,"./Items/BookOfEnergyT1":49,"./Items/BookOfEnergyT2":50,"./Items/BookOfEnergyT3":51,"./Items/Pickaxe":54,"./Items/Shovel":55,"./Items/Sword":56}],62:[function(require,module,exports){
+},{"../config/env.json":64,"../utils/authentication":67,"./API":2,"./Items/Abstract/EquippableItem":48,"./Items/BookOfEnergyT1":49,"./Items/BookOfEnergyT2":50,"./Items/BookOfEnergyT3":51,"./Items/Pickaxe":54,"./Items/Shovel":55,"./Items/Sword":56}],62:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -4629,6 +4870,93 @@ class TerminalView {
 exports.TerminalView = TerminalView;
 
 },{}],64:[function(require,module,exports){
+module.exports={
+    "BookOfEnergyTier1Name": "Book Of Energy Tier 1",
+    "BookOfEnergyTier1Desc": "Basic energy guide, +<number> energy.",
+    "BookOfEnergyTier1Price": 100,
+    "BookOfEnergyTier1ImagePath": "dist/Assets/Prototype/buku1.png",
+    "BookOfEnergyTier1EnergyRestored": 10,
+    "BookOfEnergyTier2Name": "Book Of Energy Tier 2",
+    "BookOfEnergyTier2Desc": "Advanced energy guide, +<number> energy.",
+    "BookOfEnergyTier2Price": 200,
+    "BookOfEnergyTier2ImagePath": "dist/Assets/Prototype/buku2.png",
+    "BookOfEnergyTier2EnergyRestored": 20,
+    "BookOfEnergyTier3Name": "Book Of Energy Tier 3",
+    "BookOfEnergyTier3Desc": "Mastery energy guide, +<number> energy.",
+    "BookOfEnergyTier3Price": 300,
+    "BookOfEnergyTier3ImagePath": "dist/Assets/Prototype/buku3.png",
+    "BookOfEnergyTier3EnergyRestored": 30,
+
+    "IronSwordName": "Iron Sword",
+    "IronSwordDesc": "A Sword made of Iron, used to break chests and slay sea monsters.",
+    "IronSwordPrice": 200,
+    "IronSwordImagePath": "dist/assets/final/ironsword.png",
+
+    "IronShovelName": "Iron Shovel",
+    "IronShovelDesc": "A Shovel made of Iron, used to dig.",
+    "IronShovelPrice": 200,
+    "IronShovelImagePath": "dist/assets/final/ironshovel.png",
+
+    "IronPickaxeName": "Iron Pickaxe",
+    "IronPickaxeDesc": "A Pickaxe made of Iron, used to mine.",
+    "IronPickaxePrice": 200,
+    "IronPickaxeImagePath": "dist/assets/final/ironpickaxe.png",
+
+    "GoldSwordName": "Gold Sword",
+    "GoldSwordDesc": "A Legendary Sword made of Gold, used to break chests and slay sea monsters.",
+    "GoldSwordPrice": 500,
+    "GoldSwordImagePath": "dist/assets/final/goldsword.png",
+
+    "GoldShovelName": "Gold Shovel",
+    "GoldShovelDesc": "A Legendary Shovel made of Gold, used to dig.",
+    "GoldShovelPrice": 500,
+    "GoldShovelImagePath": "dist/assets/final/goldshovel.png",
+
+    "GoldPickaxeName": "Gold Pickaxe",
+    "GoldPickaxeDesc": "A Legendary Pickaxe made of Gold, used to mine.",
+    "GoldPickaxePrice": 500,
+    "GoldPickaxeImagePath": "dist/assets/final/goldpickaxe.png",
+
+    "SilverSwordName": "Silver Sword",
+    "SilverSwordDesc": "A Durable Sword made of Silver, used to break chests and slay sea monsters.",
+    "SilverSwordPrice": 350,
+    "SilverSwordImagePath": "dist/assets/final/silversword.png",
+
+    "SilverShovelName": "Silver Shovel",
+    "SilverShovelDesc": "A Durable Shovel made of Silver, used to dig.",
+    "SilverShovelPrice": 350,
+    "SilverShovelImagePath": "dist/assets/final/silvershovel.png",
+
+    "SilverPickaxeName": "Silver Pickaxe",
+    "SilverPickaxeDesc": "A Durable Pickaxe made of Silver, used to mine.",
+    "SilverPickaxePrice": 350,
+    "SilverPickaxeImagePath": "dist/assets/final/silverpickaxe.png",
+
+    "SwordName": "Sword Name",
+    "SwordDesc": "Sword Description",
+    "SwordPrice": 1000,
+    "SwordImagePath": "dist/Assets/Prototype/buku3.png",
+    "ShovelName": "Shovel Name",
+    "ShovelDesc": "Shovel Description",
+    "ShovelPrice": 150,
+    "ShovelImagePath": "dist/Assets/Prototype/buku3.png",
+    "PickaxeName": "Pickaxe Name",
+    "PickaxeDesc": "Pickaxe Description",
+    "PickaxePrice": 200,
+    "PickaxeImagePath": "dist/Assets/Prototype/buku3.png",
+
+    "GoldImagePath": "dist/assets/final/gold2.png",
+    "EnergyImagePath": "dist/assets/final/energy2.png",
+    "DynamiteImagePath": "dist/assets/final/dynamite.png",
+    "CannonBallImagePath": "dist/assets/final/cannonball bomb.png",
+
+    "TopImagePath": "dist/assets/final/pxl-1.jpeg",
+    "BottomImagePath": "dist/assets/final/pxl-2.jpeg",
+    
+    "LOCAL_API_URL": "http://localhost:3000",
+    "MASTER_API_URL": "http://localhost:8000"
+}
+},{}],65:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -4690,6 +5018,19 @@ function loadAsset() {
     const player_dig = new Image();
     player_dig.src = "./dist/Assets/final/hooman_down_dig.png";
     Animation_1.Animation.assets["dig"] = player_dig;
+    //player sword swing animation assets
+    const break_down = new Image();
+    break_down.src = "./dist/Assets/final/hooman_down_sword.png";
+    Animation_1.Animation.assets["break_down"] = break_down;
+    const break_up = new Image();
+    break_up.src = "./dist/Assets/final/hooman_up_sword.png";
+    Animation_1.Animation.assets["break_up"] = break_up;
+    const break_left = new Image();
+    break_left.src = "./dist/Assets/final/hooman_left_sword.png";
+    Animation_1.Animation.assets["break_left"] = break_left;
+    const break_right = new Image();
+    break_right.src = "./dist/Assets/final/hooman_right_sword.png";
+    Animation_1.Animation.assets["break_right"] = break_right;
     //Other Entities
     const obsidian = new Image();
     obsidian.src = './dist/Assets/final/obsidian.png';
@@ -4707,6 +5048,8 @@ function loadAsset() {
     chest_medium.src = "./dist/Assets/final/chest1.png";
     const chest_large = new Image();
     chest_large.src = "./dist/Assets/final/chest2.png";
+    //Player items assets
+    const stone_pickaxe = new Image();
     //Tile
     Animation_1.Animation.assets['grass_tile'] = grass;
     Animation_1.Animation.assets['flowery_grass_tile'] = flowergrass;
@@ -4758,7 +5101,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":31}],65:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":31}],66:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -4816,6 +5159,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     const DButton = document.querySelector("#d");
     const energyDiv = document.querySelector("#energyAmount");
     const goldDiv = document.querySelector("#goldAmount");
+    const questionIDDiv = document.querySelector("#questionID");
     (0, loadAsset_1.default)(); //load game asset
     const userToken = (0, authentication_1.getAuthToken)();
     if (!userToken) {
@@ -4823,7 +5167,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         alert("Not logged in!");
         window.location.replace("login.html");
     }
-    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv, goldDiv), new LeaderboardView_1.LeaderboardView(leaderboardButton, leaderboard, leaderboardElement));
+    const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv, goldDiv, questionIDDiv), new LeaderboardView_1.LeaderboardView(leaderboardButton, leaderboard, leaderboardElement));
     game.start();
     yield game.load(userToken);
     const pUnit = game.getActivePlayerUnit();
@@ -4842,22 +5186,79 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     soalButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _e;
         yield ((_e = game.getQuestionView()) === null || _e === void 0 ? void 0 : _e.UpdateQuestion());
+        game.logActivity("Changing Question! (Cooldown: 20s)");
+        soalButton.disabled = true;
+        setTimeout(function () {
+            soalButton.disabled = false;
+        }, 20000);
     }));
     AButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _f;
-        yield ((_f = game.getQuestionView()) === null || _f === void 0 ? void 0 : _f.checkAnswer(AButton, AButton.value));
+        const correct = yield ((_f = game.getQuestionView()) === null || _f === void 0 ? void 0 : _f.checkAnswer(AButton, AButton.value));
+        if (!correct) {
+            game.logActivity("Wrong Answer! (Wait 20s to answer again)");
+            AButton.disabled = true;
+            BButton.disabled = true;
+            CButton.disabled = true;
+            DButton.disabled = true;
+            setTimeout(function () {
+                AButton.disabled = false;
+                BButton.disabled = false;
+                CButton.disabled = false;
+                DButton.disabled = false;
+            }, 20000);
+        }
     }));
     BButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _g;
-        yield ((_g = game.getQuestionView()) === null || _g === void 0 ? void 0 : _g.checkAnswer(BButton, BButton.value));
+        const correct = yield ((_g = game.getQuestionView()) === null || _g === void 0 ? void 0 : _g.checkAnswer(BButton, BButton.value));
+        if (!correct) {
+            game.logActivity("Wrong Answer! (Wait 20s to answer again)");
+            AButton.disabled = true;
+            BButton.disabled = true;
+            CButton.disabled = true;
+            DButton.disabled = true;
+            setTimeout(function () {
+                AButton.disabled = false;
+                BButton.disabled = false;
+                CButton.disabled = false;
+                DButton.disabled = false;
+            }, 20000);
+        }
     }));
     CButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _h;
-        yield ((_h = game.getQuestionView()) === null || _h === void 0 ? void 0 : _h.checkAnswer(CButton, CButton.value));
+        const correct = yield ((_h = game.getQuestionView()) === null || _h === void 0 ? void 0 : _h.checkAnswer(CButton, CButton.value));
+        if (!correct) {
+            game.logActivity("Wrong Answer! (Wait 20s to answer again)");
+            AButton.disabled = true;
+            BButton.disabled = true;
+            CButton.disabled = true;
+            DButton.disabled = true;
+            setTimeout(function () {
+                AButton.disabled = false;
+                BButton.disabled = false;
+                CButton.disabled = false;
+                DButton.disabled = false;
+            }, 20000);
+        }
     }));
     DButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         var _j;
-        yield ((_j = game.getQuestionView()) === null || _j === void 0 ? void 0 : _j.checkAnswer(DButton, DButton.value));
+        const correct = yield ((_j = game.getQuestionView()) === null || _j === void 0 ? void 0 : _j.checkAnswer(DButton, DButton.value));
+        if (!correct) {
+            game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+            AButton.disabled = true;
+            BButton.disabled = true;
+            CButton.disabled = true;
+            DButton.disabled = true;
+            setTimeout(function () {
+                AButton.disabled = false;
+                BButton.disabled = false;
+                CButton.disabled = false;
+                DButton.disabled = false;
+            }, 20000);
+        }
     }));
     document.addEventListener("keydown", (e) => {
         let key = e.key;
@@ -4911,15 +5312,15 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
                     break;
             }
         }
-        if (key === "1") {
-            game.getPlayer().setEquipmentLevels(1);
-        }
-        if (key === "2") {
-            game.getPlayer().setEquipmentLevels(2);
-        }
-        if (key === "3") {
-            game.getPlayer().setEquipmentLevels(3);
-        }
+        // if (key === "1") {
+        //   game.getPlayer().setEquipmentLevels(1);
+        // }
+        // if (key === "2") {
+        //   game.getPlayer().setEquipmentLevels(2);
+        // }
+        // if (key === "3") {
+        //   game.getPlayer().setEquipmentLevels(3);
+        // }
         if (key === "i") {
             //destroy top entity
             //for destroying crates, and stone entities.
@@ -4956,7 +5357,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
             const currentEquipped = game
                 .getPlayer()
                 .getCurrentEquipment();
-            game.Action(Direction_1.Direction.Down, currentEquipped);
+            game.Action(Direction_1.Direction.Under, currentEquipped);
         }
         // if(key=="["){
         //   alert('cheat');
@@ -4966,6 +5367,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 function fullscreenHandler() {
+    const { TopImagePath, BottomImagePath } = require("./config/env.json");
     const isFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
     const atas = document.getElementById("atas");
     const bawah = document.getElementById("bawah");
@@ -4978,8 +5380,8 @@ function fullscreenHandler() {
     else {
         atas.style.backgroundColor = "transparent";
         bawah.style.backgroundColor = "transparent";
-        atas.style.backgroundImage = "url('/src/Assets/background/pxl-1.jpeg')";
-        bawah.style.backgroundImage = "url('/src/Assets/background/pxl-2.jpeg')";
+        atas.style.backgroundImage = `url('${TopImagePath}')`;
+        bawah.style.backgroundImage = `url('${BottomImagePath}')`;
     }
 }
 let resizeTimeout = null;
@@ -4994,7 +5396,7 @@ function handleResize() {
 }
 window.addEventListener("resize", handleResize);
 
-},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":24,"./Classes/InventoryView":45,"./Classes/Items/Inventory":52,"./Classes/Leaderboard":57,"./Classes/LeaderboardView":58,"./Classes/QuestionView":60,"./Classes/Shop":61,"./Classes/ShopView":62,"./Classes/TerminalView":63,"./loadAsset":64,"./utils/authentication":66}],66:[function(require,module,exports){
+},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":24,"./Classes/InventoryView":45,"./Classes/Items/Inventory":52,"./Classes/Leaderboard":57,"./Classes/LeaderboardView":58,"./Classes/QuestionView":60,"./Classes/Shop":61,"./Classes/ShopView":62,"./Classes/TerminalView":63,"./config/env.json":64,"./loadAsset":65,"./utils/authentication":67}],67:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAuthToken = void 0;
@@ -5003,4 +5405,4 @@ const getAuthToken = () => {
 };
 exports.getAuthToken = getAuthToken;
 
-},{}]},{},[65]);
+},{}]},{},[66]);
