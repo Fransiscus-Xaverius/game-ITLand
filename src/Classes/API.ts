@@ -101,9 +101,9 @@ export class API {
     return playerdata;
   }
 
-  public async sendInventory(B1_amount: number, B2_amount: number, B3_amount: number, pickaxeLevel: number, shovelLevel: number, swordLevel:  number){
+  public async sendInventory(username: string, B1_amount: number, B2_amount: number, B3_amount: number, pickaxeLevel: number, shovelLevel: number, swordLevel:  number){
     try{
-      const apiUrl = `${LOCAL_API_URL}/inventory?B1=${B1_amount}&B2=${B2_amount}&B3=${B3_amount}&pickaxe=${pickaxeLevel}&shovel=${shovelLevel}&sword=${swordLevel}`;
+      const apiUrl = `${LOCAL_API_URL}/inventory?username=${username}&B1=${B1_amount}&B2=${B2_amount}&B3=${B3_amount}&pickaxe=${pickaxeLevel}&shovel=${shovelLevel}&sword=${swordLevel}`;
       const request: RequestInfo = new Request(apiUrl, {
         method: "PUT",
       });
