@@ -184,7 +184,7 @@ class API {
                 }
             }
             catch (error) {
-                alert(error);
+                console.error(error);
                 return null;
             }
         });
