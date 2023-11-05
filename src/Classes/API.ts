@@ -101,6 +101,19 @@ export class API {
     return playerdata;
   }
 
+  public async sendInventory(B1_amount: number, B2_amount: number, B3_amount: number, pickaxeLevel: number, shovelLevel: number, swordLevel:  number){
+    try{
+      const apiUrl = `${LOCAL_API_URL}/inventory?B1=${B1_amount}&B2=${B2_amount}&B3=${B3_amount}&pickaxe=${pickaxeLevel}&shovel=${shovelLevel}&sword=${swordLevel}`;
+      const request: RequestInfo = new Request(apiUrl, {
+        method: "PUT",
+      });
+      const response = await fetch(request);
+      if (!response.ok) throw new Error("Network Response was not ok");
+    } catch (error) {
+      console.error("hello");
+    }
+  }
+
   public async gameStart() {
     const apiUrl = LOCAL_API_URL + "/map";
     const apiUrl2 = LOCAL_API_URL + "/entity";
