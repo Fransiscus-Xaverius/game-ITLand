@@ -3801,18 +3801,14 @@ class Inventory {
                     if (amount > 0) {
                         if (this.player) {
                             if (item instanceof Book_1.Book) {
-                                const energyRestored = item.useItem();
                                 // Access the button's class using the `itemUseButton` reference
                                 const currIndex = parseInt(itemUseButton.className.split(" ")[1].split("-")[2]);
                                 if (this.items[currIndex].amount > 0) {
+                                    const energyRestored = item.useItem();
                                     this.player.addEnergy(energyRestored);
                                     this.items[currIndex].amount -= 1;
                                     const currentQty = document.querySelector(`.item-owned-qty-${currIndex}`);
                                     if (currentQty) {
-<<<<<<< HEAD
-                                        alert(this.items[currIndex].amount);
-=======
->>>>>>> 128bde6b4e689582e52bd7f012d50fb5d02be314
                                         currentQty.innerHTML = `Owned: ${this.items[currIndex].amount}`;
                                     }
                                 }
