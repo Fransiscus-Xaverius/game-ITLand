@@ -196,19 +196,32 @@ class API {
             return playerdata;
         });
     }
-    sendInventory(username, B1_amount, B2_amount, B3_amount, pickaxeLevel, shovelLevel, swordLevel) {
+    static sendInventory(username, B1_amount, B2_amount, B3_amount, pickaxeLevel, shovelLevel, swordLevel) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const apiUrl = `${LOCAL_API_URL}/inventory?username=${username}&B1=${B1_amount}&B2=${B2_amount}&B3=${B3_amount}&pickaxe=${pickaxeLevel}&shovel=${shovelLevel}&sword=${swordLevel}`;
+                const apiUrl = `${LOCAL_API_URL}/inventory`;
+                const data = {
+                    username: username,
+                    B1_amount: B1_amount,
+                    B2_amount: B2_amount,
+                    B3_amount: B3_amount,
+                    pickaxeLevel: pickaxeLevel,
+                    shovelLevel: shovelLevel,
+                    swordLevel: swordLevel,
+                };
                 const request = new Request(apiUrl, {
                     method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
                 });
                 const response = yield fetch(request);
                 if (!response.ok)
                     throw new Error("Network Response was not ok");
             }
             catch (error) {
-                console.error("hello");
+                console.error("There was an error: ", error);
             }
         });
     }
@@ -3752,6 +3765,7 @@ const Book_1 = require("./Abstract/Book");
 const ConsumableItem_1 = require("./Abstract/ConsumableItem");
 const EquippableItem_1 = require("./Abstract/EquippableItem");
 const ItemRelated_enum_1 = require("./Enum/ItemRelated.enum");
+const API_1 = require("../API");
 class Inventory {
     constructor() {
         this.player = null;
@@ -3814,6 +3828,19 @@ class Inventory {
     //   }
     // }
     // public refreshInventory
+    saveInventory() {
+        var _a;
+        const dataToSend = {
+            username: (_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName(),
+            B1_amount: this.items[0].amount,
+            B2_amount: this.items[1].amount,
+            B3_amount: this.items[2].amount,
+            pickaxeLevel: this.items[3].amount,
+            shovelLevel: this.items[4].amount,
+            swordLevel: this.items[5].amount,
+        };
+        API_1.API.sendInventory(dataToSend.username, dataToSend.B1_amount, dataToSend.B2_amount, dataToSend.B3_amount, dataToSend.pickaxeLevel, dataToSend.shovelLevel, dataToSend.swordLevel);
+    }
     open(inventoryShopElement) {
         if (!inventoryShopElement)
             return;
@@ -3860,6 +3887,7 @@ class Inventory {
                                     if (currentQty) {
                                         currentQty.innerHTML = `Owned: ${this.items[currIndex].amount}`;
                                     }
+                                    this.saveInventory();
                                 }
                             }
                         }
@@ -3881,6 +3909,7 @@ class Inventory {
                         allItemsOwned.forEach((e) => {
                             e.innerText = ItemRelated_enum_1.EquipmentStatus.CAN_BE_EQUIP;
                         });
+                        this.saveInventory();
                         this.player.equip(item);
                         this.itemEquipState[index] = ItemRelated_enum_1.EquipState.EQUIPPED;
                         itemUseButton.textContent = ItemRelated_enum_1.EquipmentStatus.EQUIPPED;
@@ -3899,7 +3928,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{"./Abstract/Book":46,"./Abstract/ConsumableItem":47,"./Abstract/EquippableItem":48,"./BookOfEnergyT1":49,"./BookOfEnergyT2":50,"./BookOfEnergyT3":51,"./Enum/ItemRelated.enum":52}],54:[function(require,module,exports){
+},{"../API":2,"./Abstract/Book":46,"./Abstract/ConsumableItem":47,"./Abstract/EquippableItem":48,"./BookOfEnergyT1":49,"./BookOfEnergyT2":50,"./BookOfEnergyT3":51,"./Enum/ItemRelated.enum":52}],54:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
@@ -4666,7 +4695,7 @@ class Shop {
                     if (this.item[i].getLevel() < 3) {
                         // alert("getLevel() < 3");
                         buyButton.onclick = () => {
-                            var _a, _b, _c, _d, _e;
+                            var _a, _b, _c, _d, _e, _f, _g;
                             const currentItem = this.item[i];
                             const totalPriceDiv = document.querySelector(`.total-price-item-${i}`);
                             // const itemAmount: HTMLInputElement | null =
@@ -4709,11 +4738,13 @@ class Shop {
                                                         (_c = this.game) === null || _c === void 0 ? void 0 : _c.upgradeShovel();
                                                         this.upgradeShovel(currentItem, (currentItem.getLevel() + 1));
                                                     }
-                                                    (_d = this.inventory) === null || _d === void 0 ? void 0 : _d.addItemOwned(i, currentQty);
+                                                    (_d = this.inventory) === null || _d === void 0 ? void 0 : _d.saveInventory();
+                                                    (_e = this.inventory) === null || _e === void 0 ? void 0 : _e.addItemOwned(i, currentQty);
                                                     currentItem.upgrade();
                                                 }
                                                 else {
-                                                    (_e = this.inventory) === null || _e === void 0 ? void 0 : _e.addItemOwned(i, currentQty);
+                                                    (_f = this.inventory) === null || _f === void 0 ? void 0 : _f.saveInventory();
+                                                    (_g = this.inventory) === null || _g === void 0 ? void 0 : _g.addItemOwned(i, currentQty);
                                                 }
                                                 this.open(shopHTML);
                                             }

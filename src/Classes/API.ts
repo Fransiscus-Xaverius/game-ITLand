@@ -95,22 +95,48 @@ export class API {
     }
   }
 
-  public async initializePlayer(x: number, y: number, energy: number, username:string) {
+  public async initializePlayer(
+    x: number,
+    y: number,
+    energy: number,
+    username: string
+  ) {
     let firstTick = await this.startTick(x, y, energy, username); //initializes player if player is not defined
     let playerdata = await this.getPlayerData();
     return playerdata;
   }
 
-  public async sendInventory(username: string, B1_amount: number, B2_amount: number, B3_amount: number, pickaxeLevel: number, shovelLevel: number, swordLevel:  number){
-    try{
-      const apiUrl = `${LOCAL_API_URL}/inventory?username=${username}&B1=${B1_amount}&B2=${B2_amount}&B3=${B3_amount}&pickaxe=${pickaxeLevel}&shovel=${shovelLevel}&sword=${swordLevel}`;
+  public static async sendInventory(
+    username: string,
+    B1_amount: number,
+    B2_amount: number,
+    B3_amount: number,
+    pickaxeLevel: number,
+    shovelLevel: number,
+    swordLevel: number
+  ) {
+    try {
+      const apiUrl = `${LOCAL_API_URL}/inventory`;
+      const data = {
+        username: username,
+        B1_amount: B1_amount,
+        B2_amount: B2_amount,
+        B3_amount: B3_amount,
+        pickaxeLevel: pickaxeLevel,
+        shovelLevel: shovelLevel,
+        swordLevel: swordLevel,
+      };
       const request: RequestInfo = new Request(apiUrl, {
         method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       });
       const response = await fetch(request);
       if (!response.ok) throw new Error("Network Response was not ok");
     } catch (error) {
-      console.error("hello");
+      console.error("There was an error: ", error);
     }
   }
 
@@ -139,7 +165,12 @@ export class API {
     return map;
   }
 
-  public async startTick(x: number, y: number, energy: number, username: string) {
+  public async startTick(
+    x: number,
+    y: number,
+    energy: number,
+    username: string
+  ) {
     try {
       const apiUrl = `${LOCAL_API_URL}/player?x=${x}&y=${y}&energy=${energy}&username=${username}`;
       const request: RequestInfo = new Request(apiUrl, {
@@ -228,7 +259,7 @@ export class API {
   }
 
   public async digTile(x: number, y: number, tile: string) {
-    try{
+    try {
       const apiURL = `${LOCAL_API_URL}/dig?x=${x}&y=${y}&tile=${tile}`;
       const request: RequestInfo = new Request(apiURL, {
         method: "PUT",
@@ -252,7 +283,7 @@ export class API {
     return JSON.stringify(jsonData);
   }
 
-  public static async CannonBall(username:string){
+  public static async CannonBall(username: string) {
     const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-500`;
     const request: RequestInfo = new Request(apiUrl, {
       method: "PUT",

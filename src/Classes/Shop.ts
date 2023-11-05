@@ -316,9 +316,11 @@ export class Shop {
                             this.game?.upgradeShovel();
                             this.upgradeShovel(currentItem, (currentItem.getLevel()+1))
                           }
+                          this.inventory?.saveInventory();
                           this.inventory?.addItemOwned(i, currentQty);
                           currentItem.upgrade();
                         } else {
+                          this.inventory?.saveInventory();
                           this.inventory?.addItemOwned(i, currentQty);
                         }
                         this.open(shopHTML);

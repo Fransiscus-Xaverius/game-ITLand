@@ -7,6 +7,7 @@ import { Player } from "../Player";
 import { ConsumableItem } from "./Abstract/ConsumableItem";
 import { EquippableItem } from "./Abstract/EquippableItem";
 import { EquipState, EquipmentStatus } from "./Enum/ItemRelated.enum";
+import { API } from "../API";
 
 export class Inventory {
   private items: ItemStack[];
@@ -79,6 +80,27 @@ export class Inventory {
 
   // public refreshInventory
 
+  public saveInventory() {
+    const dataToSend = {
+      username: this.player?.getPlayerName() as string,
+      B1_amount: this.items[0].amount,
+      B2_amount: this.items[1].amount,
+      B3_amount: this.items[2].amount,
+      pickaxeLevel: this.items[3].amount,
+      shovelLevel: this.items[4].amount,
+      swordLevel: this.items[5].amount,
+    };
+
+    API.sendInventory(
+      dataToSend.username,
+      dataToSend.B1_amount,
+      dataToSend.B2_amount,
+      dataToSend.B3_amount,
+      dataToSend.pickaxeLevel,
+      dataToSend.shovelLevel,
+      dataToSend.swordLevel
+    );
+  }
   public open(inventoryShopElement: HTMLDivElement | null): void {
     if (!inventoryShopElement) return;
 
@@ -177,6 +199,7 @@ export class Inventory {
                   if (currentQty) {
                     currentQty.innerHTML = `Owned: ${this.items[currIndex].amount}`;
                   }
+                  this.saveInventory();
                 }
               }
             }
@@ -212,6 +235,7 @@ export class Inventory {
             allItemsOwned.forEach((e) => {
               e.innerText = EquipmentStatus.CAN_BE_EQUIP;
             });
+            this.saveInventory();
             this.player.equip(item);
             this.itemEquipState[index] = EquipState.EQUIPPED;
             itemUseButton.textContent = EquipmentStatus.EQUIPPED;
