@@ -6,25 +6,31 @@ import { Book } from "./Abstract/Book";
 import { Player } from "../Player";
 import { ConsumableItem } from "./Abstract/ConsumableItem";
 import { EquippableItem } from "./Abstract/EquippableItem";
+import { EquipState, EquipmentStatus } from "./Enum/ItemRelated.enum";
 
 export class Inventory {
   private items: ItemStack[];
+  private itemEquipState: EquipState[];
   private player: Player | null = null;
 
   constructor() {
-    this.items = [];
+    this.items = [] as Array<ItemStack>;
+    this.itemEquipState = [] as Array<EquipState>;
     this.items.push({
       item: new BookOfEnergyTier1(),
       amount: 0,
     });
+    this.itemEquipState.push(EquipState.UNEQUIPPED);
     this.items.push({
       item: new BookOfEnergyTier2(),
       amount: 0,
     });
+    this.itemEquipState.push(EquipState.UNEQUIPPED);
     this.items.push({
       item: new BookOfEnergyTier3(),
       amount: 0,
     });
+    this.itemEquipState.push(EquipState.UNEQUIPPED);
   }
 
   public setPlayer(player: Player): void {
@@ -38,13 +44,25 @@ export class Inventory {
     const shovel = playerEquipments?.shovel;
 
     if (pickaxe) {
-      this.items.push({ item: pickaxe, amount: 1 });
+      this.items.push({
+        item: pickaxe,
+        amount: 1,
+      });
+      this.itemEquipState.push(EquipState.UNEQUIPPED);
     }
     if (sword) {
-      this.items.push({ item: sword, amount: 1 });
+      this.items.push({
+        item: sword,
+        amount: 1,
+      });
+      this.itemEquipState.push(EquipState.UNEQUIPPED);
     }
     if (shovel) {
-      this.items.push({ item: shovel, amount: 1 });
+      this.items.push({
+        item: shovel,
+        amount: 1,
+      });
+      this.itemEquipState.push(EquipState.UNEQUIPPED);
     }
   }
 
@@ -168,7 +186,7 @@ export class Inventory {
         itemUseButton.addEventListener("click", handleItemClick);
       } else if (item instanceof EquippableItem) {
         ownedElement.innerText = `Level: ${amount}`;
-        itemUseButton.textContent = "Equip";
+        itemUseButton.textContent = EquipmentStatus.CAN_BE_EQUIP;
         itemUseButton.classList.add(
           "Equip",
           "btn",
@@ -186,7 +204,17 @@ export class Inventory {
         itemUseButton.style.bottom = "15px";
         itemUseButton.addEventListener("click", () => {
           if (this.player) {
+            this.itemEquipState.forEach((e) => {
+              e = EquipState.UNEQUIPPED;
+            });
+            const allItemsOwned: NodeListOf<HTMLHeadingElement> =
+              document.querySelectorAll(".Equip");
+            allItemsOwned.forEach((e) => {
+              e.innerText = EquipmentStatus.CAN_BE_EQUIP;
+            });
             this.player.equip(item);
+            this.itemEquipState[index] = EquipState.EQUIPPED;
+            itemUseButton.textContent = EquipmentStatus.EQUIPPED;
           }
         });
       }

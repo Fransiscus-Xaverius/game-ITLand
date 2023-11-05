@@ -2544,7 +2544,7 @@ class GameManager {
 }
 exports.GameManager = GameManager;
 
-},{"./API":2,"./GameObjects/Direction":24,"./GameObjects/Grid":29,"./GameObjects/digged_granite":38,"./GameObjects/digged_gravel":39,"./GameObjects/digged_ground":40,"./GameObjects/digged_sand":41,"./Items/Pickaxe":54,"./Items/Shovel":55,"./Items/Sword":56,"./Player":59}],19:[function(require,module,exports){
+},{"./API":2,"./GameObjects/Direction":24,"./GameObjects/Grid":29,"./GameObjects/digged_granite":38,"./GameObjects/digged_gravel":39,"./GameObjects/digged_ground":40,"./GameObjects/digged_sand":41,"./Items/Pickaxe":55,"./Items/Shovel":56,"./Items/Sword":57,"./Player":60}],19:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Animated = void 0;
@@ -3367,7 +3367,7 @@ class PlayerUnit extends Entity_1.Entity {
 }
 exports.PlayerUnit = PlayerUnit;
 
-},{"../Console/Terminal":14,"../Items/Inventory":52,"./Direction":24,"./Entity":25}],35:[function(require,module,exports){
+},{"../Console/Terminal":14,"../Items/Inventory":53,"./Direction":24,"./Entity":25}],35:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Rock = void 0;
@@ -3641,7 +3641,7 @@ class ConsumableItem extends Item_1.Item {
 }
 exports.ConsumableItem = ConsumableItem;
 
-},{"../Item":53}],48:[function(require,module,exports){
+},{"../Item":54}],48:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EquippableItem = void 0;
@@ -3670,7 +3670,7 @@ class EquippableItem extends Item_1.Item {
 }
 exports.EquippableItem = EquippableItem;
 
-},{"../Item":53}],49:[function(require,module,exports){
+},{"../Item":54}],49:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookOfEnergyTier1 = void 0;
@@ -3712,6 +3712,22 @@ exports.BookOfEnergyTier3 = BookOfEnergyTier3;
 },{"../../../dist/config/env.json":1,"./Abstract/Book":46}],52:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.EquipmentStatus = exports.EquipState = void 0;
+var EquipState;
+(function (EquipState) {
+    EquipState[EquipState["EQUIPPED"] = 1] = "EQUIPPED";
+    EquipState[EquipState["UNEQUIPPED"] = 0] = "UNEQUIPPED";
+})(EquipState || (exports.EquipState = EquipState = {}));
+var EquipmentStatus;
+(function (EquipmentStatus) {
+    EquipmentStatus["EQUIPPED"] = "Equipped";
+    EquipmentStatus["CAN_BE_EQUIP"] = "Equip";
+    EquipmentStatus["UNEQUIPPED"] = "Unequipped";
+})(EquipmentStatus || (exports.EquipmentStatus = EquipmentStatus = {}));
+
+},{}],53:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
 const BookOfEnergyT1_1 = require("./BookOfEnergyT1");
 const BookOfEnergyT2_1 = require("./BookOfEnergyT2");
@@ -3719,22 +3735,27 @@ const BookOfEnergyT3_1 = require("./BookOfEnergyT3");
 const Book_1 = require("./Abstract/Book");
 const ConsumableItem_1 = require("./Abstract/ConsumableItem");
 const EquippableItem_1 = require("./Abstract/EquippableItem");
+const ItemRelated_enum_1 = require("./Enum/ItemRelated.enum");
 class Inventory {
     constructor() {
         this.player = null;
         this.items = [];
+        this.itemEquipState = [];
         this.items.push({
             item: new BookOfEnergyT1_1.BookOfEnergyTier1(),
             amount: 0,
         });
+        this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
         this.items.push({
             item: new BookOfEnergyT2_1.BookOfEnergyTier2(),
             amount: 0,
         });
+        this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
         this.items.push({
             item: new BookOfEnergyT3_1.BookOfEnergyTier3(),
             amount: 0,
         });
+        this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
     }
     setPlayer(player) {
         this.player = player;
@@ -3745,13 +3766,25 @@ class Inventory {
         const sword = playerEquipments === null || playerEquipments === void 0 ? void 0 : playerEquipments.sword;
         const shovel = playerEquipments === null || playerEquipments === void 0 ? void 0 : playerEquipments.shovel;
         if (pickaxe) {
-            this.items.push({ item: pickaxe, amount: 1 });
+            this.items.push({
+                item: pickaxe,
+                amount: 1,
+            });
+            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
         }
         if (sword) {
-            this.items.push({ item: sword, amount: 1 });
+            this.items.push({
+                item: sword,
+                amount: 1,
+            });
+            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
         }
         if (shovel) {
-            this.items.push({ item: shovel, amount: 1 });
+            this.items.push({
+                item: shovel,
+                amount: 1,
+            });
+            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
         }
     }
     addItemOwned(index, amount) {
@@ -3820,12 +3853,21 @@ class Inventory {
             }
             else if (item instanceof EquippableItem_1.EquippableItem) {
                 ownedElement.innerText = `Level: ${amount}`;
-                itemUseButton.textContent = "Equip";
+                itemUseButton.textContent = ItemRelated_enum_1.EquipmentStatus.CAN_BE_EQUIP;
                 itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-75", "rounded-0", "shadow", "border", "border-3", "border-black", "position-absolute", "start-50", "translate-middle-x");
                 itemUseButton.style.bottom = "15px";
                 itemUseButton.addEventListener("click", () => {
                     if (this.player) {
+                        this.itemEquipState.forEach((e) => {
+                            e = ItemRelated_enum_1.EquipState.UNEQUIPPED;
+                        });
+                        const allItemsOwned = document.querySelectorAll(".Equip");
+                        allItemsOwned.forEach((e) => {
+                            e.innerText = ItemRelated_enum_1.EquipmentStatus.CAN_BE_EQUIP;
+                        });
                         this.player.equip(item);
+                        this.itemEquipState[index] = ItemRelated_enum_1.EquipState.EQUIPPED;
+                        itemUseButton.textContent = ItemRelated_enum_1.EquipmentStatus.EQUIPPED;
                     }
                 });
             }
@@ -3841,7 +3883,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{"./Abstract/Book":46,"./Abstract/ConsumableItem":47,"./Abstract/EquippableItem":48,"./BookOfEnergyT1":49,"./BookOfEnergyT2":50,"./BookOfEnergyT3":51}],53:[function(require,module,exports){
+},{"./Abstract/Book":46,"./Abstract/ConsumableItem":47,"./Abstract/EquippableItem":48,"./BookOfEnergyT1":49,"./BookOfEnergyT2":50,"./BookOfEnergyT3":51,"./Enum/ItemRelated.enum":52}],54:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
@@ -3879,7 +3921,7 @@ class Item {
 }
 exports.Item = Item;
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pickaxe = void 0;
@@ -3892,7 +3934,7 @@ class Pickaxe extends EquippableItem_1.EquippableItem {
 }
 exports.Pickaxe = Pickaxe;
 
-},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":48}],55:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":48}],56:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shovel = void 0;
@@ -3905,7 +3947,7 @@ class Shovel extends EquippableItem_1.EquippableItem {
 }
 exports.Shovel = Shovel;
 
-},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":48}],56:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":48}],57:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sword = void 0;
@@ -3918,7 +3960,7 @@ class Sword extends EquippableItem_1.EquippableItem {
 }
 exports.Sword = Sword;
 
-},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":48}],57:[function(require,module,exports){
+},{"../../../dist/config/env.json":1,"./Abstract/EquippableItem":48}],58:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -4046,7 +4088,7 @@ class Leaderboard {
 }
 exports.Leaderboard = Leaderboard;
 
-},{"../config/env.json":64,"../utils/authentication":67,"./API":2}],58:[function(require,module,exports){
+},{"../config/env.json":65,"../utils/authentication":68,"./API":2}],59:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LeaderboardView = void 0;
@@ -4091,7 +4133,7 @@ class LeaderboardView {
 }
 exports.LeaderboardView = LeaderboardView;
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Player = void 0;
@@ -4238,7 +4280,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./API":2,"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":22,"./GameObjects/PlayerUnit":34,"./Items/Pickaxe":54,"./Items/Shovel":55,"./Items/Sword":56}],60:[function(require,module,exports){
+},{"./API":2,"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":22,"./GameObjects/PlayerUnit":34,"./Items/Pickaxe":55,"./Items/Shovel":56,"./Items/Sword":57}],61:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -4384,7 +4426,7 @@ class QuestionView {
 }
 exports.QuestionView = QuestionView;
 
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
@@ -4726,7 +4768,7 @@ class Shop {
 }
 exports.Shop = Shop;
 
-},{"../config/env.json":64,"../utils/authentication":67,"./API":2,"./Items/Abstract/EquippableItem":48,"./Items/BookOfEnergyT1":49,"./Items/BookOfEnergyT2":50,"./Items/BookOfEnergyT3":51,"./Items/Pickaxe":54,"./Items/Shovel":55,"./Items/Sword":56}],62:[function(require,module,exports){
+},{"../config/env.json":65,"../utils/authentication":68,"./API":2,"./Items/Abstract/EquippableItem":48,"./Items/BookOfEnergyT1":49,"./Items/BookOfEnergyT2":50,"./Items/BookOfEnergyT3":51,"./Items/Pickaxe":55,"./Items/Shovel":56,"./Items/Sword":57}],63:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ShopView = void 0;
@@ -4779,7 +4821,7 @@ class ShopView {
 }
 exports.ShopView = ShopView;
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TerminalView = void 0;
@@ -4865,7 +4907,7 @@ class TerminalView {
 }
 exports.TerminalView = TerminalView;
 
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 module.exports={
     "BookOfEnergyTier1Name": "Book Of Energy Tier 1",
     "BookOfEnergyTier1Desc": "Basic energy guide, +<number> energy.",
@@ -4952,7 +4994,7 @@ module.exports={
     "LOCAL_API_URL": "http://localhost:3000",
     "MASTER_API_URL": "http://localhost:8000"
 }
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Animation_1 = require("./Classes/GameObjects/Animation");
@@ -5097,7 +5139,7 @@ function loadAsset() {
 }
 exports.default = loadAsset;
 
-},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":31}],66:[function(require,module,exports){
+},{"./Classes/GameObjects/Animation":20,"./Classes/GameObjects/GroupAnimation":31}],67:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -5392,7 +5434,7 @@ function handleResize() {
 }
 window.addEventListener("resize", handleResize);
 
-},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":24,"./Classes/InventoryView":45,"./Classes/Items/Inventory":52,"./Classes/Leaderboard":57,"./Classes/LeaderboardView":58,"./Classes/QuestionView":60,"./Classes/Shop":61,"./Classes/ShopView":62,"./Classes/TerminalView":63,"./config/env.json":64,"./loadAsset":65,"./utils/authentication":67}],67:[function(require,module,exports){
+},{"./Classes/API":2,"./Classes/CanvasView":3,"./Classes/GameManager":18,"./Classes/GameObjects/Direction":24,"./Classes/InventoryView":45,"./Classes/Items/Inventory":53,"./Classes/Leaderboard":58,"./Classes/LeaderboardView":59,"./Classes/QuestionView":61,"./Classes/Shop":62,"./Classes/ShopView":63,"./Classes/TerminalView":64,"./config/env.json":65,"./loadAsset":66,"./utils/authentication":68}],68:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAuthToken = void 0;
@@ -5401,4 +5443,4 @@ const getAuthToken = () => {
 };
 exports.getAuthToken = getAuthToken;
 
-},{}]},{},[66]);
+},{}]},{},[67]);
