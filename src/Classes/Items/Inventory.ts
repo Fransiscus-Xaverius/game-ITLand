@@ -8,6 +8,7 @@ import { ConsumableItem } from "./Abstract/ConsumableItem";
 import { EquippableItem } from "./Abstract/EquippableItem";
 import { EquipState, EquipmentStatus } from "./Enum/ItemRelated.enum";
 import { API } from "../API";
+import { Pickaxe } from "./Pickaxe";
 
 export class Inventory {
   private items: ItemStack[];
@@ -101,6 +102,20 @@ export class Inventory {
       dataToSend.swordLevel
     );
   }
+  public async loadInventory() {
+    const data = await API.loadInventory(
+      this.player?.getPlayerName() as string
+    );
+    this.items[0].amount = data.B1_amount;
+    this.items[1].amount = data.B2_amount;
+    this.items[2].amount = data.B3_amount;
+
+    this.items[3].amount = data.pickaxeLevel;
+    this.items[4].amount = data.swordLevel;
+    this.items[5].amount = data.shovelLevel;
+    this.player?.loadEquipmentLevels(this.items[3].amount,this.items[4].amount,this.items[5].amount)
+  }
+
   public open(inventoryShopElement: HTMLDivElement | null): void {
     if (!inventoryShopElement) return;
 

@@ -113,6 +113,7 @@ export class GameManager {
     this.leaderboardView?.setQuestionView(this.questionView!);
     this.leaderboardView?.setGameManager(this);
     this.setInventory();
+    this.inventoryView?.getInventory()?.loadInventory();
   }
 
   public async tick() {

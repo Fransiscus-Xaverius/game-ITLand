@@ -225,6 +225,28 @@ class API {
             }
         });
     }
+    static loadInventory(username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // console.error(username);
+                const apiUrl = `${LOCAL_API_URL}/inventory?username=${username}`;
+                const request = new Request(apiUrl, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                const response = yield fetch(request);
+                const data = yield response.text();
+                return JSON.parse(data);
+                if (!response.ok)
+                    throw new Error("Nestwork Response was not ok");
+            }
+            catch (error) {
+                console.error("There was an error: ", error);
+            }
+        });
+    }
     gameStart() {
         return __awaiter(this, void 0, void 0, function* () {
             const apiUrl = LOCAL_API_URL + "/map";
@@ -2214,7 +2236,7 @@ class GameManager {
         this.player.setGameManager(this);
     }
     load(token) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
         return __awaiter(this, void 0, void 0, function* () {
             this.token = token;
             (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
@@ -2242,6 +2264,7 @@ class GameManager {
             (_j = this.leaderboardView) === null || _j === void 0 ? void 0 : _j.setQuestionView(this.questionView);
             (_k = this.leaderboardView) === null || _k === void 0 ? void 0 : _k.setGameManager(this);
             this.setInventory();
+            (_m = (_l = this.inventoryView) === null || _l === void 0 ? void 0 : _l.getInventory()) === null || _m === void 0 ? void 0 : _m.loadInventory();
         });
     }
     tick() {
@@ -3756,6 +3779,15 @@ var EquipmentStatus;
 
 },{}],53:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Inventory = void 0;
 const BookOfEnergyT1_1 = require("./BookOfEnergyT1");
@@ -3830,7 +3862,6 @@ class Inventory {
     // public refreshInventory
     saveInventory() {
         var _a;
-        alert("called save inventory");
         const dataToSend = {
             username: (_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName(),
             B1_amount: this.items[0].amount,
@@ -3841,6 +3872,19 @@ class Inventory {
             shovelLevel: this.items[5].amount,
         };
         API_1.API.sendInventory(dataToSend.username, dataToSend.B1_amount, dataToSend.B2_amount, dataToSend.B3_amount, dataToSend.pickaxeLevel, dataToSend.shovelLevel, dataToSend.swordLevel);
+    }
+    loadInventory() {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function* () {
+            const data = yield API_1.API.loadInventory((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName());
+            this.items[0].amount = data.B1_amount;
+            this.items[1].amount = data.B2_amount;
+            this.items[2].amount = data.B3_amount;
+            this.items[3].amount = data.pickaxeLevel;
+            this.items[4].amount = data.swordLevel;
+            this.items[5].amount = data.shovelLevel;
+            (_b = this.player) === null || _b === void 0 ? void 0 : _b.loadEquipmentLevels(this.items[3].amount, this.items[4].amount, this.items[5].amount);
+        });
     }
     open(inventoryShopElement) {
         if (!inventoryShopElement)
@@ -4299,6 +4343,11 @@ class Player {
         this.sword.setLevel(x);
         this.shovel.setLevel(x);
         this.pickaxe.setLevel(x);
+    }
+    loadEquipmentLevels(pickaxeLevel, shovelLevel, swordLevel) {
+        this.sword.setLevel(swordLevel);
+        this.shovel.setLevel(shovelLevel);
+        this.pickaxe.setLevel(pickaxeLevel);
     }
     setSword(sword) {
         this.sword = sword;

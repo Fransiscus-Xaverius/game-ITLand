@@ -265,6 +265,11 @@ export class Player {
     this.shovel.setLevel(x);
     this.pickaxe.setLevel(x);
   }
+  public loadEquipmentLevels(pickaxeLevel:number,shovelLevel:number,swordLevel:number): void {
+    this.sword.setLevel(swordLevel);
+    this.shovel.setLevel(shovelLevel);
+    this.pickaxe.setLevel(pickaxeLevel);
+  }
 
   public setSword(sword:Sword): void {
     this.sword = sword;

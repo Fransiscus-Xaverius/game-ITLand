@@ -140,6 +140,25 @@ export class API {
     }
   }
 
+  public static async loadInventory(username: string) {
+    try {
+      // console.error(username);
+      const apiUrl = `${LOCAL_API_URL}/inventory?username=${username}`;
+      const request: RequestInfo = new Request(apiUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const response = await fetch(request);
+      const data = await response.text();
+      return JSON.parse(data);
+      if (!response.ok) throw new Error("Nestwork Response was not ok");
+    } catch (error) {
+      console.error("There was an error: ", error);
+    }
+  }
+
   public async gameStart() {
     const apiUrl = LOCAL_API_URL + "/map";
     const apiUrl2 = LOCAL_API_URL + "/entity";
