@@ -95,8 +95,8 @@ export class API {
     }
   }
 
-  public async initializePlayer(x: number, y: number, energy: number) {
-    let firstTick = await this.startTick(x, y, energy); //initializes player if player is not defined
+  public async initializePlayer(x: number, y: number, energy: number, username:string) {
+    let firstTick = await this.startTick(x, y, energy, username); //initializes player if player is not defined
     let playerdata = await this.getPlayerData();
     return playerdata;
   }
@@ -139,9 +139,9 @@ export class API {
     return map;
   }
 
-  public async startTick(x: number, y: number, energy: number) {
+  public async startTick(x: number, y: number, energy: number, username: string) {
     try {
-      const apiUrl = `${LOCAL_API_URL}/player?x=${x}&y=${y}&energy=${energy}`;
+      const apiUrl = `${LOCAL_API_URL}/player?x=${x}&y=${y}&energy=${energy}&username=${username}`;
       const request: RequestInfo = new Request(apiUrl, {
         method: "POST",
       });

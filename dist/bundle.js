@@ -189,11 +189,27 @@ class API {
             }
         });
     }
-    initializePlayer(x, y, energy) {
+    initializePlayer(x, y, energy, username) {
         return __awaiter(this, void 0, void 0, function* () {
-            let firstTick = yield this.startTick(x, y, energy); //initializes player if player is not defined
+            let firstTick = yield this.startTick(x, y, energy, username); //initializes player if player is not defined
             let playerdata = yield this.getPlayerData();
             return playerdata;
+        });
+    }
+    sendInventory(username, B1_amount, B2_amount, B3_amount, pickaxeLevel, shovelLevel, swordLevel) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const apiUrl = `${LOCAL_API_URL}/inventory?username=${username}&B1=${B1_amount}&B2=${B2_amount}&B3=${B3_amount}&pickaxe=${pickaxeLevel}&shovel=${shovelLevel}&sword=${swordLevel}`;
+                const request = new Request(apiUrl, {
+                    method: "PUT",
+                });
+                const response = yield fetch(request);
+                if (!response.ok)
+                    throw new Error("Network Response was not ok");
+            }
+            catch (error) {
+                console.error("hello");
+            }
         });
     }
     gameStart() {
@@ -226,10 +242,10 @@ class API {
             return map;
         });
     }
-    startTick(x, y, energy) {
+    startTick(x, y, energy, username) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const apiUrl = `${LOCAL_API_URL}/player?x=${x}&y=${y}&energy=${energy}`;
+                const apiUrl = `${LOCAL_API_URL}/player?x=${x}&y=${y}&energy=${energy}&username=${username}`;
                 const request = new Request(apiUrl, {
                     method: "POST",
                 });
@@ -2196,8 +2212,8 @@ class GameManager {
             // let playerdata = await this.api?.initializePlayer(1, 1, 0);
             let playerdata = yield ((_c = this.api) === null || _c === void 0 ? void 0 : _c.getPlayerData());
             if (!playerdata) {
-                alert('player data not found');
-                playerdata = yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.initializePlayer(1, 1, 0));
+                alert(this.player.getPlayerName());
+                playerdata = yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.initializePlayer(1, 1, 0, this.player.getPlayerName()));
             }
             this.player = new Player_1.Player(Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.x), Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.y), 0, Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.energy));
             this.player.energy = Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.energy); //an example of why typescript is dogshit.

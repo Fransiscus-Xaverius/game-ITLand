@@ -91,8 +91,8 @@ export class GameManager {
     // let playerdata = await this.api?.initializePlayer(1, 1, 0);
     let playerdata = await this.api?.getPlayerData();
     if(!playerdata){
-      alert('player data not found');
-      playerdata = await this.api?.initializePlayer(1,1,0);
+      alert(this.player.getPlayerName()!);
+      playerdata = await this.api?.initializePlayer(1,1,0, this.player.getPlayerName()!);
     }
     this.player = new Player(
       Number(playerdata?.x),
