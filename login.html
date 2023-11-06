@@ -8,7 +8,7 @@
     <link href="./dist/scripts/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            /* background-image: url('./dist/images/pirate-background.jpg'); */
+            background-image: url('dist/Assets/final/bg_login.png');
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -55,10 +55,13 @@
 
         .btn-block {
             margin-top: 20px;
+            background-color: #8B4513;
+            color: white;
         }
 
         .btn-block:hover {
             background-color: #F5DEB3;
+            border: 1px solid #8B4513;
             color: #8B4513;
         }
     </style>
@@ -77,12 +80,14 @@
                             <div class="form-group">
                                 <label for="username">Pirate Name</label>
                                 <input type="text" class="form-control" id="username" placeholder="Enter pirate name">
+                                <div id="userErr" style="color: red; height: 20px;"></div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mt-2">
                                 <label for="password">Secret Code</label>
                                 <input type="password" class="form-control" id="password" placeholder="Secret code">
+                                <div id="passErr" style="color: red; height: 20px;"></div>
                             </div>
-                            <button class="btn btn-primary btn-block" onclick="submitForm()">Set Sail</button>
+                            <button class="btn btn-block w-100" onclick="submitForm()">Set Sail</button>
                         </div>
                     </div>
                 </div>
@@ -97,32 +102,53 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            const formData = {
-                username: username,
-                password: password
-            };
+            if (username == "") {
+                document.getElementById('userErr').innerHTML = "Please enter your pirate name";
+            } else {
+                document.getElementById('userErr').innerHTML = "";
+            }
 
-            // Make a POST request to your Node.js backend
-            fetch('http://localhost:3000/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        if (data.token) {
-                            sessionStorage.setItem("game_itland", data.token);
-                            sessionStorage.setItem("game_itland_player_name", username);
-                            window.location.href = "./index.html";
+            if (password == "") {
+                document.getElementById('passErr').innerHTML = "Please enter your secret code";
+            } else {
+                document.getElementById('passErr').innerHTML = "";
+            }
+
+            if(username != "" && password != "") {
+                document.getElementById('userErr').innerHTML = "";
+                document.getElementById('passErr').innerHTML = "";
+
+                const formData = {
+                    username: username,
+                    password: password
+                };
+    
+                // Make a POST request to your Node.js backend
+                fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                }).then(response => response.json()).then(data => {
+                        if (data) {
+                            console.log(data);
+                            if(data.message == "user"){
+                                document.getElementById('userErr').innerHTML = "Pirate name not found";
+                            }else if(data.message == "pass"){
+                                document.getElementById('passErr').innerHTML = "Secret code is incorrect";
+                            }else{
+                                sessionStorage.setItem("game_itland", data.token);
+                                sessionStorage.setItem("game_itland_player_name", username);
+                                window.location.href = "./index.html";
+                            }
                         }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+
         }
     </script>
 </body>
