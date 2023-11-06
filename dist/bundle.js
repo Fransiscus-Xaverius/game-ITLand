@@ -199,22 +199,12 @@ class API {
     static sendInventory(username, B1_amount, B2_amount, B3_amount, pickaxeLevel, shovelLevel, swordLevel) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const apiUrl = `${LOCAL_API_URL}/inventory`;
-                const data = {
-                    username: username,
-                    B1_amount: B1_amount,
-                    B2_amount: B2_amount,
-                    B3_amount: B3_amount,
-                    pickaxeLevel: pickaxeLevel,
-                    shovelLevel: shovelLevel,
-                    swordLevel: swordLevel,
-                };
+                const apiUrl = `${LOCAL_API_URL}/inventory?username=${username}&B1_amount=${B1_amount}&B2_amount=${B2_amount}&B3_amount=${B3_amount}&pickaxeLevel=${pickaxeLevel}&shovelLevel=${shovelLevel}&swordLevel=${swordLevel}`;
                 const request = new Request(apiUrl, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(data),
                 });
                 const response = yield fetch(request);
                 if (!response.ok)
@@ -3798,6 +3788,9 @@ const ConsumableItem_1 = require("./Abstract/ConsumableItem");
 const EquippableItem_1 = require("./Abstract/EquippableItem");
 const ItemRelated_enum_1 = require("./Enum/ItemRelated.enum");
 const API_1 = require("../API");
+const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../../config/env.json');
+const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../../config/env.json');
+const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../../config/env.json');
 class Inventory {
     constructor() {
         this.player = null;
@@ -3882,6 +3875,17 @@ class Inventory {
             this.items[2].amount = data.B3_amount;
             this.items[3].amount = data.pickaxeLevel;
             this.items[4].amount = data.swordLevel;
+            switch (data.swordLevel) {
+                case 1:
+                    this.items[4].item.setImagePath(IronSwordImagePath);
+                    break;
+                case 2:
+                    this.items[4].item.setImagePath(SilverSwordImagePath);
+                    break;
+                case 3:
+                    this.items[4].item.setImagePath(GoldSwordImagePath);
+                    break;
+            }
             this.items[5].amount = data.shovelLevel;
             (_b = this.player) === null || _b === void 0 ? void 0 : _b.loadEquipmentLevels(this.items[3].amount, this.items[4].amount, this.items[5].amount);
         });
@@ -3973,7 +3977,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{"../API":2,"./Abstract/Book":46,"./Abstract/ConsumableItem":47,"./Abstract/EquippableItem":48,"./BookOfEnergyT1":49,"./BookOfEnergyT2":50,"./BookOfEnergyT3":51,"./Enum/ItemRelated.enum":52}],54:[function(require,module,exports){
+},{"../../config/env.json":65,"../API":2,"./Abstract/Book":46,"./Abstract/ConsumableItem":47,"./Abstract/EquippableItem":48,"./BookOfEnergyT1":49,"./BookOfEnergyT2":50,"./BookOfEnergyT3":51,"./Enum/ItemRelated.enum":52}],54:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
@@ -4234,6 +4238,9 @@ const PlayerUnit_1 = require("./GameObjects/PlayerUnit");
 const Pickaxe_1 = require("./Items/Pickaxe");
 const Shovel_1 = require("./Items/Shovel");
 const Sword_1 = require("./Items/Sword");
+const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../config/env.json');
+const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../config/env.json');
+const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../config/env.json');
 class Player {
     //this tells which item the player is holding
     //0 = not holding anything
@@ -4346,8 +4353,41 @@ class Player {
     }
     loadEquipmentLevels(pickaxeLevel, shovelLevel, swordLevel) {
         this.sword.setLevel(swordLevel);
+        switch (swordLevel) {
+            case 1:
+                this.sword.setImagePath(IronSwordImagePath);
+                break;
+            case 2:
+                this.sword.setImagePath(SilverSwordImagePath);
+                break;
+            case 3:
+                this.sword.setImagePath(GoldSwordImagePath);
+                break;
+        }
         this.shovel.setLevel(shovelLevel);
+        switch (shovelLevel) {
+            case 1:
+                this.shovel.setImagePath(IronShovelImagePath);
+                break;
+            case 2:
+                this.shovel.setImagePath(SilverShovelImagePath);
+                break;
+            case 3:
+                this.shovel.setImagePath(GoldShovelImagePath);
+                break;
+        }
         this.pickaxe.setLevel(pickaxeLevel);
+        switch (pickaxeLevel) {
+            case 1:
+                this.pickaxe.setImagePath(IronPickaxeImagePath);
+                break;
+            case 2:
+                this.pickaxe.setImagePath(SilverPickaxeImagePath);
+                break;
+            case 3:
+                this.pickaxe.setImagePath(GoldPickaxeImagePath);
+                break;
+        }
     }
     setSword(sword) {
         this.sword = sword;
@@ -4375,7 +4415,7 @@ class Player {
 }
 exports.Player = Player;
 
-},{"./API":2,"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":22,"./GameObjects/PlayerUnit":34,"./Items/Pickaxe":55,"./Items/Shovel":56,"./Items/Sword":57}],61:[function(require,module,exports){
+},{"../config/env.json":65,"./API":2,"./GameObjects/Animation":20,"./GameObjects/ChainedAnimation":22,"./GameObjects/PlayerUnit":34,"./Items/Pickaxe":55,"./Items/Shovel":56,"./Items/Sword":57}],61:[function(require,module,exports){
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }

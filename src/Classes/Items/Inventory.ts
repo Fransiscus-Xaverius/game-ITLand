@@ -9,6 +9,11 @@ import { EquippableItem } from "./Abstract/EquippableItem";
 import { EquipState, EquipmentStatus } from "./Enum/ItemRelated.enum";
 import { API } from "../API";
 import { Pickaxe } from "./Pickaxe";
+import { Shop } from "../Shop";
+
+const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../../config/env.json');
+const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../../config/env.json');
+const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../../config/env.json');
 
 export class Inventory {
   private items: ItemStack[];
@@ -112,6 +117,17 @@ export class Inventory {
 
     this.items[3].amount = data.pickaxeLevel;
     this.items[4].amount = data.swordLevel;
+    switch(data.swordLevel){
+      case 1:
+        this.items[4].item.setImagePath(IronSwordImagePath);
+        break;
+      case 2:
+        this.items[4].item.setImagePath(SilverSwordImagePath);
+        break;
+      case 3:
+        this.items[4].item.setImagePath(GoldSwordImagePath);
+        break;
+    }
     this.items[5].amount = data.shovelLevel;
     this.player?.loadEquipmentLevels(this.items[3].amount,this.items[4].amount,this.items[5].amount)
   }

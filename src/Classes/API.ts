@@ -116,22 +116,12 @@ export class API {
     swordLevel: number
   ) {
     try {
-      const apiUrl = `${LOCAL_API_URL}/inventory`;
-      const data = {
-        username: username,
-        B1_amount: B1_amount,
-        B2_amount: B2_amount,
-        B3_amount: B3_amount,
-        pickaxeLevel: pickaxeLevel,
-        shovelLevel: shovelLevel,
-        swordLevel: swordLevel,
-      };
+      const apiUrl = `${LOCAL_API_URL}/inventory?username=${username}&B1_amount=${B1_amount}&B2_amount=${B2_amount}&B3_amount=${B3_amount}&pickaxeLevel=${pickaxeLevel}&shovelLevel=${shovelLevel}&swordLevel=${swordLevel}`;
       const request: RequestInfo = new Request(apiUrl, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
       });
       const response = await fetch(request);
       if (!response.ok) throw new Error("Network Response was not ok");

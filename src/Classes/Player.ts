@@ -10,6 +10,9 @@ import { Item } from "./Items/Item";
 import { Pickaxe } from "./Items/Pickaxe";
 import { Shovel } from "./Items/Shovel";
 import { Sword } from "./Items/Sword";
+const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../config/env.json');
+const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../config/env.json');
+const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../config/env.json');
 
 export class Player {
   private gold: number = 500;
@@ -267,8 +270,41 @@ export class Player {
   }
   public loadEquipmentLevels(pickaxeLevel:number,shovelLevel:number,swordLevel:number): void {
     this.sword.setLevel(swordLevel);
+    switch(swordLevel){ 
+      case 1:
+        this.sword.setImagePath(IronSwordImagePath);
+        break;
+      case 2:
+        this.sword.setImagePath(SilverSwordImagePath);
+        break;
+      case 3:
+        this.sword.setImagePath(GoldSwordImagePath);
+        break;
+    }
     this.shovel.setLevel(shovelLevel);
+    switch(shovelLevel){
+      case 1:
+        this.shovel.setImagePath(IronShovelImagePath);
+        break;
+      case 2:
+        this.shovel.setImagePath(SilverShovelImagePath);
+        break;
+      case 3:
+        this.shovel.setImagePath(GoldShovelImagePath);
+        break;
+    }
     this.pickaxe.setLevel(pickaxeLevel);
+    switch(pickaxeLevel){
+      case 1:
+        this.pickaxe.setImagePath(IronPickaxeImagePath);
+        break;
+      case 2:
+        this.pickaxe.setImagePath(SilverPickaxeImagePath);
+        break;
+      case 3:
+        this.pickaxe.setImagePath(GoldPickaxeImagePath);
+        break;
+    }
   }
 
   public setSword(sword:Sword): void {
