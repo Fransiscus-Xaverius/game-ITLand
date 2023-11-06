@@ -280,8 +280,8 @@ export class API {
     }
   }
 
-  public static async Dynamite(username: string) {
-    const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-250`;
+  public static async Dynamite(username: string, target:string) {
+    const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-150&sender=${target}`;
     const request: RequestInfo = new Request(apiUrl, {
       method: "PUT",
     });
@@ -292,8 +292,8 @@ export class API {
     return JSON.stringify(jsonData);
   }
 
-  public static async CannonBall(username: string) {
-    const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-500`;
+  public static async CannonBall(username: string, target:string) {
+    const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-300&sender=${target}`;
     const request: RequestInfo = new Request(apiUrl, {
       method: "PUT",
     });
@@ -302,6 +302,26 @@ export class API {
     const jsonString = await response.text();
     const jsonData = JSON.parse(jsonString);
     return JSON.stringify(jsonData);
+  }
+
+  public async getLastAttack(username:string){
+    const apiURL = `${LOCAL_API_URL}/last-attack?username=${username}`;
+    const request: RequestInfo = new Request(apiURL, {
+      method: "GET",
+    });
+    const response = await fetch(request);
+    if(!response.ok) throw new Error("Network Response was not ok");
+    return response;
+  }
+
+  public async seeAttack(id:number){
+    const apiURL = `${LOCAL_API_URL}/see-attack?id=${id}`;
+    const request: RequestInfo = new Request(apiURL, {
+      method: "PUT",
+    });
+    const response = await fetch(request);
+    if(!response.ok) throw new Error("Network Response was not ok");
+    return response;
   }
 
   public static async getAllUser() {

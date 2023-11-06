@@ -80,7 +80,7 @@ export class Leaderboard {
           this.player!.useGold(150);
           console.error(this.listUser);
           alert(this.listUser[i].username);
-          API.CannonBall(this.listUser[i].username);
+          API.CannonBall(this.listUser[i].username, this.player!.getPlayerName() as string);
           const token = getAuthToken();
           if (token) {
             API.updateGold(token, -150)
@@ -102,7 +102,7 @@ export class Leaderboard {
         );
         if(this.player!.getGold()>75){
           this.player!.useGold(75);
-          API.Dynamite(this.listUser[i].username);
+          API.Dynamite(this.listUser[i].username,this.player!.getPlayerName() as string);
           const token = getAuthToken();
           if (token) {
             API.updateGold(token, -150)

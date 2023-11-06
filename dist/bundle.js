@@ -387,9 +387,9 @@ class API {
             }
         });
     }
-    static Dynamite(username) {
+    static Dynamite(username, target) {
         return __awaiter(this, void 0, void 0, function* () {
-            const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-250`;
+            const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-150&sender=${target}`;
             const request = new Request(apiUrl, {
                 method: "PUT",
             });
@@ -401,9 +401,9 @@ class API {
             return JSON.stringify(jsonData);
         });
     }
-    static CannonBall(username) {
+    static CannonBall(username, target) {
         return __awaiter(this, void 0, void 0, function* () {
-            const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-500`;
+            const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-300&sender=${target}`;
             const request = new Request(apiUrl, {
                 method: "PUT",
             });
@@ -413,6 +413,30 @@ class API {
             const jsonString = yield response.text();
             const jsonData = JSON.parse(jsonString);
             return JSON.stringify(jsonData);
+        });
+    }
+    getLastAttack(username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const apiURL = `${LOCAL_API_URL}/last-attack?username=${username}`;
+            const request = new Request(apiURL, {
+                method: "GET",
+            });
+            const response = yield fetch(request);
+            if (!response.ok)
+                throw new Error("Network Response was not ok");
+            return response;
+        });
+    }
+    seeAttack(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const apiURL = `${LOCAL_API_URL}/see-attack?id=${id}`;
+            const request = new Request(apiURL, {
+                method: "PUT",
+            });
+            const response = yield fetch(request);
+            if (!response.ok)
+                throw new Error("Network Response was not ok");
+            return response;
         });
     }
     static getAllUser() {
@@ -2266,7 +2290,20 @@ class GameManager {
             const jsonData = JSON.parse(jsonString);
             this.player.setGold(parseInt(jsonData.gold));
             (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.refreshStats();
+            this.processAttack();
             yield this.save();
+        });
+    }
+    processAttack() {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function* () {
+            const lastAttack = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.getLastAttack(this.player.getPlayerName()));
+            const lastAttackString = yield lastAttack.text();
+            const lastAttackData = JSON.parse(lastAttackString);
+            if (!lastAttackData.seen) {
+                (_b = this.api) === null || _b === void 0 ? void 0 : _b.seeAttack(lastAttackData.id);
+                alert(`You have been attacked by ${lastAttackData.sender}! You lost ${lastAttackData.gold} gold coin(s)!`);
+            }
         });
     }
     save() {
@@ -4141,7 +4178,7 @@ class Leaderboard {
                         this.player.useGold(150);
                         console.error(this.listUser);
                         alert(this.listUser[i].username);
-                        API_1.API.CannonBall(this.listUser[i].username);
+                        API_1.API.CannonBall(this.listUser[i].username, this.player.getPlayerName());
                         const token = (0, authentication_1.getAuthToken)();
                         if (token) {
                             API_1.API.updateGold(token, -150);
@@ -4161,7 +4198,7 @@ class Leaderboard {
                     let closeButton = document.querySelector(".close-leaderboard-button");
                     if (this.player.getGold() > 75) {
                         this.player.useGold(75);
-                        API_1.API.Dynamite(this.listUser[i].username);
+                        API_1.API.Dynamite(this.listUser[i].username, this.player.getPlayerName());
                         const token = (0, authentication_1.getAuthToken)();
                         if (token) {
                             API_1.API.updateGold(token, -150);

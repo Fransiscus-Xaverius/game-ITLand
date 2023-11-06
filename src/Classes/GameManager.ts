@@ -127,7 +127,18 @@ export class GameManager {
     const jsonData = JSON.parse(jsonString);
     this.player.setGold(parseInt(jsonData.gold));
     this.questionView?.refreshStats();
+    this.processAttack();
     await this.save();
+  }
+
+  public async processAttack(){ //attack warning.
+    const lastAttack = await this.api?.getLastAttack(this.player.getPlayerName()!);
+    const lastAttackString = await lastAttack!.text();
+    const lastAttackData = JSON.parse(lastAttackString);
+    if(!lastAttackData.seen){
+      this.api?.seeAttack(lastAttackData.id);
+      alert(`You have been attacked by ${lastAttackData.sender}! You lost ${lastAttackData.gold} gold coin(s)!`);
+    }
   }
 
   public async save(){
