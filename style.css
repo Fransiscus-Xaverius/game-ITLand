@@ -193,6 +193,25 @@ border-radius: 7px;
 background: #555;
 }
 
+.modal-body::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+background: transparent;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+background: #888;
+border-radius: 7px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+background: #555;
+}
+
+
 .item-qty::-webkit-outer-spin-button,
 .item-qty::-webkit-inner-spin-button {
     display: none;

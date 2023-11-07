@@ -47,19 +47,23 @@ export class Leaderboard {
       // if(currentUser.username != )
       if (currentUser.username != this.player?.getPlayerName() && currentUser.total_gold>0 ) {
         showUser += 
-        `<div class='d-flex align-items-center'>
-          <p class='mb-0 me-3' style='font-size: small;'>${leadNumber}. ${currentUser.username}</p>
-          <div class='d-flex align-items-center me-3' >
-            <img src='${GoldImagePath}' class='me-1' style='height: 30px'>
-            <p class='mb-0' style='font-size: small;'>${currentUser.total_gold}</p>
+        `<div class='d-flex justify-content-between align-items-center mb-3'>
+          <div class="d-flex align-items-center">
+            <p class='mb-0 me-3' style='font-size: small;'>${leadNumber}. ${currentUser.username}</p>
+            <div class='d-flex align-items-center me-3' >
+              <img src='${GoldImagePath}' class='me-1' style='height: 30px'>
+              <p class='mb-0' style='font-size: small;'>${currentUser.total_gold}</p>
+            </div>
           </div>
-          <div class='dyn-atk dyn-attack-${i} btn btn-danger d-flex align-items-center me-3 rounded-0 border border-black border-3'>
-            <img src='${DynamiteImagePath}' class='me-1' style='height: 30px'>
-            <p class='m-0' style='font-size: small;'>Dynamite Attack</p>
-          </div>
-          <div class='cnn-atk cnn-attack-${i} btn btn-secondary d-flex align-items-center rounded-0 border border-black border-3'>
-            <img src='${CannonBallImagePath}' class='me-1' style='height: 30px'>
-            <p class='m-0' style='font-size: small;'>Cannon Bomb Attack</p>
+          <div class="d-flex align-items-center">
+            <div class='dyn-atk dyn-attack-${i} btn btn-danger d-flex align-items-center me-3 rounded-0 border border-black border-3'>
+              <img src='${DynamiteImagePath}' class='me-1' style='height: 30px'>
+              <p class='m-0' style='font-size: small;'>Dynamite Attack</p>
+            </div>
+            <div class='cnn-atk cnn-attack-${i} btn btn-secondary d-flex align-items-center rounded-0 border border-black border-3'>
+              <img src='${CannonBallImagePath}' class='me-1' style='height: 30px'>
+              <p class='m-0' style='font-size: small;'>Cannon Bomb Attack</p>
+            </div>
           </div>
         </div>`;
         
