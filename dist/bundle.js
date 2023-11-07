@@ -4134,7 +4134,7 @@ class Leaderboard {
             const allUserString = JSON.parse(yield API_1.API.getAllUser());
             this.listUser = [];
             for (let i = 0; i < allUserString.length; i++) {
-                if (((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName()) != allUserString[i].username) {
+                if (((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName()) != allUserString[i].username && allUserString[i].total_gold >= 150) {
                     const currentUser = allUserString[i];
                     this.listUser.push(currentUser);
                 }
@@ -4148,10 +4148,10 @@ class Leaderboard {
                     showUser +=
                         `<div class='d-flex justify-content-between align-items-center mb-3'>
           <div class="d-flex align-items-center">
-            <p class='mb-0 me-3' style='font-size: small;'>${leadNumber}. ${currentUser.username}</p>
+            <p class='mb-0 me-3' style='font-size: medium;'>${leadNumber}. ${currentUser.username}</p>
             <div class='d-flex align-items-center me-3' >
-              <img src='${GoldImagePath}' class='me-1' style='height: 30px'>
-              <p class='mb-0' style='font-size: small;'>${currentUser.total_gold}</p>
+              <img src='${GoldImagePath}' class='me-1' style='height: 30px' draggable="false">
+              <p class='mb-0' style='font-size: medium;'>${currentUser.total_gold}</p>
             </div>
           </div>
           <div class="d-flex align-items-center">
@@ -4205,7 +4205,7 @@ class Leaderboard {
                         API_1.API.Dynamite(this.listUser[i].username, this.player.getPlayerName());
                         const token = (0, authentication_1.getAuthToken)();
                         if (token) {
-                            API_1.API.updateGold(token, -150);
+                            API_1.API.updateGold(token, -75);
                         }
                         if (closeButton) {
                             // alert("close button click")

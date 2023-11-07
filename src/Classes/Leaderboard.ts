@@ -49,10 +49,10 @@ export class Leaderboard {
         showUser += 
         `<div class='d-flex justify-content-between align-items-center mb-3'>
           <div class="d-flex align-items-center">
-            <p class='mb-0 me-3' style='font-size: small;'>${leadNumber}. ${currentUser.username}</p>
+            <p class='mb-0 me-3' style='font-size: medium;'>${leadNumber}. ${currentUser.username}</p>
             <div class='d-flex align-items-center me-3' >
-              <img src='${GoldImagePath}' class='me-1' style='height: 30px'>
-              <p class='mb-0' style='font-size: small;'>${currentUser.total_gold}</p>
+              <img src='${GoldImagePath}' class='me-1' style='height: 30px' draggable="false">
+              <p class='mb-0' style='font-size: medium;'>${currentUser.total_gold}</p>
             </div>
           </div>
           <div class="d-flex align-items-center">
