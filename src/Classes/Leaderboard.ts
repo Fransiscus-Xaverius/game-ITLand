@@ -35,7 +35,7 @@ export class Leaderboard {
     const allUserString: UserStack[] = JSON.parse(await API.getAllUser());
     this.listUser = [];
     for (let i = 0; i < allUserString.length; i++) {
-     if(this.player?.getPlayerName()!=allUserString[i].username){
+     if(this.player?.getPlayerName()!=allUserString[i].username && allUserString[i].total_gold>=150){
       const currentUser = allUserString[i];
       this.listUser.push(currentUser);
      }
@@ -109,7 +109,7 @@ export class Leaderboard {
           API.Dynamite(this.listUser[i].username,this.player!.getPlayerName() as string);
           const token = getAuthToken();
           if (token) {
-            API.updateGold(token, -150)
+            API.updateGold(token, -75)
           }
           if (closeButton) {
             // alert("close button click")
