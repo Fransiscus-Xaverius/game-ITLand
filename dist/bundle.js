@@ -4177,6 +4177,7 @@ class Leaderboard {
             }
             const allDynButton = document.querySelectorAll(".dyn-atk");
             const allCnnButton = document.querySelectorAll(".cnn-atk");
+            const leaderboardButton = document.querySelector(".button-leaderboard");
             for (let i = 0; i < allCnnButton.length; i++) {
                 allCnnButton[i].addEventListener("click", () => {
                     var _a, _b;
@@ -4191,9 +4192,16 @@ class Leaderboard {
                         if (token) {
                             API_1.API.updateGold(token, -150);
                         }
+                        if (leaderboardButton) {
+                            alert('done');
+                            leaderboardButton.disabled = true;
+                            setTimeout(() => {
+                                leaderboardButton.disabled = false;
+                            }, 5000);
+                        }
                         if (closeButton) {
                             // alert("close button click")
-                            (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You have attacked " + this.listUser[i].username + " with a Cannonball! they lost 300 gold coins!");
+                            (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You have attacked " + this.listUser[i].username + " with a Cannonball! they lost 300 gold coins! You can attack again in 5 seconds!");
                             closeButton.click();
                         }
                     }
@@ -4214,8 +4222,12 @@ class Leaderboard {
                             API_1.API.updateGold(token, -75);
                         }
                         if (closeButton) {
-                            (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You have attacked " + this.listUser[i].username + " with a Dynamite! they lost 150 gold coins!");
+                            (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You have attacked " + this.listUser[i].username + " with a Dynamite! they lost 150 gold coins! You can attack again in 5 seconds!");
                             closeButton.click();
+                            leaderboardButton.disabled = true;
+                            setTimeout(() => {
+                                leaderboardButton.disabled = false;
+                            }, 5000);
                         }
                     }
                     else {

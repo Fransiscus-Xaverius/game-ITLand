@@ -77,6 +77,9 @@ export class Leaderboard {
     }
     const allDynButton = document.querySelectorAll(".dyn-atk");
     const allCnnButton = document.querySelectorAll(".cnn-atk");
+    const leaderboardButton = document.querySelector(
+      ".button-leaderboard"
+    ) as HTMLButtonElement;
     for (let i = 0; i < allCnnButton.length; i++) {
       allCnnButton[i].addEventListener("click", () => {
         let closeButton: HTMLButtonElement | null = document.querySelector(
@@ -92,10 +95,16 @@ export class Leaderboard {
           if (token) {
             API.updateGold(token, -150)
           }
-          
+          if(leaderboardButton){
+            alert('done');
+            leaderboardButton.disabled = true;
+            setTimeout(() => {
+              leaderboardButton.disabled = false;
+            }, 5000);
+          }
           if (closeButton) {
             // alert("close button click")
-            this.gameManager?.logActivity("You have attacked "+this.listUser[i].username+" with a Cannonball! they lost 300 gold coins!");
+            this.gameManager?.logActivity("You have attacked "+this.listUser[i].username+" with a Cannonball! they lost 300 gold coins! You can attack again in 5 seconds!");
             closeButton.click();
           }
         }
@@ -117,8 +126,12 @@ export class Leaderboard {
             API.updateGold(token, -75)
           }
           if (closeButton) {
-            this.gameManager?.logActivity("You have attacked "+this.listUser[i].username+" with a Dynamite! they lost 150 gold coins!");
+            this.gameManager?.logActivity("You have attacked "+this.listUser[i].username+" with a Dynamite! they lost 150 gold coins! You can attack again in 5 seconds!");
             closeButton.click();
+            leaderboardButton.disabled = true;
+            setTimeout(() => {
+              leaderboardButton.disabled = false;
+            }, 5000);
           }
         }
         else{
