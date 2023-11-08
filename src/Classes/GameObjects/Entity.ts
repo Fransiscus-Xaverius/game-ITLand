@@ -92,7 +92,7 @@ export abstract class Entity extends Animated{
 
     public entityDrop():number{
         if(this.minValue!=null&&this.maxValue!=null){
-            return Math.round(Math.random() * this.maxValue!) + this.minValue!;
+            return Math.round(Math.random() * (this.maxValue! - this.minValue! + 1) + this.minValue!);
         }
         else{
             return 0; //if this returns into 0 there's sumting wong

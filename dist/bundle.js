@@ -2874,7 +2874,7 @@ class Entity extends Animated_1.Animated {
     }
     entityDrop() {
         if (this.minValue != null && this.maxValue != null) {
-            return Math.round(Math.random() * this.maxValue) + this.minValue;
+            return Math.round(Math.random() * (this.maxValue - this.minValue + 1) + this.minValue);
         }
         else {
             return 0; //if this returns into 0 there's sumting wong
@@ -3520,7 +3520,7 @@ class Tile extends Animated_1.Animated {
     }
     tileDrop() {
         if (this.minValue != null && this.maxValue != null) {
-            return Math.round(Math.random() * this.maxValue) + this.minValue;
+            return Math.round(Math.random() * (this.maxValue - this.minValue + 1) + this.minValue);
         }
         else {
             return 0; //if this returns into 0 there's sumting wong
