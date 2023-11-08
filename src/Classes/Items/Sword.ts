@@ -25,7 +25,7 @@ export class Sword extends EquippableItem {
     super.upgrade();
     this.checkUpdateData();
   }
-  checkUpdateData() {
+  public checkUpdateData() {
     if (this.getLevel() == 1) {
       this.setImagePath(IronSwordImagePath);
       this.setItemName(IronSwordName);

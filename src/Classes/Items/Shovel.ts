@@ -28,7 +28,7 @@ export class Shovel extends EquippableItem {
     super.upgrade();
     this.checkUpdateData();
   }
-  checkUpdateData() {
+  public checkUpdateData() {
     if (this.getLevel() == 1) {
       this.setImagePath(IronShovelImagePath);
       this.setItemName(IronShovelName);

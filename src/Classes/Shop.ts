@@ -13,10 +13,22 @@ import { getAuthToken } from "../utils/authentication";
 import { EquippableItem } from "./Items/Abstract/EquippableItem";
 import { GameManager } from "./GameManager";
 
-const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../config/env.json');
-const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../config/env.json');
-const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../config/env.json');
-const { GoldImagePath } = require('../config/env.json');
+const {
+  IronSwordImagePath,
+  SilverSwordImagePath,
+  GoldSwordImagePath,
+} = require("../config/env.json");
+const {
+  IronShovelImagePath,
+  SilverShovelImagePath,
+  GoldShovelImagePath,
+} = require("../config/env.json");
+const {
+  IronPickaxeImagePath,
+  SilverPickaxeImagePath,
+  GoldPickaxeImagePath,
+} = require("../config/env.json");
+const { GoldImagePath } = require("../config/env.json");
 
 export class Shop {
   private item: Item[];
@@ -32,45 +44,45 @@ export class Shop {
     ];
   }
 
-  public upgradeSword(currentItem: EquippableItem, x:number): void{
-    switch(x){
-        case 2:
-            currentItem.setImagePath(SilverSwordImagePath);
-            break;
-        case 3:
-            currentItem.setImagePath(GoldSwordImagePath);
-            break;
-        default:
-            currentItem.setImagePath(IronSwordImagePath);
-            break;
-    }
-  }    
-
-  public upgradeShovel(currentItem: EquippableItem, x:number): void{
-    switch(x){
-        case 2:
-            currentItem.setImagePath(SilverShovelImagePath);
-            break;
-        case 3:
-            currentItem.setImagePath(GoldShovelImagePath);
-            break;
-        default:
-            currentItem.setImagePath(IronShovelImagePath);
-            break;
+  public upgradeSword(currentItem: EquippableItem, x: number): void {
+    switch (x) {
+      case 2:
+        currentItem.setImagePath(SilverSwordImagePath);
+        break;
+      case 3:
+        currentItem.setImagePath(GoldSwordImagePath);
+        break;
+      default:
+        currentItem.setImagePath(IronSwordImagePath);
+        break;
     }
   }
 
-  public upgradePickaxe(currentItem: EquippableItem, x:number): void{
-    switch(x){
-        case 2:
-            currentItem.setImagePath(SilverPickaxeImagePath);
-            break;
-        case 3:
-            currentItem.setImagePath(GoldPickaxeImagePath);
-            break;
-        default:
-            currentItem.setImagePath(IronPickaxeImagePath);
-            break;
+  public upgradeShovel(currentItem: EquippableItem, x: number): void {
+    switch (x) {
+      case 2:
+        currentItem.setImagePath(SilverShovelImagePath);
+        break;
+      case 3:
+        currentItem.setImagePath(GoldShovelImagePath);
+        break;
+      default:
+        currentItem.setImagePath(IronShovelImagePath);
+        break;
+    }
+  }
+
+  public upgradePickaxe(currentItem: EquippableItem, x: number): void {
+    switch (x) {
+      case 2:
+        currentItem.setImagePath(SilverPickaxeImagePath);
+        break;
+      case 3:
+        currentItem.setImagePath(GoldPickaxeImagePath);
+        break;
+      default:
+        currentItem.setImagePath(IronPickaxeImagePath);
+        break;
     }
   }
 
@@ -83,18 +95,21 @@ export class Shop {
       this.player?.getPlayerName() as string
     );
 
-    const tempPickaxe = this.item[3] as EquippableItem
-    const tempSword = this.item[4] as EquippableItem
-    const tempShovel = this.item[5] as EquippableItem
+    const tempPickaxe = this.item[3] as Pickaxe;
+    const tempSword = this.item[4] as Sword;
+    const tempShovel = this.item[5] as Shovel;
 
     tempPickaxe.setLevel(data.pickaxeLevel);
+    tempPickaxe.checkUpdateData();
     tempSword.setLevel(data.swordLevel);
+    tempSword.checkUpdateData();
     tempShovel.setLevel(data.shovelLevel);
+    tempShovel.checkUpdateData();
 
     this.item[3] = tempPickaxe;
     this.item[4] = tempSword;
     this.item[5] = tempShovel;
-  }
+  };
 
   public setPlayer(player: Player | null) {
     this.player = player;
@@ -129,17 +144,16 @@ export class Shop {
       for (let i = 0; i < this.item.length; i++) {
         let tempItem = this.item[i];
         let isBuyable = false;
-        if(tempItem instanceof EquippableItem){
+        if (tempItem instanceof EquippableItem) {
           let temp = tempItem as EquippableItem;
-          if(temp.getLevel() < 3){
+          if (temp.getLevel() < 3) {
             isBuyable = true;
           }
-        }
-        else{
+        } else {
           isBuyable = true;
         }
-        if(isBuyable){
-           // Card shop
+        if (isBuyable) {
+          // Card shop
           const shopTemp = document.createElement("div") as HTMLDivElement;
           shopTemp.className =
             "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-black border-3 shadow";
@@ -169,7 +183,15 @@ export class Shop {
           colDiv1.classList.add("col-sm-6", "d-flex", "align-items-center");
           if (!(this.item[i] instanceof EquippableItem)) {
             const minusBtn: HTMLDivElement = document.createElement("div");
-            minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0", "border", "border-3", "border-black");
+            minusBtn.classList.add(
+              "btn",
+              "btn-danger",
+              "p-0",
+              "rounded-0",
+              "border",
+              "border-3",
+              "border-black"
+            );
             minusBtn.style.width = "45px";
             minusBtn.style.height = "30px";
             minusBtn.textContent = "-";
@@ -195,12 +217,21 @@ export class Shop {
                 console.error(`Element with class .item-${i} not found.`);
               }
             });
-  
-            const itemQtyDiv: HTMLInputElement = document.createElement("input");
+
+            const itemQtyDiv: HTMLInputElement =
+              document.createElement("input");
             itemQtyDiv.style.width = "90px";
             itemQtyDiv.style.height = "30px";
             itemQtyDiv.type = "number";
-            itemQtyDiv.classList.add("item-qty", `item-${i}`, "border", "border-3", "border-start-0", "border-end-0",  "border-black");
+            itemQtyDiv.classList.add(
+              "item-qty",
+              `item-${i}`,
+              "border",
+              "border-3",
+              "border-start-0",
+              "border-end-0",
+              "border-black"
+            );
             itemQtyDiv.style.textAlign = "center";
             itemQtyDiv.value = "1";
             itemQtyDiv.min = "1";
@@ -226,9 +257,17 @@ export class Shop {
                 console.error(`Element with class .item-${i} not found.`);
               }
             });
-  
+
             const plusBtn: HTMLDivElement = document.createElement("div");
-            plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0", "border", "border-3", "border-black");
+            plusBtn.classList.add(
+              "btn",
+              "btn-success",
+              "p-0",
+              "rounded-0",
+              "border",
+              "border-3",
+              "border-black"
+            );
             plusBtn.style.width = "45px";
             plusBtn.style.height = "30px";
             plusBtn.textContent = "+";
@@ -252,59 +291,156 @@ export class Shop {
                 console.error(`Element with class .item-${i} not found.`);
               }
             });
-  
+
             colDiv1.appendChild(minusBtn);
             colDiv1.appendChild(itemQtyDiv);
             colDiv1.appendChild(plusBtn);
-            
+
             const colDiv2: HTMLDivElement = document.createElement("div");
-            colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "d-flex", "align-items-center", "position-relative");
-  
+            colDiv2.classList.add(
+              "col-sm-6",
+              `total-price-container-item-${i}`,
+              "d-flex",
+              "align-items-center",
+              "position-relative"
+            );
+
             const goldIcon: HTMLImageElement = document.createElement("img");
             goldIcon.src = GoldImagePath;
-            goldIcon.className = "ms-2 me-2"
+            goldIcon.className = "ms-2 me-2";
             goldIcon.style.width = "30px";
-  
+
             const totalPriceDiv: HTMLDivElement = document.createElement("div");
             totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
             totalPriceDiv.textContent = `Gold ${
               parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()
             }`;
-  
+
             colDiv2.appendChild(goldIcon);
             colDiv2.appendChild(totalPriceDiv);
-  
+
             addBox.appendChild(colDiv1);
             addBox.appendChild(colDiv2);
           } else {
             let equipment = this.item[i] as EquippableItem;
-            if(equipment.getLevel() < 3){
+            if (equipment.getLevel() < 3) {
               const colDiv2: HTMLDivElement = document.createElement("div");
-              colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "position-relative");
-              const totalPriceDiv: HTMLDivElement = document.createElement("div");
-              totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
+              colDiv2.classList.add(
+                "col-sm-6",
+                `total-price-container-item-${i}`,
+                "position-relative"
+              );
+              const totalPriceDiv: HTMLDivElement =
+                document.createElement("div");
+              totalPriceDiv.classList.add(
+                "total-price",
+                `total-price-item-${i}`
+              );
               totalPriceDiv.textContent = `Gold ${this.item[i].getItemPrice()}`;
               colDiv2.appendChild(totalPriceDiv);
-  
+
               addBox.appendChild(colDiv1);
               addBox.appendChild(colDiv2);
             }
           }
-          const buyButton = document.createElement("button") as HTMLButtonElement;
-        buyButton.className =
-          "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
-        if (this.item[i] instanceof EquippableItem) {
-          buyButton.innerHTML = "Upgrade";
-          if ((this.item[i] as EquippableItem).getLevel() < 3) {
+          const buyButton = document.createElement(
+            "button"
+          ) as HTMLButtonElement;
+          buyButton.className =
+            "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
+          if (this.item[i] instanceof EquippableItem) {
+            buyButton.innerHTML = "Upgrade";
+            if ((this.item[i] as EquippableItem).getLevel() < 3) {
+              buyButton.onclick = () => {
+                const currentItem = this.item[i];
+                const totalPriceDiv = document.querySelector(
+                  `.total-price-item-${i}`
+                ) as HTMLDivElement;
+                // const itemAmount: HTMLInputElement | null =
+                //   document.querySelector(`.item-${i}`);
+                const itemAmount: HTMLInputElement | null =
+                  document.createElement("input") as HTMLInputElement;
+                itemAmount.value = "1";
+
+                if (itemAmount) {
+                  if (totalPriceDiv) {
+                    if (this.player) {
+                      const goldDiv = document.querySelector(
+                        "#goldAmount"
+                      ) as HTMLDivElement;
+                      let playerGold = 0;
+                      if (goldDiv) {
+                        playerGold = parseInt(
+                          goldDiv.textContent!.split(" ")[1]
+                        );
+                      }
+                      const priceContent = totalPriceDiv.textContent as string;
+                      const price = parseInt(priceContent.split(" ")[1]);
+                      if (playerGold >= price) {
+                        const currentQty: number =
+                          parseInt(itemAmount.value) || 0;
+                        if (currentQty > 0) {
+                          //   this.player.useGold(price);
+                          const token: string | null = getAuthToken();
+                          if (token) {
+                            API.updateGold(token, -price);
+                          }
+                          if (currentItem instanceof EquippableItem) {
+                            //basically what we need to do is to first check if the item is an equippable
+                            //then we basically do nothing to said object and just go to the gameManager
+                            //and from the gamemanager we do a force upgrade.
+
+                            //TL;DR: this is fucking stupid but my hands and mind have forced me. Forgive me my son -Frans
+                            if (currentItem instanceof Sword) {
+                              this.game?.upgradeSword();
+                              this.upgradeSword(
+                                currentItem,
+                                currentItem.getLevel() + 1
+                              );
+                            } else if (currentItem instanceof Pickaxe) {
+                              this.game?.upgradePickaxe();
+                              this.upgradePickaxe(
+                                currentItem,
+                                currentItem.getLevel() + 1
+                              );
+                            } else if (currentItem instanceof Shovel) {
+                              this.game?.upgradeShovel();
+                              this.upgradeShovel(
+                                currentItem,
+                                currentItem.getLevel() + 1
+                              );
+                            }
+                            this.inventory?.addItemOwned(i, currentQty);
+                            this.inventory?.saveInventory();
+                            currentItem.upgrade();
+                          } else {
+                            this.inventory?.addItemOwned(i, currentQty);
+                            this.inventory?.saveInventory();
+                          }
+                          this.open(shopHTML);
+                        } else {
+                          itemAmount.value = "1";
+                          totalPriceDiv.textContent = `Gold ${
+                            1 * this.item[i].getItemPrice()
+                          }`;
+                        }
+                      } else {
+                        alert("Not enough gold!");
+                      }
+                    }
+                  }
+                }
+              };
+            }
+          } else {
+            buyButton.innerHTML = "Buy";
             buyButton.onclick = () => {
               const currentItem = this.item[i];
               const totalPriceDiv = document.querySelector(
                 `.total-price-item-${i}`
               ) as HTMLDivElement;
-              // const itemAmount: HTMLInputElement | null =
-              //   document.querySelector(`.item-${i}`);
-              const itemAmount: HTMLInputElement | null = document.createElement("input") as HTMLInputElement;
-              itemAmount.value = "1";
+              const itemAmount: HTMLInputElement | null =
+                document.querySelector(`.item-${i}`);
 
               if (itemAmount) {
                 if (totalPriceDiv) {
@@ -327,37 +463,14 @@ export class Shop {
                         if (token) {
                           API.updateGold(token, -price);
                         }
-                        if (currentItem instanceof EquippableItem) {
-                          //basically what we need to do is to first check if the item is an equippable
-                          //then we basically do nothing to said object and just go to the gameManager
-                          //and from the gamemanager we do a force upgrade.
-
-                          //TL;DR: this is fucking stupid but my hands and mind have forced me. Forgive me my son -Frans
-                          if(currentItem instanceof Sword){
-                            this.game?.upgradeSword();
-                            this.upgradeSword(currentItem, (currentItem.getLevel()+1));
-                          }
-                          else if(currentItem instanceof Pickaxe){ 
-                            this.game?.upgradePickaxe();
-                            this.upgradePickaxe(currentItem, (currentItem.getLevel()+1))
-                          }
-                          else if(currentItem instanceof Shovel){
-                            this.game?.upgradeShovel();
-                            this.upgradeShovel(currentItem, (currentItem.getLevel()+1))
-                          }
-                          this.inventory?.addItemOwned(i, currentQty);
-                          this.inventory?.saveInventory();
-                          currentItem.upgrade();
-                        } else {
-                          this.inventory?.addItemOwned(i, currentQty);
-                          this.inventory?.saveInventory();
-                        }
-                        this.open(shopHTML);
+                        this.inventory?.addItemOwned(i, currentQty);
+                        this.inventory?.saveInventory();
                       } else {
                         itemAmount.value = "1";
                         totalPriceDiv.textContent = `Gold ${
                           1 * this.item[i].getItemPrice()
                         }`;
+                        this.inventory?.saveInventory();
                       }
                     } else {
                       alert("Not enough gold!");
@@ -367,63 +480,15 @@ export class Shop {
               }
             };
           }
-        } else {
-          buyButton.innerHTML = "Buy";
-          buyButton.onclick = () => {
-            const currentItem = this.item[i];
-            const totalPriceDiv = document.querySelector(
-              `.total-price-item-${i}`
-            ) as HTMLDivElement;
-            const itemAmount: HTMLInputElement | null = document.querySelector(
-              `.item-${i}`
-            );
 
-            if (itemAmount) {
-              if (totalPriceDiv) {
-                if (this.player) {
-                  const goldDiv = document.querySelector(
-                    "#goldAmount"
-                  ) as HTMLDivElement;
-                  let playerGold = 0;
-                  if (goldDiv) {
-                    playerGold = parseInt(goldDiv.textContent!.split(" ")[1]);
-                  }
-                  const priceContent = totalPriceDiv.textContent as string;
-                  const price = parseInt(priceContent.split(" ")[1]);
-                  if (playerGold >= price) {
-                    const currentQty: number = parseInt(itemAmount.value) || 0;
-                    if (currentQty > 0) {
-                      //   this.player.useGold(price);
-                      const token: string | null = getAuthToken();
-                      if (token) {
-                        API.updateGold(token, -price);
-                      }
-                      this.inventory?.addItemOwned(i, currentQty);
-                      this.inventory?.saveInventory();
-                    } else {
-                      itemAmount.value = "1";
-                      totalPriceDiv.textContent = `Gold ${
-                        1 * this.item[i].getItemPrice()
-                      }`;
-                      this.inventory?.saveInventory();
-                    }
-                  } else {
-                    alert("Not enough gold!");
-                  }
-                }
-              }
-            }
-          };
-        }
+          desc.appendChild(itemName);
+          desc.appendChild(mainDesc);
+          desc.appendChild(addBox);
+          desc.appendChild(buyButton);
 
-        desc.appendChild(itemName);
-        desc.appendChild(mainDesc);
-        desc.appendChild(addBox);
-        desc.appendChild(buyButton);
-
-        shopTemp.appendChild(shopImage);
-        shopTemp.appendChild(desc);
-        shopHTML.appendChild(shopTemp);
+          shopTemp.appendChild(shopImage);
+          shopTemp.appendChild(desc);
+          shopHTML.appendChild(shopTemp);
         }
       }
     }
