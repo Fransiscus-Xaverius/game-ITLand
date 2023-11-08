@@ -2254,14 +2254,11 @@ class GameManager {
         return __awaiter(this, void 0, void 0, function* () {
             this.token = token;
             (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
-            // alert('await load');
             let map = { tile: [], entity: [] };
             map = yield ((_b = this.api) === null || _b === void 0 ? void 0 : _b.gameStart()); //use non-null assertion operator.
-            // alert(map.tile.length);
             // let playerdata = await this.api?.initializePlayer(1, 1, 0);
             let playerdata = yield ((_c = this.api) === null || _c === void 0 ? void 0 : _c.getPlayerData());
             if (!playerdata) {
-                alert(this.player.getPlayerName());
                 playerdata = yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.initializePlayer(1, 1, 0, this.player.getPlayerName()));
             }
             this.player = new Player_1.Player(Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.x), Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.y), 0, Number(playerdata === null || playerdata === void 0 ? void 0 : playerdata.energy));
@@ -2287,6 +2284,7 @@ class GameManager {
         return __awaiter(this, void 0, void 0, function* () {
             yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.subtick(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getEnergy()));
             const curGold = yield ((_b = this.api) === null || _b === void 0 ? void 0 : _b.getGold(this.token));
+            console.error(curGold);
             const jsonString = yield curGold.text();
             const jsonData = JSON.parse(jsonString);
             this.player.setGold(parseInt(jsonData.gold));
@@ -2486,8 +2484,8 @@ class GameManager {
                     (_b = this.questionView) === null || _b === void 0 ? void 0 : _b.refreshStats();
                 }
                 else {
-                    alert(this.player.getEquipmentLevels().pickaxe);
-                    alert(entity.getEntityLevel());
+                    // alert(this.player.getEquipmentLevels().pickaxe);
+                    // alert(entity.getEntityLevel()!);
                     this.logActivity(`Upgrade your pickaxe to destroy this block!`);
                 }
             }
@@ -4186,21 +4184,18 @@ class Leaderboard {
                         this.player.useGold(150);
                         this.player.useEnergy(20);
                         console.error(this.listUser);
-                        alert(this.listUser[i].username);
                         API_1.API.CannonBall(this.listUser[i].username, this.player.getPlayerName());
                         const token = (0, authentication_1.getAuthToken)();
                         if (token) {
                             API_1.API.updateGold(token, -150);
                         }
                         if (leaderboardButton) {
-                            alert('done');
                             leaderboardButton.disabled = true;
                             setTimeout(() => {
                                 leaderboardButton.disabled = false;
                             }, 5000);
                         }
                         if (closeButton) {
-                            // alert("close button click")
                             (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You have attacked " + this.listUser[i].username + " with a Cannonball! they lost 300 gold coins! You can attack again in 5 seconds!");
                             closeButton.click();
                         }
@@ -4877,9 +4872,7 @@ class Shop {
                         "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
                     if (this.item[i] instanceof EquippableItem_1.EquippableItem) {
                         buyButton.innerHTML = "Upgrade";
-                        // alert("EquippableItem");
                         if (this.item[i].getLevel() < 3) {
-                            // alert("getLevel() < 3");
                             buyButton.onclick = () => {
                                 var _a, _b, _c, _d, _e, _f, _g;
                                 const currentItem = this.item[i];
@@ -4907,7 +4900,6 @@ class Shop {
                                                         API_1.API.updateGold(token, -price);
                                                     }
                                                     if (currentItem instanceof EquippableItem_1.EquippableItem) {
-                                                        // alert(playerGold + " " + price);
                                                         //basically what we need to do is to first check if the item is an equippable
                                                         //then we basically do nothing to said object and just go to the gameManager
                                                         //and from the gamemanager we do a force upgrade.
@@ -4973,7 +4965,6 @@ class Shop {
                                                 if (token) {
                                                     API_1.API.updateGold(token, -price);
                                                 }
-                                                alert(playerGold + " " + price);
                                                 (_a = this.inventory) === null || _a === void 0 ? void 0 : _a.addItemOwned(i, currentQty);
                                                 (_b = this.inventory) === null || _b === void 0 ? void 0 : _b.saveInventory();
                                             }

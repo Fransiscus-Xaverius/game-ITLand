@@ -89,21 +89,18 @@ export class Leaderboard {
           this.player!.useGold(150);
           this.player!.useEnergy(20);
           console.error(this.listUser);
-          alert(this.listUser[i].username);
           API.CannonBall(this.listUser[i].username, this.player!.getPlayerName() as string);
           const token = getAuthToken();
           if (token) {
             API.updateGold(token, -150)
           }
           if(leaderboardButton){
-            alert('done');
             leaderboardButton.disabled = true;
             setTimeout(() => {
               leaderboardButton.disabled = false;
             }, 5000);
           }
           if (closeButton) {
-            // alert("close button click")
             this.gameManager?.logActivity("You have attacked "+this.listUser[i].username+" with a Cannonball! they lost 300 gold coins! You can attack again in 5 seconds!");
             closeButton.click();
           }

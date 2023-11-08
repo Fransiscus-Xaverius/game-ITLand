@@ -295,9 +295,7 @@ export class Shop {
           "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
         if (this.item[i] instanceof EquippableItem) {
           buyButton.innerHTML = "Upgrade";
-          // alert("EquippableItem");
           if ((this.item[i] as EquippableItem).getLevel() < 3) {
-            // alert("getLevel() < 3");
             buyButton.onclick = () => {
               const currentItem = this.item[i];
               const totalPriceDiv = document.querySelector(
@@ -330,7 +328,6 @@ export class Shop {
                           API.updateGold(token, -price);
                         }
                         if (currentItem instanceof EquippableItem) {
-                          // alert(playerGold + " " + price);
                           //basically what we need to do is to first check if the item is an equippable
                           //then we basically do nothing to said object and just go to the gameManager
                           //and from the gamemanager we do a force upgrade.
@@ -401,7 +398,6 @@ export class Shop {
                       if (token) {
                         API.updateGold(token, -price);
                       }
-                      alert(playerGold + " " + price);
                       this.inventory?.addItemOwned(i, currentQty);
                       this.inventory?.saveInventory();
                     } else {

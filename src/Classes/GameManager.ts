@@ -84,14 +84,11 @@ export class GameManager {
   public async load(token: string) {
     this.token = token;
     this.shopView?.setPlayer(this.player);
-    // alert('await load');
     let map: Map = { tile: [], entity: [] };
     map = await this.api?.gameStart()!; //use non-null assertion operator.
-    // alert(map.tile.length);
     // let playerdata = await this.api?.initializePlayer(1, 1, 0);
     let playerdata = await this.api?.getPlayerData();
     if(!playerdata){
-      alert(this.player.getPlayerName()!);
       playerdata = await this.api?.initializePlayer(1,1,0, this.player.getPlayerName()!);
     }
     this.player = new Player(
@@ -124,6 +121,7 @@ export class GameManager {
       this.player.getEnergy()
     );
     const curGold = await this.api?.getGold(this.token);
+    console.error(curGold);
     const jsonString = await curGold!.text();
     const jsonData = JSON.parse(jsonString);
     this.player.setGold(parseInt(jsonData.gold));
@@ -340,8 +338,8 @@ export class GameManager {
           this.player.useEnergy(entity.getRequiredEnergy());
           this.questionView?.refreshStats();
         } else {
-          alert(this.player.getEquipmentLevels().pickaxe);
-          alert(entity.getEntityLevel()!);
+          // alert(this.player.getEquipmentLevels().pickaxe);
+          // alert(entity.getEntityLevel()!);
           this.logActivity(`Upgrade your pickaxe to destroy this block!`);
         }
       } else {
@@ -417,7 +415,7 @@ export class GameManager {
         this.logActivity("This area has already been excavated! ");
         break;
       default:
-        alert("This is the wrong tool!");
+        alert("This is the wrong tool!"); 
         break;
     }
   }
