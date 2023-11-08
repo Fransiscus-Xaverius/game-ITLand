@@ -11,9 +11,9 @@ export default function loadAsset():void{
     const player_idle = new Image()
     player_idle.src = "./dist/Assets/final/hooman_down_idle.png"
     const sand_tile = new Image()
-    sand_tile.src = "./dist/Assets/Prototype/sand.png"
+    sand_tile.src = "./dist/Assets/final/sand.png"
     const gravel_tile = new Image()
-    gravel_tile.src = "./dist/Assets/Prototype/gravel.png"
+    gravel_tile.src = "./dist/Assets/final/gravel.png"
     const granite_tile = new Image()
     granite_tile.src = "./dist/Assets/final/granite.png"
     const cave_tile = new Image()

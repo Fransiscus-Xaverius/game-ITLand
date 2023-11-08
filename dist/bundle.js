@@ -2890,7 +2890,7 @@ const GroupAnimation_1 = require("./GroupAnimation");
 class Granite extends Tile_1.Tile {
     constructor(coordinate) {
         super(coordinate, [], "granite", 15, 3, 150, 400);
-        this.addAnimation(GroupAnimation_1.GroupAnimation.animations[3]);
+        this.addAnimation(GroupAnimation_1.GroupAnimation.animations[4]);
     }
     step(stepper) {
         return;
@@ -3148,12 +3148,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ground = void 0;
 const Tile_1 = require("./Tile");
 const GroupAnimation_1 = require("./GroupAnimation");
-const digged_ground_1 = require("./digged_ground");
 class Ground extends Tile_1.Tile {
     constructor(coordinate) {
-        super(coordinate, [], "ground", 5, 1, 5, 40);
-        this.addAnimation(GroupAnimation_1.GroupAnimation.animations[4]);
-        this.addDigForm(new digged_ground_1.DiggedGround(coordinate));
+        super(coordinate, [], "ground", 5, 1, 10, 50);
+        this.addAnimation(GroupAnimation_1.GroupAnimation.animations[0]);
     }
     step(stepper) {
         return;
@@ -3162,7 +3160,7 @@ class Ground extends Tile_1.Tile {
 }
 exports.Ground = Ground;
 
-},{"./GroupAnimation":31,"./Tile":37,"./digged_ground":40}],31:[function(require,module,exports){
+},{"./GroupAnimation":31,"./Tile":37}],31:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GroupAnimation = void 0;
@@ -3924,6 +3922,18 @@ class Inventory {
             }
             this.items[5].amount = data.shovelLevel;
             (_b = this.player) === null || _b === void 0 ? void 0 : _b.loadEquipmentLevels(this.items[3].amount, this.items[4].amount, this.items[5].amount);
+            const tempPickaxe = this.items[3].item;
+            const tempSword = this.items[4].item;
+            const tempShovel = this.items[5].item;
+            tempPickaxe.setLevel(data.pickaxeLevel);
+            tempPickaxe.checkUpdateData();
+            tempSword.setLevel(data.swordLevel);
+            tempSword.checkUpdateData();
+            tempShovel.setLevel(data.shovelLevel);
+            tempShovel.checkUpdateData();
+            this.items[3].item = tempPickaxe;
+            this.items[4].item = tempSword;
+            this.items[5].item = tempShovel;
         });
     }
     open(inventoryShopElement) {
@@ -4056,10 +4066,35 @@ exports.Item = Item;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pickaxe = void 0;
 const EquippableItem_1 = require("./Abstract/EquippableItem");
-const { PickaxeName, PickaxeDesc, PickaxePrice, IronPickaxeImagePath, } = require("../../../dist/config/env.json");
+const { PickaxeName, PickaxeDesc, PickaxePrice, IronPickaxeImagePath, IronPickaxeName, IronPickaxeDesc, IronPickaxePrice, SilverPickaxeImagePath, SilverPickaxeName, SilverPickaxeDesc, SilverPickaxePrice, GoldPickaxeImagePath, GoldPickaxeName, GoldPickaxeDesc, GoldPickaxePrice, } = require("../../../dist/config/env.json");
 class Pickaxe extends EquippableItem_1.EquippableItem {
     constructor() {
-        super(IronPickaxeImagePath, PickaxeName, PickaxeDesc, PickaxePrice);
+        super(IronPickaxeImagePath, IronPickaxeName, IronPickaxeDesc, IronPickaxePrice);
+        this.checkUpdateData();
+    }
+    upgrade() {
+        super.upgrade();
+        this.checkUpdateData();
+    }
+    checkUpdateData() {
+        if (this.getLevel() == 1) {
+            this.setImagePath(IronPickaxeImagePath);
+            this.setItemName(IronPickaxeName);
+            this.setItemDesc(IronPickaxeDesc);
+            this.setItemPrice(IronPickaxePrice);
+        }
+        else if (this.getLevel() == 2) {
+            this.setImagePath(SilverPickaxeImagePath);
+            this.setItemName(SilverPickaxeName);
+            this.setItemDesc(SilverPickaxeDesc);
+            this.setItemPrice(SilverPickaxePrice);
+        }
+        else if (this.getLevel() == 3) {
+            this.setImagePath(GoldPickaxeImagePath);
+            this.setItemName(GoldPickaxeName);
+            this.setItemDesc(GoldPickaxeDesc);
+            this.setItemPrice(GoldPickaxePrice);
+        }
     }
 }
 exports.Pickaxe = Pickaxe;
@@ -4069,10 +4104,35 @@ exports.Pickaxe = Pickaxe;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shovel = void 0;
 const EquippableItem_1 = require("./Abstract/EquippableItem");
-const { ShovelName, ShovelDesc, ShovelPrice, IronShovelImagePath } = require('../../../dist/config/env.json');
+const { ShovelName, ShovelDesc, ShovelPrice, IronShovelImagePath, IronShovelName, IronShovelDesc, IronShovelPrice, SilverShovelImagePath, SilverShovelName, SilverShovelDesc, SilverShovelPrice, GoldShovelImagePath, GoldShovelName, GoldShovelDesc, GoldShovelPrice, } = require("../../../dist/config/env.json");
 class Shovel extends EquippableItem_1.EquippableItem {
     constructor() {
-        super(IronShovelImagePath, ShovelName, ShovelDesc, ShovelPrice);
+        super(IronShovelImagePath, IronShovelName, IronShovelDesc, IronShovelPrice);
+        this.checkUpdateData();
+    }
+    upgrade() {
+        super.upgrade();
+        this.checkUpdateData();
+    }
+    checkUpdateData() {
+        if (this.getLevel() == 1) {
+            this.setImagePath(IronShovelImagePath);
+            this.setItemName(IronShovelName);
+            this.setItemDesc(IronShovelDesc);
+            this.setItemPrice(IronShovelPrice);
+        }
+        else if (this.getLevel() == 2) {
+            this.setImagePath(SilverShovelImagePath);
+            this.setItemName(SilverShovelName);
+            this.setItemDesc(SilverShovelDesc);
+            this.setItemPrice(SilverShovelPrice);
+        }
+        else if (this.getLevel() == 3) {
+            this.setImagePath(GoldShovelImagePath);
+            this.setItemName(GoldShovelName);
+            this.setItemDesc(GoldShovelDesc);
+            this.setItemPrice(GoldShovelPrice);
+        }
     }
 }
 exports.Shovel = Shovel;
@@ -4082,10 +4142,35 @@ exports.Shovel = Shovel;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Sword = void 0;
 const EquippableItem_1 = require("./Abstract/EquippableItem");
-const { SwordName, SwordDesc, SwordPrice, IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../../../dist/config/env.json');
+const { IronSwordName, IronSwordDesc, IronSwordPrice, IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath, SilverSwordName, SilverSwordDesc, SilverSwordPrice, GoldSwordName, GoldSwordDesc, GoldSwordPrice, } = require("../../../dist/config/env.json");
 class Sword extends EquippableItem_1.EquippableItem {
     constructor() {
-        super(IronSwordImagePath, SwordName, SwordDesc, SwordPrice);
+        super(IronSwordImagePath, IronSwordName, IronSwordDesc, IronSwordPrice);
+        this.checkUpdateData();
+    }
+    upgrade() {
+        super.upgrade();
+        this.checkUpdateData();
+    }
+    checkUpdateData() {
+        if (this.getLevel() == 1) {
+            this.setImagePath(IronSwordImagePath);
+            this.setItemName(IronSwordName);
+            this.setItemDesc(IronSwordDesc);
+            this.setItemPrice(IronSwordPrice);
+        }
+        else if (this.getLevel() == 2) {
+            this.setImagePath(SilverSwordImagePath);
+            this.setItemName(SilverSwordName);
+            this.setItemDesc(SilverSwordDesc);
+            this.setItemPrice(SilverSwordPrice);
+        }
+        else if (this.getLevel() == 3) {
+            this.setImagePath(GoldSwordImagePath);
+            this.setItemName(GoldSwordName);
+            this.setItemDesc(GoldSwordDesc);
+            this.setItemPrice(GoldSwordPrice);
+        }
     }
 }
 exports.Sword = Sword;
@@ -4637,10 +4722,10 @@ const Pickaxe_1 = require("./Items/Pickaxe");
 const API_1 = require("./API");
 const authentication_1 = require("../utils/authentication");
 const EquippableItem_1 = require("./Items/Abstract/EquippableItem");
-const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../config/env.json');
-const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../config/env.json');
-const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../config/env.json');
-const { GoldImagePath } = require('../config/env.json');
+const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath, } = require("../config/env.json");
+const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath, } = require("../config/env.json");
+const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath, } = require("../config/env.json");
+const { GoldImagePath } = require("../config/env.json");
 class Shop {
     constructor() {
         this.player = null;
@@ -4653,8 +4738,11 @@ class Shop {
             const tempSword = this.item[4];
             const tempShovel = this.item[5];
             tempPickaxe.setLevel(data.pickaxeLevel);
+            tempPickaxe.checkUpdateData();
             tempSword.setLevel(data.swordLevel);
+            tempSword.checkUpdateData();
             tempShovel.setLevel(data.shovelLevel);
+            tempShovel.checkUpdateData();
             this.item[3] = tempPickaxe;
             this.item[4] = tempSword;
             this.item[5] = tempShovel;
@@ -4906,15 +4994,15 @@ class Shop {
                                                         //TL;DR: this is fucking stupid but my hands and mind have forced me. Forgive me my son -Frans
                                                         if (currentItem instanceof Sword_1.Sword) {
                                                             (_a = this.game) === null || _a === void 0 ? void 0 : _a.upgradeSword();
-                                                            this.upgradeSword(currentItem, (currentItem.getLevel() + 1));
+                                                            this.upgradeSword(currentItem, currentItem.getLevel() + 1);
                                                         }
                                                         else if (currentItem instanceof Pickaxe_1.Pickaxe) {
                                                             (_b = this.game) === null || _b === void 0 ? void 0 : _b.upgradePickaxe();
-                                                            this.upgradePickaxe(currentItem, (currentItem.getLevel() + 1));
+                                                            this.upgradePickaxe(currentItem, currentItem.getLevel() + 1);
                                                         }
                                                         else if (currentItem instanceof Shovel_1.Shovel) {
                                                             (_c = this.game) === null || _c === void 0 ? void 0 : _c.upgradeShovel();
-                                                            this.upgradeShovel(currentItem, (currentItem.getLevel() + 1));
+                                                            this.upgradeShovel(currentItem, currentItem.getLevel() + 1);
                                                         }
                                                         (_d = this.inventory) === null || _d === void 0 ? void 0 : _d.addItemOwned(i, currentQty);
                                                         (_e = this.inventory) === null || _e === void 0 ? void 0 : _e.saveInventory();
@@ -5236,9 +5324,9 @@ function loadAsset() {
     const player_idle = new Image();
     player_idle.src = "./dist/Assets/final/hooman_down_idle.png";
     const sand_tile = new Image();
-    sand_tile.src = "./dist/Assets/Prototype/sand.png";
+    sand_tile.src = "./dist/Assets/final/sand.png";
     const gravel_tile = new Image();
-    gravel_tile.src = "./dist/Assets/Prototype/gravel.png";
+    gravel_tile.src = "./dist/Assets/final/gravel.png";
     const granite_tile = new Image();
     granite_tile.src = "./dist/Assets/final/granite.png";
     const cave_tile = new Image();

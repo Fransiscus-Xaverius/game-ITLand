@@ -9,9 +9,8 @@ import { DiggedGround } from "./digged_ground";
 
 export class Ground extends Tile implements IDestructable {
     constructor(coordinate:Point){
-        super(coordinate,[],"ground", 5, 1, 5, 40)
-        this.addAnimation(GroupAnimation.animations[4])
-        this.addDigForm(new DiggedGround(coordinate))
+        super(coordinate, [], "ground", 5, 1, 10, 50)
+        this.addAnimation(GroupAnimation.animations[0])
     }
 
     public step(stepper: Entity): void {

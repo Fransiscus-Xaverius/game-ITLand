@@ -9,6 +9,8 @@ import { EquippableItem } from "./Abstract/EquippableItem";
 import { EquipState, EquipmentStatus } from "./Enum/ItemRelated.enum";
 import { API } from "../API";
 import { Pickaxe } from "./Pickaxe";
+import { Sword } from "./Sword";
+import { Shovel } from "./Shovel";
 import { Shop } from "../Shop";
 
 const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../../config/env.json');
@@ -130,6 +132,22 @@ export class Inventory {
     }
     this.items[5].amount = data.shovelLevel;
     this.player?.loadEquipmentLevels(this.items[3].amount,this.items[4].amount,this.items[5].amount)
+
+    const tempPickaxe = this.items[3].item as Pickaxe;
+    const tempSword = this.items[4].item as Sword;
+    const tempShovel = this.items[5].item as Shovel;
+
+    tempPickaxe.setLevel(data.pickaxeLevel);
+    tempPickaxe.checkUpdateData();
+    tempSword.setLevel(data.swordLevel);
+    tempSword.checkUpdateData();
+    tempShovel.setLevel(data.shovelLevel);
+    tempShovel.checkUpdateData();
+
+    this.items[3].item = tempPickaxe;
+    this.items[4].item = tempSword;
+    this.items[5].item = tempShovel;
+
   }
 
   public open(inventoryShopElement: HTMLDivElement | null): void {
