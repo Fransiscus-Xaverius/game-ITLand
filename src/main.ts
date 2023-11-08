@@ -169,7 +169,7 @@ window.onload = async () => {
   DButton.addEventListener("click", async () => {
     const correct = await game.getQuestionView()?.checkAnswer(DButton, DButton.value);
     if(!correct){
-      game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+      game.logActivity("Wrong Answer! (Wait 20s to answer again)");
       AButton.disabled = true;
       BButton.disabled = true;
       CButton.disabled = true;

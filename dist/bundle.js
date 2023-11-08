@@ -2250,7 +2250,7 @@ class GameManager {
         this.player.setGameManager(this);
     }
     load(token) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
         return __awaiter(this, void 0, void 0, function* () {
             this.token = token;
             (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.setPlayer(this.player);
@@ -2279,6 +2279,7 @@ class GameManager {
             (_k = this.leaderboardView) === null || _k === void 0 ? void 0 : _k.setGameManager(this);
             this.setInventory();
             (_m = (_l = this.inventoryView) === null || _l === void 0 ? void 0 : _l.getInventory()) === null || _m === void 0 ? void 0 : _m.loadInventory();
+            (_p = (_o = this.shopView) === null || _o === void 0 ? void 0 : _o.getShop()) === null || _p === void 0 ? void 0 : _p.loadShop();
         });
     }
     tick() {
@@ -4112,6 +4113,7 @@ class Leaderboard {
         this.player = null;
         this.questionView = null;
         this.gameManager = null;
+        this.self = null;
     }
     setPlayer(player) {
         this.player = player;
@@ -4130,6 +4132,7 @@ class Leaderboard {
     open(leaderboardElement) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            this.self = leaderboardElement;
             const { GoldImagePath, EnergyImagePath, DynamiteImagePath, CannonBallImagePath } = require('../config/env.json');
             const allUserString = JSON.parse(yield API_1.API.getAllUser());
             this.listUser = [];
@@ -4176,7 +4179,7 @@ class Leaderboard {
             const allCnnButton = document.querySelectorAll(".cnn-atk");
             for (let i = 0; i < allCnnButton.length; i++) {
                 allCnnButton[i].addEventListener("click", () => {
-                    var _a;
+                    var _a, _b;
                     let closeButton = document.querySelector(".close-leaderboard-button");
                     if (this.player.getGold() >= 150 && this.player.getEnergy() >= 20) {
                         this.player.useGold(150);
@@ -4190,16 +4193,17 @@ class Leaderboard {
                         }
                         if (closeButton) {
                             // alert("close button click")
+                            (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You have attacked " + this.listUser[i].username + " with a Cannonball! they lost 300 gold coins!");
                             closeButton.click();
                         }
                     }
                     else {
+                        (_b = this.gameManager) === null || _b === void 0 ? void 0 : _b.logActivity("You don't have enough resources to attack this player! (Gold needed: 150, Energy needed: 20)");
                         closeButton.click();
-                        (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You don't have enough gold to attack this player! (Gold needed: 150)");
                     }
                 });
                 allDynButton[i].addEventListener("click", () => {
-                    var _a;
+                    var _a, _b;
                     let closeButton = document.querySelector(".close-leaderboard-button");
                     if (this.player.getGold() >= 75 && this.player.getEnergy() >= 10) {
                         this.player.useGold(75);
@@ -4210,13 +4214,13 @@ class Leaderboard {
                             API_1.API.updateGold(token, -75);
                         }
                         if (closeButton) {
-                            // alert("close button click")
+                            (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You have attacked " + this.listUser[i].username + " with a Dynamite! they lost 150 gold coins!");
                             closeButton.click();
                         }
                     }
                     else {
+                        (_b = this.gameManager) === null || _b === void 0 ? void 0 : _b.logActivity("You don't have enough resources to attack this player! (Gold needed: 75, Energy needed: 10)");
                         closeButton.click();
-                        (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You don't have enough gold to attack this player! (Gold needed: 75)");
                     }
                 });
             }
@@ -4606,6 +4610,15 @@ exports.QuestionView = QuestionView;
 
 },{}],62:[function(require,module,exports){
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Shop = void 0;
 const BookOfEnergyT1_1 = require("./Items/BookOfEnergyT1");
@@ -4626,6 +4639,19 @@ class Shop {
         this.player = null;
         this.inventory = null;
         this.game = null;
+        this.loadShop = () => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const data = yield API_1.API.loadInventory((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName());
+            const tempPickaxe = this.item[3];
+            const tempSword = this.item[4];
+            const tempShovel = this.item[5];
+            tempPickaxe.setLevel(data.pickaxeLevel);
+            tempSword.setLevel(data.swordLevel);
+            tempShovel.setLevel(data.shovelLevel);
+            this.item[3] = tempPickaxe;
+            this.item[4] = tempSword;
+            this.item[5] = tempShovel;
+        });
         this.item = [
             new BookOfEnergyT1_1.BookOfEnergyTier1(),
             new BookOfEnergyT2_1.BookOfEnergyTier2(),
@@ -4705,136 +4731,218 @@ class Shop {
             shopHTML.innerHTML = "";
             // console.log(shopHTML)
             for (let i = 0; i < this.item.length; i++) {
-                // Card shop
-                const shopTemp = document.createElement("div");
-                shopTemp.className =
-                    "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-black border-3 shadow";
-                // Image shop
-                const shopImage = document.createElement("img");
-                shopImage.className = "shop-img h-100";
-                shopImage.src = this.item[i].getImagePath();
-                // Description shop
-                const desc = document.createElement("div");
-                desc.className = "desc h-100 position-relative";
-                desc.style.width = "60%";
-                const itemName = document.createElement("div");
-                itemName.className = " fs-5 w-100";
-                itemName.innerHTML = this.item[i].getItemName();
-                const mainDesc = document.createElement("div");
-                mainDesc.className = " w-100 mb-3";
-                mainDesc.innerHTML = this.item[i].getItemDesc();
-                const addBox = document.createElement("div");
-                addBox.className = "d-flex w-100";
-                const colDiv1 = document.createElement("div");
-                colDiv1.classList.add("col-sm-6", "d-flex", "align-items-center");
-                if (!(this.item[i] instanceof EquippableItem_1.EquippableItem)) {
-                    const minusBtn = document.createElement("div");
-                    minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0", "border", "border-3", "border-black");
-                    minusBtn.style.width = "45px";
-                    minusBtn.style.height = "30px";
-                    minusBtn.textContent = "-";
-                    minusBtn.addEventListener("click", () => {
-                        const item = document.querySelector(`.item-${i}`);
-                        const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
-                        const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
-                        if (item) {
-                            const currentQty = parseInt(item.value) || 0;
-                            if (currentQty > 1) {
-                                item.value = `${currentQty - 1}`;
-                            }
-                            const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
-                            totalPriceDiv.textContent = `Gold ${totalPrice}`;
-                        }
-                        else {
-                            console.error(`Element with class .item-${i} not found.`);
-                        }
-                    });
-                    const itemQtyDiv = document.createElement("input");
-                    itemQtyDiv.style.width = "90px";
-                    itemQtyDiv.style.height = "30px";
-                    itemQtyDiv.type = "number";
-                    itemQtyDiv.classList.add("item-qty", `item-${i}`, "border", "border-3", "border-start-0", "border-end-0", "border-black");
-                    itemQtyDiv.style.textAlign = "center";
-                    itemQtyDiv.value = "1";
-                    itemQtyDiv.min = "1";
-                    itemQtyDiv.addEventListener("change", () => {
-                        const item = document.querySelector(`.item-${i}`);
-                        const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
-                        const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
-                        if (item) {
-                            const currentQty = parseInt(item.value) || 0;
-                            if (currentQty < 1) {
-                                item.innerHTML = "1";
-                            }
-                            const totalPrice = currentQty * this.item[i].getItemPrice();
-                            totalPriceDiv.textContent = `Gold ${totalPrice}`;
-                        }
-                        else {
-                            console.error(`Element with class .item-${i} not found.`);
-                        }
-                    });
-                    const plusBtn = document.createElement("div");
-                    plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0", "border", "border-3", "border-black");
-                    plusBtn.style.width = "45px";
-                    plusBtn.style.height = "30px";
-                    plusBtn.textContent = "+";
-                    plusBtn.addEventListener("click", () => {
-                        const item = document.querySelector(`.item-${i}`);
-                        const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
-                        const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
-                        if (item) {
-                            const currentQty = parseInt(item.value) || 0;
-                            item.value = `${currentQty + 1}`;
-                            const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
-                            totalPriceDiv.textContent = `Gold ${totalPrice}`;
-                        }
-                        else {
-                            console.error(`Element with class .item-${i} not found.`);
-                        }
-                    });
-                    colDiv1.appendChild(minusBtn);
-                    colDiv1.appendChild(itemQtyDiv);
-                    colDiv1.appendChild(plusBtn);
-                    const colDiv2 = document.createElement("div");
-                    colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "d-flex", "align-items-center", "position-relative");
-                    const goldIcon = document.createElement("img");
-                    goldIcon.src = GoldImagePath;
-                    goldIcon.className = "ms-2 me-2";
-                    goldIcon.style.width = "30px";
-                    const totalPriceDiv = document.createElement("div");
-                    totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
-                    totalPriceDiv.textContent = `Gold ${parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()}`;
-                    colDiv2.appendChild(goldIcon);
-                    colDiv2.appendChild(totalPriceDiv);
-                    addBox.appendChild(colDiv1);
-                    addBox.appendChild(colDiv2);
+                let tempItem = this.item[i];
+                let isBuyable = false;
+                if (tempItem instanceof EquippableItem_1.EquippableItem) {
+                    let temp = tempItem;
+                    if (temp.getLevel() < 3) {
+                        isBuyable = true;
+                    }
                 }
                 else {
-                    const colDiv2 = document.createElement("div");
-                    colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "position-relative");
-                    const totalPriceDiv = document.createElement("div");
-                    totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
-                    totalPriceDiv.textContent = `Gold ${this.item[i].getItemPrice()}`;
-                    colDiv2.appendChild(totalPriceDiv);
-                    addBox.appendChild(colDiv1);
-                    addBox.appendChild(colDiv2);
+                    isBuyable = true;
                 }
-                const buyButton = document.createElement("button");
-                buyButton.className =
-                    "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
-                if (this.item[i] instanceof EquippableItem_1.EquippableItem) {
-                    buyButton.innerHTML = "Upgrade";
-                    // alert("EquippableItem");
-                    if (this.item[i].getLevel() < 3) {
-                        // alert("getLevel() < 3");
+                if (isBuyable) {
+                    // Card shop
+                    const shopTemp = document.createElement("div");
+                    shopTemp.className =
+                        "card-shop mb-3 w-full p-3 flex justify-content-between bg-white border border-black border-3 shadow";
+                    // Image shop
+                    const shopImage = document.createElement("img");
+                    shopImage.className = "shop-img h-100";
+                    shopImage.src = this.item[i].getImagePath();
+                    // Description shop
+                    const desc = document.createElement("div");
+                    desc.className = "desc h-100 position-relative";
+                    desc.style.width = "60%";
+                    const itemName = document.createElement("div");
+                    itemName.className = " fs-5 w-100";
+                    itemName.innerHTML = this.item[i].getItemName();
+                    const mainDesc = document.createElement("div");
+                    mainDesc.className = " w-100 mb-3";
+                    mainDesc.innerHTML = this.item[i].getItemDesc();
+                    const addBox = document.createElement("div");
+                    addBox.className = "d-flex w-100";
+                    const colDiv1 = document.createElement("div");
+                    colDiv1.classList.add("col-sm-6", "d-flex", "align-items-center");
+                    if (!(this.item[i] instanceof EquippableItem_1.EquippableItem)) {
+                        const minusBtn = document.createElement("div");
+                        minusBtn.classList.add("btn", "btn-danger", "p-0", "rounded-0", "border", "border-3", "border-black");
+                        minusBtn.style.width = "45px";
+                        minusBtn.style.height = "30px";
+                        minusBtn.textContent = "-";
+                        minusBtn.addEventListener("click", () => {
+                            const item = document.querySelector(`.item-${i}`);
+                            const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
+                            const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
+                            if (item) {
+                                const currentQty = parseInt(item.value) || 0;
+                                if (currentQty > 1) {
+                                    item.value = `${currentQty - 1}`;
+                                }
+                                const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
+                                totalPriceDiv.textContent = `Gold ${totalPrice}`;
+                            }
+                            else {
+                                console.error(`Element with class .item-${i} not found.`);
+                            }
+                        });
+                        const itemQtyDiv = document.createElement("input");
+                        itemQtyDiv.style.width = "90px";
+                        itemQtyDiv.style.height = "30px";
+                        itemQtyDiv.type = "number";
+                        itemQtyDiv.classList.add("item-qty", `item-${i}`, "border", "border-3", "border-start-0", "border-end-0", "border-black");
+                        itemQtyDiv.style.textAlign = "center";
+                        itemQtyDiv.value = "1";
+                        itemQtyDiv.min = "1";
+                        itemQtyDiv.addEventListener("change", () => {
+                            const item = document.querySelector(`.item-${i}`);
+                            const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
+                            const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
+                            if (item) {
+                                const currentQty = parseInt(item.value) || 0;
+                                if (currentQty < 1) {
+                                    item.innerHTML = "1";
+                                }
+                                const totalPrice = currentQty * this.item[i].getItemPrice();
+                                totalPriceDiv.textContent = `Gold ${totalPrice}`;
+                            }
+                            else {
+                                console.error(`Element with class .item-${i} not found.`);
+                            }
+                        });
+                        const plusBtn = document.createElement("div");
+                        plusBtn.classList.add("btn", "btn-success", "p-0", "rounded-0", "border", "border-3", "border-black");
+                        plusBtn.style.width = "45px";
+                        plusBtn.style.height = "30px";
+                        plusBtn.textContent = "+";
+                        plusBtn.addEventListener("click", () => {
+                            const item = document.querySelector(`.item-${i}`);
+                            const totalPriceContainer = document.querySelector(`.total-price-container-item-${i}`);
+                            const totalPriceDiv = totalPriceContainer.querySelector(`.total-price-item-${i}`);
+                            if (item) {
+                                const currentQty = parseInt(item.value) || 0;
+                                item.value = `${currentQty + 1}`;
+                                const totalPrice = parseInt(item.value) * this.item[i].getItemPrice();
+                                totalPriceDiv.textContent = `Gold ${totalPrice}`;
+                            }
+                            else {
+                                console.error(`Element with class .item-${i} not found.`);
+                            }
+                        });
+                        colDiv1.appendChild(minusBtn);
+                        colDiv1.appendChild(itemQtyDiv);
+                        colDiv1.appendChild(plusBtn);
+                        const colDiv2 = document.createElement("div");
+                        colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "d-flex", "align-items-center", "position-relative");
+                        const goldIcon = document.createElement("img");
+                        goldIcon.src = GoldImagePath;
+                        goldIcon.className = "ms-2 me-2";
+                        goldIcon.style.width = "30px";
+                        const totalPriceDiv = document.createElement("div");
+                        totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
+                        totalPriceDiv.textContent = `Gold ${parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()}`;
+                        colDiv2.appendChild(goldIcon);
+                        colDiv2.appendChild(totalPriceDiv);
+                        addBox.appendChild(colDiv1);
+                        addBox.appendChild(colDiv2);
+                    }
+                    else {
+                        let equipment = this.item[i];
+                        if (equipment.getLevel() < 3) {
+                            const colDiv2 = document.createElement("div");
+                            colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "position-relative");
+                            const totalPriceDiv = document.createElement("div");
+                            totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
+                            totalPriceDiv.textContent = `Gold ${this.item[i].getItemPrice()}`;
+                            colDiv2.appendChild(totalPriceDiv);
+                            addBox.appendChild(colDiv1);
+                            addBox.appendChild(colDiv2);
+                        }
+                    }
+                    const buyButton = document.createElement("button");
+                    buyButton.className =
+                        "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
+                    if (this.item[i] instanceof EquippableItem_1.EquippableItem) {
+                        buyButton.innerHTML = "Upgrade";
+                        // alert("EquippableItem");
+                        if (this.item[i].getLevel() < 3) {
+                            // alert("getLevel() < 3");
+                            buyButton.onclick = () => {
+                                var _a, _b, _c, _d, _e, _f, _g;
+                                const currentItem = this.item[i];
+                                const totalPriceDiv = document.querySelector(`.total-price-item-${i}`);
+                                // const itemAmount: HTMLInputElement | null =
+                                //   document.querySelector(`.item-${i}`);
+                                const itemAmount = document.createElement("input");
+                                itemAmount.value = "1";
+                                if (itemAmount) {
+                                    if (totalPriceDiv) {
+                                        if (this.player) {
+                                            const goldDiv = document.querySelector("#goldAmount");
+                                            let playerGold = 0;
+                                            if (goldDiv) {
+                                                playerGold = parseInt(goldDiv.textContent.split(" ")[1]);
+                                            }
+                                            const priceContent = totalPriceDiv.textContent;
+                                            const price = parseInt(priceContent.split(" ")[1]);
+                                            if (playerGold >= price) {
+                                                const currentQty = parseInt(itemAmount.value) || 0;
+                                                if (currentQty > 0) {
+                                                    //   this.player.useGold(price);
+                                                    const token = (0, authentication_1.getAuthToken)();
+                                                    if (token) {
+                                                        API_1.API.updateGold(token, -price);
+                                                    }
+                                                    if (currentItem instanceof EquippableItem_1.EquippableItem) {
+                                                        // alert(playerGold + " " + price);
+                                                        //basically what we need to do is to first check if the item is an equippable
+                                                        //then we basically do nothing to said object and just go to the gameManager
+                                                        //and from the gamemanager we do a force upgrade.
+                                                        //TL;DR: this is fucking stupid but my hands and mind have forced me. Forgive me my son -Frans
+                                                        if (currentItem instanceof Sword_1.Sword) {
+                                                            (_a = this.game) === null || _a === void 0 ? void 0 : _a.upgradeSword();
+                                                            this.upgradeSword(currentItem, (currentItem.getLevel() + 1));
+                                                        }
+                                                        else if (currentItem instanceof Pickaxe_1.Pickaxe) {
+                                                            (_b = this.game) === null || _b === void 0 ? void 0 : _b.upgradePickaxe();
+                                                            this.upgradePickaxe(currentItem, (currentItem.getLevel() + 1));
+                                                        }
+                                                        else if (currentItem instanceof Shovel_1.Shovel) {
+                                                            (_c = this.game) === null || _c === void 0 ? void 0 : _c.upgradeShovel();
+                                                            this.upgradeShovel(currentItem, (currentItem.getLevel() + 1));
+                                                        }
+                                                        (_d = this.inventory) === null || _d === void 0 ? void 0 : _d.addItemOwned(i, currentQty);
+                                                        (_e = this.inventory) === null || _e === void 0 ? void 0 : _e.saveInventory();
+                                                        currentItem.upgrade();
+                                                    }
+                                                    else {
+                                                        (_f = this.inventory) === null || _f === void 0 ? void 0 : _f.addItemOwned(i, currentQty);
+                                                        (_g = this.inventory) === null || _g === void 0 ? void 0 : _g.saveInventory();
+                                                    }
+                                                    this.open(shopHTML);
+                                                }
+                                                else {
+                                                    itemAmount.value = "1";
+                                                    totalPriceDiv.textContent = `Gold ${1 * this.item[i].getItemPrice()}`;
+                                                }
+                                            }
+                                            else {
+                                                alert("Not enough gold!");
+                                            }
+                                        }
+                                    }
+                                }
+                            };
+                        }
+                    }
+                    else {
+                        buyButton.innerHTML = "Buy";
                         buyButton.onclick = () => {
-                            var _a, _b, _c, _d, _e, _f, _g;
+                            var _a, _b, _c;
                             const currentItem = this.item[i];
                             const totalPriceDiv = document.querySelector(`.total-price-item-${i}`);
-                            // const itemAmount: HTMLInputElement | null =
-                            //   document.querySelector(`.item-${i}`);
-                            const itemAmount = document.createElement("input");
-                            itemAmount.value = "1";
+                            const itemAmount = document.querySelector(`.item-${i}`);
                             if (itemAmount) {
                                 if (totalPriceDiv) {
                                     if (this.player) {
@@ -4853,37 +4961,14 @@ class Shop {
                                                 if (token) {
                                                     API_1.API.updateGold(token, -price);
                                                 }
-                                                if (currentItem instanceof EquippableItem_1.EquippableItem) {
-                                                    // alert(playerGold + " " + price);
-                                                    //basically what we need to do is to first check if the item is an equippable
-                                                    //then we basically do nothing to said object and just go to the gameManager
-                                                    //and from the gamemanager we do a force upgrade.
-                                                    //TL;DR: this is fucking stupid but my hands and mind have forced me. Forgive me my son -Frans
-                                                    if (currentItem instanceof Sword_1.Sword) {
-                                                        (_a = this.game) === null || _a === void 0 ? void 0 : _a.upgradeSword();
-                                                        this.upgradeSword(currentItem, (currentItem.getLevel() + 1));
-                                                    }
-                                                    else if (currentItem instanceof Pickaxe_1.Pickaxe) {
-                                                        (_b = this.game) === null || _b === void 0 ? void 0 : _b.upgradePickaxe();
-                                                        this.upgradePickaxe(currentItem, (currentItem.getLevel() + 1));
-                                                    }
-                                                    else if (currentItem instanceof Shovel_1.Shovel) {
-                                                        (_c = this.game) === null || _c === void 0 ? void 0 : _c.upgradeShovel();
-                                                        this.upgradeShovel(currentItem, (currentItem.getLevel() + 1));
-                                                    }
-                                                    (_d = this.inventory) === null || _d === void 0 ? void 0 : _d.addItemOwned(i, currentQty);
-                                                    (_e = this.inventory) === null || _e === void 0 ? void 0 : _e.saveInventory();
-                                                    currentItem.upgrade();
-                                                }
-                                                else {
-                                                    (_f = this.inventory) === null || _f === void 0 ? void 0 : _f.addItemOwned(i, currentQty);
-                                                    (_g = this.inventory) === null || _g === void 0 ? void 0 : _g.saveInventory();
-                                                }
-                                                this.open(shopHTML);
+                                                alert(playerGold + " " + price);
+                                                (_a = this.inventory) === null || _a === void 0 ? void 0 : _a.addItemOwned(i, currentQty);
+                                                (_b = this.inventory) === null || _b === void 0 ? void 0 : _b.saveInventory();
                                             }
                                             else {
                                                 itemAmount.value = "1";
                                                 totalPriceDiv.textContent = `Gold ${1 * this.item[i].getItemPrice()}`;
+                                                (_c = this.inventory) === null || _c === void 0 ? void 0 : _c.saveInventory();
                                             }
                                         }
                                         else {
@@ -4894,57 +4979,14 @@ class Shop {
                             }
                         };
                     }
+                    desc.appendChild(itemName);
+                    desc.appendChild(mainDesc);
+                    desc.appendChild(addBox);
+                    desc.appendChild(buyButton);
+                    shopTemp.appendChild(shopImage);
+                    shopTemp.appendChild(desc);
+                    shopHTML.appendChild(shopTemp);
                 }
-                else {
-                    buyButton.innerHTML = "Buy";
-                    buyButton.onclick = () => {
-                        var _a, _b, _c;
-                        const currentItem = this.item[i];
-                        const totalPriceDiv = document.querySelector(`.total-price-item-${i}`);
-                        const itemAmount = document.querySelector(`.item-${i}`);
-                        if (itemAmount) {
-                            if (totalPriceDiv) {
-                                if (this.player) {
-                                    const goldDiv = document.querySelector("#goldAmount");
-                                    let playerGold = 0;
-                                    if (goldDiv) {
-                                        playerGold = parseInt(goldDiv.textContent.split(" ")[1]);
-                                    }
-                                    const priceContent = totalPriceDiv.textContent;
-                                    const price = parseInt(priceContent.split(" ")[1]);
-                                    if (playerGold >= price) {
-                                        const currentQty = parseInt(itemAmount.value) || 0;
-                                        if (currentQty > 0) {
-                                            //   this.player.useGold(price);
-                                            const token = (0, authentication_1.getAuthToken)();
-                                            if (token) {
-                                                API_1.API.updateGold(token, -price);
-                                            }
-                                            alert(playerGold + " " + price);
-                                            (_a = this.inventory) === null || _a === void 0 ? void 0 : _a.addItemOwned(i, currentQty);
-                                            (_b = this.inventory) === null || _b === void 0 ? void 0 : _b.saveInventory();
-                                        }
-                                        else {
-                                            itemAmount.value = "1";
-                                            totalPriceDiv.textContent = `Gold ${1 * this.item[i].getItemPrice()}`;
-                                            (_c = this.inventory) === null || _c === void 0 ? void 0 : _c.saveInventory();
-                                        }
-                                    }
-                                    else {
-                                        alert("Not enough gold!");
-                                    }
-                                }
-                            }
-                        }
-                    };
-                }
-                desc.appendChild(itemName);
-                desc.appendChild(mainDesc);
-                desc.appendChild(addBox);
-                desc.appendChild(buyButton);
-                shopTemp.appendChild(shopImage);
-                shopTemp.appendChild(desc);
-                shopHTML.appendChild(shopTemp);
             }
         }
     }
@@ -5468,7 +5510,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         var _j;
         const correct = yield ((_j = game.getQuestionView()) === null || _j === void 0 ? void 0 : _j.checkAnswer(DButton, DButton.value));
         if (!correct) {
-            game.logActivity("Wrong Answer! (Wait 5s to answer again)");
+            game.logActivity("Wrong Answer! (Wait 20s to answer again)");
             AButton.disabled = true;
             BButton.disabled = true;
             CButton.disabled = true;

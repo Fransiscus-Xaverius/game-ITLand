@@ -10,6 +10,7 @@ export class Leaderboard {
   private player: Player | null = null;
   public questionView: QuestionView | null = null;
   public gameManager:GameManager | null = null;
+  public self: HTMLDivElement | null = null;
 
   constructor() {}
 
@@ -30,6 +31,7 @@ export class Leaderboard {
   }
 
   public async open(leaderboardElement: HTMLDivElement | null) {
+    this.self = leaderboardElement;
     const { GoldImagePath, EnergyImagePath, DynamiteImagePath, CannonBallImagePath } = require('../config/env.json');
 
     const allUserString: UserStack[] = JSON.parse(await API.getAllUser());
@@ -93,12 +95,13 @@ export class Leaderboard {
           
           if (closeButton) {
             // alert("close button click")
+            this.gameManager?.logActivity("You have attacked "+this.listUser[i].username+" with a Cannonball! they lost 300 gold coins!");
             closeButton.click();
           }
         }
         else{
+          this.gameManager?.logActivity("You don't have enough resources to attack this player! (Gold needed: 150, Energy needed: 20)");
           closeButton!.click();
-          this.gameManager?.logActivity("You don't have enough gold to attack this player! (Gold needed: 150)");
         }
       });
       allDynButton[i].addEventListener("click", () => {
@@ -114,13 +117,13 @@ export class Leaderboard {
             API.updateGold(token, -75)
           }
           if (closeButton) {
-            // alert("close button click")
+            this.gameManager?.logActivity("You have attacked "+this.listUser[i].username+" with a Dynamite! they lost 150 gold coins!");
             closeButton.click();
           }
         }
         else{
+          this.gameManager?.logActivity("You don't have enough resources to attack this player! (Gold needed: 75, Energy needed: 10)");
           closeButton!.click();
-          this.gameManager?.logActivity("You don't have enough gold to attack this player! (Gold needed: 75)");
         }
       });
     }
