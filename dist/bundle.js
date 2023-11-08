@@ -2710,7 +2710,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class BigChest extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Big_Chest", 3, 10, 50, 5);
+        super(coordinate, animations, "Big_Chest", 3, 350, 800, 20);
         this.getLoot = function (min, max) {
             return Math.random() * (max - min) + min;
         };
@@ -2762,7 +2762,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Chest extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Chest", 1, 10, 50, 5);
+        super(coordinate, animations, "Chest", 1, 10, 150, 5);
         this.getLoot = function (min, max) {
             return Math.random() * (max - min) + min;
         };
@@ -2890,7 +2890,7 @@ const Tile_1 = require("./Tile");
 const GroupAnimation_1 = require("./GroupAnimation");
 class Granite extends Tile_1.Tile {
     constructor(coordinate) {
-        super(coordinate, [], "granite", 15, 3, 50, 300);
+        super(coordinate, [], "granite", 15, 3, 150, 400);
         this.addAnimation(GroupAnimation_1.GroupAnimation.animations[3]);
     }
     step(stepper) {
@@ -2908,7 +2908,7 @@ const Tile_1 = require("./Tile");
 const GroupAnimation_1 = require("./GroupAnimation");
 class Grass extends Tile_1.Tile {
     constructor(coordinate) {
-        super(coordinate, [], "grass", 5, 1, 5, 45);
+        super(coordinate, [], "grass", 5, 1, 10, 50);
         this.addAnimation(GroupAnimation_1.GroupAnimation.animations[0]);
         this.addAnimation(GroupAnimation_1.GroupAnimation.animations[1]);
         this.currentAnimationIndex = Math.round(Math.random());
@@ -2928,7 +2928,7 @@ const Tile_1 = require("./Tile");
 const GroupAnimation_1 = require("./GroupAnimation");
 class Gravel extends Tile_1.Tile {
     constructor(coordinate) {
-        super(coordinate, [], "gravel", 10, 2, 15, 75);
+        super(coordinate, [], "gravel", 10, 2, 50, 150);
         this.addAnimation(GroupAnimation_1.GroupAnimation.animations[3]);
         this.currentAnimationIndex = 0;
     }
@@ -3186,7 +3186,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class MediumChest extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Medium_Chest", 2, 10, 50, 5);
+        super(coordinate, animations, "Medium_Chest", 2, 150, 350, 10);
         this.getLoot = function (min, max) {
             return Math.random() * (max - min) + min;
         };
@@ -3455,7 +3455,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Rock extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Rock", 1, 10, 50, 5);
+        super(coordinate, animations, "Rock", 1, 10, 75, 5);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'rock', Animation_1.Animation.assets['rock'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
@@ -3610,7 +3610,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Gold_ore extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Gold_ore", 3, 80, 400, 40);
+        super(coordinate, animations, "Gold_ore", 3, 250, 600, 20);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Gold_ore', Animation_1.Animation.assets['gold_ore'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
@@ -3625,7 +3625,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Iron_ore extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Iron_ore", 2, 20, 100, 15);
+        super(coordinate, animations, "Iron_ore", 2, 75, 175, 15);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Iron_ore', Animation_1.Animation.assets['iron_ore'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
@@ -3640,7 +3640,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Silver_ore extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Silver_ore", 2, 40, 200, 25);
+        super(coordinate, animations, "Silver_ore", 2, 125, 250, 25);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Silver_ore', Animation_1.Animation.assets['silver_ore'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }
