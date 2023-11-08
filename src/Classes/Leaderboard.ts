@@ -80,8 +80,9 @@ export class Leaderboard {
         let closeButton: HTMLButtonElement | null = document.querySelector(
           ".close-leaderboard-button"
         );
-        if(this.player!.getGold()>150){
+        if(this.player!.getGold()>=150&&this.player!.getEnergy()>=20){
           this.player!.useGold(150);
+          this.player!.useEnergy(20);
           console.error(this.listUser);
           alert(this.listUser[i].username);
           API.CannonBall(this.listUser[i].username, this.player!.getPlayerName() as string);
@@ -104,8 +105,9 @@ export class Leaderboard {
         let closeButton: HTMLButtonElement | null = document.querySelector(
           ".close-leaderboard-button"
         );
-        if(this.player!.getGold()>75){
+        if(this.player!.getGold()>=75 && this.player!.getEnergy()>=10){
           this.player!.useGold(75);
+          this.player!.useEnergy(10);
           API.Dynamite(this.listUser[i].username,this.player!.getPlayerName() as string);
           const token = getAuthToken();
           if (token) {

@@ -4178,8 +4178,9 @@ class Leaderboard {
                 allCnnButton[i].addEventListener("click", () => {
                     var _a;
                     let closeButton = document.querySelector(".close-leaderboard-button");
-                    if (this.player.getGold() > 150) {
+                    if (this.player.getGold() >= 150 && this.player.getEnergy() >= 20) {
                         this.player.useGold(150);
+                        this.player.useEnergy(20);
                         console.error(this.listUser);
                         alert(this.listUser[i].username);
                         API_1.API.CannonBall(this.listUser[i].username, this.player.getPlayerName());
@@ -4200,8 +4201,9 @@ class Leaderboard {
                 allDynButton[i].addEventListener("click", () => {
                     var _a;
                     let closeButton = document.querySelector(".close-leaderboard-button");
-                    if (this.player.getGold() > 75) {
+                    if (this.player.getGold() >= 75 && this.player.getEnergy() >= 10) {
                         this.player.useGold(75);
+                        this.player.useEnergy(10);
                         API_1.API.Dynamite(this.listUser[i].username, this.player.getPlayerName());
                         const token = (0, authentication_1.getAuthToken)();
                         if (token) {
