@@ -9,7 +9,7 @@ import { GroupAnimation } from "./GroupAnimation";
 export class Grass extends Tile implements IDestructable{
     
     constructor(coordinate:Point){
-        super(coordinate, [], "grass", 5, 1, 5, 45)
+        super(coordinate, [], "grass", 5, 1, 10, 50)
         this.addAnimation(GroupAnimation.animations[0])
         this.addAnimation(GroupAnimation.animations[1])
         this.currentAnimationIndex = Math.round(Math.random())
