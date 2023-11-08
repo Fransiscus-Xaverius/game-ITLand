@@ -162,6 +162,7 @@ export class Shop {
           const shopImage = document.createElement("img") as HTMLImageElement;
           shopImage.className = "shop-img h-100";
           shopImage.src = this.item[i].getImagePath();
+          shopImage.draggable = false;
 
           // Description shop
           const desc = document.createElement("div") as HTMLDivElement;
@@ -309,6 +310,7 @@ export class Shop {
             goldIcon.src = GoldImagePath;
             goldIcon.className = "ms-2 me-2";
             goldIcon.style.width = "30px";
+            goldIcon.draggable = false;
 
             const totalPriceDiv: HTMLDivElement = document.createElement("div");
             totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);

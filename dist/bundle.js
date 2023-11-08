@@ -3953,6 +3953,7 @@ class Inventory {
             imageElement.classList.add("inventory-item-image", "h-100");
             imageElement.src = item.getImagePath();
             imageElement.alt = "";
+            imageElement.draggable = false;
             imgDiv.appendChild(imageElement);
             const cardBody = document.createElement("div");
             cardBody.classList.add("card-body");
@@ -4242,11 +4243,11 @@ class Leaderboard {
           </div>
           <div class="d-flex align-items-center">
             <div class='dyn-atk dyn-attack-${i} btn btn-danger d-flex align-items-center me-3 rounded-0 border border-black border-3'>
-              <img src='${DynamiteImagePath}' class='me-1' style='height: 30px'>
+              <img src='${DynamiteImagePath}' class='me-1' style='height: 30px' draggable="false">
               <p class='m-0' style='font-size: small;'>Dynamite Attack</p>
             </div>
             <div class='cnn-atk cnn-attack-${i} btn btn-secondary d-flex align-items-center rounded-0 border border-black border-3'>
-              <img src='${CannonBallImagePath}' class='me-1' style='height: 30px'>
+              <img src='${CannonBallImagePath}' class='me-1' style='height: 30px' draggable="false">
               <p class='m-0' style='font-size: small;'>Cannon Bomb Attack</p>
             </div>
           </div>
@@ -4846,6 +4847,7 @@ class Shop {
                     const shopImage = document.createElement("img");
                     shopImage.className = "shop-img h-100";
                     shopImage.src = this.item[i].getImagePath();
+                    shopImage.draggable = false;
                     // Description shop
                     const desc = document.createElement("div");
                     desc.className = "desc h-100 position-relative";
@@ -4934,6 +4936,7 @@ class Shop {
                         goldIcon.src = GoldImagePath;
                         goldIcon.className = "ms-2 me-2";
                         goldIcon.style.width = "30px";
+                        goldIcon.draggable = false;
                         const totalPriceDiv = document.createElement("div");
                         totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
                         totalPriceDiv.textContent = `Gold ${parseInt(itemQtyDiv.value) * this.item[i].getItemPrice()}`;

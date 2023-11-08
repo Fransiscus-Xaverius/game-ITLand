@@ -185,6 +185,7 @@ export class Inventory {
       imageElement.classList.add("inventory-item-image", "h-100");
       imageElement.src = item.getImagePath();
       imageElement.alt = "";
+      imageElement.draggable = false;
 
       imgDiv.appendChild(imageElement);
 

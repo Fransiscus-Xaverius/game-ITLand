@@ -59,11 +59,11 @@ export class Leaderboard {
           </div>
           <div class="d-flex align-items-center">
             <div class='dyn-atk dyn-attack-${i} btn btn-danger d-flex align-items-center me-3 rounded-0 border border-black border-3'>
-              <img src='${DynamiteImagePath}' class='me-1' style='height: 30px'>
+              <img src='${DynamiteImagePath}' class='me-1' style='height: 30px' draggable="false">
               <p class='m-0' style='font-size: small;'>Dynamite Attack</p>
             </div>
             <div class='cnn-atk cnn-attack-${i} btn btn-secondary d-flex align-items-center rounded-0 border border-black border-3'>
-              <img src='${CannonBallImagePath}' class='me-1' style='height: 30px'>
+              <img src='${CannonBallImagePath}' class='me-1' style='height: 30px' draggable="false">
               <p class='m-0' style='font-size: small;'>Cannon Bomb Attack</p>
             </div>
           </div>

@@ -27,7 +27,10 @@
     <div class="right-side">
         <!-- Content for the right side -->
         <div class="UI atas p-4" id="atas">
-          <div class="d-flex mb-4 mt-3">
+          <div class="team-name fs-2 w-100 text-white p-2 px-4" style="background-color: rgba(0, 0, 0, 0.6);">
+            TEAM-NAME
+          </div>
+          <div class="d-flex justify-content-between mb-2 mt-3">
             <button class="button-shop btn border border-black border-3 rounded-0 me-3 shadow" style="background-color:springgreen;">Shop</button>
             <button class="button-inventory btn border border-black border-3 rounded-0 me-3 shadow" style="background-color:springgreen;">Inventory</button>
             <button class="button-leaderboard btn border border-black border-3 rounded-0 me-3 shadow" style="background-color:springgreen;" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -41,11 +44,13 @@
               
               <!-- Attack Modal -->
               <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-scrollable modal-xl" style="background-image: url('dist/Assets/final/leaderboard.png'); background-size: contain; background-repeat: no-repeat; background-position: center;margin-top: -9rem; padding-top: 20rem;" >
-                  <div class="modal-content rounded-0" style="background-color: transparent; height: 40rem; padding: 5rem; padding-bottom: 4rem;" >
-                    <div class="w-100 d-flex justify-content-center" id="exampleModalLabel">
+                <div class="modal-dialog modal-dialog-scrollable modal-xl position-relative" style="background-image: url('dist/Assets/final/leaderboard.png'); background-size: contain; background-repeat: no-repeat; background-position: center;margin-top: -9rem; padding-top: 20rem;" >
+                  <div class="modal-content rounded-0 border-0" style="background-color: transparent; height: 40rem; padding: 3rem 5rem 5.5rem 5rem;" >
+                    <div class="w-100 d-flex justify-content-center position-relative" id="exampleModalLabel">
+                      <button type="button" class="p-0 close-leaderboard-button border-0 bg-transparent position-absolute" style="width: 70px; height: 70px; top: 0%; right: 0%;" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="dist/Assets/final/x.png" style="width: 100%; height: 100%;" alt="" draggable="false">
+                      </button>
                       <h1 style="text-shadow: 4px 4px #ff0000;">ATTACK</h1>
-                      <button type="button" class="btn-close close-leaderboard-button" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body mt-4 mb-3 rounded-3 text-white p-4" style="background-color: rgba(0, 0, 0, 0.6);">
                       
@@ -68,10 +73,13 @@
 
               <!-- Documentation Modal -->
               <div class="modal fade" id="documentation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-scrollable modal-xl" style="background-image: url('dist/Assets/final/leaderboard.png'); background-size: contain; background-repeat: no-repeat; background-position: center;margin-top: -9rem; padding-top: 20rem;" >
-                  <div class="modal-content rounded-0" style="background-color: transparent; height: 40rem; padding: 5rem; padding-bottom: 4rem;" >
-                    <div class="w-100 d-flex justify-content-center" id="exampleModalLabel">
-                      <h1>Documentation</h1>
+                <div class="modal-dialog modal-dialog-scrollable modal-xl position-relative" style="background-image: url('dist/Assets/final/leaderboard.png'); background-size: contain; background-repeat: no-repeat; background-position: center;margin-top: -9rem; padding-top: 20rem;" >
+                  <div class="modal-content rounded-0 border-0" style="background-color: transparent; height: 40rem; padding: 3rem 5rem 5.5rem 5rem;" >
+                    <div class="w-100 d-flex justify-content-center position-relative" id="exampleModalLabel">
+                      <button type="button" class="p-0 close-leaderboard-button border-0 bg-transparent position-absolute" style="width: 70px; height: 70px; top: 0%; right: 0%;" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="dist/Assets/final/x.png" style="width: 100%; height: 100%;" alt="" draggable="false">
+                      </button>
+                      <h1 style="text-shadow: 4px 4px rgb(147, 100, 59);">Documentation</h1>
                     </div>
                     <div class="modal-body mt-4 mb-3 rounded-3 text-white p-4" style="background-color: rgba(0, 0, 0, 0.5);">
                       
@@ -98,11 +106,11 @@
         <div class="UI bawah p-4 border-top border-black" id="bawah">
             <div class="amountStatus d-flex border border-3 border-black p-2 shadow" style="background-color:sandybrown ;">
                 <div class="w-50 d-flex">
-                  <img src="dist/Assets/final/gold2.png" alt="" class="me-2" style="height: 25px;">
+                  <img src="dist/Assets/final/gold2.png" alt="" class="me-2" style="height: 25px;" draggable="false">
                   <div class="goldAmount" id="goldAmount">Gold : </div>
                 </div>
                 <div class="w-50 d-flex">
-                  <img src="dist/Assets/final/energy2.png" alt="" class="me-2" style="height: 25px;">
+                  <img src="dist/Assets/final/energy2.png" alt="" class="me-2" style="height: 25px;" draggable="false">
                   <div class="energyAmount" id="energyAmount">Energy : </div>
                 </div>
             </div>

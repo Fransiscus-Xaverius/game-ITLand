@@ -216,3 +216,7 @@ background: #555;
 .item-qty::-webkit-inner-spin-button {
     display: none;
 }
+
+*{
+    user-select: none;
+}
