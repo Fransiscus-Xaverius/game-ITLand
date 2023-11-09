@@ -101,6 +101,7 @@ export class Leaderboard {
             }, 5000);
           }
           if (closeButton) {
+            this.gameManager?.resetTimer();
             this.gameManager?.logActivity("You have attacked "+this.listUser[i].username+" with a Cannonball! they lost 300 gold coins! You can attack again in 5 seconds!");
             closeButton.click();
           }
@@ -132,6 +133,7 @@ export class Leaderboard {
           }
         }
         else{
+          this.gameManager?.resetTimer();
           this.gameManager?.logActivity("You don't have enough resources to attack this player! (Gold needed: 75, Energy needed: 10)");
           closeButton!.click();
         }

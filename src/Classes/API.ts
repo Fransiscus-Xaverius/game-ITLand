@@ -280,6 +280,20 @@ export class API {
     }
   }
 
+  public async inflation(gold:number, username:string){
+    const amount = Math.round(gold*0.1);
+    try {
+      const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-${amount}&sender=inflation`;
+      const request: RequestInfo = new Request(apiUrl, {
+        method: "PUT",
+      });
+      const response = await fetch(request);
+      if (!response.ok) throw new Error("Network Response was not ok");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   public static async Dynamite(username: string, target:string) {
     const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-150&sender=${target}`;
     const request: RequestInfo = new Request(apiUrl, {

@@ -27,6 +27,7 @@ import { DiggedSand } from "./GameObjects/digged_sand";
 import { DiggedGravel } from "./GameObjects/digged_gravel";
 import { DiggedGround } from "./GameObjects/digged_ground";
 import { DiggedGranite } from "./GameObjects/digged_granite";
+import { count } from "console";
 
 export class GameManager {
   public api: API | null = null;
@@ -44,6 +45,7 @@ export class GameManager {
   private leaderboardView: LeaderboardView | null = null;
   private questionView: QuestionView | null = null;
   private token: string = "";
+  public countdown: number = 300; //5 minutes countdown for inflation.
 
   constructor(
     canvasView: CanvasView | null = null,
@@ -114,6 +116,10 @@ export class GameManager {
     this.shopView?.getShop()?.loadShop();
   }
 
+  public resetTimer(){
+    this.countdown = 300;
+  }
+
   public async tick() {
     await this.api?.subtick(
       this.player.getCoordinate().x,
@@ -128,6 +134,16 @@ export class GameManager {
     this.questionView?.refreshStats();
     this.processAttack();
     await this.save();
+
+    let inflationwarning:HTMLSpanElement|null = document.querySelector("#inflation-span");
+
+    this.countdown--;
+    console.error(this.countdown);
+    if(this.countdown==0){
+      this.countdown = 300;
+      await this.api?.inflation(this.player.getGold()!, this.player.getPlayerName()!);
+    }
+    inflationwarning!.textContent = this.countdown.toString();
   }
 
   public async processAttack(){ //attack warning.
@@ -135,8 +151,14 @@ export class GameManager {
     const lastAttackString = await lastAttack!.text();
     const lastAttackData = JSON.parse(lastAttackString);
     if(!lastAttackData.seen){
-      this.api?.seeAttack(lastAttackData.id);
-      alert(`You have been attacked by ${lastAttackData.sender}! You lost ${lastAttackData.gold} gold coin(s)!`);
+      if(lastAttackData.sender!="inflation"){
+        this.api?.seeAttack(lastAttackData.id);
+        alert(`You have been attacked by ${lastAttackData.sender}! You lost ${lastAttackData.gold} gold coin(s)!`);
+      }
+      else{
+        this.api?.seeAttack(lastAttackData.id);
+        alert(`You lost ${lastAttackData.gold} gold coin(s) due to inflation... 💀`);
+      }
     }
   }
 

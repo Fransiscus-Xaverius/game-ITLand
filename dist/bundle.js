@@ -387,6 +387,23 @@ class API {
             }
         });
     }
+    inflation(gold, username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const amount = Math.round(gold * 0.1);
+            try {
+                const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-${amount}&sender=inflation`;
+                const request = new Request(apiUrl, {
+                    method: "PUT",
+                });
+                const response = yield fetch(request);
+                if (!response.ok)
+                    throw new Error("Network Response was not ok");
+            }
+            catch (error) {
+                console.error(error);
+            }
+        });
+    }
     static Dynamite(username, target) {
         return __awaiter(this, void 0, void 0, function* () {
             const apiUrl = `${LOCAL_API_URL}/attack?username=${username}&gold=-150&sender=${target}`;
@@ -2223,6 +2240,7 @@ class GameManager {
         this.leaderboardView = null;
         this.questionView = null;
         this.token = "";
+        this.countdown = 300; //5 minutes countdown for inflation.
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
         this.setShopView(shopView);
@@ -2279,8 +2297,11 @@ class GameManager {
             (_p = (_o = this.shopView) === null || _o === void 0 ? void 0 : _o.getShop()) === null || _p === void 0 ? void 0 : _p.loadShop();
         });
     }
+    resetTimer() {
+        this.countdown = 300;
+    }
     tick() {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.subtick(this.player.getCoordinate().x, this.player.getCoordinate().y, this.player.getEnergy()));
             const curGold = yield ((_b = this.api) === null || _b === void 0 ? void 0 : _b.getGold(this.token));
@@ -2291,17 +2312,31 @@ class GameManager {
             (_c = this.questionView) === null || _c === void 0 ? void 0 : _c.refreshStats();
             this.processAttack();
             yield this.save();
+            let inflationwarning = document.querySelector("#inflation-span");
+            this.countdown--;
+            console.error(this.countdown);
+            if (this.countdown == 0) {
+                this.countdown = 300;
+                yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.inflation(this.player.getGold(), this.player.getPlayerName()));
+            }
+            inflationwarning.textContent = this.countdown.toString();
         });
     }
     processAttack() {
-        var _a, _b;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             const lastAttack = yield ((_a = this.api) === null || _a === void 0 ? void 0 : _a.getLastAttack(this.player.getPlayerName()));
             const lastAttackString = yield lastAttack.text();
             const lastAttackData = JSON.parse(lastAttackString);
             if (!lastAttackData.seen) {
-                (_b = this.api) === null || _b === void 0 ? void 0 : _b.seeAttack(lastAttackData.id);
-                alert(`You have been attacked by ${lastAttackData.sender}! You lost ${lastAttackData.gold} gold coin(s)!`);
+                if (lastAttackData.sender != "inflation") {
+                    (_b = this.api) === null || _b === void 0 ? void 0 : _b.seeAttack(lastAttackData.id);
+                    alert(`You have been attacked by ${lastAttackData.sender}! You lost ${lastAttackData.gold} gold coin(s)!`);
+                }
+                else {
+                    (_c = this.api) === null || _c === void 0 ? void 0 : _c.seeAttack(lastAttackData.id);
+                    alert(`You lost ${lastAttackData.gold} gold coin(s) due to inflation... 💀`);
+                }
             }
         });
     }
@@ -4264,7 +4299,7 @@ class Leaderboard {
             const leaderboardButton = document.querySelector(".button-leaderboard");
             for (let i = 0; i < allCnnButton.length; i++) {
                 allCnnButton[i].addEventListener("click", () => {
-                    var _a, _b;
+                    var _a, _b, _c;
                     let closeButton = document.querySelector(".close-leaderboard-button");
                     if (this.player.getGold() >= 150 && this.player.getEnergy() >= 20) {
                         this.player.useGold(150);
@@ -4282,17 +4317,18 @@ class Leaderboard {
                             }, 5000);
                         }
                         if (closeButton) {
-                            (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You have attacked " + this.listUser[i].username + " with a Cannonball! they lost 300 gold coins! You can attack again in 5 seconds!");
+                            (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.resetTimer();
+                            (_b = this.gameManager) === null || _b === void 0 ? void 0 : _b.logActivity("You have attacked " + this.listUser[i].username + " with a Cannonball! they lost 300 gold coins! You can attack again in 5 seconds!");
                             closeButton.click();
                         }
                     }
                     else {
-                        (_b = this.gameManager) === null || _b === void 0 ? void 0 : _b.logActivity("You don't have enough resources to attack this player! (Gold needed: 150, Energy needed: 20)");
+                        (_c = this.gameManager) === null || _c === void 0 ? void 0 : _c.logActivity("You don't have enough resources to attack this player! (Gold needed: 150, Energy needed: 20)");
                         closeButton.click();
                     }
                 });
                 allDynButton[i].addEventListener("click", () => {
-                    var _a, _b;
+                    var _a, _b, _c;
                     let closeButton = document.querySelector(".close-leaderboard-button");
                     if (this.player.getGold() >= 75 && this.player.getEnergy() >= 10) {
                         this.player.useGold(75);
@@ -4312,7 +4348,8 @@ class Leaderboard {
                         }
                     }
                     else {
-                        (_b = this.gameManager) === null || _b === void 0 ? void 0 : _b.logActivity("You don't have enough resources to attack this player! (Gold needed: 75, Energy needed: 10)");
+                        (_b = this.gameManager) === null || _b === void 0 ? void 0 : _b.resetTimer();
+                        (_c = this.gameManager) === null || _c === void 0 ? void 0 : _c.logActivity("You don't have enough resources to attack this player! (Gold needed: 75, Energy needed: 10)");
                         closeButton.click();
                     }
                 });
