@@ -5554,6 +5554,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
     const energyDiv = document.querySelector("#energyAmount");
     const goldDiv = document.querySelector("#goldAmount");
     const questionIDDiv = document.querySelector("#questionID");
+    const team_name = document.querySelector("#team-name");
     (0, loadAsset_1.default)(); //load game asset
     const userToken = (0, authentication_1.getAuthToken)();
     if (!userToken) {
@@ -5562,6 +5563,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
         window.location.replace("login.html");
     }
     const game = new GameManager_1.GameManager(new CanvasView_1.CanvasView(canvas), new TerminalView_1.TerminalView(terminal, executeButton, stopButton), new ShopView_1.ShopView(shopButton, shop, inventoryShopElement), new InventoryView_1.InventoryView(inventoryButton, inventory, inventoryShopElement), new QuestionView_1.QuestionView(QuestionArea, soalButton, new API_1.API(), AButton, BButton, CButton, DButton, energyDiv, goldDiv, questionIDDiv), new LeaderboardView_1.LeaderboardView(leaderboardButton, leaderboard, leaderboardElement));
+    team_name.innerHTML = game.getPlayer().getPlayerName();
     game.start();
     yield game.load(userToken);
     const pUnit = game.getActivePlayerUnit();

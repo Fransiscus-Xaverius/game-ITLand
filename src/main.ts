@@ -59,6 +59,7 @@ window.onload = async () => {
   const energyDiv = document.querySelector("#energyAmount") as HTMLDivElement;
   const goldDiv = document.querySelector("#goldAmount") as HTMLDivElement;
   const questionIDDiv = document.querySelector("#questionID") as HTMLDivElement;
+  const team_name = document.querySelector("#team-name") as HTMLDivElement;
 
   loadAsset(); //load game asset
 
@@ -88,6 +89,8 @@ window.onload = async () => {
     ),
     new LeaderboardView(leaderboardButton, leaderboard, leaderboardElement)
   );
+
+  team_name.innerHTML = game.getPlayer().getPlayerName()!;
 
   game.start();
   await game.load(userToken!);
