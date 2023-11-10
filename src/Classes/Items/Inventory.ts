@@ -302,41 +302,30 @@ export class Inventory {
           "border-black",
           "position-absolute",
           "start-50",
-          "translate-middle-x",
-          `item-equip-index-${index}`
+          "translate-middle-x"
         );
         itemUseButton.style.bottom = "15px";
-
         itemUseButton.addEventListener("click", () => {
-          let className = Array.from(itemUseButton.classList).find(
-            (className) => className.includes("item-equip-index-")
-          );
-          // let idx = className ? parseInt(className.split('-').pop() || '') : undefined;
-          if (className) {
-            let parts = className.split("-");
-            let index =
-              parts.length > 0 ? parseInt(parts[parts.length - 1]) : undefined;
-            let idx = index;
-            if (this.player) {
-              this.itemEquipState.forEach((e) => {
-                e = EquipState.UNEQUIPPED;
-              });
-              const allItemsOwned: NodeListOf<HTMLHeadingElement> =
-                document.querySelectorAll(".Equip");
-              allItemsOwned.forEach((e) => {
-                e.innerText = EquipmentStatus.CAN_BE_EQUIP;
-              });
-              this.saveInventory();
-              this.player.equip(item);
-              this.itemEquipState[idx] = EquipState.EQUIPPED;
-              let iES = [0, 0, 0, 0, 0, 0];
-              iES[idx] = 1;
-              sessionStorage.setItem(
-                "equipState",
-                JSON.stringify({ equipState: iES })
-              );
-              itemUseButton.textContent = EquipmentStatus.EQUIPPED;
-            }
+          let idx = index;
+          if (this.player) {
+            this.itemEquipState.forEach((e) => {
+              e = EquipState.UNEQUIPPED;
+            });
+            const allItemsOwned: NodeListOf<HTMLHeadingElement> =
+              document.querySelectorAll(".Equip");
+            allItemsOwned.forEach((e) => {
+              e.innerText = EquipmentStatus.CAN_BE_EQUIP;
+            });
+            this.saveInventory();
+            this.player.equip(item);
+            this.itemEquipState[idx] = EquipState.EQUIPPED;
+            let iES = [0, 0, 0, 0, 0, 0];
+            iES[idx] = 1;
+            sessionStorage.setItem(
+              "equipState",
+              JSON.stringify({ equipState: iES })
+            );
+            itemUseButton.textContent = EquipmentStatus.EQUIPPED;
           }
         });
       }
