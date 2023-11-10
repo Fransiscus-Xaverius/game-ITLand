@@ -305,7 +305,13 @@ export class GameManager {
       this.actionWithSword(temp!, direction);
     } else if (tools instanceof Shovel) {
       if (!tile) return;
-      this.actionWithShovel(tile!);
+      if (direction!= Direction.Under){
+        alert("This is the wrong tool!")
+        return;
+      }
+      else{
+        this.actionWithShovel(tile!);
+      }
     } else {
       this.alertEquipSomething();
     }

@@ -2477,7 +2477,13 @@ class GameManager {
         else if (tools instanceof Shovel_1.Shovel) {
             if (!tile)
                 return;
-            this.actionWithShovel(tile);
+            if (direction != Direction_1.Direction.Under) {
+                alert("This is the wrong tool!");
+                return;
+            }
+            else {
+                this.actionWithShovel(tile);
+            }
         }
         else {
             this.alertEquipSomething();
@@ -4043,13 +4049,7 @@ class Inventory {
                         });
                         this.saveInventory();
                         this.player.equip(item);
-                        this.itemEquipState[index] = ItemRelated_enum_1.EquipState.EQUIPPED;
-                        allItemsOwned.forEach((e, idx) => {
-                            if (index == idx) {
-                                e.innerText = ItemRelated_enum_1.EquipmentStatus.EQUIPPED;
-                            }
-                        });
-                        // itemUseButton.textContent = EquipmentStatus.EQUIPPED;
+                        this.itemEquipState[index] = ItemRelated_enum_1.EquipState.EQUIPPED; // itemUseButton.textContent = EquipmentStatus.EQUIPPED;
                     }
                 });
             }
@@ -4345,7 +4345,8 @@ class Leaderboard {
                             API_1.API.updateGold(token, -75);
                         }
                         if (closeButton) {
-                            (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.logActivity("You have attacked " + this.listUser[i].username + " with a Dynamite! they lost 150 gold coins! You can attack again in 5 seconds!");
+                            (_a = this.gameManager) === null || _a === void 0 ? void 0 : _a.resetTimer();
+                            (_b = this.gameManager) === null || _b === void 0 ? void 0 : _b.logActivity("You have attacked " + this.listUser[i].username + " with a Dynamite! they lost 150 gold coins! You can attack again in 5 seconds!");
                             closeButton.click();
                             leaderboardButton.disabled = true;
                             setTimeout(() => {
@@ -4354,7 +4355,6 @@ class Leaderboard {
                         }
                     }
                     else {
-                        (_b = this.gameManager) === null || _b === void 0 ? void 0 : _b.resetTimer();
                         (_c = this.gameManager) === null || _c === void 0 ? void 0 : _c.logActivity("You don't have enough resources to attack this player! (Gold needed: 75, Energy needed: 10)");
                         closeButton.click();
                     }
