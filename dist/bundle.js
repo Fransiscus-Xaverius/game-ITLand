@@ -3866,6 +3866,9 @@ const ConsumableItem_1 = require("./Abstract/ConsumableItem");
 const EquippableItem_1 = require("./Abstract/EquippableItem");
 const ItemRelated_enum_1 = require("./Enum/ItemRelated.enum");
 const API_1 = require("../API");
+const Pickaxe_1 = require("./Pickaxe");
+const Sword_1 = require("./Sword");
+const Shovel_1 = require("./Shovel");
 const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath, } = require("../../config/env.json");
 const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath, } = require("../../config/env.json");
 const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath, } = require("../../config/env.json");
@@ -3994,6 +3997,7 @@ class Inventory {
     open(inventoryShopElement) {
         if (!inventoryShopElement)
             return;
+        this.hasGetItemEquipState();
         inventoryShopElement.innerHTML = "";
         const cardContainer = document.querySelector(".shop-inventory");
         cardContainer.classList.add("p-3");
@@ -4056,25 +4060,69 @@ class Inventory {
                 itemUseButton.textContent = show;
                 itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-75", "rounded-0", "shadow", "border", "border-3", "border-black", "position-absolute", "start-50", "translate-middle-x");
                 itemUseButton.style.bottom = "15px";
-                itemUseButton.addEventListener("click", () => {
-                    let idx = index;
-                    if (this.player) {
-                        this.itemEquipState.forEach((e) => {
-                            e = ItemRelated_enum_1.EquipState.UNEQUIPPED;
-                        });
-                        const allItemsOwned = document.querySelectorAll(".Equip");
-                        allItemsOwned.forEach((e) => {
-                            e.innerText = ItemRelated_enum_1.EquipmentStatus.CAN_BE_EQUIP;
-                        });
-                        this.saveInventory();
-                        this.player.equip(item);
-                        this.itemEquipState[idx] = ItemRelated_enum_1.EquipState.EQUIPPED;
-                        let iES = [0, 0, 0, 0, 0, 0];
-                        iES[idx] = 1;
-                        sessionStorage.setItem("equipState", JSON.stringify({ equipState: iES }));
-                        itemUseButton.textContent = ItemRelated_enum_1.EquipmentStatus.EQUIPPED;
-                    }
-                });
+                if (item instanceof Pickaxe_1.Pickaxe) {
+                    itemUseButton.addEventListener("click", () => {
+                        let idx1 = 3;
+                        if (this.player) {
+                            this.itemEquipState.forEach((e) => {
+                                e = ItemRelated_enum_1.EquipState.UNEQUIPPED;
+                            });
+                            const allItemsOwned = document.querySelectorAll(".Equip");
+                            allItemsOwned.forEach((e) => {
+                                e.innerText = ItemRelated_enum_1.EquipmentStatus.CAN_BE_EQUIP;
+                            });
+                            this.saveInventory();
+                            this.player.equip(item);
+                            // this.itemEquipState[idx] = EquipState.EQUIPPED;
+                            let iES = [0, 0, 0, 0, 0, 0];
+                            iES[idx1] = 1;
+                            sessionStorage.setItem("equipState", JSON.stringify({ equipState: iES }));
+                            itemUseButton.textContent = ItemRelated_enum_1.EquipmentStatus.EQUIPPED;
+                        }
+                    });
+                }
+                else if (item instanceof Sword_1.Sword) {
+                    itemUseButton.addEventListener("click", () => {
+                        let idx2 = 4;
+                        if (this.player) {
+                            this.itemEquipState.forEach((e) => {
+                                e = ItemRelated_enum_1.EquipState.UNEQUIPPED;
+                            });
+                            const allItemsOwned = document.querySelectorAll(".Equip");
+                            allItemsOwned.forEach((e) => {
+                                e.innerText = ItemRelated_enum_1.EquipmentStatus.CAN_BE_EQUIP;
+                            });
+                            this.saveInventory();
+                            this.player.equip(item);
+                            // this.itemEquipState[idx] = EquipState.EQUIPPED;
+                            let iES = [0, 0, 0, 0, 0, 0];
+                            iES[idx2] = 1;
+                            sessionStorage.setItem("equipState", JSON.stringify({ equipState: iES }));
+                            itemUseButton.textContent = ItemRelated_enum_1.EquipmentStatus.EQUIPPED;
+                        }
+                    });
+                }
+                else if (item instanceof Shovel_1.Shovel) {
+                    itemUseButton.addEventListener("click", () => {
+                        let idx3 = 5;
+                        if (this.player) {
+                            this.itemEquipState.forEach((e) => {
+                                e = ItemRelated_enum_1.EquipState.UNEQUIPPED;
+                            });
+                            const allItemsOwned = document.querySelectorAll(".Equip");
+                            allItemsOwned.forEach((e) => {
+                                e.innerText = ItemRelated_enum_1.EquipmentStatus.CAN_BE_EQUIP;
+                            });
+                            this.saveInventory();
+                            this.player.equip(item);
+                            // this.itemEquipState[idx] = EquipState.EQUIPPED;
+                            let iES = [0, 0, 0, 0, 0, 0];
+                            iES[idx3] = 1;
+                            sessionStorage.setItem("equipState", JSON.stringify({ equipState: iES }));
+                            itemUseButton.textContent = ItemRelated_enum_1.EquipmentStatus.EQUIPPED;
+                        }
+                    });
+                }
             }
             cardBody.appendChild(nameElement);
             cardBody.appendChild(ownedElement);
@@ -4088,7 +4136,7 @@ class Inventory {
 }
 exports.Inventory = Inventory;
 
-},{"../../config/env.json":65,"../API":2,"./Abstract/Book":46,"./Abstract/ConsumableItem":47,"./Abstract/EquippableItem":48,"./BookOfEnergyT1":49,"./BookOfEnergyT2":50,"./BookOfEnergyT3":51,"./Enum/ItemRelated.enum":52}],54:[function(require,module,exports){
+},{"../../config/env.json":65,"../API":2,"./Abstract/Book":46,"./Abstract/ConsumableItem":47,"./Abstract/EquippableItem":48,"./BookOfEnergyT1":49,"./BookOfEnergyT2":50,"./BookOfEnergyT3":51,"./Enum/ItemRelated.enum":52,"./Pickaxe":55,"./Shovel":56,"./Sword":57}],54:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;

@@ -177,6 +177,7 @@ export class Inventory {
 
   public open(inventoryShopElement: HTMLDivElement | null): void {
     if (!inventoryShopElement) return;
+    this.hasGetItemEquipState();
 
     inventoryShopElement.innerHTML = "";
 
@@ -305,29 +306,81 @@ export class Inventory {
           "translate-middle-x"
         );
         itemUseButton.style.bottom = "15px";
-        itemUseButton.addEventListener("click", () => {
-          let idx = index;
-          if (this.player) {
-            this.itemEquipState.forEach((e) => {
-              e = EquipState.UNEQUIPPED;
-            });
-            const allItemsOwned: NodeListOf<HTMLHeadingElement> =
-              document.querySelectorAll(".Equip");
-            allItemsOwned.forEach((e) => {
-              e.innerText = EquipmentStatus.CAN_BE_EQUIP;
-            });
-            this.saveInventory();
-            this.player.equip(item);
-            this.itemEquipState[idx] = EquipState.EQUIPPED;
-            let iES = [0, 0, 0, 0, 0, 0];
-            iES[idx] = 1;
-            sessionStorage.setItem(
-              "equipState",
-              JSON.stringify({ equipState: iES })
-            );
-            itemUseButton.textContent = EquipmentStatus.EQUIPPED;
-          }
-        });
+
+        if (item instanceof Pickaxe) {
+          itemUseButton.addEventListener("click", () => {
+            let idx1: number = 3;
+            if (this.player) {
+              this.itemEquipState.forEach((e) => {
+                e = EquipState.UNEQUIPPED;
+              });
+              const allItemsOwned: NodeListOf<HTMLHeadingElement> =
+                document.querySelectorAll(".Equip");
+              allItemsOwned.forEach((e) => {
+                e.innerText = EquipmentStatus.CAN_BE_EQUIP;
+              });
+              this.saveInventory();
+              this.player.equip(item);
+              // this.itemEquipState[idx] = EquipState.EQUIPPED;
+              let iES = [0, 0, 0, 0, 0, 0];
+              iES[idx1] = 1;
+              sessionStorage.setItem(
+                "equipState",
+                JSON.stringify({ equipState: iES })
+              );
+              itemUseButton.textContent = EquipmentStatus.EQUIPPED;
+            }
+          });
+        } else if (item instanceof Sword) {
+          itemUseButton.addEventListener("click", () => {
+            let idx2: number = 4;
+            if (this.player) {
+              this.itemEquipState.forEach((e) => {
+                e = EquipState.UNEQUIPPED;
+              });
+              const allItemsOwned: NodeListOf<HTMLHeadingElement> =
+                document.querySelectorAll(".Equip");
+              allItemsOwned.forEach((e) => {
+                e.innerText = EquipmentStatus.CAN_BE_EQUIP;
+              });
+              this.saveInventory();
+              this.player.equip(item);
+              // this.itemEquipState[idx] = EquipState.EQUIPPED;
+              let iES = [0, 0, 0, 0, 0, 0];
+              iES[idx2] = 1;
+              sessionStorage.setItem(
+                "equipState",
+                JSON.stringify({ equipState: iES })
+              );
+              itemUseButton.textContent = EquipmentStatus.EQUIPPED;
+            }
+          });
+        } else if (item instanceof Shovel) {
+
+          itemUseButton.addEventListener("click", () => {
+            let idx3: number = 5;
+            if (this.player) {
+              this.itemEquipState.forEach((e) => {
+                e = EquipState.UNEQUIPPED;
+              });
+              const allItemsOwned: NodeListOf<HTMLHeadingElement> =
+                document.querySelectorAll(".Equip");
+              allItemsOwned.forEach((e) => {
+                e.innerText = EquipmentStatus.CAN_BE_EQUIP;
+              });
+              this.saveInventory();
+              this.player.equip(item);
+              // this.itemEquipState[idx] = EquipState.EQUIPPED;
+              let iES = [0, 0, 0, 0, 0, 0];
+              iES[idx3] = 1;
+              sessionStorage.setItem(
+                "equipState",
+                JSON.stringify({ equipState: iES })
+              );
+              itemUseButton.textContent = EquipmentStatus.EQUIPPED;
+            }
+          });
+        }
       }
 
       cardBody.appendChild(nameElement);
