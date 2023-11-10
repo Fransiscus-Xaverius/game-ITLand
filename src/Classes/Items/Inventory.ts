@@ -31,10 +31,11 @@ const {
 
 export class Inventory {
   private items: ItemStack[];
-  private itemEquipState: EquipState[] | undefined;
+  private itemEquipState: EquipState[] = [] as Array<EquipState>;
   private player: Player | null = null;
 
   constructor() {
+    this.hasGetItemEquipState();
     this.items = [] as Array<ItemStack>;
     this.items.push({
       item: new BookOfEnergyTier1(),
@@ -50,8 +51,22 @@ export class Inventory {
     });
   }
 
-  public setItemEquipState(itemEquipState: Array<EquipState>) {
-    this.itemEquipState = itemEquipState;
+  public hasGetItemEquipState(): boolean {
+    const equipState = sessionStorage.getItem("equipState");
+    if (equipState) {
+      const equipStateJSON = JSON.parse(equipState).equipState;
+      this.itemEquipState = equipStateJSON;
+      return true;
+    } else {
+      this.itemEquipState = [] as Array<EquipState>;
+      this.itemEquipState.push(EquipState.UNEQUIPPED);
+      this.itemEquipState.push(EquipState.UNEQUIPPED);
+      this.itemEquipState.push(EquipState.UNEQUIPPED);
+      this.itemEquipState.push(EquipState.UNEQUIPPED);
+      this.itemEquipState.push(EquipState.UNEQUIPPED);
+      this.itemEquipState.push(EquipState.UNEQUIPPED);
+      return false;
+    }
   }
 
   public setPlayer(player: Player): void {
@@ -292,20 +307,18 @@ export class Inventory {
         itemUseButton.style.bottom = "15px";
         itemUseButton.addEventListener("click", () => {
           if (this.player) {
-            if(this.itemEquipState){
-              this.itemEquipState.forEach((e) => {
-                e = EquipState.UNEQUIPPED;
-              });
-              const allItemsOwned: NodeListOf<HTMLHeadingElement> =
-                document.querySelectorAll(".Equip");
-              allItemsOwned.forEach((e) => {
-                e.innerText = EquipmentStatus.CAN_BE_EQUIP;
-              });
-              this.saveInventory();
-              this.player.equip(item);
-              this.itemEquipState[index] = EquipState.EQUIPPED;
-              itemUseButton.textContent = EquipmentStatus.EQUIPPED;
-            }
+            this.itemEquipState.forEach((e) => {
+              e = EquipState.UNEQUIPPED;
+            });
+            const allItemsOwned: NodeListOf<HTMLHeadingElement> =
+              document.querySelectorAll(".Equip");
+            allItemsOwned.forEach((e) => {
+              e.innerText = EquipmentStatus.CAN_BE_EQUIP;
+            });
+            this.saveInventory();
+            this.player.equip(item);
+            this.itemEquipState[index] = EquipState.EQUIPPED;
+            itemUseButton.textContent = EquipmentStatus.EQUIPPED;
           }
         });
       }
