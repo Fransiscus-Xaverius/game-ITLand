@@ -124,6 +124,7 @@ export class Leaderboard {
             API.updateGold(token, -75)
           }
           if (closeButton) {
+            this.gameManager?.resetTimer();
             this.gameManager?.logActivity("You have attacked "+this.listUser[i].username+" with a Dynamite! they lost 150 gold coins! You can attack again in 5 seconds!");
             closeButton.click();
             leaderboardButton.disabled = true;
@@ -133,7 +134,6 @@ export class Leaderboard {
           }
         }
         else{
-          this.gameManager?.resetTimer();
           this.gameManager?.logActivity("You don't have enough resources to attack this player! (Gold needed: 75, Energy needed: 10)");
           closeButton!.click();
         }
