@@ -1,17 +1,17 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 module.exports={
     "BookOfEnergyTier1Name": "Book Of Energy Tier 1",
-    "BookOfEnergyTier1Desc": "Basic energy guide, +<number> energy.",
+    "BookOfEnergyTier1Desc": "Basic energy guide, +10 energy.",
     "BookOfEnergyTier1Price": 100,
     "BookOfEnergyTier1ImagePath": "dist/Assets/Prototype/buku1.png",
     "BookOfEnergyTier1EnergyRestored": 10,
     "BookOfEnergyTier2Name": "Book Of Energy Tier 2",
-    "BookOfEnergyTier2Desc": "Advanced energy guide, +<number> energy.",
+    "BookOfEnergyTier2Desc": "Advanced energy guide, +20 energy.",
     "BookOfEnergyTier2Price": 200,
     "BookOfEnergyTier2ImagePath": "dist/Assets/Prototype/buku2.png",
     "BookOfEnergyTier2EnergyRestored": 20,
     "BookOfEnergyTier3Name": "Book Of Energy Tier 3",
-    "BookOfEnergyTier3Desc": "Mastery energy guide, +<number> energy.",
+    "BookOfEnergyTier3Desc": "Mastery energy guide, +30 energy.",
     "BookOfEnergyTier3Price": 300,
     "BookOfEnergyTier3ImagePath": "dist/Assets/Prototype/buku3.png",
     "BookOfEnergyTier3EnergyRestored": 30,
@@ -4994,7 +4994,7 @@ class Shop {
                             const itemLevel = document.createElement("div");
                             itemLevel.classList.add("item-level", `item-level-${i}`);
                             itemLevel.textContent = `Level ${equipment.getLevel()}`;
-                            colDiv2.appendChild(itemLevel);
+                            colDiv1.appendChild(itemLevel);
                             colDiv2.appendChild(totalPriceDiv);
                             addBox.appendChild(colDiv1);
                             addBox.appendChild(colDiv2);
@@ -5271,17 +5271,17 @@ exports.TerminalView = TerminalView;
 },{}],65:[function(require,module,exports){
 module.exports={
     "BookOfEnergyTier1Name": "Book Of Energy Tier 1",
-    "BookOfEnergyTier1Desc": "Basic energy guide, +<number> energy.",
+    "BookOfEnergyTier1Desc": "Basic energy guide, +10 energy.",
     "BookOfEnergyTier1Price": 100,
     "BookOfEnergyTier1ImagePath": "dist/Assets/Prototype/buku1.png",
     "BookOfEnergyTier1EnergyRestored": 10,
     "BookOfEnergyTier2Name": "Book Of Energy Tier 2",
-    "BookOfEnergyTier2Desc": "Advanced energy guide, +<number> energy.",
+    "BookOfEnergyTier2Desc": "Advanced energy guide, +20 energy.",
     "BookOfEnergyTier2Price": 200,
     "BookOfEnergyTier2ImagePath": "dist/Assets/Prototype/buku2.png",
     "BookOfEnergyTier2EnergyRestored": 20,
     "BookOfEnergyTier3Name": "Book Of Energy Tier 3",
-    "BookOfEnergyTier3Desc": "Mastery energy guide, +<number> energy.",
+    "BookOfEnergyTier3Desc": "Mastery energy guide, +30 energy.",
     "BookOfEnergyTier3Price": 300,
     "BookOfEnergyTier3ImagePath": "dist/Assets/Prototype/buku3.png",
     "BookOfEnergyTier3EnergyRestored": 30,

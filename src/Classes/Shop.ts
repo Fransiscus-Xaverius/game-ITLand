@@ -345,7 +345,7 @@ export class Shop {
               const itemLevel: HTMLDivElement = document.createElement("div");
               itemLevel.classList.add("item-level", `item-level-${i}`);
               itemLevel.textContent = `Level ${equipment.getLevel()}`;
-              colDiv2.appendChild(itemLevel);
+              colDiv1.appendChild(itemLevel);
               colDiv2.appendChild(totalPriceDiv);
 
               addBox.appendChild(colDiv1);
