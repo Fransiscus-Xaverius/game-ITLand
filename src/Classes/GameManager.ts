@@ -45,7 +45,7 @@ export class GameManager {
   private leaderboardView: LeaderboardView | null = null;
   private questionView: QuestionView | null = null;
   private token: string = "";
-  public countdown: number = 1800; //5 minutes countdown for inflation (initial value).
+  public countdown: number = JSON.parse(localStorage.getItem('countdown') ?? '{"countdown": null}').countdown ?? 1800;
 
   constructor(
     canvasView: CanvasView | null = null,
@@ -138,6 +138,7 @@ export class GameManager {
     let inflationwarning:HTMLSpanElement|null = document.querySelector("#inflation-span");
 
     this.countdown--;
+    localStorage.setItem('countdown', JSON.stringify({countdown: this.countdown}));
     console.error(this.countdown);
     if(this.countdown==0){
       this.resetTimer();
@@ -157,7 +158,7 @@ export class GameManager {
       }
       else{
         this.api?.seeAttack(lastAttackData.id);
-        alert(`You lost ${lastAttackData.gold} gold coin(s) due to inflation... 💀`);
+        alert(`You lost ${lastAttackData.gold} gold coin(s) due to devaluation... 💀`);
       }
     }
   }

@@ -33,32 +33,32 @@ module.exports={
 
     "GoldSwordName": "Gold Sword",
     "GoldSwordDesc": "A Legendary Sword made of Gold, used to break chests.",
-    "GoldSwordPrice": 500,
+    "GoldSwordPrice": 2000,
     "GoldSwordImagePath": "dist/assets/final/goldsword.png",
 
     "GoldShovelName": "Gold Shovel",
     "GoldShovelDesc": "A Legendary Shovel made of Gold, used to dig.",
-    "GoldShovelPrice": 500,
+    "GoldShovelPrice": 1000,
     "GoldShovelImagePath": "dist/assets/final/goldshovel.png",
 
     "GoldPickaxeName": "Gold Pickaxe",
     "GoldPickaxeDesc": "A Legendary Pickaxe made of Gold, used to mine.",
-    "GoldPickaxePrice": 500,
+    "GoldPickaxePrice": 1250,
     "GoldPickaxeImagePath": "dist/assets/final/goldpickaxe.png",
 
     "SilverSwordName": "Silver Sword",
     "SilverSwordDesc": "A Durable Sword made of Silver, used to break chests.",
-    "SilverSwordPrice": 350,
+    "SilverSwordPrice": 1000,
     "SilverSwordImagePath": "dist/assets/final/silversword.png",
 
     "SilverShovelName": "Silver Shovel",
     "SilverShovelDesc": "A Durable Shovel made of Silver, used to dig.",
-    "SilverShovelPrice": 350,
+    "SilverShovelPrice": 500,
     "SilverShovelImagePath": "dist/assets/final/silvershovel.png",
 
     "SilverPickaxeName": "Silver Pickaxe",
     "SilverPickaxeDesc": "A Durable Pickaxe made of Silver, used to mine.",
-    "SilverPickaxePrice": 350,
+    "SilverPickaxePrice": 750,
     "SilverPickaxeImagePath": "dist/assets/final/silverpickaxe.png",
 
     "SwordName": "Sword Name",
@@ -2224,7 +2224,7 @@ const digged_ground_1 = require("./GameObjects/digged_ground");
 const digged_granite_1 = require("./GameObjects/digged_granite");
 class GameManager {
     constructor(canvasView = null, terminalView = null, shopView, inventoryView = null, questionView = null, leaderboardView = null) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         this.api = null;
         this.lastTimeStamp = 0;
         this.deltaTime = 0;
@@ -2240,7 +2240,7 @@ class GameManager {
         this.leaderboardView = null;
         this.questionView = null;
         this.token = "";
-        this.countdown = 1800; //5 minutes countdown for inflation (initial value).
+        this.countdown = (_b = JSON.parse((_a = localStorage.getItem('countdown')) !== null && _a !== void 0 ? _a : '{"countdown": null}').countdown) !== null && _b !== void 0 ? _b : 1800;
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
         this.setShopView(shopView);
@@ -2248,7 +2248,7 @@ class GameManager {
         this.api = new API_1.API();
         this.setQuestionView(questionView);
         this.setLeaderboardView(leaderboardView);
-        (_b = (_a = this.shopView) === null || _a === void 0 ? void 0 : _a.getShop()) === null || _b === void 0 ? void 0 : _b.setGame(this);
+        (_d = (_c = this.shopView) === null || _c === void 0 ? void 0 : _c.getShop()) === null || _d === void 0 ? void 0 : _d.setGame(this);
     }
     // public addToInventory(index: number, amount: number) {
     //     this.inventoryView?.getInventory()?.addItemOwned(index, amount);
@@ -2314,6 +2314,7 @@ class GameManager {
             yield this.save();
             let inflationwarning = document.querySelector("#inflation-span");
             this.countdown--;
+            localStorage.setItem('countdown', JSON.stringify({ countdown: this.countdown }));
             console.error(this.countdown);
             if (this.countdown == 0) {
                 this.resetTimer();
@@ -2335,7 +2336,7 @@ class GameManager {
                 }
                 else {
                     (_c = this.api) === null || _c === void 0 ? void 0 : _c.seeAttack(lastAttackData.id);
-                    alert(`You lost ${lastAttackData.gold} gold coin(s) due to inflation... 💀`);
+                    alert(`You lost ${lastAttackData.gold} gold coin(s) due to devaluation... 💀`);
                 }
             }
         });
