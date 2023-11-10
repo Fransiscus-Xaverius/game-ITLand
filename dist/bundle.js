@@ -4775,11 +4775,11 @@ class Shop {
             const tempPickaxe = this.item[3];
             const tempSword = this.item[4];
             const tempShovel = this.item[5];
-            tempPickaxe.setLevel(data.pickaxeLevel);
+            tempPickaxe.setLevel(data.pickaxeLevel + 1);
             tempPickaxe.checkUpdateData();
-            tempSword.setLevel(data.swordLevel);
+            tempSword.setLevel(data.swordLevel + 1);
             tempSword.checkUpdateData();
-            tempShovel.setLevel(data.shovelLevel);
+            tempShovel.setLevel(data.shovelLevel + 1);
             tempShovel.checkUpdateData();
             this.item[3] = tempPickaxe;
             this.item[4] = tempSword;
@@ -4868,7 +4868,7 @@ class Shop {
                 let isBuyable = false;
                 if (tempItem instanceof EquippableItem_1.EquippableItem) {
                     let temp = tempItem;
-                    if (temp.getLevel() < 3) {
+                    if (temp.getLevel() <= 3) {
                         isBuyable = true;
                     }
                 }
@@ -4984,7 +4984,7 @@ class Shop {
                     }
                     else {
                         let equipment = this.item[i];
-                        if (equipment.getLevel() < 3) {
+                        if (equipment.getLevel() <= 3) {
                             const colDiv2 = document.createElement("div");
                             colDiv2.classList.add("col-sm-6", `total-price-container-item-${i}`, "position-relative");
                             const totalPriceDiv = document.createElement("div");
@@ -5000,7 +5000,7 @@ class Shop {
                         "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
                     if (this.item[i] instanceof EquippableItem_1.EquippableItem) {
                         buyButton.innerHTML = "Upgrade";
-                        if (this.item[i].getLevel() < 3) {
+                        if (this.item[i].getLevel() <= 3) {
                             buyButton.onclick = () => {
                                 var _a, _b, _c, _d, _e, _f, _g;
                                 const currentItem = this.item[i];

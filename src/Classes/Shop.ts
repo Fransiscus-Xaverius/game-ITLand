@@ -99,11 +99,11 @@ export class Shop {
     const tempSword = this.item[4] as Sword;
     const tempShovel = this.item[5] as Shovel;
 
-    tempPickaxe.setLevel(data.pickaxeLevel);
+    tempPickaxe.setLevel(data.pickaxeLevel+1);
     tempPickaxe.checkUpdateData();
-    tempSword.setLevel(data.swordLevel);
+    tempSword.setLevel(data.swordLevel+1);
     tempSword.checkUpdateData();
-    tempShovel.setLevel(data.shovelLevel);
+    tempShovel.setLevel(data.shovelLevel+1);
     tempShovel.checkUpdateData();
 
     this.item[3] = tempPickaxe;
@@ -146,7 +146,7 @@ export class Shop {
         let isBuyable = false;
         if (tempItem instanceof EquippableItem) {
           let temp = tempItem as EquippableItem;
-          if (temp.getLevel() < 3) {
+          if (temp.getLevel() <= 3) {
             isBuyable = true;
           }
         } else {
@@ -325,7 +325,7 @@ export class Shop {
             addBox.appendChild(colDiv2);
           } else {
             let equipment = this.item[i] as EquippableItem;
-            if (equipment.getLevel() < 3) {
+            if (equipment.getLevel() <= 3) {
               const colDiv2: HTMLDivElement = document.createElement("div");
               colDiv2.classList.add(
                 "col-sm-6",
@@ -352,7 +352,7 @@ export class Shop {
             "content buy-button btn btn-primary w-100 mt-2 rounded-0 shadow border border-3 border-black position-absolute bottom-0 start-50 translate-middle-x";
           if (this.item[i] instanceof EquippableItem) {
             buyButton.innerHTML = "Upgrade";
-            if ((this.item[i] as EquippableItem).getLevel() < 3) {
+            if ((this.item[i] as EquippableItem).getLevel() <= 3) {
               buyButton.onclick = () => {
                 const currentItem = this.item[i];
                 const totalPriceDiv = document.querySelector(
