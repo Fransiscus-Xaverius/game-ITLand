@@ -287,15 +287,7 @@ export class Inventory {
             });
             this.saveInventory();
             this.player.equip(item);
-            this.itemEquipState[index] = EquipState.EQUIPPED;
-            allItemsOwned.forEach(
-                (e,idx)=>{
-                  if(index == idx){
-                    e.innerText = EquipmentStatus.EQUIPPED;
-                  }
-                }
-            )
-            // itemUseButton.textContent = EquipmentStatus.EQUIPPED;
+            this.itemEquipState[index] = EquipState.EQUIPPED;            // itemUseButton.textContent = EquipmentStatus.EQUIPPED;
           }
         });
       }
