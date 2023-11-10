@@ -37,7 +37,7 @@ export class Leaderboard {
     const allUserString: UserStack[] = JSON.parse(await API.getAllUser());
     this.listUser = [];
     for (let i = 0; i < allUserString.length; i++) {
-     if(this.player?.getPlayerName()!=allUserString[i].username && allUserString[i].total_gold>=150){
+     if(this.player?.getPlayerName()!=allUserString[i].username && allUserString[i].total_gold>=300){
       const currentUser = allUserString[i];
       this.listUser.push(currentUser);
      }

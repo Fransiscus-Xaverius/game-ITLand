@@ -4262,7 +4262,7 @@ class Leaderboard {
             const allUserString = JSON.parse(yield API_1.API.getAllUser());
             this.listUser = [];
             for (let i = 0; i < allUserString.length; i++) {
-                if (((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName()) != allUserString[i].username && allUserString[i].total_gold >= 150) {
+                if (((_a = this.player) === null || _a === void 0 ? void 0 : _a.getPlayerName()) != allUserString[i].username && allUserString[i].total_gold >= 300) {
                     const currentUser = allUserString[i];
                     this.listUser.push(currentUser);
                 }
