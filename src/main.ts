@@ -254,6 +254,14 @@ window.onload = async () => {
     });
     document.onkeydown = function (e) {
 
+    if(e.keyCode == 32){
+      return false;
+    }
+
+    if(e.keyCode == 13){
+      return false;
+    }
+
     // disable F12 key
     if(e.keyCode == 123) {
         return false;
@@ -308,7 +316,7 @@ window.onload = async () => {
       game.Action(Direction.Right, currentEquipped);
     }
 
-    if(key===" "){
+    if(key==="c"){
       const currentEquipped = game
         .getPlayer()
         .getCurrentEquipment() as EquippableItem;
