@@ -285,6 +285,7 @@ export class Inventory {
       } else if (item instanceof EquippableItem) {
         ownedElement.innerText = `Level: ${amount}`;
         let show: EquipmentStatus = EquipmentStatus.CAN_BE_EQUIP;
+        alert(JSON.stringify(this.itemEquipState));
         if (this.itemEquipState[index] === 1) {
           show = EquipmentStatus.EQUIPPED;
         }
