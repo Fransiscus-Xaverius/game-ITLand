@@ -17,7 +17,7 @@ module.exports={
     "BookOfEnergyTier3EnergyRestored": 30,
 
     "IronSwordName": "Iron Sword",
-    "IronSwordDesc": "A Sword made of Iron, used to break chests and slay sea monsters.",
+    "IronSwordDesc": "A Sword made of Iron, used to break chests.",
     "IronSwordPrice": 200,
     "IronSwordImagePath": "dist/assets/final/ironsword.png",
 
@@ -32,7 +32,7 @@ module.exports={
     "IronPickaxeImagePath": "dist/assets/final/ironpickaxe.png",
 
     "GoldSwordName": "Gold Sword",
-    "GoldSwordDesc": "A Legendary Sword made of Gold, used to break chests and slay sea monsters.",
+    "GoldSwordDesc": "A Legendary Sword made of Gold, used to break chests.",
     "GoldSwordPrice": 500,
     "GoldSwordImagePath": "dist/assets/final/goldsword.png",
 
@@ -47,7 +47,7 @@ module.exports={
     "GoldPickaxeImagePath": "dist/assets/final/goldpickaxe.png",
 
     "SilverSwordName": "Silver Sword",
-    "SilverSwordDesc": "A Durable Sword made of Silver, used to break chests and slay sea monsters.",
+    "SilverSwordDesc": "A Durable Sword made of Silver, used to break chests.",
     "SilverSwordPrice": 350,
     "SilverSwordImagePath": "dist/assets/final/silversword.png",
 
@@ -4990,6 +4990,10 @@ class Shop {
                             const totalPriceDiv = document.createElement("div");
                             totalPriceDiv.classList.add("total-price", `total-price-item-${i}`);
                             totalPriceDiv.textContent = `Gold ${this.item[i].getItemPrice()}`;
+                            const itemLevel = document.createElement("div");
+                            itemLevel.classList.add("item-level", `item-level-${i}`);
+                            itemLevel.textContent = `Level ${equipment.getLevel()}`;
+                            colDiv2.appendChild(itemLevel);
                             colDiv2.appendChild(totalPriceDiv);
                             addBox.appendChild(colDiv1);
                             addBox.appendChild(colDiv2);
@@ -5282,7 +5286,7 @@ module.exports={
     "BookOfEnergyTier3EnergyRestored": 30,
 
     "IronSwordName": "Iron Sword",
-    "IronSwordDesc": "A Sword made of Iron, used to break chests and slay sea monsters.",
+    "IronSwordDesc": "A Sword made of Iron, used to break chests.",
     "IronSwordPrice": 200,
     "IronSwordImagePath": "dist/assets/final/ironsword.png",
 
@@ -5297,7 +5301,7 @@ module.exports={
     "IronPickaxeImagePath": "dist/assets/final/ironpickaxe.png",
 
     "GoldSwordName": "Gold Sword",
-    "GoldSwordDesc": "A Legendary Sword made of Gold, used to break chests and slay sea monsters.",
+    "GoldSwordDesc": "A Legendary Sword made of Gold, used to break chests.",
     "GoldSwordPrice": 500,
     "GoldSwordImagePath": "dist/assets/final/goldsword.png",
 
@@ -5312,7 +5316,7 @@ module.exports={
     "GoldPickaxeImagePath": "dist/assets/final/goldpickaxe.png",
 
     "SilverSwordName": "Silver Sword",
-    "SilverSwordDesc": "A Durable Sword made of Silver, used to break chests and slay sea monsters.",
+    "SilverSwordDesc": "A Durable Sword made of Silver, used to break chests.",
     "SilverSwordPrice": 350,
     "SilverSwordImagePath": "dist/assets/final/silversword.png",
 

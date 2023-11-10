@@ -109,6 +109,9 @@ export class Shop {
     this.item[3] = tempPickaxe;
     this.item[4] = tempSword;
     this.item[5] = tempShovel;
+
+    
+
   };
 
   public setPlayer(player: Player | null) {
@@ -339,6 +342,10 @@ export class Shop {
                 `total-price-item-${i}`
               );
               totalPriceDiv.textContent = `Gold ${this.item[i].getItemPrice()}`;
+              const itemLevel: HTMLDivElement = document.createElement("div");
+              itemLevel.classList.add("item-level", `item-level-${i}`);
+              itemLevel.textContent = `Level ${equipment.getLevel()}`;
+              colDiv2.appendChild(itemLevel);
               colDiv2.appendChild(totalPriceDiv);
 
               addBox.appendChild(colDiv1);
