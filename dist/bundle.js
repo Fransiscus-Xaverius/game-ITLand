@@ -4044,7 +4044,12 @@ class Inventory {
                         this.saveInventory();
                         this.player.equip(item);
                         this.itemEquipState[index] = ItemRelated_enum_1.EquipState.EQUIPPED;
-                        itemUseButton.textContent = ItemRelated_enum_1.EquipmentStatus.EQUIPPED;
+                        allItemsOwned.forEach((e, idx) => {
+                            if (index == idx) {
+                                e.innerText = ItemRelated_enum_1.EquipmentStatus.EQUIPPED;
+                            }
+                        });
+                        // itemUseButton.textContent = EquipmentStatus.EQUIPPED;
                     }
                 });
             }
