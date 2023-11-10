@@ -285,7 +285,7 @@ export class Inventory {
       } else if (item instanceof EquippableItem) {
         ownedElement.innerText = `Level: ${amount}`;
         let show: EquipmentStatus = EquipmentStatus.CAN_BE_EQUIP;
-        alert(JSON.stringify(this.itemEquipState));
+        // alert(JSON.stringify(this.itemEquipState));
         if (this.itemEquipState[index] === 1) {
           show = EquipmentStatus.EQUIPPED;
         }
@@ -318,9 +318,11 @@ export class Inventory {
             this.saveInventory();
             this.player.equip(item);
             this.itemEquipState[index] = EquipState.EQUIPPED;
+            let iES = [0, 0, 0, 0, 0, 0];
+            iES[index] = 1;
             sessionStorage.setItem(
               "equipState",
-              JSON.stringify({ equipState: this.itemEquipState })
+              JSON.stringify({ equipState: iES })
             );
             itemUseButton.textContent = EquipmentStatus.EQUIPPED;
           }
