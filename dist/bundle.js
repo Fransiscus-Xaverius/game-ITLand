@@ -5731,6 +5731,12 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
             e.preventDefault();
         });
         document.onkeydown = function (e) {
+            if (e.keyCode == 32) {
+                return false;
+            }
+            if (e.keyCode == 13) {
+                return false;
+            }
             // disable F12 key
             if (e.keyCode == 123) {
                 return false;
@@ -5780,7 +5786,7 @@ window.onload = () => __awaiter(void 0, void 0, void 0, function* () {
                 .getCurrentEquipment();
             game.Action(Direction_1.Direction.Right, currentEquipped);
         }
-        if (key === " ") {
+        if (key === "c") {
             const currentEquipped = game
                 .getPlayer()
                 .getCurrentEquipment();
