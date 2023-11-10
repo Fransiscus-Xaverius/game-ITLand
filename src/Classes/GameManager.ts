@@ -28,6 +28,7 @@ import { DiggedGravel } from "./GameObjects/digged_gravel";
 import { DiggedGround } from "./GameObjects/digged_ground";
 import { DiggedGranite } from "./GameObjects/digged_granite";
 import { count } from "console";
+import { EquipState } from "./Items/Enum/ItemRelated.enum";
 
 export class GameManager {
   public api: API | null = null;
@@ -45,7 +46,10 @@ export class GameManager {
   private leaderboardView: LeaderboardView | null = null;
   private questionView: QuestionView | null = null;
   private token: string = "";
-  public countdown: number = JSON.parse(localStorage.getItem('countdown') ?? '{"countdown": null}').countdown ?? 1800;
+  public countdown: number =
+    JSON.parse(localStorage.getItem("countdown") ?? '{"countdown": null}')
+      .countdown ?? 1800;
+  private itemEquipState: Array<EquipState>;
 
   constructor(
     canvasView: CanvasView | null = null,
@@ -63,6 +67,7 @@ export class GameManager {
     this.setQuestionView(questionView);
     this.setLeaderboardView(leaderboardView);
     this.shopView?.getShop()?.setGame(this);
+    this.itemEquipState = [] as Array<EquipState>;
   }
 
   // public addToInventory(index: number, amount: number) {
@@ -90,15 +95,20 @@ export class GameManager {
     map = await this.api?.gameStart()!; //use non-null assertion operator.
     // let playerdata = await this.api?.initializePlayer(1, 1, 0);
     let playerdata = await this.api?.getPlayerData();
-    if(!playerdata){
-      playerdata = await this.api?.initializePlayer(1,1,0, this.player.getPlayerName()!);
+    if (!playerdata) {
+      playerdata = await this.api?.initializePlayer(
+        1,
+        1,
+        0,
+        this.player.getPlayerName()!
+      );
     }
     this.player = new Player(
       Number(playerdata?.x),
       Number(playerdata?.y),
       0,
       Number(playerdata?.energy)
-    ); 
+    );
     this.player.energy = Number(playerdata?.energy); //an example of why typescript is dogshit.
     //redoing load grid because the constructor cannot be an async function.
     this.grid = new Grid({ x: 100, y: 100 });
@@ -114,10 +124,11 @@ export class GameManager {
     this.setInventory();
     this.inventoryView?.getInventory()?.loadInventory();
     this.shopView?.getShop()?.loadShop();
+    this.inventoryView?.getInventory()?.setItemEquipState(this.itemEquipState);
   }
 
-  public resetTimer(){
-    if(this.countdown<600){
+  public resetTimer() {
+    if (this.countdown < 600) {
       this.countdown = 600;
     }
   }
@@ -137,37 +148,48 @@ export class GameManager {
     this.processAttack();
     await this.save();
 
-    let inflationwarning:HTMLSpanElement|null = document.querySelector("#inflation-span");
+    let inflationwarning: HTMLSpanElement | null =
+      document.querySelector("#inflation-span");
 
     this.countdown--;
-    localStorage.setItem('countdown', JSON.stringify({countdown: this.countdown}));
+    localStorage.setItem(
+      "countdown",
+      JSON.stringify({ countdown: this.countdown })
+    );
     console.error(this.countdown);
-    if(this.countdown==0){
+    if (this.countdown == 0) {
       this.resetTimer();
-      await this.api?.inflation(this.player.getGold()!, this.player.getPlayerName()!);
+      await this.api?.inflation(
+        this.player.getGold()!,
+        this.player.getPlayerName()!
+      );
     }
     inflationwarning!.textContent = this.countdown.toString();
   }
 
-  public async processAttack(){ //attack warning.
-    const lastAttack = await this.api?.getLastAttack(this.player.getPlayerName()!);
+  public async processAttack() {
+    //attack warning.
+    const lastAttack = await this.api?.getLastAttack(
+      this.player.getPlayerName()!
+    );
     const lastAttackString = await lastAttack!.text();
     const lastAttackData = JSON.parse(lastAttackString);
-    if(!lastAttackData.seen){
-      if(lastAttackData.sender!="inflation"){
+    if (!lastAttackData.seen) {
+      if (lastAttackData.sender != "inflation") {
         this.api?.seeAttack(lastAttackData.id);
-        alert(`You have been attacked by ${lastAttackData.sender}! You lost ${lastAttackData.gold} gold coin(s)!`);
-      }
-      else{
+        alert(
+          `You have been attacked by ${lastAttackData.sender}! You lost ${lastAttackData.gold} gold coin(s)!`
+        );
+      } else {
         this.api?.seeAttack(lastAttackData.id);
-        alert(`You lost ${lastAttackData.gold} gold coin(s) due to devaluation... 💀`);
+        alert(
+          `You lost ${lastAttackData.gold} gold coin(s) due to devaluation... 💀`
+        );
       }
     }
   }
 
-  public async save(){
-
-  }
+  public async save() {}
 
   public getQuestionView(): QuestionView | null {
     return this.questionView;
@@ -186,19 +208,19 @@ export class GameManager {
     return string1;
   }
 
-  public cheatItems(){
+  public cheatItems() {
     this.player.setEquipmentLevels(2);
   }
 
-  public upgradePickaxe(){
+  public upgradePickaxe() {
     this.player.upgradePickaxe();
   }
 
-  public upgradeSword(){
+  public upgradeSword() {
     this.player.upgradeSword();
   }
 
-  public upgradeShovel(){
+  public upgradeShovel() {
     this.player.upgradeShovel();
   }
 
@@ -281,7 +303,7 @@ export class GameManager {
   //Direction.Under = dig
 
   public Action(direction: Direction, tools: EquippableItem) {
-    if(this.activePlayerUnit?.isMoving) return;
+    if (this.activePlayerUnit?.isMoving) return;
     const coords = this.player.getCoordinate();
     const temp = this.getGridEntity(coords, direction);
     const tile = this.getTile(coords);
@@ -307,11 +329,10 @@ export class GameManager {
       this.actionWithSword(temp!, direction);
     } else if (tools instanceof Shovel) {
       if (!tile) return;
-      if (direction!= Direction.Under){
-        alert("This is the wrong tool!")
+      if (direction != Direction.Under) {
+        alert("This is the wrong tool!");
         return;
-      }
-      else{
+      } else {
         this.actionWithShovel(tile!);
       }
     } else {
@@ -417,7 +438,7 @@ export class GameManager {
     }
   }
 
-  private  actionWithShovel(tile: Tile) {
+  private actionWithShovel(tile: Tile) {
     const isDiggable = !tile.name.includes("digged");
     switch (isDiggable) {
       case true:
@@ -446,7 +467,7 @@ export class GameManager {
         this.logActivity("This area has already been excavated! ");
         break;
       default:
-        alert("This is the wrong tool!"); 
+        alert("This is the wrong tool!");
         break;
     }
   }
