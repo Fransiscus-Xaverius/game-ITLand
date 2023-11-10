@@ -318,6 +318,10 @@ export class Inventory {
             this.saveInventory();
             this.player.equip(item);
             this.itemEquipState[index] = EquipState.EQUIPPED;
+            sessionStorage.setItem(
+              "equipState",
+              JSON.stringify({ equipState: this.itemEquipState })
+            );
             itemUseButton.textContent = EquipmentStatus.EQUIPPED;
           }
         });
