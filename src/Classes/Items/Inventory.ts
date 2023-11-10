@@ -316,7 +316,7 @@ export class Inventory {
             let parts = className.split("-");
             let index =
               parts.length > 0 ? parseInt(parts[parts.length - 1]) : undefined;
-            let idx = index;
+            let idx: number = index as number;
             if (this.player) {
               this.itemEquipState.forEach((e) => {
                 e = EquipState.UNEQUIPPED;
