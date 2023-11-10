@@ -306,6 +306,7 @@ export class Inventory {
         );
         itemUseButton.style.bottom = "15px";
         itemUseButton.addEventListener("click", () => {
+          let idx = index;
           if (this.player) {
             this.itemEquipState.forEach((e) => {
               e = EquipState.UNEQUIPPED;
@@ -317,9 +318,9 @@ export class Inventory {
             });
             this.saveInventory();
             this.player.equip(item);
-            this.itemEquipState[index] = EquipState.EQUIPPED;
+            this.itemEquipState[idx] = EquipState.EQUIPPED;
             let iES = [0, 0, 0, 0, 0, 0];
-            iES[index] = 1;
+            iES[idx] = 1;
             sessionStorage.setItem(
               "equipState",
               JSON.stringify({ equipState: iES })
