@@ -300,9 +300,9 @@ export class Inventory {
             });
             const allItemsOwned: NodeListOf<HTMLHeadingElement> =
               document.querySelectorAll(".Equip");
-            allItemsOwned.forEach((e) => {
-              e.innerText = EquipmentStatus.CAN_BE_EQUIP;
-            });
+            // allItemsOwned.forEach((e) => {
+            //   e.innerText = EquipmentStatus.CAN_BE_EQUIP;
+            // });
             this.saveInventory();
             this.player.equip(item);
             this.itemEquipState[index] = EquipState.EQUIPPED;
