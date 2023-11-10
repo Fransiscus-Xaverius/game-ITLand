@@ -142,7 +142,7 @@ export class GameManager {
     this.countdown--;
     localStorage.setItem('countdown', JSON.stringify({countdown: this.countdown}));
     console.error(this.countdown);
-    if(this.countdown==0){
+    if(this.countdown<=0){
       this.resetTimer();
       await this.api?.inflation(this.player.getGold()!, this.player.getPlayerName()!);
     }

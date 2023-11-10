@@ -2318,7 +2318,7 @@ class GameManager {
             this.countdown--;
             localStorage.setItem('countdown', JSON.stringify({ countdown: this.countdown }));
             console.error(this.countdown);
-            if (this.countdown == 0) {
+            if (this.countdown <= 0) {
                 this.resetTimer();
                 yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.inflation(this.player.getGold(), this.player.getPlayerName()));
             }
@@ -3866,29 +3866,43 @@ const ConsumableItem_1 = require("./Abstract/ConsumableItem");
 const EquippableItem_1 = require("./Abstract/EquippableItem");
 const ItemRelated_enum_1 = require("./Enum/ItemRelated.enum");
 const API_1 = require("../API");
-const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../../config/env.json');
-const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../../config/env.json');
-const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../../config/env.json');
+const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath, } = require("../../config/env.json");
+const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath, } = require("../../config/env.json");
+const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath, } = require("../../config/env.json");
 class Inventory {
     constructor() {
+        this.itemEquipState = [];
         this.player = null;
         this.items = [];
-        this.itemEquipState = [];
         this.items.push({
             item: new BookOfEnergyT1_1.BookOfEnergyTier1(),
             amount: 0,
         });
-        this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
         this.items.push({
             item: new BookOfEnergyT2_1.BookOfEnergyTier2(),
             amount: 0,
         });
-        this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
         this.items.push({
             item: new BookOfEnergyT3_1.BookOfEnergyTier3(),
             amount: 0,
         });
-        this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
+        this.hasGetItemEquipState();
+    }
+    hasGetItemEquipState() {
+        const equipState = sessionStorage.getItem("equipState");
+        if (equipState) {
+            const equipStateJSON = JSON.parse(equipState).equipState;
+            this.itemEquipState = equipStateJSON;
+        }
+        else {
+            this.itemEquipState = [];
+            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
+            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
+            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
+            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
+            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
+            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
+        }
     }
     setPlayer(player) {
         this.player = player;
@@ -3903,21 +3917,18 @@ class Inventory {
                 item: pickaxe,
                 amount: 1,
             });
-            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
         }
         if (sword) {
             this.items.push({
                 item: sword,
                 amount: 1,
             });
-            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
         }
         if (shovel) {
             this.items.push({
                 item: shovel,
                 amount: 1,
             });
-            this.itemEquipState.push(ItemRelated_enum_1.EquipState.UNEQUIPPED);
         }
     }
     addItemOwned(index, amount) {
@@ -4037,10 +4048,16 @@ class Inventory {
             }
             else if (item instanceof EquippableItem_1.EquippableItem) {
                 ownedElement.innerText = `Level: ${amount}`;
-                itemUseButton.textContent = ItemRelated_enum_1.EquipmentStatus.CAN_BE_EQUIP;
+                let show = ItemRelated_enum_1.EquipmentStatus.CAN_BE_EQUIP;
+                // alert(JSON.stringify(this.itemEquipState));
+                if (this.itemEquipState[index] === 1) {
+                    show = ItemRelated_enum_1.EquipmentStatus.EQUIPPED;
+                }
+                itemUseButton.textContent = show;
                 itemUseButton.classList.add("Equip", "btn", "btn-primary", "w-75", "rounded-0", "shadow", "border", "border-3", "border-black", "position-absolute", "start-50", "translate-middle-x");
                 itemUseButton.style.bottom = "15px";
                 itemUseButton.addEventListener("click", () => {
+                    let idx = index;
                     if (this.player) {
                         this.itemEquipState.forEach((e) => {
                             e = ItemRelated_enum_1.EquipState.UNEQUIPPED;
@@ -4051,7 +4068,11 @@ class Inventory {
                         });
                         this.saveInventory();
                         this.player.equip(item);
-                        this.itemEquipState[index] = ItemRelated_enum_1.EquipState.EQUIPPED; // itemUseButton.textContent = EquipmentStatus.EQUIPPED;
+                        this.itemEquipState[idx] = ItemRelated_enum_1.EquipState.EQUIPPED;
+                        let iES = [0, 0, 0, 0, 0, 0];
+                        iES[idx] = 1;
+                        sessionStorage.setItem("equipState", JSON.stringify({ equipState: iES }));
+                        itemUseButton.textContent = ItemRelated_enum_1.EquipmentStatus.EQUIPPED;
                     }
                 });
             }
