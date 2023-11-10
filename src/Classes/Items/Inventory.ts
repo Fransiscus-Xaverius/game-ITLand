@@ -35,7 +35,6 @@ export class Inventory {
   private player: Player | null = null;
 
   constructor() {
-    this.hasGetItemEquipState();
     this.items = [] as Array<ItemStack>;
     this.items.push({
       item: new BookOfEnergyTier1(),
@@ -49,14 +48,14 @@ export class Inventory {
       item: new BookOfEnergyTier3(),
       amount: 0,
     });
+    this.hasGetItemEquipState();
   }
 
-  public hasGetItemEquipState(): boolean {
+  public hasGetItemEquipState() {
     const equipState = sessionStorage.getItem("equipState");
     if (equipState) {
       const equipStateJSON = JSON.parse(equipState).equipState;
       this.itemEquipState = equipStateJSON;
-      return true;
     } else {
       this.itemEquipState = [] as Array<EquipState>;
       this.itemEquipState.push(EquipState.UNEQUIPPED);
@@ -65,7 +64,6 @@ export class Inventory {
       this.itemEquipState.push(EquipState.UNEQUIPPED);
       this.itemEquipState.push(EquipState.UNEQUIPPED);
       this.itemEquipState.push(EquipState.UNEQUIPPED);
-      return false;
     }
   }
 
@@ -286,10 +284,11 @@ export class Inventory {
         itemUseButton.addEventListener("click", handleItemClick);
       } else if (item instanceof EquippableItem) {
         ownedElement.innerText = `Level: ${amount}`;
-        itemUseButton.textContent =
-          itemUseButton.textContent == EquipmentStatus.EQUIPPED
-            ? EquipmentStatus.EQUIPPED
-            : EquipmentStatus.CAN_BE_EQUIP;
+        let show: EquipmentStatus = EquipmentStatus.CAN_BE_EQUIP;
+        if (this.itemEquipState[index] === EquipState.EQUIPPED) {
+          show = EquipmentStatus.EQUIPPED;
+        }
+        itemUseButton.textContent = show;
         itemUseButton.classList.add(
           "Equip",
           "btn",
