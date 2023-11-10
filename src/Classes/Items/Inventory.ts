@@ -13,9 +13,21 @@ import { Sword } from "./Sword";
 import { Shovel } from "./Shovel";
 import { Shop } from "../Shop";
 
-const { IronSwordImagePath, SilverSwordImagePath, GoldSwordImagePath } = require('../../config/env.json');
-const { IronShovelImagePath, SilverShovelImagePath, GoldShovelImagePath } = require('../../config/env.json');
-const { IronPickaxeImagePath, SilverPickaxeImagePath, GoldPickaxeImagePath } = require('../../config/env.json');
+const {
+  IronSwordImagePath,
+  SilverSwordImagePath,
+  GoldSwordImagePath,
+} = require("../../config/env.json");
+const {
+  IronShovelImagePath,
+  SilverShovelImagePath,
+  GoldShovelImagePath,
+} = require("../../config/env.json");
+const {
+  IronPickaxeImagePath,
+  SilverPickaxeImagePath,
+  GoldPickaxeImagePath,
+} = require("../../config/env.json");
 
 export class Inventory {
   private items: ItemStack[];
@@ -119,7 +131,7 @@ export class Inventory {
 
     this.items[3].amount = data.pickaxeLevel;
     this.items[4].amount = data.swordLevel;
-    switch(data.swordLevel){
+    switch (data.swordLevel) {
       case 1:
         this.items[4].item.setImagePath(IronSwordImagePath);
         break;
@@ -131,7 +143,11 @@ export class Inventory {
         break;
     }
     this.items[5].amount = data.shovelLevel;
-    this.player?.loadEquipmentLevels(this.items[3].amount,this.items[4].amount,this.items[5].amount)
+    this.player?.loadEquipmentLevels(
+      this.items[3].amount,
+      this.items[4].amount,
+      this.items[5].amount
+    );
 
     const tempPickaxe = this.items[3].item as Pickaxe;
     const tempSword = this.items[4].item as Sword;
@@ -147,7 +163,6 @@ export class Inventory {
     this.items[3].item = tempPickaxe;
     this.items[4].item = tempSword;
     this.items[5].item = tempShovel;
-
   }
 
   public open(inventoryShopElement: HTMLDivElement | null): void {
@@ -259,7 +274,9 @@ export class Inventory {
         itemUseButton.addEventListener("click", handleItemClick);
       } else if (item instanceof EquippableItem) {
         ownedElement.innerText = `Level: ${amount}`;
-        itemUseButton.textContent = EquipmentStatus.CAN_BE_EQUIP;
+        itemUseButton.textContent = EquipmentStatus.EQUIPPED
+          ? EquipmentStatus.EQUIPPED
+          : EquipmentStatus.CAN_BE_EQUIP;
         itemUseButton.classList.add(
           "Equip",
           "btn",
@@ -287,7 +304,7 @@ export class Inventory {
             });
             this.saveInventory();
             this.player.equip(item);
-            this.itemEquipState[index] = EquipState.EQUIPPED;            // itemUseButton.textContent = EquipmentStatus.EQUIPPED;
+            this.itemEquipState[index] = EquipState.EQUIPPED; // itemUseButton.textContent = EquipmentStatus.EQUIPPED;
           }
         });
       }
