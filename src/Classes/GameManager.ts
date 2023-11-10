@@ -45,7 +45,7 @@ export class GameManager {
   private leaderboardView: LeaderboardView | null = null;
   private questionView: QuestionView | null = null;
   private token: string = "";
-  public countdown: number = 300; //5 minutes countdown for inflation.
+  public countdown: number = 1800; //5 minutes countdown for inflation (initial value).
 
   constructor(
     canvasView: CanvasView | null = null,
@@ -117,7 +117,7 @@ export class GameManager {
   }
 
   public resetTimer(){
-    this.countdown = 300;
+    this.countdown = 600;
   }
 
   public async tick() {
@@ -140,7 +140,7 @@ export class GameManager {
     this.countdown--;
     console.error(this.countdown);
     if(this.countdown==0){
-      this.countdown = 300;
+      this.resetTimer();
       await this.api?.inflation(this.player.getGold()!, this.player.getPlayerName()!);
     }
     inflationwarning!.textContent = this.countdown.toString();

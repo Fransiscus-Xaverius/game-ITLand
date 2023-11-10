@@ -2240,7 +2240,7 @@ class GameManager {
         this.leaderboardView = null;
         this.questionView = null;
         this.token = "";
-        this.countdown = 300; //5 minutes countdown for inflation.
+        this.countdown = 1800; //5 minutes countdown for inflation (initial value).
         this.setCanvasView(canvasView);
         this.setTerminalView(terminalView);
         this.setShopView(shopView);
@@ -2298,7 +2298,7 @@ class GameManager {
         });
     }
     resetTimer() {
-        this.countdown = 300;
+        this.countdown = 600;
     }
     tick() {
         var _a, _b, _c, _d;
@@ -2316,7 +2316,7 @@ class GameManager {
             this.countdown--;
             console.error(this.countdown);
             if (this.countdown == 0) {
-                this.countdown = 300;
+                this.resetTimer();
                 yield ((_d = this.api) === null || _d === void 0 ? void 0 : _d.inflation(this.player.getGold(), this.player.getPlayerName()));
             }
             inflationwarning.textContent = this.countdown.toString();
