@@ -2298,7 +2298,9 @@ class GameManager {
         });
     }
     resetTimer() {
-        this.countdown = 600;
+        if (this.countdown < 600) {
+            this.countdown = 600;
+        }
     }
     tick() {
         var _a, _b, _c, _d;
@@ -3679,7 +3681,7 @@ const Animation_1 = require("./Animation");
 const ChainedAnimation_1 = require("./ChainedAnimation");
 class Silver_ore extends Entity_1.Entity {
     constructor(coordinate, animations = []) {
-        super(coordinate, animations, "Silver_ore", 2, 125, 250, 25);
+        super(coordinate, animations, "Silver_ore", 2, 125, 250, 15);
         const animation = new ChainedAnimation_1.ChainedAnimation(this, 'Silver_ore', Animation_1.Animation.assets['silver_ore'], { x: 32, y: 32 }, 1, -1, 1);
     }
 }

@@ -117,7 +117,9 @@ export class GameManager {
   }
 
   public resetTimer(){
-    this.countdown = 600;
+    if(this.countdown<600){
+      this.countdown = 600;
+    }
   }
 
   public async tick() {
