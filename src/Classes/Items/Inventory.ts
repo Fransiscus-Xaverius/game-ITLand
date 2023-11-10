@@ -274,9 +274,10 @@ export class Inventory {
         itemUseButton.addEventListener("click", handleItemClick);
       } else if (item instanceof EquippableItem) {
         ownedElement.innerText = `Level: ${amount}`;
-        itemUseButton.textContent = EquipmentStatus.EQUIPPED
-          ? EquipmentStatus.EQUIPPED
-          : EquipmentStatus.CAN_BE_EQUIP;
+        itemUseButton.textContent =
+          itemUseButton.textContent == EquipmentStatus.EQUIPPED
+            ? EquipmentStatus.EQUIPPED
+            : EquipmentStatus.CAN_BE_EQUIP;
         itemUseButton.classList.add(
           "Equip",
           "btn",
@@ -304,7 +305,8 @@ export class Inventory {
             });
             this.saveInventory();
             this.player.equip(item);
-            this.itemEquipState[index] = EquipState.EQUIPPED; // itemUseButton.textContent = EquipmentStatus.EQUIPPED;
+            this.itemEquipState[index] = EquipState.EQUIPPED;
+            itemUseButton.textContent = EquipmentStatus.EQUIPPED;
           }
         });
       }
