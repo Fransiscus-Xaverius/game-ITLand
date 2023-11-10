@@ -328,7 +328,7 @@ export class Inventory {
               });
               this.saveInventory();
               this.player.equip(item);
-              // this.itemEquipState[idx] = EquipState.EQUIPPED;
+              this.itemEquipState[idx] = EquipState.EQUIPPED;
               let iES = [0, 0, 0, 0, 0, 0];
               iES[idx] = 1;
               sessionStorage.setItem(
